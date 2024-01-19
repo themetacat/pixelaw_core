@@ -1,6 +1,7 @@
 import { useComponentValue } from "@latticexyz/react";
 import { useMUD } from "./MUDContext";
 import { singletonEntity } from "@latticexyz/store-sync/recs";
+import Header from './components/herder'
 
 export const App = () => {
   const {
@@ -12,7 +13,8 @@ export const App = () => {
 
   return (
     <>
-      <div>
+    <Header/>
+      {/* <div>
         Counter: <span>{counter?.value ?? "??"}</span>
       </div>
       <button
@@ -23,7 +25,7 @@ export const App = () => {
         }}
       >
         Increment
-      </button>
+      </button> */}
     </>
   );
 };

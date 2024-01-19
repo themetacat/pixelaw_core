@@ -1,0 +1,17 @@
+import {atom} from "jotai";
+import { NotificationDataType, PositionWithAddressAndType } from './types'
+
+export const colorAtom = atom('#FFFFFF')
+
+export const gameModeAtom = atom<string>("paint")
+
+export const zoomLevelAtom = atom<number>(50)
+
+export const positionWithAddressAndTypeAtom = atom<PositionWithAddressAndType>({
+  x: 0,
+  y: 0,
+  address: '',
+  pixel: '',
+})
+
+export const notificationDataAtom = atom<NotificationDataType | undefined>(undefined)
