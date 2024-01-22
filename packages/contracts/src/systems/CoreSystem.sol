@@ -4,10 +4,10 @@ pragma solidity >=0.8.19;
 import { System } from "@latticexyz/world/src/System.sol";
 import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData} from "../codegen/index.sol";
 
-
 contract CoreSystem is System {
   
   event AppNameUpdated(address indexed callre, AppData  app);
+
 
   function init() public{
     bytes32 key = convertToBytes32('core_actions');
