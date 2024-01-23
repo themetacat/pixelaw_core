@@ -58,4 +58,35 @@ top: 0px;
     width: 100%;
     height: 100vh;
     background-color:#2f1643;
+    margin-top: 70px;
+    position:relative
 }
+
+
+
+
+.color-picker {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .color-option {
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  
+  .indicator {
+    position: absolute;
+    inset: 5px;
+    background: rgb(255, 255, 255);
+    border-radius: 50%;
+    opacity: 0;
+  }
+  
+  .color-option.selected .indicator {
+    opacity: 1;
+  }
