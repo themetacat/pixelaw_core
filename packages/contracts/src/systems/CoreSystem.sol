@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData} from "../codegen/index.sol";
+import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData, Instruction, InstructionTableId} from "../codegen/index.sol";
 
 contract CoreSystem is System {
   
@@ -11,19 +11,19 @@ contract CoreSystem is System {
 
   function init() public{
     bytes32 key = convertToBytes32('core_actions');
-    CoreActionAddress.set(key, address(this));
+    CoreActionAddress.set(key, _world());
   }
 
-  function udpate_permission(string memory app_name, PermissionsData memory  Permissionparam) public {
+  function udpate_permission(string memory app_name, PermissionsData memory  permission_param) public {
     //system 使用msg.sender在此调用而不是传入
     // app addr
     // 在没有创建app的情况下，依然可以调用？这是对的？
     address allowed_app = AppName.getSystem(convertToBytes32(app_name));
-    Permissions.set(address(_msgSender()), allowed_app, Permissionparam);
+    Permissions.set(address(_msgSender()), allowed_app, permission_param);
   }
 
   // system: app addr
-  function udpate_app(string memory name, string memory icon) public {
+  function update_app(string memory name, string memory icon) public {
 
     AppData memory app = new_app(address(_msgSender()), name, icon);
     emit AppNameUpdated(address(_msgSender()), app);
@@ -128,6 +128,13 @@ contract CoreSystem is System {
 
   }
 
+  function set_instruction(string memory selector, string memory instruction) public {
+    address system = address(_msgSender());
+    AppData app = App.get(caller);
+    require(bytes(app.name).length != 0, 'cannot be called by a non-app');
+    Instruction.set(system, convertToBytes32(selector), instruction)
+  }
+
   function convertToBytes32(string memory input) public pure returns (bytes32) {
     bytes memory stringBytes = bytes(input);
     if (stringBytes.length == 0) {
@@ -139,4 +146,5 @@ contract CoreSystem is System {
     }
     return result;
   }
+
 }
