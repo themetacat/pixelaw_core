@@ -9,7 +9,7 @@ import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 
 import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
-import IWorldAbi from "contracts/out/IWorld.sol/IWorld.abi.json";
+// import IWorldAbi from "contracts/out/IWorld.sol/IWorld.abi.json";
 import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
 
 import { Subject, share } from "rxjs";
@@ -62,7 +62,8 @@ export async function setupNetwork() {
    */
   const worldContract = getContract({
     address: networkConfig.worldAddress as Hex,
-    abi: IWorldAbi,
+    // abi: IWorldAbi,
+    abi:[],
     publicClient,
     walletClient: burnerWalletClient,
     onWrite: (write) => write$.next(write),
