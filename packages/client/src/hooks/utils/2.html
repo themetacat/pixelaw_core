@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>节省内存绘制表格</title>
+  <style>
+    #container {
+      width: 500px; /* 容器宽度，用于显示可视区域 */
+      height: 300px; /* 容器高度，用于显示可视区域 */
+      overflow: auto; /* 显示滚动条 */
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <canvas id="tableCanvas"></canvas>
+  </div>
+
+  <script>
+    // 表格行列数和单元格大小
+    var rowCount = 150;
+    var colCount = 255;
+    var cellWidth = 30;
+    var cellHeight = 20;
+
+    // 创建Canvas元素
+    var canvas = document.getElementById("tableCanvas");
+    canvas.width = colCount * cellWidth;
+    canvas.height = rowCount * cellHeight;
+
+    // 获取绘图上下文
+    var ctx = canvas.getContext("2d");
+
+    // 绘制表格内容
+    for (var row = 0; row < rowCount; row++) {
+      for (var col = 0; col < colCount; col++) {
+        // 计算单元格左上角的坐标
+        var x = col * cellWidth;
+        var y = row * cellHeight;
+
+        // 绘制单元格
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(x, y, cellWidth, cellHeight);
+        ctx.strokeStyle = "#000000";
+        ctx.strokeRect(x, y, cellWidth, cellHeight);
+        ctx.fillStyle = "#000000";
+        ctx.fillText((row + 1) + "-" + (col + 1), x + 10, y + 15);
+      }
+    }
+
+    // 绘制可视区域的函数
+    function drawViewport(x, y, width, height) {
+  // 将可视区域的坐标转换为整数
+  x = Math.floor(x);
+  y = Math.floor(y);
+
+  // 计算可视区域对应的部分
+  var imageData = ctx.getImageData(x, y, width, height);
+
+  // 清空可视区域外的部分
+  ctx.clearRect(0, 0, x, canvas.height);
+  ctx.clearRect(x + width, 0, canvas.width - x - width, canvas.height);
+  ctx.clearRect(x, 0, width, y);
+  ctx.clearRect(x, y + height, width, canvas.height - y - height);
+
+  // 绘制可视区域的部分
+  ctx.putImageData(imageData, x, y);
+}
+    // 获取容器元素
+    var container = document.getElementById("container");
+
+    // 监听滚动事件
+    container.addEventListener("scroll", function() {
+      var x = container.scrollLeft;
+      var y = container.scrollTop;
+      var width = container.clientWidth;
+      var height = container.clientHeight;
+
+      drawViewport(x, y, width, height);
+    });
+  </script>
+</body>
+</html>
