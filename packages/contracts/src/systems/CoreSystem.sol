@@ -14,7 +14,7 @@ contract CoreSystem is System {
     CoreActionAddress.set(key, _world());
   }
 
-  function udpate_permission(string memory app_name, PermissionsData memory  permission_param) public {
+  function update_permission(string memory app_name, PermissionsData memory  permission_param) public {
     //system 使用msg.sender在此调用而不是传入
     // app addr
     // 在没有创建app的情况下，依然可以调用？这是对的？
@@ -53,6 +53,9 @@ contract CoreSystem is System {
   // }
 
   function has_write_access(address for_system, PixelData memory pixel, PixelUpdateData memory pixel_update) public view returns (bool) {
+    // _msgSender should be user addr
+    // _msgSender is system addr
+
     if (pixel.owner == address(0) || pixel.owner == address(_msgSender())){
       return true;
     }
@@ -128,12 +131,12 @@ contract CoreSystem is System {
 
   }
 
-  function set_instruction(string memory selector, string memory instruction) public {
-    address system = address(_msgSender());
-    AppData app = App.get(caller);
-    require(bytes(app.name).length != 0, 'cannot be called by a non-app');
-    Instruction.set(system, convertToBytes32(selector), instruction)
-  }
+  // function set_instruction(string memory selector, string memory instruction) public {
+  //   address system = address(_msgSender());
+  //   AppData app = App.get(caller);
+  //   require(bytes(app.name).length != 0, 'cannot be called by a non-app');
+  //   Instruction.set(system, convertToBytes32(selector), instruction);
+  // }
 
   function convertToBytes32(string memory input) public pure returns (bytes32) {
     bytes memory stringBytes = bytes(input);

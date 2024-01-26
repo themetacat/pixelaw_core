@@ -12,9 +12,11 @@ import { PermissionsData, PixelData, PixelUpdateData } from "./../index.sol";
 interface ICoreSystem {
   function init() external;
 
-  function udpate_permission(string memory app_name, PermissionsData memory Permissionparam) external;
+  function update_permission(string memory app_name, PermissionsData memory permission_param) external;
 
-  function udpate_app(string memory name, string memory icon) external;
+  function get_pixel(uint32 x, uint32 y) external returns (PixelData memory);
+
+  function update_app(string memory name, string memory icon) external;
 
   function has_write_access(
     address for_system,

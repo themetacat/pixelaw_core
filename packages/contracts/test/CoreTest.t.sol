@@ -28,7 +28,7 @@ contract CounterTest is MudTest {
     assertEq(app.app_name, "");
 
     // // Expect the counter to be 2 after calling increment.
-    IWorld(worldAddress).udpate_app("zz", "zzz");
+    IWorld(worldAddress).update_app("zz", "zzz");
     app = App.get(address(this));
      assertEq(app.app_name, "zz");
   }
@@ -54,7 +54,7 @@ contract CounterTest is MudTest {
     assertEq(app.app_name, "");
     assertEq(addr, address(0));
 
-    IWorld(worldAddress).udpate_app("paint", "paint_icon");
+    IWorld(worldAddress).update_app("paint", "paint_icon");
 
     app = App.get(address(this));
     addr = AppName.get(convertToBytes32("paint"));
@@ -71,7 +71,7 @@ contract CounterTest is MudTest {
     assertEq(permissions.color, false);
     // // Expect the counter to be 2 after calling increment.
     // PermissionsData memory perData = PermissionsData({app: true});
-    IWorld(worldAddress).udpate_permission("paint", PermissionsData({app: true, color: false, owner:true, text: true, timestamp: true, action: true}));
+    IWorld(worldAddress).update_permission("paint", PermissionsData({app: true, color: false, owner:true, text: true, timestamp: true, action: true}));
 
     permissions = Permissions.get(address(this), addr);
     assertEq(permissions.app, true);
