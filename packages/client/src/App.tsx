@@ -24,7 +24,7 @@ export const App = () => {
 
   const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
   const valueToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
-  const stringToEntityID = (name: string) => encodeEntity({ name: "bytes32" }, { name });
+  // const stringToEntityID = (name: string) => encodeEntity({ name: "bytes32" }, { name });
   const counter = useComponentValue(App, addressToEntityID("0x4d8E02BBfCf205828A8352Af4376b165E123D7b0"));
   const pixel = useComponentValue(Pixel, valueToEntityID(1, 2));
   // const appName = useComponentValue(AppName, hexKeyTupleToEntity(Hex["paint"]));
