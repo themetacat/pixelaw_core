@@ -12,9 +12,36 @@
  */
 
 import { MUDChain, latticeTestnet, mudFoundry } from "@latticexyz/common/chains";
-
+import {defineChain} from "viem/utils"
+const redstone = defineChain({
+    id: 17_001,
+    name: 'REDSTONE HOLESKY',
+    network: 'redstone-holesky',
+    nativeCurrency: {
+      name: 'redstone holesky Ether',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.holesky.redstone.xyz'],
+        webSocket: ['wss://rpc.holesky.redstone.xyz/ws']
+      },
+      public: {
+        http: ['https://rpc.holesky.redstone.xyz'],
+        webSocket: ['wss://rpc.holesky.redstone.xyz/ws']
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Blockscout',
+        url: 'https://explorer.holesky.redstone.xyz',
+      },
+    },
+    testnet: true,
+  })
 /*
  * See https://mud.dev/tutorials/minimal/deploy#run-the-user-interface
  * for instructions on how to add networks.
  */
-export const supportedChains: MUDChain[] = [mudFoundry, latticeTestnet];
+export const supportedChains: MUDChain[] = [mudFoundry, latticeTestnet, redstone];
