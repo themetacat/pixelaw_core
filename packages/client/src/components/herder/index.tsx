@@ -275,7 +275,7 @@ const drawGrid = useCallback(
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
     if (hoveredSquare && selectedColor) {
-      console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
+      // console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
       const increData = increment(hoveredSquare.x,hoveredSquare.y,selectedColor)
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
         // 调用handleData方法并传递需要的参数

@@ -14,7 +14,7 @@ interface ICoreSystem {
 
   function update_permission(string memory app_name, PermissionsData memory permission_param) external;
 
-  function update_app(string memory name, string memory icon) external;
+  function update_app(string memory name, string memory icon, string memory manifest) external;
 
   function has_write_access(
     address for_system,
