@@ -6,8 +6,7 @@ import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, A
 
 contract CoreSystem is System {
   
-  event AppNameUpdated(address indexed callre, AppData  app);
-
+  // event AppNameUpdated(address indexed callre, AppData  app);
 
   function init() public{
     bytes32 key = convertToBytes32('core_actions');
@@ -23,13 +22,13 @@ contract CoreSystem is System {
   }
 
   // system: app addr
-  function update_app(string memory name, string memory icon) public {
+  function update_app(string memory name, string memory icon, string memory manifest) public {
 
-    AppData memory app = new_app(address(_msgSender()), name, icon);
-    emit AppNameUpdated(address(_msgSender()), app);
+    AppData memory app = new_app(address(_msgSender()), name, icon, manifest);
+    // emit AppNameUpdated(address(_msgSender()), app);
   }
 
-  function new_app(address system, string memory name, string memory icon) internal returns(AppData memory){
+  function new_app(address system, string memory name, string memory icon, string memory manifest) internal returns(AppData memory){
     AppData memory app = App.get(system);
 
     bytes32 bytes_name = convertToBytes32(name);
@@ -39,6 +38,7 @@ contract CoreSystem is System {
 
     app.app_name = name;
     app.icon = icon;
+    app.manifest = manifest;
     App.set(system, app);
 
     AppName.set(bytes_name, system);

@@ -28,7 +28,7 @@ contract CounterTest is MudTest {
     assertEq(app.app_name, "");
 
     // // Expect the counter to be 2 after calling increment.
-    IWorld(worldAddress).update_app("zz", "zzz");
+    IWorld(worldAddress).update_app("zz", "zzz", "zzzz");
     app = App.get(address(this));
      assertEq(app.app_name, "zz");
   }
@@ -54,7 +54,7 @@ contract CounterTest is MudTest {
     assertEq(app.app_name, "");
     assertEq(addr, address(0));
 
-    IWorld(worldAddress).update_app("paint", "paint_icon");
+    IWorld(worldAddress).update_app("paint", "paint_icon", "paint_mainfest");
 
     app = App.get(address(this));
     addr = AppName.get(convertToBytes32("paint"));

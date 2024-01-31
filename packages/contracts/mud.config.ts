@@ -58,7 +58,7 @@ export default mudConfig({
         system: "address"
       },
       valueSchema: {
-        // manifet: "string",
+        manifest: "string",
         app_name: "string",
         icon: "string",
         action: "string"
