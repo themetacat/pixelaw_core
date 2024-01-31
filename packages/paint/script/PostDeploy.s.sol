@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.21;
+pragma solidity >=0.8.19;
  
 import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
@@ -34,9 +34,9 @@ contract PaintExtension is Script {
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
  
     vm.startBroadcast(deployerPrivateKey);
-    // world.registerNamespace(namespaceResource);
+    world.registerNamespace(namespaceResource);
 
-    // forge script script/PaintExtension.s.sol --rpc-url http://localhost:8545 --broadcast
+    // forge script script/PaintExtension.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
     // StoreSwitch.setStoreAddress(worldAddress);
     // Messages.register();
  
@@ -44,9 +44,9 @@ contract PaintExtension is Script {
     console.log("PaintSystem address: ", address(paintSystem));
  
     world.registerSystem(systemResource, paintSystem, true);
-    // world.registerFunctionSelector(systemResource, "init()");
+    world.registerFunctionSelector(systemResource, "init()");
     // world.registerFunctionSelector(systemResource, "interact(DefaultParameters)");
-    // world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string))");
+    world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string))");
     // world.registerFunctionSelector(systemResource, "put_color(DefaultParameters)");
  
     vm.stopBroadcast();

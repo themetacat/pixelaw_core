@@ -12,7 +12,7 @@ overflow-x: hidden;
     position: relative;
 position: fixed;
 top: 0px;
-z-index: 999999999;
+z-index: 9999999;
 }
 .container img{
     width: 139px;
@@ -23,9 +23,11 @@ z-index: 999999999;
 }
 .addr{
     justify-content: right;
-    color: red;
+    color: #fff;
     position: absolute;
     right: 80px;
+    width:150px;
+    height: auto;
     line-height: 50px;
 }
 .content{

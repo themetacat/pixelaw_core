@@ -14,8 +14,6 @@ interface ICoreSystem {
 
   function update_permission(string memory app_name, PermissionsData memory permission_param) external;
 
-  function get_pixel(uint32 x, uint32 y) external returns (PixelData memory);
-
   function update_app(string memory name, string memory icon) external;
 
   function has_write_access(
