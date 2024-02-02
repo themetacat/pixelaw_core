@@ -69,7 +69,6 @@ const colorOptionsData = [
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
-  // allInfoData:any;
 }
 
 export default function Header({ hoveredData, handleData }: Props) {
