@@ -138,9 +138,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
-console.log(Has(Pixel),'Has(Pixel)',Has(App))
+//console.log(Has(Pixel),'Has(Pixel)',Has(App))
   const entities = useEntityQuery([Has(Pixel)]);
-  console.log(entities,'-----')
+  //console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
     [];
   if (entities.length !== 0) {
@@ -151,7 +151,7 @@ console.log(Has(Pixel),'Has(Pixel)',Has(App))
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
 
-    // console.log(entityData); // 打印数组
+    // //console.log(entityData); // 打印数组
   }
 
   const drawGrid = useCallback(
@@ -278,11 +278,11 @@ console.log(Has(Pixel),'Has(Pixel)',Has(App))
   ]);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    console.log("是点击事件吗");
+    //console.log("是点击事件吗");
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
     if (hoveredSquare && selectedColor) {
-      // console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
+      // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
       const increData = increment(
         hoveredSquare.x,
         hoveredSquare.y,
@@ -292,7 +292,7 @@ console.log(Has(Pixel),'Has(Pixel)',Has(App))
       // 调用handleData方法并传递需要的参数
       handleData(hoveredSquare);
     } else {
-      console.log("hoveredSquare或selectedColor为空");
+      //console.log("hoveredSquare或selectedColor为空");
     }
   };
 

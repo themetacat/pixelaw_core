@@ -9,14 +9,14 @@ import { setupNetwork } from "./setupNetwork";
 // import {ManifestContext} from '../components/rightPart'
 
 export type SetupResult = Awaited<ReturnType<typeof setup>>;
-// console.log(ManifestContext,66666666666666)
+// //console.log(ManifestContext,66666666666666)
 
 export async function setup() {
   const network = await setupNetwork();
-  console.log(network,'network')
+  //console.log(network,'network')
 
   const components = createClientComponents(network);
-  console.log(components,'components')
+  //console.log(components,'components')
   const systemCalls = createSystemCalls(network, components);
 
   return {

@@ -26,7 +26,7 @@ import mudConfig from "../../../contracts/mud.config";
 
 
 
-console.log(mudConfig,555)
+//console.log(mudConfig,555)
 
 export type SetupNetworkResult = {
   world: any;
@@ -100,10 +100,10 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
            * to the viem publicClient to make RPC calls to fetch MUD
            * events from the chain.
            */
-                   console.log(networkConfig.worldAddress,'address')
-                   console.log(mudConfig,'config')
-                   console.log(world,'world')
-            console.log(publicClient,'publicClient')
+                   //console.log(networkConfig.worldAddress,'address')
+                   //console.log(mudConfig,'config')
+                   //console.log(world,'world')
+            //console.log(publicClient,'publicClient')
 
           syncToRecs({
             world,
@@ -112,7 +112,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
-            console.log(components,'components')
+            //console.log(components,'components')
    
             /*
              * If there is a faucet, request (test) ETH if you have
