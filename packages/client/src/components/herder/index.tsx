@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect,useMemo, useRef, useCallback } from "react";
 import style from "./index.module.css";
 // import { useDrawPanel } from '@/providers/DrawPanelProvider.tsx'
 import { clsx } from "clsx";
@@ -141,18 +141,18 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
 
   const entities = useEntityQuery([Has(Pixel)]);
-  const entityData: { coordinates: { x: number; y: number }; value: any }[] =
-    [];
-  if (entities.length !== 0) {
-    entities.forEach((entity) => {
-      const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
-      const value = getComponentValueStrict(Pixel, entity);
-
-      entityData.push({ coordinates, value }); // 将数据添加到数组中
-    });
-
-    // console.log(entityData); // 打印数组
-  }
+  console.log(entities,'-----')
+  const entityData = useMemo(() => {
+    const data:any = [];
+    if (entities.length !== 0) {
+      entities.forEach((entity) => {
+        const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
+        const value = getComponentValueStrict(Pixel, entity);
+        data.push({ coordinates, value });
+      });
+    }
+    return data;
+  }, [entities]);
 
   const drawGrid = useCallback(
     (
@@ -193,7 +193,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             GRID_SIZE - 1
           );
           const currentCoordinates = { x: i, y: j };
-          const entity = entityData.find((entity) => {
+          const entity = entityData.find((entity:any) => {
             return (
               entity.coordinates.x === currentCoordinates.x &&
               entity.coordinates.y === currentCoordinates.y
