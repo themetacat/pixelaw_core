@@ -13,7 +13,10 @@ export type SetupResult = Awaited<ReturnType<typeof setup>>;
 
 export async function setup() {
   const network = await setupNetwork();
+  console.log(network,'network')
+
   const components = createClientComponents(network);
+  console.log(components,'components')
   const systemCalls = createSystemCalls(network, components);
 
   return {
