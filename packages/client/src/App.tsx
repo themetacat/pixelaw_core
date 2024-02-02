@@ -47,11 +47,7 @@ export const App = () => {
     hexString.substring(hexString.length - 4).toUpperCase();
 
 
-  const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
-  const valueToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
-  const stringToEntityID = (name: any) => encodeEntity({ name: "bytes32" }, { name });
-
-  const pixel = useComponentValue(Pixel, valueToEntityID(hoveredData!==null?hoveredData.x:'', hoveredData!==null?hoveredData.y:''));
+ 
 
   const entities_app = useEntityQuery([Has(App)])
   // console.log(entities_app,'-------------------')
