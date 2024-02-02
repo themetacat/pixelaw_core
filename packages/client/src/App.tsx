@@ -70,7 +70,6 @@ export const App = () => {
   // })
 
   // const appName = useComponentValue(AppName, stringToEntityID("0x7061696e74000000000000000000000000000000000000000000000000000000"));
-  const appName = useComponentValue(AppName, stringToBytes32("paint") as Entity);
   // console.log(stringToBytes32("paint"));
   
   // console.log(counter);
