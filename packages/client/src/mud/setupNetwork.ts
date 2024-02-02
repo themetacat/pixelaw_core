@@ -9,7 +9,7 @@ import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 
 import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
-import IWorldAbi from "../../../../packages/paint/out/IWorld.sol/IWorld.abi.json";
+// import IWorldAbi from "../../../../packages/paint/out/IWorld.sol/IWorld.abi.json";
 import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
 
 import { Subject, share } from "rxjs";
@@ -22,7 +22,11 @@ import { Subject, share } from "rxjs";
  * See https://mud.dev/templates/typescript/contracts#mudconfigts
  * for the source of this information.
  */
-import mudConfig from "contracts/mud.config";
+import mudConfig from "../../../contracts/mud.config";
+
+
+
+console.log(mudConfig,555)
 
 export type SetupNetworkResult = {
   world: any;
