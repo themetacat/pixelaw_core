@@ -9,7 +9,8 @@ import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 
 import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
-import IWorldAbi from "../../../../packages/paint/out/IWorld.sol/IWorld.abi.json";
+// import IWorldAbi from "../../../../packages/paint/out/IWorld.sol/IWorld.abi.json";
+import IWorldAbi from "./mud.abi.json";
 import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
 
 import { Subject, share } from "rxjs";
