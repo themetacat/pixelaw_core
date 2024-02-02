@@ -8,7 +8,7 @@ import { setupNetwork } from "./setupNetwork";
 
 // import {ManifestContext} from '../components/rightPart'
 
-// export type SetupResult = Awaited<ReturnType<typeof setup>>;
+export type SetupResult = Awaited<ReturnType<typeof setup>>;
 // console.log(ManifestContext,66666666666666)
 
 export async function setup() {
