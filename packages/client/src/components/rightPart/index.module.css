@@ -1,0 +1,25 @@
+.container{
+    width: 120px;
+    padding-top: 70px;
+    background-color: #2a0d39;
+    height: 100vh;
+
+}
+.container button {
+    margin-left: 10px;
+    width: 100px;
+    height: 50px;
+    font-size: 20px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #b1b2d7,#8083cb);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 15px;
+    margin-bottom: 10px; /* 添加间距 */
+}
+.imgCon{
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}

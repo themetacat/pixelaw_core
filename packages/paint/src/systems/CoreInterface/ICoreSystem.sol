@@ -16,7 +16,7 @@ interface ICoreSystem {
 
   function get_pixel(uint32 x, uint32 y) external returns (PixelData memory);
 
-  function update_app(string memory name, string memory icon) external;
+  function update_app(string memory name, string memory icon, string memory manifest) external;
 
   function has_write_access(
     address for_system,

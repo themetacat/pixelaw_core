@@ -1,13 +1,25 @@
-import React, { useState, useEffect, useRef,useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import style from "./index.module.css";
 // import { useDrawPanel } from '@/providers/DrawPanelProvider.tsx'
 import { clsx } from "clsx";
 import { useRenderGrid } from "../../hooks/useRenderGrid";
 import DrawPanel from "../shared/DrawPanel";
-import { ComponentValue, Entity, Has, HasValue, getComponentValueStrict  } from "@latticexyz/recs"
-import { encodeEntity, syncToRecs, decodeEntity, hexKeyTupleToEntity } from "@latticexyz/store-sync/recs";
+import {
+  ComponentValue,
+  Entity,
+  Has,
+  HasValue,
+  getComponentValueStrict,
+} from "@latticexyz/recs";
+import {
+  encodeEntity,
+  syncToRecs,
+  decodeEntity,
+  hexKeyTupleToEntity,
+} from "@latticexyz/store-sync/recs";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
+import RightPart from "../rightPart";
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -54,7 +66,6 @@ const colorOptionsData = [
   // 其他颜色选项...
 ];
 
-
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
@@ -63,19 +74,16 @@ interface Props {
 
 export default function Header({ hoveredData, handleData }: Props) {
   const {
-    components: {  App,Pixel,AppName},
+    components: { App, Pixel, AppName },
     network: { playerEntity, publicClient },
-    systemCalls: { increment, },
+    systemCalls: { increment },
   } = useMUD();
   const [numberData, setNumberData] = useState(50);
   const gridCanvasRef = React.useRef(null);
   const [panning, setPanning] = useState(false);
 
-
-  
-
   const playerEntityNum = BigInt(playerEntity);
-  const hexString = "0x" + playerEntityNum.toString(16) as any;
+  const hexString = ("0x" + playerEntityNum.toString(16)) as any;
   const addressData =
     hexString.substring(0, 6) +
     "..." +
@@ -86,20 +94,20 @@ export default function Header({ hoveredData, handleData }: Props) {
     setNumberData(numberData - 5); // 每次点击减号减少5
     setGRID_SIZE(GRID_SIZE - 5);
     setScrollOffset({ x: 0, y: 0 }); // 或者根据实际情况设置合适的值
-setTranslateX(0);
-setTranslateY(0);
+    setTranslateX(0);
+    setTranslateY(0);
   };
   const btnAdd = () => {
     setNumberData(numberData + 5); // 每次点击加号增加5
     setGRID_SIZE(GRID_SIZE + 5);
     setScrollOffset({ x: 0, y: 0 }); // 或者根据实际情况设置合适的值
-setTranslateX(0);
-setTranslateY(0);
+    setTranslateX(0);
+    setTranslateY(0);
   };
   const CANVAS_WIDTH = window.innerWidth;
   // 计算每行可容纳的网格数量
   const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
-  
+
   // 根据每行的网格数量计算内容区域的宽度
   const CONTENT_WIDTH = gridCount * GRID_SIZE;
   // const CANVAS_WIDTH = window.innerWidth;
@@ -122,8 +130,6 @@ setTranslateY(0);
     setSelectedColor(color);
   }
 
-
-  
   const handleLeave = () => {
     setHoveredSquare(null);
   };
@@ -134,124 +140,118 @@ setTranslateY(0);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
 
-const entities = useEntityQuery([Has(Pixel)])
-const entityData: { coordinates: { x: number, y: number }, value: any }[] = [];
-if(entities.length!==0){
-  entities.forEach((entity) => {
-    const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
-    const value = getComponentValueStrict(Pixel, entity);
-    
-    entityData.push({ coordinates, value }); // 将数据添加到数组中
-    
-  });
-  
-  console.log(entityData); // 打印数组
-}
+  const entities = useEntityQuery([Has(Pixel)]);
+  const entityData: { coordinates: { x: number; y: number }; value: any }[] =
+    [];
+  if (entities.length !== 0) {
+    entities.forEach((entity) => {
+      const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
+      const value = getComponentValueStrict(Pixel, entity);
 
+      entityData.push({ coordinates, value }); // 将数据添加到数组中
+    });
 
-const drawGrid = useCallback(
-  (
-    ctx: CanvasRenderingContext2D,
-    hoveredSquare: { x: number; y: number } | null,
-    mouseX: number,
-    mouseY: number
-  ) => {
-    // 清除之前绘制的格子
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "black"; // 将网格线颜色设置为黑色
+    // console.log(entityData); // 打印数组
+  }
 
-    for (let x = 0.5; x < 12000; x += GRID_SIZE) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, 12000);
-      ctx.stroke();
-    }
+  const drawGrid = useCallback(
+    (
+      ctx: CanvasRenderingContext2D,
+      hoveredSquare: { x: number; y: number } | null,
+      mouseX: number,
+      mouseY: number
+    ) => {
+      // 清除之前绘制的格子
+      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "black"; // 将网格线颜色设置为黑色
 
-    for (let y = 0.5; y < 12000; y += GRID_SIZE) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(12000, y);
-      ctx.stroke();
-    }
+      for (let x = 0.5; x < 12000; x += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 12000);
+        ctx.stroke();
+      }
 
-    ctx.font = "10px Arial";
-    ctx.fillStyle = "#2f1643";
+      for (let y = 0.5; y < 12000; y += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(12000, y);
+        ctx.stroke();
+      }
 
-    for (let i = 0; i <= 12000 / GRID_SIZE; i++) {
-      for (let j = 0; j <= 12000 / GRID_SIZE; j++) {
-        ctx.fillStyle = "#2f1643"; // 设置背景色
-        ctx.fillRect(
-          i * GRID_SIZE - scrollOffset.x,
-          j * GRID_SIZE - scrollOffset.y,
-          GRID_SIZE - 1,
-          GRID_SIZE - 1
-        );
-        const currentCoordinates = { x: i, y: j };
-        const entity = entityData.find((entity) => {
-          return (
-            entity.coordinates.x === currentCoordinates.x &&
-            entity.coordinates.y === currentCoordinates.y
-          );
-        });
-        if (entity) {
-          ctx.fillStyle = entity.value.color;
+      ctx.font = "10px Arial";
+      ctx.fillStyle = "#2f1643";
+
+      for (let i = 0; i <= 12000 / GRID_SIZE; i++) {
+        for (let j = 0; j <= 12000 / GRID_SIZE; j++) {
+          ctx.fillStyle = "#2f1643"; // 设置背景色
           ctx.fillRect(
             i * GRID_SIZE - scrollOffset.x,
             j * GRID_SIZE - scrollOffset.y,
             GRID_SIZE - 1,
             GRID_SIZE - 1
           );
-        }
-        ctx.fillStyle = "#fff"; // 设置文字颜色
-        ctx.fillText(
-          `${i},${j}`,
-          i * GRID_SIZE + 2 - scrollOffset.x,
-          j * GRID_SIZE + 10 - scrollOffset.y
-        );
-        if (entity && entity.value.text) {
-          ctx.fillStyle = "#000"; // 设置文本颜色
+          const currentCoordinates = { x: i, y: j };
+          const entity = entityData.find((entity) => {
+            return (
+              entity.coordinates.x === currentCoordinates.x &&
+              entity.coordinates.y === currentCoordinates.y
+            );
+          });
+          if (entity) {
+            ctx.fillStyle = entity.value.color;
+            ctx.fillRect(
+              i * GRID_SIZE - scrollOffset.x,
+              j * GRID_SIZE - scrollOffset.y,
+              GRID_SIZE - 1,
+              GRID_SIZE - 1
+            );
+          }
+          ctx.fillStyle = "#fff"; // 设置文字颜色
           ctx.fillText(
-            entity.value.text,
+            `${i},${j}`,
             i * GRID_SIZE + 2 - scrollOffset.x,
-            j * GRID_SIZE + 20 - scrollOffset.y
+            j * GRID_SIZE + 10 - scrollOffset.y
           );
+          if (entity && entity.value.text) {
+            ctx.fillStyle = "#000"; // 设置文本颜色
+            ctx.fillText(
+              entity.value.text,
+              i * GRID_SIZE + 2 - scrollOffset.x,
+              j * GRID_SIZE + 20 - scrollOffset.y
+            );
+          }
         }
       }
-    }
 
-    if (selectedColor && hoveredSquare) {
-      ctx.fillStyle = selectedColor;
-      ctx.fillRect(
-        hoveredSquare.x * GRID_SIZE - scrollOffset.x,
-        hoveredSquare.y * GRID_SIZE - scrollOffset.y,
-        GRID_SIZE,
-        GRID_SIZE
-      );
-    }
+      if (selectedColor && hoveredSquare) {
+        ctx.fillStyle = selectedColor;
+        ctx.fillRect(
+          hoveredSquare.x * GRID_SIZE - scrollOffset.x,
+          hoveredSquare.y * GRID_SIZE - scrollOffset.y,
+          GRID_SIZE,
+          GRID_SIZE
+        );
+      }
 
-    // 改变鼠标样式为小手
-    if (hoveredSquare) {
-      ctx.canvas.style.cursor = "pointer";
-    } else {
-      ctx.canvas.style.cursor = "default";
-    }
-  },
-  [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
-);
-
-
-  
-
-
+      // 改变鼠标样式为小手
+      if (hoveredSquare) {
+        ctx.canvas.style.cursor = "pointer";
+      } else {
+        ctx.canvas.style.cursor = "default";
+      }
+    },
+    [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
+  );
 
   useEffect(() => {
     const handleScroll = () => {
       setScrollOffset({ x: window.scrollX, y: window.scrollY });
     };
-    
+
     window.addEventListener("scroll", handleScroll);
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -259,31 +259,41 @@ const drawGrid = useCallback(
   const [mouseX, setMouseX] = useState(0);
   const [mouseY, setMouseY] = useState(0);
 
- useEffect(() => {
-  const canvas = canvasRef.current;
-  if (canvas&&entityData.length>0) {
-    const ctx = canvas.getContext("2d");
-    if (ctx) {
-      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
-      drawGrid(ctx, hoveredSquare, mouseX, mouseY);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas && entityData.length > 0) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
+        drawGrid(ctx, hoveredSquare, mouseX, mouseY);
+      }
     }
-  }
-}, [drawGrid,CANVAS_WIDTH,entityData.length, hoveredSquare, mouseX, mouseY]);
+  }, [
+    drawGrid,
+    CANVAS_WIDTH,
+    entityData.length,
+    hoveredSquare,
+    mouseX,
+    mouseY,
+  ]);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    console.log('是点击事件吗')
+    console.log("是点击事件吗");
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
     if (hoveredSquare && selectedColor) {
       // console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-      const increData = increment(hoveredSquare.x,hoveredSquare.y,selectedColor)
+      const increData = increment(
+        hoveredSquare.x,
+        hoveredSquare.y,
+        selectedColor
+      );
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
-        // 调用handleData方法并传递需要的参数
-        handleData(hoveredSquare);
+      // 调用handleData方法并传递需要的参数
+      handleData(hoveredSquare);
     } else {
-      console.log('hoveredSquare或selectedColor为空');
+      console.log("hoveredSquare或selectedColor为空");
     }
-
   };
 
   const handleMouseUp = () => {
@@ -295,18 +305,18 @@ const drawGrid = useCallback(
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!visibleAreaRef.current || !canvasRef.current) return;
-  
+
       const rect = visibleAreaRef.current.getBoundingClientRect();
       mouseXRef.current = event.clientX - rect.left;
       mouseYRef.current = event.clientY - rect.top;
-  
+
       // 计算网格位置
       const gridX = Math.floor(mouseXRef.current / GRID_SIZE);
       const gridY = Math.floor(mouseYRef.current / GRID_SIZE);
-  
+
       // 更新hoveredSquare状态
       setHoveredSquare({ x: gridX, y: gridY });
-  
+
       // 绘制蓝色背景
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
@@ -315,53 +325,56 @@ const drawGrid = useCallback(
     },
     [drawGrid, hoveredSquare]
   );
-  const handleMouseMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-    setMouseX(event.clientX);
-    setMouseY(event.clientY);
-    if (event.buttons !== 1 || !visibleAreaRef.current) return;
-  
-    const dx = event.clientX - translateX;
-    const dy = event.clientY - translateY;
-  
-    setTranslateX(event.clientX);
-    setTranslateY(event.clientY);
-  
-    visibleAreaRef.current.scrollLeft -= dx;
-    visibleAreaRef.current.scrollTop -= dy;
-  
-    // 更新鼠标位置
-    if (!canvasRef.current) return;
-    const rect = visibleAreaRef.current.getBoundingClientRect();
-    mouseXRef.current = event.clientX - rect.left;
-    mouseYRef.current = event.clientY - rect.top;
-  }, [translateX, translateY]);
+  const handleMouseMove = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      setMouseX(event.clientX);
+      setMouseY(event.clientY);
+      if (event.buttons !== 1 || !visibleAreaRef.current) return;
+
+      const dx = event.clientX - translateX;
+      const dy = event.clientY - translateY;
+
+      setTranslateX(event.clientX);
+      setTranslateY(event.clientY);
+
+      visibleAreaRef.current.scrollLeft -= dx;
+      visibleAreaRef.current.scrollTop -= dy;
+
+      // 更新鼠标位置
+      if (!canvasRef.current) return;
+      const rect = visibleAreaRef.current.getBoundingClientRect();
+      mouseXRef.current = event.clientX - rect.left;
+      mouseYRef.current = event.clientY - rect.top;
+    },
+    [translateX, translateY]
+  );
   useEffect(() => {
     const canvas = canvasRef.current as any;
-  
+
     // 在合适的地方注册鼠标移动事件和滚动条滚动事件
-    const handleMouseMove = (event:any) => {
+    const handleMouseMove = (event: any) => {
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
-  
+
       const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
       const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
-  
+
       setHoveredSquare({ x: gridX, y: gridY });
     };
-  
+
     const handleScroll = () => {
       const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-  
+
       setScrollOffset({ x: scrollX, y: scrollY });
     };
-  
+
     if (canvas) {
       canvas.addEventListener("mousemove", handleMouseMove);
     }
     window.addEventListener("scroll", handleScroll);
-  
+
     return () => {
       if (canvas) {
         canvas.removeEventListener("mousemove", handleMouseMove);
@@ -369,9 +382,6 @@ const drawGrid = useCallback(
       window.removeEventListener("scroll", handleScroll);
     };
   }, [canvasRef, scrollOffset]);
-
-
-  
 
   const addressDataCopy = (text: any) => {
     navigator.clipboard.writeText(text).then(
@@ -383,7 +393,7 @@ const drawGrid = useCallback(
       }
     );
   };
-  
+
   return (
     <>
       <div className={style.container}>
@@ -408,83 +418,96 @@ const drawGrid = useCallback(
             +
           </button>
         </div>
-        <div className={style.addr}   style={{
-                  cursor: "pointer",
-                  marginLeft: "32px",
-                }}   onClick={() => {
-                  addressDataCopy(hexString);
-                }}>{addressData}</div>
-      </div>
-
-  
-       <div
-      style={{
-        width: `100vw` ,
-        // height: `${CONTENT_WIDTH}px`,
-        overflow: "hidden",
-        position: "relative",
-        // margin: "0 auto",
-      }}
-      className={style.bodyCon}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleLeave}
-      onMouseEnter={handleMouseEnter} // 添加这一行
-    >
-      <div
-        ref={visibleAreaRef}
-        style={{
-          width: `${CONTENT_WIDTH}px`,
-          height: `900px`,
-          overflow: "auto",
-        }}
-      >
-        <canvas ref={canvasRef} width={CANVAS_WIDTH} height={CANVAS_WIDTH} style={{ border: "1px solid black" }} />
-      </div>
-     
-    </div>
-    <div
+        <div
+          className={style.addr}
           style={{
-            position: "absolute",
-            left: '5%',
-            bottom: "15px",
-            cursor:"pointer",
-            zIndex:'9999999999'
+            cursor: "pointer",
+            marginLeft: "32px",
+          }}
+          onClick={() => {
+            addressDataCopy(hexString);
           }}
         >
-          {Array.from(colorOptionsData).map((option, index) => (
-            <span
-              key={index}
-              className={`color-option${
-                selectedColor === option.color ? " selected" : ""
-              }`}
-              data-color={option.color} 
-              style={{
-                backgroundColor: option.color,
-                width: "48px",
-                height: "48px",
-                display: "inline-block",
-              }}
-              onClick={() => handleColorOptionClick(option.color)}
-            >
-              {selectedColor === option.color && (
-                <div
-                  className="selected-circle"
-                  style={{
-                    backgroundColor: "black",
-                    borderRadius: "50%",
-                    width: "20px",
-                    height: "20px",
-                    margin: "14px auto",
-                  }}
-                ></div>
-              )}
-            </span>
-          ))}
+          {addressData}
         </div>
+      </div>
+<div style={{display:'flex'}}>
+      <div
+        style={{
+          width: `calc(100vw - 120px)`,
+          // height: `${CONTENT_WIDTH}px`,
+          overflow: "hidden",
+          position: "relative",
+          display: "flex",
+          // margin: "0 auto",
+        }}
+        className={style.bodyCon}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleLeave}
+        onMouseEnter={handleMouseEnter} // 添加这一行
+      >
+        <div
+          ref={visibleAreaRef}
+          style={{
+            width: `${CONTENT_WIDTH}px`,
+            height: `900px`,
+            overflow: "auto",
+          }}
+        >
+          <canvas
+            ref={canvasRef}
+            width={CANVAS_WIDTH - 120}
+            height={CANVAS_WIDTH}
+            style={{ border: "1px solid black" }}
+          />
+        </div>
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: "5%",
+          bottom: "15px",
+          cursor: "pointer",
+          zIndex: "9999999999",
+        }}
+      >
+        {Array.from(colorOptionsData).map((option, index) => (
+          <span
+            key={index}
+            className={`color-option${
+              selectedColor === option.color ? " selected" : ""
+            }`}
+            data-color={option.color}
+            style={{
+              backgroundColor: option.color,
+              width: "48px",
+              height: "48px",
+              display: "inline-block",
+            }}
+            onClick={() => handleColorOptionClick(option.color)}
+          >
+            {selectedColor === option.color && (
+              <div
+                className="selected-circle"
+                style={{
+                  backgroundColor: "black",
+                  borderRadius: "50%",
+                  width: "20px",
+                  height: "20px",
+                  margin: "14px auto",
+                }}
+              ></div>
+            )}
+          </span>
+        ))}
+      </div>
 
-        
+      <div>
+        <RightPart />
+      </div>
+      </div>
     </>
   );
 }

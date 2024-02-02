@@ -52,7 +52,18 @@ export const App = () => {
   const stringToEntityID = (name: any) => encodeEntity({ name: "bytes32" }, { name });
   const counter = useComponentValue(App, addressToEntityID("0x48958E8c587b6b0BfDfD3fc772597AC1F3B1781c"));
   const pixel = useComponentValue(Pixel, valueToEntityID(hoveredData!==null?hoveredData.x:'', hoveredData!==null?hoveredData.y:''));
+
+  const entities_app = useEntityQuery([Has(App)])
+  // console.log(entities_app,'-------------------')
+  entities_app.map((entity) =>{
+    // key {x: 6, y: 2}
+    // console.log(decodeEntity({ app_addr: "address"}, entity));
+    // // value
+    // console.log(getComponentValueStrict(App, entity));
+    
+  })
   // const entities = useEntityQuery([Has(Pixel)])
+  // console.log(entities,'====1====')
   // entities.map((entity) =>{
   //   // key {x: 6, y: 2}
   //   console.log(decodeEntity({ x: "uint32", y: "uint32" }, entity));//每个块坐标
