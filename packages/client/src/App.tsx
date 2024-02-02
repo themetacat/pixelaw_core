@@ -49,15 +49,15 @@ export const App = () => {
 
  
 
-  const entities_app = useEntityQuery([Has(App)])
-  // console.log(entities_app,'-------------------')
-  entities_app.map((entity) =>{
-    // key {x: 6, y: 2}
-    // console.log(decodeEntity({ app_addr: "address"}, entity));
-    // // value
-    // console.log(getComponentValueStrict(App, entity));
+  // const entities_app = useEntityQuery([Has(App)])
+  // // console.log(entities_app,'-------------------')
+  // entities_app.map((entity) =>{
+  //   // key {x: 6, y: 2}
+  //   // console.log(decodeEntity({ app_addr: "address"}, entity));
+  //   // // value
+  //   // console.log(getComponentValueStrict(App, entity));
     
-  })
+  // })
   // const entities = useEntityQuery([Has(Pixel)])
   // console.log(entities,'====1====')
   // entities.map((entity) =>{
