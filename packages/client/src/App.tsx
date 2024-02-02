@@ -3,6 +3,7 @@ import { useMUD } from "./MUDContext";
 import { singletonEntity } from "@latticexyz/store-sync/recs";
 import Header from './components/herder'
 import toast, { Toaster } from "react-hot-toast";
+import { SyncStep } from "@latticexyz/store-sync";
 
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import {Hex} from "viem";
@@ -20,10 +21,11 @@ const stringToBytes32 = (inputString: string) => {
 
 export const App = () => {
   const {
-    components: {  App,Pixel,AppName},
+    components: {  App,Pixel,AppName, SyncProgress},
     network: { playerEntity, publicClient },
     systemCalls: { increment },
   } = useMUD();
+  const syncProgress = useComponentValue(SyncProgress, singletonEntity) as any;
   const [hoveredData, setHoveredData] = useState<{
     x: any;
     y: any;
@@ -90,7 +92,17 @@ export const App = () => {
   };
   return (
     <>
+    {syncProgress ? (
+        syncProgress.step !== SyncStep.LIVE ? (
+          <div style={{ color: "#000" }}>
+            {syncProgress.message} ({Math.floor(syncProgress.percentage)}%)
+          </div>
+        ) : (
     <Header hoveredData = {hoveredData} handleData={handleMouseDown} />
+    )
+    ) : (
+      <div style={{ color: "#000" }}>Hydrating from RPC(0) </div>
+    )}
     <Toaster
           toastOptions={{
             duration: 2000,
