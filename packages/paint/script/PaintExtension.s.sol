@@ -37,6 +37,7 @@ contract PaintExtension is Script {
     world.registerNamespace(namespaceResource);
 
     // forge script script/PaintExtension.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
+    // forge script script/PaintExtension.s.sol --rpc-url https://rpc.holesky.redstone.xyz --broadcast
     // StoreSwitch.setStoreAddress(worldAddress);
     // Messages.register();
  
