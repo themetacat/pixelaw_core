@@ -81,7 +81,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       /*
        * Create an object for communicating with the deployed World.
        */
-      const worldAbiUrl = "https://pixelaw-game.vercel.app/IWorld.abi.json";
+      const worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
       fetch(worldAbiUrl)
         .then(response => response.json())
         .then(abi => {

@@ -41,7 +41,7 @@ const entityVal = localStorage.getItem("entityVal") as any;
 if(entityVal===null){
   localStorage.setItem(
     "entityVal",
-    '0xb40422217F29Ec33b4EB2b6d790b6932601671eB'
+    '0xc96BedB3C0f9aB47E50b53bcC03E5D7294C97cf2'
   );
 }
   function convertHexToCase(hexValue:any, uppercase:any) {
