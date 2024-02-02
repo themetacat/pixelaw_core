@@ -139,7 +139,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
-console.log(Has(Pixel),'Has(Pixel)')
+console.log(Has(Pixel),'Has(Pixel)',Has(App))
   const entities = useEntityQuery([Has(Pixel)]);
   console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
