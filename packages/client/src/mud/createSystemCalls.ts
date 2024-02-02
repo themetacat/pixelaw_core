@@ -67,14 +67,14 @@ if(entityVal===null){
      * on the World contract.
      */
     // const txData = await worldContract.write.paint_PaintSystem_init()
-    const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
-//     const hashValpublic=   publicClient.waitForTransactionReceipt({hash:tx})
-//  console.log(tx,hashValpublic)
-//     return [tx,hashValpublic]
-    // const tx = await worldContract.write.paint_PaintSystem_init();
-    const upperCaseHexValue = convertHexToCase(playerEntity, true);
-    await waitForTransaction(tx);
-    return upperCaseHexValue;
+//     const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
+// //     const hashValpublic=   publicClient.waitForTransactionReceipt({hash:tx})
+// //  console.log(tx,hashValpublic)
+// //     return [tx,hashValpublic]
+//     // const tx = await worldContract.write.paint_PaintSystem_init();
+//     const upperCaseHexValue = convertHexToCase(playerEntity, true);
+//     await waitForTransaction(tx);
+//     return upperCaseHexValue;
     // return getComponentValue(Counter, singletonEntity);
     // return {xDATA,yData,color}
   };

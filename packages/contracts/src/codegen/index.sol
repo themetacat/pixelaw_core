@@ -12,3 +12,4 @@ import { AppUser, AppUserTableId } from "./tables/AppUser.sol";
 import { AppName, AppNameTableId } from "./tables/AppName.sol";
 import { CoreActionAddress, CoreActionAddressTableId } from "./tables/CoreActionAddress.sol";
 import { Instruction, InstructionTableId } from "./tables/Instruction.sol";
+import { Text, TextTableId } from "./tables/Text.sol";
