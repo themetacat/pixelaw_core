@@ -132,10 +132,10 @@ export default function RightPart({ coordinates, entityData }: Props) {
           ) ? null : (
             <>
               <p>
-                <span className={style.a}>Type </span>:null
+                <span className={style.a}>Type :</span>null
               </p>
               <p>
-                <span className={style.a}>Owner</span>: null
+                <span className={style.a}>Owner :</span>null
               </p>
             </>
           )}
