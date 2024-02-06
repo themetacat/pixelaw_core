@@ -17,6 +17,7 @@ import {
   decodeEntity,
   hexKeyTupleToEntity,
 } from "@latticexyz/store-sync/recs";
+import { formatUnits } from "viem";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart from "../rightPart";
@@ -26,6 +27,9 @@ import {
   MAX_ROWS_COLS,
 } from "../../global/constants";
 import { useMUD } from "../../MUDContext";
+
+import powerIcon from '../../images/jian_sekuai.png'
+import AddIcon from '../../images/jia.png'
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -80,14 +84,22 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [numberData, setNumberData] = useState(50);
   const gridCanvasRef = React.useRef(null);
   const [panning, setPanning] = useState(false);
-
+  const [balance, setBalance] = useState<bigint | null>(null);
+//获取地址
   const playerEntityNum = BigInt(playerEntity);
   const hexString = ("0x" + playerEntityNum.toString(16)) as any;
   const addressData =
     hexString.substring(0, 6) +
     "..." +
     hexString.substring(hexString.length - 4).toUpperCase();
-
+    //获取网络名称
+  const chainName = publicClient.chain.name;
+    //获取余额
+    const balanceFN = publicClient.getBalance({ address: hexString });
+    balanceFN.then((a: any) => {
+      setBalance(a);
+    });
+    const natIve = publicClient.chain.nativeCurrency.decimals;
   const [GRID_SIZE, setGRID_SIZE] = useState(64);
   const btnLower = () => {
     setNumberData(numberData - 5); // 每次点击减号减少5
@@ -112,16 +124,16 @@ export default function Header({ hoveredData, handleData }: Props) {
   // const CANVAS_WIDTH = window.innerWidth;
   // const CANVAS_HEIGHT = window.innerHeight;
 
-  const [offsetX, setOffsetX] = useState(0);
-  const [offsetY, setOffsetY] = useState(0);
+  // const [offsetX, setOffsetX] = useState(0);
+  // const [offsetY, setOffsetY] = useState(0);
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
     y: number;
   } | null>(null);
-  const startXRef = useRef<number>(0);
-  const startYRef = useRef<number>(0);
-  const offsetXRef = useRef<number>(offsetX);
-  const offsetYRef = useRef<number>(offsetY);
+  // const startXRef = useRef<number>(0);
+  // const startYRef = useRef<number>(0);
+  // const offsetXRef = useRef<number>(offsetX);
+  // const offsetYRef = useRef<number>(offsetY);
   const [selectedColor, setSelectedColor] = useState("#ffffff");
 
   // 点击事件处理程序
@@ -134,24 +146,25 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
+  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
 //console.log(Has(Pixel),'Has(Pixel)',Has(App))
   const entities = useEntityQuery([Has(Pixel)]);
-  //console.log(entities,'-----')
+  // console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
     [];
   if (entities.length !== 0) {
     entities.forEach((entity) => {
       const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
       const value = getComponentValueStrict(Pixel, entity);
-
+// console.log(value,'-----------')
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
 
-    // //console.log(entityData); // 打印数组
+    // console.log(entityData); // 打印数组
   }
 
   const drawGrid = useCallback(
@@ -164,8 +177,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       // 清除之前绘制的格子
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
       ctx.lineWidth = 1;
-      ctx.strokeStyle = "black"; // 将网格线颜色设置为黑色
-
+      ctx.strokeStyle = "#000000"; // 将网格线颜色设置为黑色
       for (let x = 0.5; x < 12000; x += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -208,12 +220,13 @@ export default function Header({ hoveredData, handleData }: Props) {
               GRID_SIZE - 1
             );
           }
-          ctx.fillStyle = "#fff"; // 设置文字颜色
-          ctx.fillText(
-            `${i},${j}`,
-            i * GRID_SIZE + 2 - scrollOffset.x,
-            j * GRID_SIZE + 10 - scrollOffset.y
-          );
+          // ctx.fillStyle = "#fff"; // 设置文字颜色
+      
+          // ctx.fillText(
+          //   `${i},${j}`,
+          //   i * GRID_SIZE + 2 - scrollOffset.x,
+          //   j * GRID_SIZE + 10 - scrollOffset.y
+          // );
           if (entity && entity.value.text) {
             ctx.fillStyle = "#000"; // 设置文本颜色
             ctx.fillText(
@@ -359,7 +372,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
       const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
       const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
-
+      setCoordinates({ x: gridX, y: gridY });
       setHoveredSquare({ x: gridX, y: gridY });
     };
 
@@ -397,17 +410,17 @@ export default function Header({ hoveredData, handleData }: Props) {
   return (
     <>
       <div className={style.container}>
-        <img
+        <img  className={style.containerImg}
           src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
         />
         <div className={style.content}>
-          <button
-            className={style.btn1}
+          <button  className={style.btn1}
             disabled={numberData === 25}
             onClick={btnLower}
           >
-            -
+           <img  className={style.btn1} src={powerIcon} alt="" /> 
+           {/* - */}
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
@@ -415,7 +428,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             disabled={numberData === 100}
             onClick={btnAdd}
           >
-            +
+            <img  className={style.btn1} src={AddIcon} alt="" />
           </button>
         </div>
         <div
@@ -428,13 +441,24 @@ export default function Header({ hoveredData, handleData }: Props) {
             addressDataCopy(hexString);
           }}
         >
-          {addressData}
+          <span>{chainName}</span>
+          <span className={style.balanceNum}>{addressData}</span>
+          <span className={style.balanceNum}> {publicClient && balance != null ? (
+                  <>
+                    {formatUnits(balance, natIve).replace(
+                      /(\.\d{4})\d+$/,
+                      "$1"
+                    )}{" "}
+                    {publicClient.chain.nativeCurrency.symbol}
+                  </>
+                ) : null}</span>
         </div>
+     
       </div>
 <div style={{display:'flex'}}>
       <div
         style={{
-          width: `calc(100vw - 120px)`,
+          width: `calc(100vw)`,
           // height: `${CONTENT_WIDTH}px`,
           overflow: "hidden",
           position: "relative",
@@ -450,6 +474,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       >
         <div
           ref={visibleAreaRef}
+          className={style.canvasWrapper}
           style={{
             width: `${CONTENT_WIDTH}px`,
             height: `900px`,
@@ -458,11 +483,13 @@ export default function Header({ hoveredData, handleData }: Props) {
         >
           <canvas
             ref={canvasRef}
-            width={CANVAS_WIDTH - 120}
+            width={CANVAS_WIDTH}
             height={CANVAS_WIDTH}
             style={{ border: "1px solid black" }}
           />
+        
         </div>
+     
       </div>
       <div
         style={{
@@ -470,7 +497,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           left: "5%",
           bottom: "15px",
           cursor: "pointer",
-          zIndex: "9999999999",
+          // zIndex: "9999999999",
         }}
       >
         {Array.from(colorOptionsData).map((option, index) => (
@@ -487,16 +514,16 @@ export default function Header({ hoveredData, handleData }: Props) {
               display: "inline-block",
             }}
             onClick={() => handleColorOptionClick(option.color)}
-          >
+          >                                                             
             {selectedColor === option.color && (
               <div
                 className="selected-circle"
                 style={{
                   backgroundColor: "black",
                   borderRadius: "50%",
-                  width: "20px",
-                  height: "20px",
-                  margin: "14px auto",
+                  width: "40px",
+                  height: "40px",
+                  margin: "5px auto",
                 }}
               ></div>
             )}
@@ -504,8 +531,16 @@ export default function Header({ hoveredData, handleData }: Props) {
         ))}
       </div>
 
-      <div>
-        <RightPart />
+      <div className={style.rightPart}>
+        {/* <img onMouseEnter={()=>{
+          setPanning(true)
+        }} 
+        onMouseLeave={()=>{
+          setPanning(false)
+        }}
+        
+        src={panning === false?leftIcon:rightIcon} alt=""   className={style.pointer}/> */}
+        <RightPart coordinates={coordinates} entityData={entityData}/>
       </div>
       </div>
     </>

@@ -4,7 +4,7 @@ import { singletonEntity } from "@latticexyz/store-sync/recs";
 import Header from './components/herder'
 import toast, { Toaster } from "react-hot-toast";
 import { SyncStep } from "@latticexyz/store-sync";
-
+import style from './app.module.css'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import {Hex} from "viem";
 import { ethers } from "ethers";
@@ -92,9 +92,12 @@ export const App = () => {
   };
   return (
     <>
+    <div className={style.page}>
+
+   
     {syncProgress ? (
         syncProgress.step !== SyncStep.LIVE ? (
-          <div style={{ color: "#000" }}>
+          <div style={{ color: "#fff" }}  className={style.GameBoard}>
             {syncProgress.message} ({Math.floor(syncProgress.percentage)}%)
           </div>
         ) : (
@@ -127,6 +130,7 @@ export const App = () => {
       >
         Increment
       </button> */}
+       </div>
     </>
   );
 };

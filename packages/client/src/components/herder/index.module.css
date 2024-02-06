@@ -14,7 +14,7 @@ position: fixed;
 top: 0px;
 z-index: 9999999;
 }
-.container img{
+.containerImg{
     width: 139px;
     height: 46px;
     justify-content:space-between;
@@ -25,10 +25,15 @@ z-index: 9999999;
     justify-content: right;
     color: #fff;
     position: absolute;
-    right: 80px;
-    width:150px;
+    right: 180px;
+    /* width:150px; */
     height: auto;
     line-height: 50px;
+    display: flex;
+}
+.balanceNum{
+  display: inline-block;
+  margin-left: 25px;
 }
 .content{
     align-items: center;
@@ -40,11 +45,12 @@ z-index: 9999999;
     background-color: #000000;
     padding-left: 50px;
     font-size: 20px;
+    border-radius: 50px;
 }
 .spanData{
     display: inline-block;
     width: 70px;
-    line-height: 25px;
+    line-height: 36px;
     color: #18c2dc;
     text-align: center;
 }
@@ -54,11 +60,12 @@ z-index: 9999999;
 .btn1{
     color: #a073e2;
     width: 30px;
-    margin-top: 20px;
-    height: 30px;
-    font-size: 25px;
+    margin-top: 8px;
+    /* height: 30px; */
+    font-size: 30px;
     border: none;
     outline: none;
+    padding: 0px !important;
     background-color: #000;
 }
 .bodyCon{
@@ -96,4 +103,33 @@ z-index: 9999999;
   
   .color-option.selected .indicator {
     opacity: 1;
+  }
+  .rightPart{
+    /* position: fixed; */
+    right: 0px;
+    /* background-color: #e27373; */
+    z-index: 9999999;
+  }
+  .canvasWrapper {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+  
+  /* 自定义滚动条样式 */
+  .canvasWrapper::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .canvasWrapper::-webkit-scrollbar-track {
+    background-color: #2a0d39;
+  }
+  
+  .canvasWrapper::-webkit-scrollbar-thumb {
+    background-color: #2f1643;
+    border-radius: 4px;
+  }
+  
+  .canvasWrapper::-webkit-scrollbar-thumb:hover {
+    background-color: #2f1643;
   }
