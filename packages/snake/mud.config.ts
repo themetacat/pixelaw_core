@@ -1,6 +1,11 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
+  
+  namespace: "snake",
+  enums:{
+    Direction: ["None", "Left", "Right", "Up", "Down"]
+  },
   tables: {
     Permissions: {
       keySchema: {
@@ -97,6 +102,39 @@ export default mudConfig({
       valueSchema:{
         instruction: "string"
       }
+    },
+    Snake: {
+      keySchema: {
+        owner: "address"
+      },
+      valueSchema:{
+        is_dying: "bool",
+        direction: "Direction",
+        length: "uint8",
+        first_segment_id: "uint32",
+        last_segment_id: "uint32",
+        color: "uint32",
+        text: "string",
+      }
+    },
+    SnakeSegment: {
+      keySchema: {
+        id: "uint32"
+      },
+      valueSchema:{
+        previous_id: "uint32",
+        next_id: "uint32",
+        x: "uint32",
+        y: "uint32",
+        pixel_original_color: "uint32",
+        pixel_original_text: "string"
+      }
     }
   },
+  systems: {
+    SnakeSystem: {
+      name: "SnakeSystem",
+      openAccess: true
+    },
+  }
 });

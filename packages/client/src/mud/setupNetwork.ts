@@ -22,7 +22,9 @@ import { Subject, share } from "rxjs";
  * See https://mud.dev/templates/typescript/contracts#mudconfigts
  * for the source of this information.
  */
-import mudConfig from "contracts/mud.config";
+// import mudConfig from "contracts/mud.config";
+
+import mudConfig from "../../../contracts/mud.config"
 
 export type SetupNetworkResult = Awaited<ReturnType<typeof setupNetwork>>;
 

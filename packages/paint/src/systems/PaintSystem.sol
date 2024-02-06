@@ -20,7 +20,7 @@ contract PaintSystem is System {
 
   // string memory APP_ICON = "icon_test";
     // ICoreSystem(_world()).init();
-    ICoreSystem(_world()).update_app("paint", "icon_test", "BASE/IWorld/paint");
+    ICoreSystem(_world()).update_app("paint", "icon_test", "BASE/IWorld.abi.json");
 
     ICoreSystem(_world()).update_permission("snake", 
     PermissionsData({
