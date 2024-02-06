@@ -94,6 +94,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     hexString.substring(hexString.length - 4).toUpperCase();
     //获取网络名称
   const chainName = publicClient.chain.name;
+  const capitalizedString = chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
     //获取余额
     const balanceFN = publicClient.getBalance({ address: hexString });
     balanceFN.then((a: any) => {
@@ -441,7 +442,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             addressDataCopy(hexString);
           }}
         >
-          <span>{chainName}</span>
+          <span>{capitalizedString}</span>
           <span className={style.balanceNum}>{addressData}</span>
           <span className={style.balanceNum}> {publicClient && balance != null ? (
                   <>
