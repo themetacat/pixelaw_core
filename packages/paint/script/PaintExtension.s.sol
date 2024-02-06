@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.21;
+pragma solidity >=0.8.19;
  
 import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
@@ -36,7 +36,8 @@ contract PaintExtension is Script {
     vm.startBroadcast(deployerPrivateKey);
     world.registerNamespace(namespaceResource);
 
-    // forge script script/PaintExtension.s.sol --rpc-url http://localhost:8545 --broadcast
+    // forge script script/PaintExtension.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
+    // forge script script/PaintExtension.s.sol --rpc-url https://rpc.holesky.redstone.xyz --broadcast
     // StoreSwitch.setStoreAddress(worldAddress);
     // Messages.register();
  

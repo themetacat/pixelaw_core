@@ -97,6 +97,11 @@ export default mudConfig({
       valueSchema:{
         instruction: "string"
       }
+    },
+    Text:{
+      valueSchema:{
+        value:'string'
+      }
     }
   },
 });

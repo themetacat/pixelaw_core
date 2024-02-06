@@ -1,0 +1,70 @@
+.container{
+    width: 80px;
+    padding-top: 70px;
+    background-color: #2a0d39;
+    height: 100vh;
+}
+.container1{
+    width: 180px;
+    padding-top: 70px;
+    background-color: #2a0d39;
+    height: 100vh;
+}
+.container button {
+    margin-left: 10px;
+    width: 100px;
+    height: 50px;
+    font-size: 20px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #b1b2d7,#8083cb);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 15px;
+    margin-bottom: 10px; /* 添加间距 */
+}
+.imgCon{
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}
+.coordinates{
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+    height: 40px;
+    width: 100%;
+    z-index: 99999999;
+}
+.a{
+    color:#b261ed
+}
+.pointer{
+    background-color: #130e0e;
+    position: absolute;
+    right: 75px;
+    z-index: 9999999999999999;
+    top: 60px;
+    width: 20px;
+    height: 20px;
+    color: #000;
+  }
+.pointer1{
+    background-color: #130e0e;
+    position: absolute;
+    right: 160px;
+    z-index: 9999999999999999;
+    top: 60px;
+    width: 20px;
+    height: 20px;
+    color: #000;
+  }
+.bottomCon{
+    width: 100vw;
+    /* height:120px; */
+    /* background-color: aqua; */
+    position: fixed;
+    bottom: 12px;
+    margin-bottom: 20px;
+    color: #fff;
+}
