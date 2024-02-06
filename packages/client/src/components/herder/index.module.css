@@ -40,19 +40,21 @@ z-index: 9999999;
     justify-content: center;
     height: 60px;
     position: absolute;
-    left: 42%;
-    width: 180px;
+    left: 40%;
+    /* width: 180px; */
     background-color: #000000;
     padding-left: 50px;
+    padding-right: 50px;
     font-size: 20px;
     border-radius: 50px;
 }
 .spanData{
     display: inline-block;
-    width: 70px;
+    width: 130px;
     line-height: 36px;
     color: #18c2dc;
     text-align: center;
+    font-family: Silkscreen,cursive;
 }
 :root {
     --offset: 70px;

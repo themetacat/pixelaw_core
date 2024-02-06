@@ -177,7 +177,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       // 清除之前绘制的格子
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
       ctx.lineWidth = 1;
-      ctx.strokeStyle = "#000000"; // 将网格线颜色设置为黑色
+      ctx.strokeStyle = "#2e1140"; 
       for (let x = 0.5; x < 12000; x += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
