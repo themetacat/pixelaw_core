@@ -13,20 +13,20 @@ contract CoreSystem is System {
   event Alert(Alert alert);
 
   struct QueueScheduled{
-    byte32 id,
-    uint256 timestamp,
-    address called_system,
-    bytes4 calldata selector,
-    string calldata call_data
+    byte32 id;
+    uint256 timestamp;
+    address called_system;
+    bytes4 selector;
+    string call_data;
   }
 
   struct QueueProcessed{
-    string id
+    string id;
   }
 
   struct AppNameUpdated{
-    AppData app,
-    string calldata caller
+    AppData app;
+    string caller;
   }
 
   struct Position{
@@ -35,11 +35,11 @@ contract CoreSystem is System {
   }
 
   struct Alert{
-    Position position,
-    address caller,
-    address player,
-    string calldata message,
-    uint256 timestamp
+    Position position;
+    address caller;
+    address player;
+    string message;
+    uint256 timestamp;
   }
 
 
@@ -172,7 +172,7 @@ contract CoreSystem is System {
 
   function schedule_queue(uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
     byte32 id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
-    QueueScheduled memory qs = QueueScheduled(id, timestamp, called_system, selector, call_data)
+    QueueScheduled memory qs = QueueScheduled(id, timestamp, called_system, selector, call_data);
     emit QueueScheduled(qs);
   }
 
