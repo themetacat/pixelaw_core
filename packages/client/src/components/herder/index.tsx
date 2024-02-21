@@ -185,7 +185,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.lineTo(x, 12000);
         ctx.stroke();
       }
-
+ 
       for (let y = 0.5; y < 12000; y += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -532,7 +532,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         ))}
       </div>
 
-      <div className={style.rightPart}>
+      {/* <div className={style.rightPart}> */}
         {/* <img onMouseEnter={()=>{
           setPanning(true)
         }} 
@@ -542,7 +542,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         
         src={panning === false?leftIcon:rightIcon} alt=""   className={style.pointer}/> */}
         <RightPart coordinates={coordinates} entityData={entityData}/>
-      </div>
+      {/* </div> */}
       </div>
     </>
   );

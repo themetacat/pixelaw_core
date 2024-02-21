@@ -1,14 +1,14 @@
 .container{
     width: 80px;
-    padding-top: 70px;
+    /* padding-top: 70px; */
     background-color: #2a0d39;
-    height: 100vh;
+    height: calc(100vh-70px);
 }
 .container1{
     width: 180px;
-    padding-top: 70px;
+    /* padding-top: 70px; */
     background-color: #2a0d39;
-    height: 100vh;
+    height: calc(100vh-70px);
 }
 .container button {
     margin-left: 10px;
