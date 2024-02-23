@@ -438,12 +438,12 @@ export default function Header({ hoveredData, handleData }: Props) {
             cursor: "pointer",
             marginLeft: "32px",
           }}
-          onClick={() => {
-            addressDataCopy(hexString);
-          }}
+       
         >
           <span>{capitalizedString}</span>
-          <span className={style.balanceNum}>{addressData}</span>
+          <span    onClick={() => {
+            addressDataCopy(hexString);
+          }} className={style.balanceNum}>{addressData}</span>
           <span className={style.balanceNum}> {publicClient && balance != null ? (
                   <>
                     {formatUnits(balance, natIve).replace(
@@ -496,12 +496,14 @@ export default function Header({ hoveredData, handleData }: Props) {
         style={{
           position: "absolute",
           left: "5%",
-          bottom: "15px",
+          bottom: "0px",
           cursor: "pointer",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "flex-start",
-          alignItems: "flex-start"
+          alignItems: "flex-start",
+          backgroundColor:"#230732",
+          padding:"6px 6px 6px 6px"
         }}
       >
         {Array.from(colorOptionsData).map((option, index) => (

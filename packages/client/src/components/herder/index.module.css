@@ -1,7 +1,13 @@
 *{
     margin: 0px;
-overflow-y: hidden;
-overflow-x: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
+  
+}
+
+
+canvas{
+  z-index: 1 !important;
 }
 .container{
     background-color: #171717;

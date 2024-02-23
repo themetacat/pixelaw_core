@@ -51,9 +51,15 @@ export default function RightPart({ coordinates, entityData }: Props) {
 
   // console.log(app_info,66666)
   return (
-    <div className={panning === false ? style.container : style.container1}>
+   
+    //  <div style={{width:"220px",position:"relative"}}>
+    <div className={panning === false ? style.container : style.container1}
+    onClick={() => {
+      setPanning(!panning);
+    }}
+    >
       {/* <div  className={style.pointerBox} > */}
-        <img
+      <img
         onClick={() => {
           setPanning(!panning);
         }}
@@ -146,5 +152,6 @@ export default function RightPart({ coordinates, entityData }: Props) {
         </div>
       )}
     </div>
+    // </div>
   );
 }
