@@ -409,7 +409,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   return (
     <>
-      <div className={style.container}>
+      {/* <div className={style.container}>
         <img  className={style.containerImg}
           src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
@@ -420,7 +420,6 @@ export default function Header({ hoveredData, handleData }: Props) {
             onClick={btnLower}
           >
            <img  className={style.btn1} src={powerIcon} alt="" /> 
-           {/* - */}
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
@@ -454,8 +453,8 @@ export default function Header({ hoveredData, handleData }: Props) {
                 ) : null}</span>
         </div>
      
-      </div>
-<div style={{display:'flex'}}>
+      </div> */}
+{/* <div style={{display:'flex'}}>
       <div
         style={{
           width: `calc(100vw)`,
@@ -532,17 +531,9 @@ export default function Header({ hoveredData, handleData }: Props) {
       </div>
 
       <div className={style.rightPart}>
-        {/* <img onMouseEnter={()=>{
-          setPanning(true)
-        }} 
-        onMouseLeave={()=>{
-          setPanning(false)
-        }}
-        
-        src={panning === false?leftIcon:rightIcon} alt=""   className={style.pointer}/> */}
         <RightPart coordinates={coordinates} entityData={entityData}/>
       </div>
-      </div>
+      </div> */}
     </>
   );
 }

@@ -29,16 +29,16 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant SnakeTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x000f060101010104040400000000000000000000000000000000000000000000
+  0x0043050201010120200000000000000000000000000000000000000000000000
 );
 
 struct SnakeData {
   bool is_dying;
   Direction direction;
   uint8 length;
-  uint32 first_segment_id;
-  uint32 last_segment_id;
-  uint32 color;
+  uint256 first_segment_id;
+  uint256 last_segment_id;
+  string color;
   string text;
 }
 
@@ -71,9 +71,9 @@ library Snake {
     _valueSchema[0] = SchemaType.BOOL;
     _valueSchema[1] = SchemaType.UINT8;
     _valueSchema[2] = SchemaType.UINT8;
-    _valueSchema[3] = SchemaType.UINT32;
-    _valueSchema[4] = SchemaType.UINT32;
-    _valueSchema[5] = SchemaType.UINT32;
+    _valueSchema[3] = SchemaType.UINT256;
+    _valueSchema[4] = SchemaType.UINT256;
+    _valueSchema[5] = SchemaType.STRING;
     _valueSchema[6] = SchemaType.STRING;
 
     return SchemaLib.encode(_valueSchema);
@@ -246,29 +246,29 @@ library Snake {
   /**
    * @notice Get first_segment_id.
    */
-  function getFirst_segment_id(address owner) internal view returns (uint32 first_segment_id) {
+  function getFirst_segment_id(address owner) internal view returns (uint256 first_segment_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Get first_segment_id.
    */
-  function _getFirst_segment_id(address owner) internal view returns (uint32 first_segment_id) {
+  function _getFirst_segment_id(address owner) internal view returns (uint256 first_segment_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Set first_segment_id.
    */
-  function setFirst_segment_id(address owner, uint32 first_segment_id) internal {
+  function setFirst_segment_id(address owner, uint256 first_segment_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
@@ -278,7 +278,7 @@ library Snake {
   /**
    * @notice Set first_segment_id.
    */
-  function _setFirst_segment_id(address owner, uint32 first_segment_id) internal {
+  function _setFirst_segment_id(address owner, uint256 first_segment_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
@@ -288,29 +288,29 @@ library Snake {
   /**
    * @notice Get last_segment_id.
    */
-  function getLast_segment_id(address owner) internal view returns (uint32 last_segment_id) {
+  function getLast_segment_id(address owner) internal view returns (uint256 last_segment_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Get last_segment_id.
    */
-  function _getLast_segment_id(address owner) internal view returns (uint32 last_segment_id) {
+  function _getLast_segment_id(address owner) internal view returns (uint256 last_segment_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Set last_segment_id.
    */
-  function setLast_segment_id(address owner, uint32 last_segment_id) internal {
+  function setLast_segment_id(address owner, uint256 last_segment_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
@@ -320,7 +320,7 @@ library Snake {
   /**
    * @notice Set last_segment_id.
    */
-  function _setLast_segment_id(address owner, uint32 last_segment_id) internal {
+  function _setLast_segment_id(address owner, uint256 last_segment_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
@@ -330,43 +330,163 @@ library Snake {
   /**
    * @notice Get color.
    */
-  function getColor(address owner) internal view returns (uint32 color) {
+  function getColor(address owner) internal view returns (string memory color) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
    * @notice Get color.
    */
-  function _getColor(address owner) internal view returns (uint32 color) {
+  function _getColor(address owner) internal view returns (string memory color) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
    * @notice Set color.
    */
-  function setColor(address owner, uint32 color) internal {
+  function setColor(address owner, string memory color) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((color)), _fieldLayout);
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((color)));
   }
 
   /**
    * @notice Set color.
    */
-  function _setColor(address owner, uint32 color) internal {
+  function _setColor(address owner, string memory color) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((color)), _fieldLayout);
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((color)));
+  }
+
+  /**
+   * @notice Get the length of color.
+   */
+  function lengthColor(address owner) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of color.
+   */
+  function _lengthColor(address owner) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get an item of color.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItemColor(address owner, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of color.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItemColor(address owner, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to color.
+   */
+  function pushColor(address owner, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to color.
+   */
+  function _pushColor(address owner, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from color.
+   */
+  function popColor(address owner) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from color.
+   */
+  function _popColor(address owner) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Update a slice of color at `_index`.
+   */
+  function updateColor(address owner, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of color at `_index`.
+   */
+  function _updateColor(address owner, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(owner)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
   }
 
   /**
@@ -376,7 +496,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -387,7 +507,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -398,7 +518,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((text)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((text)));
   }
 
   /**
@@ -408,7 +528,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((text)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((text)));
   }
 
   /**
@@ -418,7 +538,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -431,7 +551,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -446,7 +566,7 @@ library Snake {
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
     unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -460,7 +580,7 @@ library Snake {
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
     unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -472,7 +592,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -482,7 +602,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -492,7 +612,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -502,7 +622,7 @@ library Snake {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
 
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -514,7 +634,7 @@ library Snake {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -527,7 +647,7 @@ library Snake {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -569,15 +689,15 @@ library Snake {
     bool is_dying,
     Direction direction,
     uint8 length,
-    uint32 first_segment_id,
-    uint32 last_segment_id,
-    uint32 color,
+    uint256 first_segment_id,
+    uint256 last_segment_id,
+    string memory color,
     string memory text
   ) internal {
-    bytes memory _staticData = encodeStatic(is_dying, direction, length, first_segment_id, last_segment_id, color);
+    bytes memory _staticData = encodeStatic(is_dying, direction, length, first_segment_id, last_segment_id);
 
-    PackedCounter _encodedLengths = encodeLengths(text);
-    bytes memory _dynamicData = encodeDynamic(text);
+    PackedCounter _encodedLengths = encodeLengths(color, text);
+    bytes memory _dynamicData = encodeDynamic(color, text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
@@ -593,15 +713,15 @@ library Snake {
     bool is_dying,
     Direction direction,
     uint8 length,
-    uint32 first_segment_id,
-    uint32 last_segment_id,
-    uint32 color,
+    uint256 first_segment_id,
+    uint256 last_segment_id,
+    string memory color,
     string memory text
   ) internal {
-    bytes memory _staticData = encodeStatic(is_dying, direction, length, first_segment_id, last_segment_id, color);
+    bytes memory _staticData = encodeStatic(is_dying, direction, length, first_segment_id, last_segment_id);
 
-    PackedCounter _encodedLengths = encodeLengths(text);
-    bytes memory _dynamicData = encodeDynamic(text);
+    PackedCounter _encodedLengths = encodeLengths(color, text);
+    bytes memory _dynamicData = encodeDynamic(color, text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
@@ -618,12 +738,11 @@ library Snake {
       _table.direction,
       _table.length,
       _table.first_segment_id,
-      _table.last_segment_id,
-      _table.color
+      _table.last_segment_id
     );
 
-    PackedCounter _encodedLengths = encodeLengths(_table.text);
-    bytes memory _dynamicData = encodeDynamic(_table.text);
+    PackedCounter _encodedLengths = encodeLengths(_table.color, _table.text);
+    bytes memory _dynamicData = encodeDynamic(_table.color, _table.text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
@@ -640,12 +759,11 @@ library Snake {
       _table.direction,
       _table.length,
       _table.first_segment_id,
-      _table.last_segment_id,
-      _table.color
+      _table.last_segment_id
     );
 
-    PackedCounter _encodedLengths = encodeLengths(_table.text);
-    bytes memory _dynamicData = encodeDynamic(_table.text);
+    PackedCounter _encodedLengths = encodeLengths(_table.color, _table.text);
+    bytes memory _dynamicData = encodeDynamic(_table.color, _table.text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(owner)));
@@ -661,14 +779,7 @@ library Snake {
   )
     internal
     pure
-    returns (
-      bool is_dying,
-      Direction direction,
-      uint8 length,
-      uint32 first_segment_id,
-      uint32 last_segment_id,
-      uint32 color
-    )
+    returns (bool is_dying, Direction direction, uint8 length, uint256 first_segment_id, uint256 last_segment_id)
   {
     is_dying = (_toBool(uint8(Bytes.slice1(_blob, 0))));
 
@@ -676,21 +787,28 @@ library Snake {
 
     length = (uint8(Bytes.slice1(_blob, 2)));
 
-    first_segment_id = (uint32(Bytes.slice4(_blob, 3)));
+    first_segment_id = (uint256(Bytes.slice32(_blob, 3)));
 
-    last_segment_id = (uint32(Bytes.slice4(_blob, 7)));
-
-    color = (uint32(Bytes.slice4(_blob, 11)));
+    last_segment_id = (uint256(Bytes.slice32(_blob, 35)));
   }
 
   /**
    * @notice Decode the tightly packed blob of dynamic data using the encoded lengths.
    */
-  function decodeDynamic(PackedCounter _encodedLengths, bytes memory _blob) internal pure returns (string memory text) {
+  function decodeDynamic(
+    PackedCounter _encodedLengths,
+    bytes memory _blob
+  ) internal pure returns (string memory color, string memory text) {
     uint256 _start;
     uint256 _end;
     unchecked {
       _end = _encodedLengths.atIndex(0);
+    }
+    color = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+
+    _start = _end;
+    unchecked {
+      _end += _encodedLengths.atIndex(1);
     }
     text = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
@@ -706,16 +824,11 @@ library Snake {
     PackedCounter _encodedLengths,
     bytes memory _dynamicData
   ) internal pure returns (SnakeData memory _table) {
-    (
-      _table.is_dying,
-      _table.direction,
-      _table.length,
-      _table.first_segment_id,
-      _table.last_segment_id,
-      _table.color
-    ) = decodeStatic(_staticData);
+    (_table.is_dying, _table.direction, _table.length, _table.first_segment_id, _table.last_segment_id) = decodeStatic(
+      _staticData
+    );
 
-    (_table.text) = decodeDynamic(_encodedLengths, _dynamicData);
+    (_table.color, _table.text) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
@@ -746,21 +859,23 @@ library Snake {
     bool is_dying,
     Direction direction,
     uint8 length,
-    uint32 first_segment_id,
-    uint32 last_segment_id,
-    uint32 color
+    uint256 first_segment_id,
+    uint256 last_segment_id
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(is_dying, direction, length, first_segment_id, last_segment_id, color);
+    return abi.encodePacked(is_dying, direction, length, first_segment_id, last_segment_id);
   }
 
   /**
    * @notice Tightly pack dynamic data lengths using this table's schema.
    * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
-  function encodeLengths(string memory text) internal pure returns (PackedCounter _encodedLengths) {
+  function encodeLengths(
+    string memory color,
+    string memory text
+  ) internal pure returns (PackedCounter _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
-      _encodedLengths = PackedCounterLib.pack(bytes(text).length);
+      _encodedLengths = PackedCounterLib.pack(bytes(color).length, bytes(text).length);
     }
   }
 
@@ -768,8 +883,8 @@ library Snake {
    * @notice Tightly pack dynamic (variable length) data using this table's schema.
    * @return The dynamic data, encoded into a sequence of bytes.
    */
-  function encodeDynamic(string memory text) internal pure returns (bytes memory) {
-    return abi.encodePacked(bytes((text)));
+  function encodeDynamic(string memory color, string memory text) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((color)), bytes((text)));
   }
 
   /**
@@ -782,15 +897,15 @@ library Snake {
     bool is_dying,
     Direction direction,
     uint8 length,
-    uint32 first_segment_id,
-    uint32 last_segment_id,
-    uint32 color,
+    uint256 first_segment_id,
+    uint256 last_segment_id,
+    string memory color,
     string memory text
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(is_dying, direction, length, first_segment_id, last_segment_id, color);
+    bytes memory _staticData = encodeStatic(is_dying, direction, length, first_segment_id, last_segment_id);
 
-    PackedCounter _encodedLengths = encodeLengths(text);
-    bytes memory _dynamicData = encodeDynamic(text);
+    PackedCounter _encodedLengths = encodeLengths(color, text);
+    bytes memory _dynamicData = encodeDynamic(color, text);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }

@@ -26,15 +26,15 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant SnakeSegmentTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0014050104040404040000000000000000000000000000000000000000000000
+  0x0048040220200404000000000000000000000000000000000000000000000000
 );
 
 struct SnakeSegmentData {
-  uint32 previous_id;
-  uint32 next_id;
+  uint256 previous_id;
+  uint256 next_id;
   uint32 x;
   uint32 y;
-  uint32 pixel_original_color;
+  string pixel_original_color;
   string pixel_original_text;
 }
 
@@ -53,7 +53,7 @@ library SnakeSegment {
    */
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _keySchema = new SchemaType[](1);
-    _keySchema[0] = SchemaType.UINT32;
+    _keySchema[0] = SchemaType.UINT256;
 
     return SchemaLib.encode(_keySchema);
   }
@@ -64,11 +64,11 @@ library SnakeSegment {
    */
   function getValueSchema() internal pure returns (Schema) {
     SchemaType[] memory _valueSchema = new SchemaType[](6);
-    _valueSchema[0] = SchemaType.UINT32;
-    _valueSchema[1] = SchemaType.UINT32;
+    _valueSchema[0] = SchemaType.UINT256;
+    _valueSchema[1] = SchemaType.UINT256;
     _valueSchema[2] = SchemaType.UINT32;
     _valueSchema[3] = SchemaType.UINT32;
-    _valueSchema[4] = SchemaType.UINT32;
+    _valueSchema[4] = SchemaType.STRING;
     _valueSchema[5] = SchemaType.STRING;
 
     return SchemaLib.encode(_valueSchema);
@@ -114,29 +114,29 @@ library SnakeSegment {
   /**
    * @notice Get previous_id.
    */
-  function getPrevious_id(uint32 id) internal view returns (uint32 previous_id) {
+  function getPrevious_id(uint256 id) internal view returns (uint256 previous_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Get previous_id.
    */
-  function _getPrevious_id(uint32 id) internal view returns (uint32 previous_id) {
+  function _getPrevious_id(uint256 id) internal view returns (uint256 previous_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Set previous_id.
    */
-  function setPrevious_id(uint32 id, uint32 previous_id) internal {
+  function setPrevious_id(uint256 id, uint256 previous_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -146,7 +146,7 @@ library SnakeSegment {
   /**
    * @notice Set previous_id.
    */
-  function _setPrevious_id(uint32 id, uint32 previous_id) internal {
+  function _setPrevious_id(uint256 id, uint256 previous_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -156,29 +156,29 @@ library SnakeSegment {
   /**
    * @notice Get next_id.
    */
-  function getNext_id(uint32 id) internal view returns (uint32 next_id) {
+  function getNext_id(uint256 id) internal view returns (uint256 next_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Get next_id.
    */
-  function _getNext_id(uint32 id) internal view returns (uint32 next_id) {
+  function _getNext_id(uint256 id) internal view returns (uint256 next_id) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Set next_id.
    */
-  function setNext_id(uint32 id, uint32 next_id) internal {
+  function setNext_id(uint256 id, uint256 next_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -188,7 +188,7 @@ library SnakeSegment {
   /**
    * @notice Set next_id.
    */
-  function _setNext_id(uint32 id, uint32 next_id) internal {
+  function _setNext_id(uint256 id, uint256 next_id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -198,7 +198,7 @@ library SnakeSegment {
   /**
    * @notice Get x.
    */
-  function getX(uint32 id) internal view returns (uint32 x) {
+  function getX(uint256 id) internal view returns (uint32 x) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -209,7 +209,7 @@ library SnakeSegment {
   /**
    * @notice Get x.
    */
-  function _getX(uint32 id) internal view returns (uint32 x) {
+  function _getX(uint256 id) internal view returns (uint32 x) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -220,7 +220,7 @@ library SnakeSegment {
   /**
    * @notice Set x.
    */
-  function setX(uint32 id, uint32 x) internal {
+  function setX(uint256 id, uint32 x) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -230,7 +230,7 @@ library SnakeSegment {
   /**
    * @notice Set x.
    */
-  function _setX(uint32 id, uint32 x) internal {
+  function _setX(uint256 id, uint32 x) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -240,7 +240,7 @@ library SnakeSegment {
   /**
    * @notice Get y.
    */
-  function getY(uint32 id) internal view returns (uint32 y) {
+  function getY(uint256 id) internal view returns (uint32 y) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -251,7 +251,7 @@ library SnakeSegment {
   /**
    * @notice Get y.
    */
-  function _getY(uint32 id) internal view returns (uint32 y) {
+  function _getY(uint256 id) internal view returns (uint32 y) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -262,7 +262,7 @@ library SnakeSegment {
   /**
    * @notice Set y.
    */
-  function setY(uint32 id, uint32 y) internal {
+  function setY(uint256 id, uint32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -272,7 +272,7 @@ library SnakeSegment {
   /**
    * @notice Set y.
    */
-  function _setY(uint32 id, uint32 y) internal {
+  function _setY(uint256 id, uint32 y) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -282,49 +282,7 @@ library SnakeSegment {
   /**
    * @notice Get pixel_original_color.
    */
-  function getPixel_original_color(uint32 id) internal view returns (uint32 pixel_original_color) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(id));
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
-    return (uint32(bytes4(_blob)));
-  }
-
-  /**
-   * @notice Get pixel_original_color.
-   */
-  function _getPixel_original_color(uint32 id) internal view returns (uint32 pixel_original_color) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(id));
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
-    return (uint32(bytes4(_blob)));
-  }
-
-  /**
-   * @notice Set pixel_original_color.
-   */
-  function setPixel_original_color(uint32 id, uint32 pixel_original_color) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(id));
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((pixel_original_color)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set pixel_original_color.
-   */
-  function _setPixel_original_color(uint32 id, uint32 pixel_original_color) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(id));
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((pixel_original_color)), _fieldLayout);
-  }
-
-  /**
-   * @notice Get pixel_original_text.
-   */
-  function getPixel_original_text(uint32 id) internal view returns (string memory pixel_original_text) {
+  function getPixel_original_color(uint256 id) internal view returns (string memory pixel_original_color) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -333,9 +291,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Get pixel_original_text.
+   * @notice Get pixel_original_color.
    */
-  function _getPixel_original_text(uint32 id) internal view returns (string memory pixel_original_text) {
+  function _getPixel_original_color(uint256 id) internal view returns (string memory pixel_original_color) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -344,29 +302,29 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Set pixel_original_text.
+   * @notice Set pixel_original_color.
    */
-  function setPixel_original_text(uint32 id, string memory pixel_original_text) internal {
+  function setPixel_original_color(uint256 id, string memory pixel_original_color) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((pixel_original_text)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((pixel_original_color)));
   }
 
   /**
-   * @notice Set pixel_original_text.
+   * @notice Set pixel_original_color.
    */
-  function _setPixel_original_text(uint32 id, string memory pixel_original_text) internal {
+  function _setPixel_original_color(uint256 id, string memory pixel_original_color) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((pixel_original_text)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((pixel_original_color)));
   }
 
   /**
-   * @notice Get the length of pixel_original_text.
+   * @notice Get the length of pixel_original_color.
    */
-  function lengthPixel_original_text(uint32 id) internal view returns (uint256) {
+  function lengthPixel_original_color(uint256 id) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -377,9 +335,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Get the length of pixel_original_text.
+   * @notice Get the length of pixel_original_color.
    */
-  function _lengthPixel_original_text(uint32 id) internal view returns (uint256) {
+  function _lengthPixel_original_color(uint256 id) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -390,10 +348,10 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Get an item of pixel_original_text.
+   * @notice Get an item of pixel_original_color.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemPixel_original_text(uint32 id, uint256 _index) internal view returns (string memory) {
+  function getItemPixel_original_color(uint256 id, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -404,10 +362,10 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Get an item of pixel_original_text.
+   * @notice Get an item of pixel_original_color.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemPixel_original_text(uint32 id, uint256 _index) internal view returns (string memory) {
+  function _getItemPixel_original_color(uint256 id, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -418,9 +376,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Push a slice to pixel_original_text.
+   * @notice Push a slice to pixel_original_color.
    */
-  function pushPixel_original_text(uint32 id, string memory _slice) internal {
+  function pushPixel_original_color(uint256 id, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -428,9 +386,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Push a slice to pixel_original_text.
+   * @notice Push a slice to pixel_original_color.
    */
-  function _pushPixel_original_text(uint32 id, string memory _slice) internal {
+  function _pushPixel_original_color(uint256 id, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -438,9 +396,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Pop a slice from pixel_original_text.
+   * @notice Pop a slice from pixel_original_color.
    */
-  function popPixel_original_text(uint32 id) internal {
+  function popPixel_original_color(uint256 id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -448,9 +406,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Pop a slice from pixel_original_text.
+   * @notice Pop a slice from pixel_original_color.
    */
-  function _popPixel_original_text(uint32 id) internal {
+  function _popPixel_original_color(uint256 id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -458,9 +416,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Update a slice of pixel_original_text at `_index`.
+   * @notice Update a slice of pixel_original_color at `_index`.
    */
-  function updatePixel_original_text(uint32 id, uint256 _index, string memory _slice) internal {
+  function updatePixel_original_color(uint256 id, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -471,9 +429,9 @@ library SnakeSegment {
   }
 
   /**
-   * @notice Update a slice of pixel_original_text at `_index`.
+   * @notice Update a slice of pixel_original_color at `_index`.
    */
-  function _updatePixel_original_text(uint32 id, uint256 _index, string memory _slice) internal {
+  function _updatePixel_original_color(uint256 id, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -484,9 +442,171 @@ library SnakeSegment {
   }
 
   /**
+   * @notice Get pixel_original_text.
+   */
+  function getPixel_original_text(uint256 id) internal view returns (string memory pixel_original_text) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Get pixel_original_text.
+   */
+  function _getPixel_original_text(uint256 id) internal view returns (string memory pixel_original_text) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Set pixel_original_text.
+   */
+  function setPixel_original_text(uint256 id, string memory pixel_original_text) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((pixel_original_text)));
+  }
+
+  /**
+   * @notice Set pixel_original_text.
+   */
+  function _setPixel_original_text(uint256 id, string memory pixel_original_text) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((pixel_original_text)));
+  }
+
+  /**
+   * @notice Get the length of pixel_original_text.
+   */
+  function lengthPixel_original_text(uint256 id) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of pixel_original_text.
+   */
+  function _lengthPixel_original_text(uint256 id) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get an item of pixel_original_text.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItemPixel_original_text(uint256 id, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of pixel_original_text.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItemPixel_original_text(uint256 id, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to pixel_original_text.
+   */
+  function pushPixel_original_text(uint256 id, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to pixel_original_text.
+   */
+  function _pushPixel_original_text(uint256 id, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from pixel_original_text.
+   */
+  function popPixel_original_text(uint256 id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
+  }
+
+  /**
+   * @notice Pop a slice from pixel_original_text.
+   */
+  function _popPixel_original_text(uint256 id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
+  }
+
+  /**
+   * @notice Update a slice of pixel_original_text at `_index`.
+   */
+  function updatePixel_original_text(uint256 id, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of pixel_original_text at `_index`.
+   */
+  function _updatePixel_original_text(uint256 id, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(id));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
    * @notice Get the full data.
    */
-  function get(uint32 id) internal view returns (SnakeSegmentData memory _table) {
+  function get(uint256 id) internal view returns (SnakeSegmentData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -501,7 +621,7 @@ library SnakeSegment {
   /**
    * @notice Get the full data.
    */
-  function _get(uint32 id) internal view returns (SnakeSegmentData memory _table) {
+  function _get(uint256 id) internal view returns (SnakeSegmentData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -517,18 +637,18 @@ library SnakeSegment {
    * @notice Set the full data using individual values.
    */
   function set(
-    uint32 id,
-    uint32 previous_id,
-    uint32 next_id,
+    uint256 id,
+    uint256 previous_id,
+    uint256 next_id,
     uint32 x,
     uint32 y,
-    uint32 pixel_original_color,
+    string memory pixel_original_color,
     string memory pixel_original_text
   ) internal {
-    bytes memory _staticData = encodeStatic(previous_id, next_id, x, y, pixel_original_color);
+    bytes memory _staticData = encodeStatic(previous_id, next_id, x, y);
 
-    PackedCounter _encodedLengths = encodeLengths(pixel_original_text);
-    bytes memory _dynamicData = encodeDynamic(pixel_original_text);
+    PackedCounter _encodedLengths = encodeLengths(pixel_original_color, pixel_original_text);
+    bytes memory _dynamicData = encodeDynamic(pixel_original_color, pixel_original_text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -540,18 +660,18 @@ library SnakeSegment {
    * @notice Set the full data using individual values.
    */
   function _set(
-    uint32 id,
-    uint32 previous_id,
-    uint32 next_id,
+    uint256 id,
+    uint256 previous_id,
+    uint256 next_id,
     uint32 x,
     uint32 y,
-    uint32 pixel_original_color,
+    string memory pixel_original_color,
     string memory pixel_original_text
   ) internal {
-    bytes memory _staticData = encodeStatic(previous_id, next_id, x, y, pixel_original_color);
+    bytes memory _staticData = encodeStatic(previous_id, next_id, x, y);
 
-    PackedCounter _encodedLengths = encodeLengths(pixel_original_text);
-    bytes memory _dynamicData = encodeDynamic(pixel_original_text);
+    PackedCounter _encodedLengths = encodeLengths(pixel_original_color, pixel_original_text);
+    bytes memory _dynamicData = encodeDynamic(pixel_original_color, pixel_original_text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -562,17 +682,11 @@ library SnakeSegment {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(uint32 id, SnakeSegmentData memory _table) internal {
-    bytes memory _staticData = encodeStatic(
-      _table.previous_id,
-      _table.next_id,
-      _table.x,
-      _table.y,
-      _table.pixel_original_color
-    );
+  function set(uint256 id, SnakeSegmentData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.previous_id, _table.next_id, _table.x, _table.y);
 
-    PackedCounter _encodedLengths = encodeLengths(_table.pixel_original_text);
-    bytes memory _dynamicData = encodeDynamic(_table.pixel_original_text);
+    PackedCounter _encodedLengths = encodeLengths(_table.pixel_original_color, _table.pixel_original_text);
+    bytes memory _dynamicData = encodeDynamic(_table.pixel_original_color, _table.pixel_original_text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -583,17 +697,11 @@ library SnakeSegment {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(uint32 id, SnakeSegmentData memory _table) internal {
-    bytes memory _staticData = encodeStatic(
-      _table.previous_id,
-      _table.next_id,
-      _table.x,
-      _table.y,
-      _table.pixel_original_color
-    );
+  function _set(uint256 id, SnakeSegmentData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.previous_id, _table.next_id, _table.x, _table.y);
 
-    PackedCounter _encodedLengths = encodeLengths(_table.pixel_original_text);
-    bytes memory _dynamicData = encodeDynamic(_table.pixel_original_text);
+    PackedCounter _encodedLengths = encodeLengths(_table.pixel_original_color, _table.pixel_original_text);
+    bytes memory _dynamicData = encodeDynamic(_table.pixel_original_color, _table.pixel_original_text);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
@@ -606,16 +714,14 @@ library SnakeSegment {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (uint32 previous_id, uint32 next_id, uint32 x, uint32 y, uint32 pixel_original_color) {
-    previous_id = (uint32(Bytes.slice4(_blob, 0)));
+  ) internal pure returns (uint256 previous_id, uint256 next_id, uint32 x, uint32 y) {
+    previous_id = (uint256(Bytes.slice32(_blob, 0)));
 
-    next_id = (uint32(Bytes.slice4(_blob, 4)));
+    next_id = (uint256(Bytes.slice32(_blob, 32)));
 
-    x = (uint32(Bytes.slice4(_blob, 8)));
+    x = (uint32(Bytes.slice4(_blob, 64)));
 
-    y = (uint32(Bytes.slice4(_blob, 12)));
-
-    pixel_original_color = (uint32(Bytes.slice4(_blob, 16)));
+    y = (uint32(Bytes.slice4(_blob, 68)));
   }
 
   /**
@@ -624,11 +730,17 @@ library SnakeSegment {
   function decodeDynamic(
     PackedCounter _encodedLengths,
     bytes memory _blob
-  ) internal pure returns (string memory pixel_original_text) {
+  ) internal pure returns (string memory pixel_original_color, string memory pixel_original_text) {
     uint256 _start;
     uint256 _end;
     unchecked {
       _end = _encodedLengths.atIndex(0);
+    }
+    pixel_original_color = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+
+    _start = _end;
+    unchecked {
+      _end += _encodedLengths.atIndex(1);
     }
     pixel_original_text = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
@@ -644,15 +756,15 @@ library SnakeSegment {
     PackedCounter _encodedLengths,
     bytes memory _dynamicData
   ) internal pure returns (SnakeSegmentData memory _table) {
-    (_table.previous_id, _table.next_id, _table.x, _table.y, _table.pixel_original_color) = decodeStatic(_staticData);
+    (_table.previous_id, _table.next_id, _table.x, _table.y) = decodeStatic(_staticData);
 
-    (_table.pixel_original_text) = decodeDynamic(_encodedLengths, _dynamicData);
+    (_table.pixel_original_color, _table.pixel_original_text) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(uint32 id) internal {
+  function deleteRecord(uint256 id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -662,7 +774,7 @@ library SnakeSegment {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(uint32 id) internal {
+  function _deleteRecord(uint256 id) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 
@@ -673,24 +785,21 @@ library SnakeSegment {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(
-    uint32 previous_id,
-    uint32 next_id,
-    uint32 x,
-    uint32 y,
-    uint32 pixel_original_color
-  ) internal pure returns (bytes memory) {
-    return abi.encodePacked(previous_id, next_id, x, y, pixel_original_color);
+  function encodeStatic(uint256 previous_id, uint256 next_id, uint32 x, uint32 y) internal pure returns (bytes memory) {
+    return abi.encodePacked(previous_id, next_id, x, y);
   }
 
   /**
    * @notice Tightly pack dynamic data lengths using this table's schema.
    * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
-  function encodeLengths(string memory pixel_original_text) internal pure returns (PackedCounter _encodedLengths) {
+  function encodeLengths(
+    string memory pixel_original_color,
+    string memory pixel_original_text
+  ) internal pure returns (PackedCounter _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
-      _encodedLengths = PackedCounterLib.pack(bytes(pixel_original_text).length);
+      _encodedLengths = PackedCounterLib.pack(bytes(pixel_original_color).length, bytes(pixel_original_text).length);
     }
   }
 
@@ -698,8 +807,11 @@ library SnakeSegment {
    * @notice Tightly pack dynamic (variable length) data using this table's schema.
    * @return The dynamic data, encoded into a sequence of bytes.
    */
-  function encodeDynamic(string memory pixel_original_text) internal pure returns (bytes memory) {
-    return abi.encodePacked(bytes((pixel_original_text)));
+  function encodeDynamic(
+    string memory pixel_original_color,
+    string memory pixel_original_text
+  ) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((pixel_original_color)), bytes((pixel_original_text)));
   }
 
   /**
@@ -709,17 +821,17 @@ library SnakeSegment {
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
-    uint32 previous_id,
-    uint32 next_id,
+    uint256 previous_id,
+    uint256 next_id,
     uint32 x,
     uint32 y,
-    uint32 pixel_original_color,
+    string memory pixel_original_color,
     string memory pixel_original_text
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(previous_id, next_id, x, y, pixel_original_color);
+    bytes memory _staticData = encodeStatic(previous_id, next_id, x, y);
 
-    PackedCounter _encodedLengths = encodeLengths(pixel_original_text);
-    bytes memory _dynamicData = encodeDynamic(pixel_original_text);
+    PackedCounter _encodedLengths = encodeLengths(pixel_original_color, pixel_original_text);
+    bytes memory _dynamicData = encodeDynamic(pixel_original_color, pixel_original_text);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }
@@ -727,7 +839,7 @@ library SnakeSegment {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(uint32 id) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(uint256 id) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(id));
 

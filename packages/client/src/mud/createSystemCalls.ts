@@ -66,14 +66,14 @@ if(entityVal===null){
      * is in the root namespace, `.increment` can be called directly
      * on the World contract.
      */
-    // const txData = await worldContract.write.paint_PaintSystem_init()
-    const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
+    const txData = await worldContract.write.paint_PaintSystem_init()
+    // const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
 //     const hashValpublic=   publicClient.waitForTransactionReceipt({hash:tx})
 //  console.log(tx,hashValpublic)
 //     return [tx,hashValpublic]
     // const tx = await worldContract.write.paint_PaintSystem_init();
     const upperCaseHexValue = convertHexToCase(playerEntity, true);
-    await waitForTransaction(tx);
+    await waitForTransaction(txData);
     return upperCaseHexValue;
     // return getComponentValue(Counter, singletonEntity);
     // return {xDATA,yData,color}

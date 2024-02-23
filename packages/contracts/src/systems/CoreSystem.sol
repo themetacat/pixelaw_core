@@ -3,17 +3,18 @@ pragma solidity >=0.8.19;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData, Instruction, InstructionTableId} from "../codegen/index.sol";
+import {Position} from "../index.sol";
 
 contract CoreSystem is System {
   
   // event AppNameUpdated(address indexed callre, AppData  app);
-  event QueueScheduled(QueueScheduled queueScheduled);
-  event QueueProcessed(QueueProcessed queueProcessed);
-  event AppNameUpdated(AppNameUpdated appNameUpdated);
-  event Alert(Alert alert);
+  event EventQueueScheduled(QueueScheduled queueScheduled);
+  event EventQueueProcessed(QueueProcessed queueProcessed);
+  event EventAppNameUpdated(AppNameUpdated appNameUpdated);
+  event EventAlert(Alert alert);
 
   struct QueueScheduled{
-    byte32 id;
+    bytes32 id;
     uint256 timestamp;
     address called_system;
     bytes4 selector;
@@ -21,18 +22,18 @@ contract CoreSystem is System {
   }
 
   struct QueueProcessed{
-    string id;
+    bytes32 id;
   }
-
+  
   struct AppNameUpdated{
     AppData app;
     string caller;
   }
 
-  struct Position{
-    uint32 x;
-    uint32 y; 
-  }
+  // struct Position{
+  //   uint32 x;
+  //   uint32 y; 
+  // }
 
   struct Alert{
     Position position;
@@ -60,7 +61,7 @@ contract CoreSystem is System {
   function update_app(string memory name, string memory icon, string memory manifest) public {
 
     AppData memory app = new_app(address(_msgSender()), name, icon, manifest);
-    // emit AppNameUpdated(address(_msgSender()), app);
+    // emit EventAppNameUpdated(address(_msgSender()), app);
   }
 
   function new_app(address system, string memory name, string memory icon, string memory manifest) internal returns(AppData memory){
@@ -163,34 +164,34 @@ contract CoreSystem is System {
 
   }
 
-  function set_instruction(bytes4 memory selector, string memory instruction) public {
+  function set_instruction(bytes4 selector, string memory instruction) public {
     address system = address(_msgSender());
-    AppData app = App.get(caller);
-    require(bytes(app.name).length != 0, 'cannot be called by a non-app');
+    AppData memory app = App.get(system);
+    require(bytes(app.app_name).length != 0, 'cannot be called by a non-app');
     Instruction.set(system, selector, instruction);
   }
 
   function schedule_queue(uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
-    byte32 id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
+    bytes32 id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
     QueueScheduled memory qs = QueueScheduled(id, timestamp, called_system, selector, call_data);
-    emit QueueScheduled(qs);
+    emit EventQueueScheduled(qs);
   }
 
-  function process_quene(byte32 id, uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
+  function process_quene(bytes32 id, uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
     
     require(timestamp <= block.timestamp, 'timestamp still in the future');
 
-    byte32 calculated_id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
+    bytes32 calculated_id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
     require(calculated_id == id, 'Invalid Id');
     QueueProcessed memory qp = QueueProcessed(id);
-    emit QueueProcessed(qp);
+    emit EventQueueProcessed(qp);
   }
 
-  function alert_player(Position memory position, address player, string memory message){
+  function alert_player(Position memory position, address player, string memory message) public {
     AppData memory app = App.get(address(_msgSender()));
-    require(bytes(app.name).length != 0, 'cannot be called by a non-app');
-    Alert memory alert = Alert(position, caller, player, message, block.timestamp);
-    emit Alert(alert);
+    require(bytes(app.app_name).length != 0, 'cannot be called by a non-app');
+    Alert memory alert = Alert(position, address(_msgSender()), player, message, block.timestamp);
+    emit EventAlert(alert);
   }
 
   function convertToBytes32(string memory input) public pure returns (bytes32) {
