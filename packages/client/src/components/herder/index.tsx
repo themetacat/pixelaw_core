@@ -420,8 +420,8 @@ export default function Header({ hoveredData, handleData }: Props) {
             disabled={numberData === 25}
             onClick={btnLower}
           >
-           <img  className={style.btn1} src={powerIcon} alt="" /> 
-           {/* - */}
+           <img  className={numberData === 25?style.gray:style.btn1} src={powerIcon} alt="" /> 
+           {/* <span className={style.btn1}>-</span> */}
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
@@ -429,7 +429,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             disabled={numberData === 100}
             onClick={btnAdd}
           >
-            <img  className={style.btn1} src={AddIcon} alt="" />
+            <img  className={numberData === 100?style.gray:style.btn1} src={AddIcon} alt="" />
           </button>
         </div>
         <div
