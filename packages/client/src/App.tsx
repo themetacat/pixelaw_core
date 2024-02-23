@@ -85,27 +85,25 @@ export const App = () => {
   // },[hoveredData])
   const handleMouseDown = (event:any) => {
     // ...其他逻辑
-    console.log(event)
+    // console.log(event)
     setHoveredData(event)
     // setHoveredData(hoveredData);
     
   };
   return (
-    <>
-    <div className={style.page}>
-
    
-    {syncProgress ? (
+    <div className={style.page}>
+    {/* {syncProgress ? (
         syncProgress.step !== SyncStep.LIVE ? (
           <div style={{ color: "#fff" }}  className={style.GameBoard}>
             {syncProgress.message} ({Math.floor(syncProgress.percentage)}%)
           </div>
-        ) : (
+        ) : ( */}
     <Header hoveredData = {hoveredData} handleData={handleMouseDown} />
-    )
+    {/* )
     ) : (
       <div style={{ color: "#000" }}>Hydrating from RPC(0) </div>
-    )}
+    )} */}
     <Toaster
           toastOptions={{
             duration: 2000,
@@ -131,6 +129,6 @@ export const App = () => {
         Increment
       </button> */}
        </div>
-    </>
+  
   );
 };

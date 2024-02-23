@@ -5,9 +5,9 @@ overflow-x: hidden;
 }
 .container{
     background-color: #171717;
-    height: 50px;
+    height: 60px;
     width: 100%;
-    padding: 5px 30px 5px 30px;
+    /* padding: 5px 30px 5px 30px; */
     display: flex;
     position: relative;
 position: fixed;
@@ -19,7 +19,10 @@ z-index: 9999999;
     height: 46px;
     justify-content:space-between;
     align-items: center;
-    margin: 5px 0 5px 0;
+    /* margin: 5px 0 5px 0; */
+    position: absolute;
+    top: 9px;
+    left: 20px;
 }
 .addr{
     justify-content: right;
@@ -45,19 +48,28 @@ canvas{
     align-items: center;
     justify-content: center;
     /* height: 100%; */
+    width: 238px;
+    height: 51px;
     position: absolute;
-    left: 40%;
+    /* top:50%; */
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
+    margin:auto;
+    /* margin-top:-100px; */
+    /* margin-left:-100px; */
     /* width: 180px; */
     background-color: #000000;
-    padding-left: 50px;
-    padding-right: 50px;
+    /* padding-left: 50px;
+    padding-right: 50px; */
     /* padding-top: 8px; */
     font-size: 20px;
     border-radius: 50px;
 }
 .spanData{
     display: inline-block;
-    width: 130px;
+    width: 78px;
     line-height: 36px;
     color: #19C0DB;
     padding-top: 8px;
@@ -75,11 +87,18 @@ font: normal normal normal 16px/20px Silkscreen; */
 :root {
     --offset: 70px;
   }
+  .btnBox{
+    width: 80px;
+    color: #a073e2;
+    border: none;
+    outline: none;
+    background-color: #000;
+  }
 .btn1{
     color: #a073e2;
-    width: 25px;
+    width: 20px;
     margin-bottom: 4px;
-    /* height: 25px; */
+    height: 20px;
     font-size: 30px;
     border: none;
     outline: none;

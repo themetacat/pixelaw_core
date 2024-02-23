@@ -416,7 +416,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           alt=""
         />
         <div className={style.content}>
-          <button  className={style.btn1}
+          <button  className={style.btnBox}
             disabled={numberData === 25}
             onClick={btnLower}
           >
@@ -425,7 +425,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
-            className={style.btn1}
+            className={style.btnBox}
             disabled={numberData === 100}
             onClick={btnAdd}
           >
@@ -498,7 +498,10 @@ export default function Header({ hoveredData, handleData }: Props) {
           left: "5%",
           bottom: "15px",
           cursor: "pointer",
-          // zIndex: "9999999999",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "flex-start",
+          alignItems: "flex-start"
         }}
       >
         {Array.from(colorOptionsData).map((option, index) => (
