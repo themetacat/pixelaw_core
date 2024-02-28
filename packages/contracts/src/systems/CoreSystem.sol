@@ -2,24 +2,24 @@
 pragma solidity >=0.8.19;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData, Instruction, InstructionTableId} from "../codegen/index.sol";
+import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData, Instruction, InstructionTableId, QueueScheduledData, QueueScheduled} from "../codegen/index.sol";
 import {Position} from "../index.sol";
 
 contract CoreSystem is System {
   
   // event AppNameUpdated(address indexed callre, AppData  app);
-  event EventQueueScheduled(QueueScheduled queueScheduled);
+  // event EventQueueScheduled(QueueScheduled queueScheduled);
   event EventQueueProcessed(QueueProcessed queueProcessed);
   event EventAppNameUpdated(AppNameUpdated appNameUpdated);
   event EventAlert(Alert alert);
 
-  struct QueueScheduled{
-    bytes32 id;
-    uint256 timestamp;
-    address called_system;
-    bytes4 selector;
-    string call_data;
-  }
+  // struct QueueScheduled{
+  //   bytes32 id;
+  //   uint256 timestamp;
+  //   address called_system;
+  //   bytes4 selector;
+  //   string call_data;
+  // }
 
   struct QueueProcessed{
     bytes32 id;
@@ -42,7 +42,6 @@ contract CoreSystem is System {
     string message;
     uint256 timestamp;
   }
-
 
   function init() public{
     bytes32 key = convertToBytes32('core_actions');
@@ -173,8 +172,9 @@ contract CoreSystem is System {
 
   function schedule_queue(uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
     bytes32 id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
-    QueueScheduled memory qs = QueueScheduled(id, timestamp, called_system, selector, call_data);
-    emit EventQueueScheduled(qs);
+    QueueScheduledData memory qs = QueueScheduledData(timestamp, called_system, selector, call_data);
+    QueueScheduled.set(id, qs);
+    // emit EventQueueScheduled(qs);
   }
 
   function process_quene(bytes32 id, uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
@@ -189,7 +189,7 @@ contract CoreSystem is System {
 
   function alert_player(Position memory position, address player, string memory message) public {
     AppData memory app = App.get(address(_msgSender()));
-    require(bytes(app.app_name).length != 0, 'cannot be called by a non-app');
+    // require(bytes(app.app_name).length != 0, 'cannot be called by a non-app');
     Alert memory alert = Alert(position, address(_msgSender()), player, message, block.timestamp);
     emit EventAlert(alert);
   }

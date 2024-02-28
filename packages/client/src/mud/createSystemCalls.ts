@@ -8,8 +8,8 @@ import { ClientComponents } from "./createClientComponents";
 import { SetupNetworkResult } from "./setupNetwork";
 import { singletonEntity } from "@latticexyz/store-sync/recs";
 import { ManifestContext ,} from '../components/rightPart';
-
-
+import { encodeSystemCall, encodeSystemCalls } from '@latticexyz/world';
+import { resourceToHex } from "@latticexyz/common";
 
 
 export function createSystemCalls(
@@ -59,27 +59,51 @@ if(entityVal===null){
     
     return '0x' + hexString;
   }
-  const increment = async (xDATA:any,yData:any,color:any) => {
+  const increment = async () => {
     /*
      * Because IncrementSystem
      * (https://mud.dev/templates/typescript/contracts#incrementsystemsol)
      * is in the root namespace, `.increment` can be called directly
      * on the World contract.
      */
-    const txData = await worldContract.write.paint_PaintSystem_init()
+    // const txData = await worldContract.write.paint_PaintSystem_init()
     // const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
-//     const hashValpublic=   publicClient.waitForTransactionReceipt({hash:tx})
-//  console.log(tx,hashValpublic)
-//     return [tx,hashValpublic]
-    // const tx = await worldContract.write.paint_PaintSystem_init();
-    const upperCaseHexValue = convertHexToCase(playerEntity, true);
+    const txData = await worldContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
     await waitForTransaction(txData);
-    return upperCaseHexValue;
-    // return getComponentValue(Counter, singletonEntity);
-    // return {xDATA,yData,color}
+
+  };
+  // increment()
+
+  // new
+  interface QueueData {
+    name: string;
+    namespace: string;
+    functionName: string;
+    args: any
+  }
+  const execute_queue = async (queue_data: QueueData) => {
+
+    const txData = await worldContract.write.call(encodeSystemCall({
+      abi: worldContract.abi,
+      systemId: resourceToHex({"type": "system", "namespace": queue_data.namespace, "name": queue_data.name}),
+      functionName: queue_data.functionName,
+      args: ['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc']
+      })
+    )
+    await waitForTransaction(txData);
+    setTimeout(() => execute_queue(queue_data), 1000);
+
+  };
+  const queue_data: QueueData = {
+    name: "SnakeSystem",
+    namespace: "snake",
+    functionName: "move",
+    args: ['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc']
   };
 
+  execute_queue(queue_data)
   return {
     increment,
+    execute_queue
   };
 }

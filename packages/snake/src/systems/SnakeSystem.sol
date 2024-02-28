@@ -196,7 +196,7 @@ contract SnakeSystem is System {
     // uuid
     uint256 id = generateUUID();
     existing_segment.previous_id = id;
-    // SnakeSegment.set(id, existing_segment);
+    SnakeSegment.set(snake.first_segment_id, existing_segment);
     SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel.color, pixel_original_text: pixel.text}));
     
     ICoreSystem(_world()).update_pixel(PixelUpdateData({

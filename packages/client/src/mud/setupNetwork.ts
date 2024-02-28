@@ -9,7 +9,8 @@ import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 
 import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
-// import IWorldAbi from "../../../../packages/paint/out/IWorld.sol/IWorld.abi.json";
+// import IWorldAbi from "../../../../packages/snake/out/IWorld.sol/IWorld.abi.json";
+import IWorldAbi from "../../../../packages/snake/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
 
 import { Subject, share } from "rxjs";
@@ -87,8 +88,9 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
         .then(abi => {
           // 将获取到的ABI作为contract参数传递
           const worldContract = getContract({
-            address: networkConfig.worldAddress as Hex,
-            abi,
+            // address: networkConfig.worldAddress as Hex,
+            address: "0x0D8694F47cDC22Bb8C6D2668a38d07a439F378F9",
+            abi:IWorldAbi,
             publicClient,
             walletClient: burnerWalletClient,
             onWrite: (write) => write$.next(write),
