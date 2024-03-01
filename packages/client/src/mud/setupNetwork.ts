@@ -77,7 +77,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
        * pass into MUD dev tools for transaction observability.
        */
       const write$ = new Subject<ContractWrite>();
-
+console.log(networkConfig,'-------------------')
       /*
        * Create an object for communicating with the deployed World.
        */
@@ -85,6 +85,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       fetch(worldAbiUrl)
         .then(response => response.json())
         .then(abi => {
+
           // 将获取到的ABI作为contract参数传递
           const worldContract = getContract({
             address: networkConfig.worldAddress as Hex,
