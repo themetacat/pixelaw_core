@@ -8,9 +8,9 @@ import style from './app.module.css'
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import {Hex} from "viem";
 import { ethers } from "ethers";
-import { ComponentValue, Entity, Has, HasValue, getComponentValueStrict, removeComponent } from "@latticexyz/recs"
+import { ComponentValue, Entity, Has, HasValue, getComponentValueStrict, removeComponent, getComponentValue } from "@latticexyz/recs"
 import { encodeEntity, syncToRecs, decodeEntity, hexKeyTupleToEntity } from "@latticexyz/store-sync/recs";
-
+import { addToQueue, getQueue } from "./bot/queue";
 import { error } from "@latticexyz/common/src/debug";
 const stringToBytes32 = (inputString: string) => {
 
@@ -22,7 +22,7 @@ const stringToBytes32 = (inputString: string) => {
 
 export const App = () => {
   const {
-    components: {  App,Pixel,AppName, SyncProgress, QueueScheduled},
+    components: {  App,Pixel,AppName, SyncProgress, QueueScheduled, QueueProcessed },
     network: { playerEntity, publicClient },
     systemCalls: { increment,execute_queue },
   } = useMUD();
@@ -51,14 +51,43 @@ export const App = () => {
     hexString.substring(hexString.length - 4).toUpperCase();
 
   
-    // get queue
+  
+  // get queue!!!!!!!!!!!!!!!!!!!!!!!
+  // entry
+  // 获取QueueScheduled和QueueProcessed，在QueueScheduled中筛选出QueueProcessed没有的，然后添加到queue中，./bot/queue.ts addToQueue
+  //  处理完成之后 监听QueueScheduled中新增的数据放到queue中（继续调用addToQueue）
+
+  // 这里匹配符合条件的event
   const entities_queue_scheduled = useEntityQuery([Has(QueueScheduled)])
-  console.log(entities_queue_scheduled, '=======');
+  // console.log(entities_queue_scheduled, '=======');
   entities_queue_scheduled.map((entity) =>{
       // value
-      console.log(getComponentValueStrict(QueueScheduled, entity));
-      // removeComponent(QueueScheduled, entity)
+      const res = getComponentValueStrict(QueueScheduled, entity);
+      const res_processed = getComponentValue(QueueProcessed, entity);
+      console.log(res_processed);
+      if(!res_processed){
+        // console.log(res);
+        console.log(111);
+        
+        addToQueue([entity, res.timestamp, res.name_space, res.name, res.call_data])
+        // execute_queue({id: entity, timestamp: res.timestamp, namespace: res.name_space, name: res.name, call_data: res.call_data})
+        // removeComponent(QueueScheduled, entity)
+        return; 
+      }
   })
+
+  getQueue();
+  // 定时执行queue中的方法
+  // async function loop() {
+  //   try {
+  //     await addToQueue()
+  //   } catch (e) {
+  //     console.error('QueueBot failed to process unlockables due to: ', e)
+  //   }
+    // setTimeout(loop, config.refreshRate);
+  // }
+  // get queue!!!!!!!!!!!!!!!!!!!!!!!
+
 
   // const entities_app = useEntityQuery([Has(App)])
   // // console.log(entities_app,'-------------------')

@@ -454,7 +454,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         </div>
      
       </div> */}
-{/* <div style={{display:'flex'}}>
+<div style={{display:'flex'}}>
       <div
         style={{
           width: `calc(100vw)`,
@@ -533,7 +533,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       <div className={style.rightPart}>
         <RightPart coordinates={coordinates} entityData={entityData}/>
       </div>
-      </div> */}
+      </div>
     </>
   );
 }

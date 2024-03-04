@@ -104,9 +104,18 @@ export default mudConfig({
       },
       valueSchema:{
         timestamp: "uint256",
-        called_system: "address",
-        selector: "bytes4",
-        call_data: "string"
+        name_space: "string",
+        name: "string",
+        call_data: "bytes"
+      },
+      offchainOnly: true
+    },
+    QueueProcessed: {
+      keySchema: {
+        id: "bytes32"
+      },
+      valueSchema: {
+        caller: "address"
       },
       offchainOnly: true
     }

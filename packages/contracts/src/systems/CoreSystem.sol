@@ -2,33 +2,21 @@
 pragma solidity >=0.8.19;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData, Instruction, InstructionTableId, QueueScheduledData, QueueScheduled} from "../codegen/index.sol";
+import { IWorld } from "../codegen/world/IWorld.sol";
+import {Permissions, PermissionsData, Pixel, 
+PixelData, App, AppData, AppUser, 
+AppName, CoreActionAddress, PixelUpdate, 
+PixelUpdateData, Instruction, InstructionTableId, 
+QueueScheduledData, QueueScheduled, QueueProcessed
+} from "../codegen/index.sol";
+import { ResourceId, WorldResourceIdLib, WorldResourceIdInstance } from "@latticexyz/world/src/WorldResourceId.sol";
+import { RESOURCE_SYSTEM } from "@latticexyz/world/src/worldResourceTypes.sol";
 import {Position} from "../index.sol";
-
+import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
 contract CoreSystem is System {
   
-  // event AppNameUpdated(address indexed callre, AppData  app);
   // event EventQueueScheduled(QueueScheduled queueScheduled);
-  event EventQueueProcessed(QueueProcessed queueProcessed);
-  event EventAppNameUpdated(AppNameUpdated appNameUpdated);
   event EventAlert(Alert alert);
-
-  // struct QueueScheduled{
-  //   bytes32 id;
-  //   uint256 timestamp;
-  //   address called_system;
-  //   bytes4 selector;
-  //   string call_data;
-  // }
-
-  struct QueueProcessed{
-    bytes32 id;
-  }
-  
-  struct AppNameUpdated{
-    AppData app;
-    string caller;
-  }
 
   // struct Position{
   //   uint32 x;
@@ -98,15 +86,23 @@ contract CoreSystem is System {
       return false;
     }
     
-    if(bytes(pixel_update.color).length != 0 && !permissions.color){
-      return false;
-    }
-
     if(pixel_update.owner != address(0) && !permissions.owner){
       return false;
     }
 
-    if(bytes(pixel_update.text).length != 0 && !permissions.text){
+    // if(bytes(pixel_update.color).length != 0 && !permissions.color){
+    //   return false;
+    // }
+
+    // if(bytes(pixel_update.text).length != 0 && !permissions.text){
+    //   return false;
+    // }
+
+    if(!permissions.color){
+      return false;
+    }
+
+    if(!permissions.text){
       return false;
     }
 
@@ -138,18 +134,18 @@ contract CoreSystem is System {
       pixel.app = pixel_update.app;
     }
 
-    if(bytes(pixel_update.color).length != 0){
+    // if(bytes(pixel_update.color).length != 0){
       pixel.color = pixel_update.color;
-    }
+    // }
 
     // not allowed transfer to 0x00...? is that True?
     if(pixel_update.owner != address(0)){
       pixel.owner = pixel_update.owner;
     }
 
-    if(bytes(pixel_update.text).length != 0){
+    // if(bytes(pixel_update.text).length != 0){
       pixel.text = pixel_update.text;
-    }
+    // }
 
     if(pixel_update.timestamp != 0){
       pixel.timestamp = pixel_update.timestamp;
@@ -170,21 +166,34 @@ contract CoreSystem is System {
     Instruction.set(system, selector, instruction);
   }
 
-  function schedule_queue(uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
-    bytes32 id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
-    QueueScheduledData memory qs = QueueScheduledData(timestamp, called_system, selector, call_data);
+  function schedule_queue(uint256 timestamp, string memory name_space, string memory name, bytes calldata call_data) public {
+    bytes32 id = keccak256(abi.encodePacked(timestamp, name_space, name, call_data));
+    QueueScheduledData memory qs = QueueScheduledData(timestamp, name_space, name, call_data);
     QueueScheduled.set(id, qs);
-    // emit EventQueueScheduled(qs);
   }
 
-  function process_quene(bytes32 id, uint256 timestamp, address called_system, bytes4 selector, string calldata call_data) public {
+  function process_queue(bytes32 id) public {
     
-    require(timestamp <= block.timestamp, 'timestamp still in the future');
+    // require(timestamp <= block.timestamp, 'timestamp still in the future');
 
-    bytes32 calculated_id = keccak256(abi.encodePacked(timestamp, called_system, selector, call_data));
-    require(calculated_id == id, 'Invalid Id');
-    QueueProcessed memory qp = QueueProcessed(id);
-    emit EventQueueProcessed(qp);
+    // bytes32 calculated_id = keccak256(abi.encodePacked(timestamp, name_space, name, call_data));
+    // require(calculated_id == id, 'Invalid Id');
+
+    // bytes14 namespace_bytes = bytes14(bytes(name_space));
+    // bytes16 name_bytes = bytes16(bytes(name));
+    // ResourceId systemId = WorldResourceIdLib.encode(RESOURCE_SYSTEM, namespace_bytes, name_bytes);
+    // // ResourceId systemId = WorldResourceIdLib.encode(RESOURCE_SYSTEM, 'snake', 'SnakeSystem');
+    // // IWorld(address(0x2b6AC77F6e08395D0988E7e883b8335800CB58c4)).call(
+    // //   systemId,
+    // //   call_data
+    // // );
+
+    // SystemSwitch.call(
+    //   systemId, 
+    //   call_data
+    // );
+    QueueProcessed.set(id, address(_msgSender()));
+ 
   }
 
   function alert_player(Position memory position, address player, string memory message) public {

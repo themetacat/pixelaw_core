@@ -10,7 +10,7 @@ import { singletonEntity } from "@latticexyz/store-sync/recs";
 import { ManifestContext ,} from '../components/rightPart';
 import { encodeSystemCall, encodeSystemCalls } from '@latticexyz/world';
 import { resourceToHex } from "@latticexyz/common";
-
+import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 
 export function createSystemCalls(
   
@@ -33,7 +33,7 @@ export function createSystemCalls(
    *   syncToRecs
    *   (https://github.com/latticexyz/mud/blob/main/templates/react/packages/client/src/mud/setupNetwork.ts#L77-L83).
    */
-  { worldContract, waitForTransaction,publicClient ,playerEntity}: SetupNetworkResult,
+  { worldContract, systemContract, waitForTransaction,publicClient ,playerEntity}: SetupNetworkResult,
   { Counter }: ClientComponents,
 ) {
 
@@ -68,40 +68,55 @@ if(entityVal===null){
      */
     // const txData = await worldContract.write.paint_PaintSystem_init()
     // const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
-    const txData = await worldContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
+    const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
     await waitForTransaction(txData);
 
   };
-  // increment()
 
-  // new
+
+  // const execute_instruction = async () => {
+  //     // SnakeSystemAbi 使用 setupNetwork中worldAbiUrl中的abi
+
+  //     const txData = await worldContract.write.call(encodeSystemCall({
+  //     abi: SnakeSystemAbi,
+  //     systemId: resourceToHex({"type": "system", "namespace": queue_data.namespace, "name": queue_data.name}),
+  //     functionName: queue_data.functionName,
+  //     args: ['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc']
+  //     })
+  //   )
+  //   await waitForTransaction(txData);
+
+  // };
+
   interface QueueData {
-    name: string;
-    namespace: string;
-    functionName: string;
-    args: any
+    id: any,
+    name: any;
+    namespace: any;
+    timestamp: any;
+    call_data: any
   }
-  const execute_queue = async (queue_data: QueueData) => {
 
-    const txData = await worldContract.write.call(encodeSystemCall({
-      abi: worldContract.abi,
-      systemId: resourceToHex({"type": "system", "namespace": queue_data.namespace, "name": queue_data.name}),
-      functionName: queue_data.functionName,
-      args: ['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc']
-      })
-    )
+  const execute_queue = async(queue_data: QueueData) => {
+
+    // const txData = await worldContract.write.call(encodeSystemCall({
+    //   abi: SnakeSystemAbi,
+    //   systemId: resourceToHex({"type": "system", "namespace": queue_data.namespace, "name": queue_data.name}),
+    //   functionName: queue_data.functionName,
+    //   args: ['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc']
+    //   })
+    // )
+    // await waitForTransaction(txData);
+    console.log(queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data);
+    
+    const txData = await worldContract.write.call_CallOtherSystem_call_world_process_queue([queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data])
+    // const txData = await worldContract.write.process_queue([queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data])
+
     await waitForTransaction(txData);
-    setTimeout(() => execute_queue(queue_data), 1000);
-
-  };
-  const queue_data: QueueData = {
-    name: "SnakeSystem",
-    namespace: "snake",
-    functionName: "move",
-    args: ['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc']
+    // setTimeout(() => execute_queue(queue_data), 1000);
   };
 
-  execute_queue(queue_data)
+
+  // execute_queue(queue_data)
   return {
     increment,
     execute_queue

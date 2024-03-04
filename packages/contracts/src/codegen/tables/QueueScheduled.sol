@@ -26,14 +26,14 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant QueueScheduledTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0038030120140400000000000000000000000000000000000000000000000000
+  0x0020010320000000000000000000000000000000000000000000000000000000
 );
 
 struct QueueScheduledData {
   uint256 timestamp;
-  address called_system;
-  bytes4 selector;
-  string call_data;
+  string name_space;
+  string name;
+  bytes call_data;
 }
 
 library QueueScheduled {
@@ -63,9 +63,9 @@ library QueueScheduled {
   function getValueSchema() internal pure returns (Schema) {
     SchemaType[] memory _valueSchema = new SchemaType[](4);
     _valueSchema[0] = SchemaType.UINT256;
-    _valueSchema[1] = SchemaType.ADDRESS;
-    _valueSchema[2] = SchemaType.BYTES4;
-    _valueSchema[3] = SchemaType.STRING;
+    _valueSchema[1] = SchemaType.STRING;
+    _valueSchema[2] = SchemaType.STRING;
+    _valueSchema[3] = SchemaType.BYTES;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -86,8 +86,8 @@ library QueueScheduled {
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](4);
     fieldNames[0] = "timestamp";
-    fieldNames[1] = "called_system";
-    fieldNames[2] = "selector";
+    fieldNames[1] = "name_space";
+    fieldNames[2] = "name";
     fieldNames[3] = "call_data";
   }
 
@@ -126,59 +126,19 @@ library QueueScheduled {
   }
 
   /**
-   * @notice Set called_system.
-   */
-  function setCalled_system(bytes32 id, address called_system) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = id;
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((called_system)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set called_system.
-   */
-  function _setCalled_system(bytes32 id, address called_system) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = id;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((called_system)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set selector.
-   */
-  function setSelector(bytes32 id, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = id;
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((selector)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set selector.
-   */
-  function _setSelector(bytes32 id, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = id;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((selector)), _fieldLayout);
-  }
-
-  /**
    * @notice Set the full data using individual values.
    */
   function set(
     bytes32 id,
     uint256 timestamp,
-    address called_system,
-    bytes4 selector,
-    string memory call_data
+    string memory name_space,
+    string memory name,
+    bytes memory call_data
   ) internal {
-    bytes memory _staticData = encodeStatic(timestamp, called_system, selector);
+    bytes memory _staticData = encodeStatic(timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(call_data);
-    bytes memory _dynamicData = encodeDynamic(call_data);
+    PackedCounter _encodedLengths = encodeLengths(name_space, name, call_data);
+    bytes memory _dynamicData = encodeDynamic(name_space, name, call_data);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = id;
@@ -192,14 +152,14 @@ library QueueScheduled {
   function _set(
     bytes32 id,
     uint256 timestamp,
-    address called_system,
-    bytes4 selector,
-    string memory call_data
+    string memory name_space,
+    string memory name,
+    bytes memory call_data
   ) internal {
-    bytes memory _staticData = encodeStatic(timestamp, called_system, selector);
+    bytes memory _staticData = encodeStatic(timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(call_data);
-    bytes memory _dynamicData = encodeDynamic(call_data);
+    PackedCounter _encodedLengths = encodeLengths(name_space, name, call_data);
+    bytes memory _dynamicData = encodeDynamic(name_space, name, call_data);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = id;
@@ -211,10 +171,10 @@ library QueueScheduled {
    * @notice Set the full data using the data struct.
    */
   function set(bytes32 id, QueueScheduledData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.timestamp, _table.called_system, _table.selector);
+    bytes memory _staticData = encodeStatic(_table.timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(_table.call_data);
-    bytes memory _dynamicData = encodeDynamic(_table.call_data);
+    PackedCounter _encodedLengths = encodeLengths(_table.name_space, _table.name, _table.call_data);
+    bytes memory _dynamicData = encodeDynamic(_table.name_space, _table.name, _table.call_data);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = id;
@@ -226,10 +186,10 @@ library QueueScheduled {
    * @notice Set the full data using the data struct.
    */
   function _set(bytes32 id, QueueScheduledData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.timestamp, _table.called_system, _table.selector);
+    bytes memory _staticData = encodeStatic(_table.timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(_table.call_data);
-    bytes memory _dynamicData = encodeDynamic(_table.call_data);
+    PackedCounter _encodedLengths = encodeLengths(_table.name_space, _table.name, _table.call_data);
+    bytes memory _dynamicData = encodeDynamic(_table.name_space, _table.name, _table.call_data);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = id;
@@ -240,14 +200,8 @@ library QueueScheduled {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(
-    bytes memory _blob
-  ) internal pure returns (uint256 timestamp, address called_system, bytes4 selector) {
+  function decodeStatic(bytes memory _blob) internal pure returns (uint256 timestamp) {
     timestamp = (uint256(Bytes.slice32(_blob, 0)));
-
-    called_system = (address(Bytes.slice20(_blob, 32)));
-
-    selector = (Bytes.slice4(_blob, 52));
   }
 
   /**
@@ -256,13 +210,25 @@ library QueueScheduled {
   function decodeDynamic(
     PackedCounter _encodedLengths,
     bytes memory _blob
-  ) internal pure returns (string memory call_data) {
+  ) internal pure returns (string memory name_space, string memory name, bytes memory call_data) {
     uint256 _start;
     uint256 _end;
     unchecked {
       _end = _encodedLengths.atIndex(0);
     }
-    call_data = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+    name_space = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+
+    _start = _end;
+    unchecked {
+      _end += _encodedLengths.atIndex(1);
+    }
+    name = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+
+    _start = _end;
+    unchecked {
+      _end += _encodedLengths.atIndex(2);
+    }
+    call_data = (bytes(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
 
   /**
@@ -276,9 +242,9 @@ library QueueScheduled {
     PackedCounter _encodedLengths,
     bytes memory _dynamicData
   ) internal pure returns (QueueScheduledData memory _table) {
-    (_table.timestamp, _table.called_system, _table.selector) = decodeStatic(_staticData);
+    (_table.timestamp) = decodeStatic(_staticData);
 
-    (_table.call_data) = decodeDynamic(_encodedLengths, _dynamicData);
+    (_table.name_space, _table.name, _table.call_data) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
@@ -305,22 +271,22 @@ library QueueScheduled {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(
-    uint256 timestamp,
-    address called_system,
-    bytes4 selector
-  ) internal pure returns (bytes memory) {
-    return abi.encodePacked(timestamp, called_system, selector);
+  function encodeStatic(uint256 timestamp) internal pure returns (bytes memory) {
+    return abi.encodePacked(timestamp);
   }
 
   /**
    * @notice Tightly pack dynamic data lengths using this table's schema.
    * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
-  function encodeLengths(string memory call_data) internal pure returns (PackedCounter _encodedLengths) {
+  function encodeLengths(
+    string memory name_space,
+    string memory name,
+    bytes memory call_data
+  ) internal pure returns (PackedCounter _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
-      _encodedLengths = PackedCounterLib.pack(bytes(call_data).length);
+      _encodedLengths = PackedCounterLib.pack(bytes(name_space).length, bytes(name).length, bytes(call_data).length);
     }
   }
 
@@ -328,8 +294,12 @@ library QueueScheduled {
    * @notice Tightly pack dynamic (variable length) data using this table's schema.
    * @return The dynamic data, encoded into a sequence of bytes.
    */
-  function encodeDynamic(string memory call_data) internal pure returns (bytes memory) {
-    return abi.encodePacked(bytes((call_data)));
+  function encodeDynamic(
+    string memory name_space,
+    string memory name,
+    bytes memory call_data
+  ) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((name_space)), bytes((name)), bytes((call_data)));
   }
 
   /**
@@ -340,14 +310,14 @@ library QueueScheduled {
    */
   function encode(
     uint256 timestamp,
-    address called_system,
-    bytes4 selector,
-    string memory call_data
+    string memory name_space,
+    string memory name,
+    bytes memory call_data
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(timestamp, called_system, selector);
+    bytes memory _staticData = encodeStatic(timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(call_data);
-    bytes memory _dynamicData = encodeDynamic(call_data);
+    PackedCounter _encodedLengths = encodeLengths(name_space, name, call_data);
+    bytes memory _dynamicData = encodeDynamic(name_space, name, call_data);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }
