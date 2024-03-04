@@ -85,16 +85,14 @@ export const App = () => {
   // },[hoveredData])
   const handleMouseDown = (event:any) => {
     // ...其他逻辑
-    console.log(event)
+    // console.log(event)
     setHoveredData(event)
     // setHoveredData(hoveredData);
     
   };
   return (
-    <>
-    <div className={style.page}>
-
    
+    <div className={style.page}>
     {syncProgress ? (
         syncProgress.step !== SyncStep.LIVE ? (
           <div style={{ color: "#fff" }}  className={style.GameBoard}>
@@ -131,6 +129,6 @@ export const App = () => {
         Increment
       </button> */}
        </div>
-    </>
+  
   );
 };

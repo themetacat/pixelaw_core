@@ -51,7 +51,14 @@ export default function RightPart({ coordinates, entityData }: Props) {
 
   // console.log(app_info,66666)
   return (
-    <div className={panning === false ? style.container : style.container1}>
+   
+    //  <div style={{width:"220px",position:"relative"}}>
+    <div className={panning === false ? style.container : style.container1}
+    onClick={() => {
+      setPanning(!panning);
+    }}
+    >
+      {/* <div  className={style.pointerBox} > */}
       <img
         onClick={() => {
           setPanning(!panning);
@@ -60,6 +67,8 @@ export default function RightPart({ coordinates, entityData }: Props) {
         alt=""
         className={panning === false ? style.pointer : style.pointer1}
       />
+
+      {/* </div> */}
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
         return (
@@ -80,21 +89,21 @@ export default function RightPart({ coordinates, entityData }: Props) {
         );
       })}
       {panning === false ? (
-        <div style={{ position: "fixed", bottom: "20px" }}>
+        <div style={{ position: "fixed", bottom: "12.4px" }}>
           <span className={style.coordinates} style={{ color: "#fff" }}>
             <span className={style.a}>X:</span>
-            {coordinates.x}
+            <span className={style.fontCon}>{coordinates.x}</span>
           </span>
           <span className={style.coordinates} style={{ color: "#fff" }}>
             <span className={style.a}>Y:</span>
-            {coordinates.y}
+            <span className={style.fontCon}>{coordinates.y}</span>
           </span>
         </div>
       ) : (
         <div className={style.bottomCon}>
           <p>
             <span className={style.a}>Coordinates: </span>
-            {coordinates.x},{coordinates.y}
+            <span className={style.fontCon}>{coordinates.x},{coordinates.y}</span>
           </p>
           {entityData.map((item: any) => {
             if (
@@ -112,11 +121,12 @@ export default function RightPart({ coordinates, entityData }: Props) {
                 <>
                   <p key={item.coordinates.x&&item.coordinates.y}>
                     <span className={style.a}>Type: </span>
-                    {type}
+                    <span  className={style.fontCon}>{type}</span>
                   </p>
                   <p key={item.coordinates.x&&item.coordinates.y}>
                     <span className={style.a}>Owner: </span>
-                    {truncatedOwner}
+                    <span  className={style.fontCon}>        {truncatedOwner}</span>
+            
                   </p>
                 </>
               );
@@ -132,15 +142,16 @@ export default function RightPart({ coordinates, entityData }: Props) {
           ) ? null : (
             <>
               <p>
-                <span className={style.a}>Type:null </span>
+                <span className={style.a}>Type :</span> <span  className={style.fontCon}>null</span>
               </p>
               <p>
-                <span className={style.a}>Owner: null</span>
+                <span className={style.a}>Owner :</span><span  className={style.fontCon}>null</span>
               </p>
             </>
           )}
         </div>
       )}
     </div>
+    // </div>
   );
 }

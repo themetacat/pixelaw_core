@@ -1,14 +1,19 @@
 .container{
-    width: 80px;
-    padding-top: 70px;
+    width: 44px;
+    margin-top: 60px;
     background-color: #2a0d39;
-    height: 100vh;
+    height: calc(100vh - 60px);
+    z-index: 999999999;
+    /* position: relative; */
 }
 .container1{
-    width: 180px;
-    padding-top: 70px;
+    width: 213px;
+    padding-left: 20px;
+    margin-top: 60px;
     background-color: #2a0d39;
-    height: 100vh;
+    height: calc(100vh - 60px);
+    z-index: 99999999;
+    /* position: relative; */
 }
 .container button {
     margin-left: 10px;
@@ -32,39 +37,62 @@
     display: inline-block;
     width: 50px;
     text-align: center;
-    height: 40px;
+    /* height: 40px; */
     width: 100%;
     z-index: 99999999;
+    margin-bottom: 15px;
 }
 .a{
-    color:#b261ed
+    color:#b261ed;
+    /* display: inline-block; */
+  
+}
+p{
+    margin-bottom: 20px;
+}
+.fontCon{
+    font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-600) var(--unnamed-font-size-14)/var(--unnamed-line-spacing-19) var(--unnamed-font-family-segoe-ui);
+letter-spacing: var(--unnamed-character-spacing-0);
+color: var(--white);
+text-align: left;
+font: normal normal 600 14px/19px Segoe UI;
+letter-spacing: 0px;
+color: #FFFFFF;
+opacity: 1;
 }
 .pointer{
     background-color: #130e0e;
     position: absolute;
-    right: 75px;
-    z-index: 9999999999999999;
+    right: 44px;
+    z-index: 999999999999999;
     top: 60px;
-    width: 20px;
-    height: 20px;
+    width:  6.29px;
+    height: 10.48px;
+    padding: 9.77px 3.86px 9.77px 5.86px;
     color: #000;
   }
 .pointer1{
     background-color: #130e0e;
     position: absolute;
-    right: 160px;
-    z-index: 9999999999999999;
+    right: 210px;
+    z-index: 999999999999999;
     top: 60px;
-    width: 20px;
-    height: 20px;
+    width:  6.29px;
+    height: 10.48px;
+    padding: 9.77px 3.86px 9.77px 5.86px;
     color: #000;
   }
+  /* .pointerBox{
+    width: 16px;
+    padding: 9.77px 3.86px 9.77px 5.86px;
+    height: 30px;
+  } */
 .bottomCon{
     width: 100vw;
     /* height:120px; */
     /* background-color: aqua; */
     position: fixed;
     bottom: 12px;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
     color: #fff;
 }

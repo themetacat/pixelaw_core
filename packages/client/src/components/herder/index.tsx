@@ -94,6 +94,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     hexString.substring(hexString.length - 4).toUpperCase();
     //获取网络名称
   const chainName = publicClient.chain.name;
+  const capitalizedString = chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
     //获取余额
     const balanceFN = publicClient.getBalance({ address: hexString });
     balanceFN.then((a: any) => {
@@ -176,15 +177,15 @@ export default function Header({ hoveredData, handleData }: Props) {
     ) => {
       // 清除之前绘制的格子
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "#000000"; // 将网格线颜色设置为黑色
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = "#2e1140"; 
       for (let x = 0.5; x < 12000; x += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, 12000);
         ctx.stroke();
       }
-
+ 
       for (let y = 0.5; y < 12000; y += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -415,20 +416,20 @@ export default function Header({ hoveredData, handleData }: Props) {
           alt=""
         />
         <div className={style.content}>
-          <button  className={style.btn1}
+          <button  className={style.btnBox}
             disabled={numberData === 25}
             onClick={btnLower}
           >
-           <img  className={style.btn1} src={powerIcon} alt="" /> 
-           {/* - */}
+           <img  className={numberData === 25?style.gray:style.btn1} src={powerIcon} alt="" /> 
+           {/* <span className={style.btn1}>-</span> */}
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
-            className={style.btn1}
+            className={style.btnBox}
             disabled={numberData === 100}
             onClick={btnAdd}
           >
-            <img  className={style.btn1} src={AddIcon} alt="" />
+            <img  className={numberData === 100?style.gray:style.btn1} src={AddIcon} alt="" />
           </button>
         </div>
         <div
@@ -437,12 +438,12 @@ export default function Header({ hoveredData, handleData }: Props) {
             cursor: "pointer",
             marginLeft: "32px",
           }}
-          onClick={() => {
-            addressDataCopy(hexString);
-          }}
+       
         >
-          <span>{chainName}</span>
-          <span className={style.balanceNum}>{addressData}</span>
+          <span>{capitalizedString}</span>
+          <span    onClick={() => {
+            addressDataCopy(hexString);
+          }} className={style.balanceNum}>{addressData}</span>
           <span className={style.balanceNum}> {publicClient && balance != null ? (
                   <>
                     {formatUnits(balance, natIve).replace(
@@ -495,9 +496,14 @@ export default function Header({ hoveredData, handleData }: Props) {
         style={{
           position: "absolute",
           left: "5%",
-          bottom: "15px",
+          bottom: "0px",
           cursor: "pointer",
-          // zIndex: "9999999999",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+          backgroundColor:"#230732",
+          padding:"6px 6px 6px 6px"
         }}
       >
         {Array.from(colorOptionsData).map((option, index) => (
@@ -531,7 +537,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         ))}
       </div>
 
-      <div className={style.rightPart}>
+      {/* <div className={style.rightPart}> */}
         {/* <img onMouseEnter={()=>{
           setPanning(true)
         }} 
@@ -541,7 +547,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         
         src={panning === false?leftIcon:rightIcon} alt=""   className={style.pointer}/> */}
         <RightPart coordinates={coordinates} entityData={entityData}/>
-      </div>
+      {/* </div> */}
       </div>
     </>
   );
