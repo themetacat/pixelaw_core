@@ -20,7 +20,8 @@ contract CallOtherSystem is System {
     bytes16 name_bytes = bytes16(bytes(name));
     ResourceId systemId = WorldResourceIdLib.encode(RESOURCE_SYSTEM, namespace_bytes, name_bytes);
     // ResourceId systemId = WorldResourceIdLib.encode(RESOURCE_SYSTEM, 'snake', 'SnakeSystem');
-    IWorld(_world()).call(
+    IWorld(_world()).callFrom(
+      address(_msgSender()),
       systemId,
       call_data
     );

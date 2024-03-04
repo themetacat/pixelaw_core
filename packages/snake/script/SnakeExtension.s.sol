@@ -20,7 +20,7 @@ import { DefaultParameters } from "../src/index.sol";
  
 // For deploying MessageSystem
 import { SnakeSystem } from "../src/systems/SnakeSystem.sol";
- 
+
 contract PaintExtension is Script {
   function run() external {
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -34,7 +34,7 @@ contract PaintExtension is Script {
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
  
     vm.startBroadcast(deployerPrivateKey);
-    // world.registerNamespace(namespaceResource);
+    world.registerNamespace(namespaceResource);
 
     // forge script script/SnakeExtension.s.sol --rpc-url http://localhost:8545 --broadcast
     StoreSwitch.setStoreAddress(worldAddress);
@@ -46,10 +46,8 @@ contract PaintExtension is Script {
  
     world.registerSystem(systemResource, snakeSystem, true);
     world.registerFunctionSelector(systemResource, "init()");
-    // world.registerFunctionSelector(systemResource, "interact(DefaultParameters)");
     world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string),uint8)");
     world.registerFunctionSelector(systemResource, "move(address)");
-    // world.registerFunctionSelector(systemResource, "put_color(DefaultParameters)");
  
     vm.stopBroadcast();
   }

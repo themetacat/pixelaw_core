@@ -29,6 +29,8 @@ contract SnakeSystem is System {
   }
 
   uint256 SNAKE_MAX_LENGTH = 255;
+  string constant NAME_SPACE = 'snake';
+  string constant SYSTEM_NAME = 'SnakeSystem';
 
   function init() public {
     
@@ -71,6 +73,7 @@ contract SnakeSystem is System {
       is_dying: false
     });
 
+
     SnakeSegmentData memory segment = SnakeSegmentData({
       previous_id: id,
       next_id: id,
@@ -96,10 +99,8 @@ contract SnakeSystem is System {
     uint256 MOVE_SECOND = 0;
     uint256 queue_timestamp = block.timestamp + MOVE_SECOND;
 
-    bytes4 MOVE_SELECTOR =  bytes4(keccak256("move(address)"));
-    
-    string memory call_data = string(abi.encodePacked(player));
-    ICoreSystem(_world()).schedule_queue(queue_timestamp, address(this), MOVE_SELECTOR, call_data);
+    bytes memory call_data = abi.encodeWithSignature("move(address)", player);
+    ICoreSystem(_world()).schedule_queue(queue_timestamp, NAME_SPACE, SYSTEM_NAME, call_data);
     return id;
   }
 
@@ -163,10 +164,11 @@ contract SnakeSystem is System {
       snake.is_dying = true;
     }
     Snake.set(owner, snake);
-    uint256 quene_timestamp = block.timestamp;
-    bytes4 MOVE_SELECTOR =  bytes4(keccak256("move(address)"));
-    string memory call_data = string(abi.encodePacked(owner));
-    ICoreSystem(_world()).schedule_queue(quene_timestamp, address(this), MOVE_SELECTOR, call_data);
+    uint256 queue_timestamp = block.timestamp;
+    // bytes4 MOVE_SELECTOR =  bytes4(keccak256("move(address)"));
+    // string memory call_data = string(abi.encodePacked(owner));
+    bytes memory call_data = abi.encodeWithSignature("move(address)", owner);
+    ICoreSystem(_world()).schedule_queue(queue_timestamp, NAME_SPACE, SYSTEM_NAME, call_data);
   }
 
   function next_position(uint32 x, uint32 y, Direction direction) public pure returns(uint32, uint32){
@@ -197,13 +199,14 @@ contract SnakeSystem is System {
     uint256 id = generateUUID();
     existing_segment.previous_id = id;
     SnakeSegment.set(snake.first_segment_id, existing_segment);
+
     SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel.color, pixel_original_text: pixel.text}));
     
     ICoreSystem(_world()).update_pixel(PixelUpdateData({
       x: x,
       y: y,
       color: snake.color,
-      timestamp: 0,
+      timestamp: 12,
       text: snake.text,
       app: address(0),
       owner: address(0),
@@ -219,7 +222,7 @@ contract SnakeSystem is System {
     ICoreSystem(_world()).update_pixel(PixelUpdateData({
       x: last_segment.x,
       y: last_segment.y,
-      color: last_segment.pixel_original_color,
+      color: last_segment.pixel_original_text,
       timestamp: 0,
       text: last_segment.pixel_original_text,
       app: address(0),
@@ -228,7 +231,7 @@ contract SnakeSystem is System {
     }));
     uint256 result = last_segment.previous_id;
 
-    //delete last_segment?
+    //delete last_segment
     SnakeSegment.deleteRecord(snake.last_segment_id);
     return result;
   }

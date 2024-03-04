@@ -25,17 +25,17 @@ interface ICoreSystem {
 
   function schedule_queue(
     uint256 timestamp,
-    address called_system,
-    bytes4 selector,
-    string calldata call_data
+    string memory name_space,
+    string memory name,
+    bytes calldata call_data
   ) external;
 
-  function process_quene(
+  function process_queue(
     bytes32 id,
     uint256 timestamp,
-    address called_system,
-    bytes4 selector,
-    string calldata call_data
+    string memory name_space,
+    string memory name,
+    bytes calldata call_data
   ) external;
 
   function alert_player(Position memory position, address player, string memory message) external;

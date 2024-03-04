@@ -28,10 +28,10 @@ contract CallSystemExtension is Script {
  
     WorldRegistrationSystem world = WorldRegistrationSystem(worldAddress);
     ResourceId namespaceResource = WorldResourceIdLib.encodeNamespace(bytes14("call"));
-    ResourceId systemResource = WorldResourceIdLib.encode(RESOURCE_SYSTEM, "call", "CallSystem");
+    ResourceId systemResource = WorldResourceIdLib.encode(RESOURCE_SYSTEM, "call", "CallOtherSystem");
     console.log("Namespace ID: %x", uint256(ResourceId.unwrap(namespaceResource)));
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
- 
+
     vm.startBroadcast(deployerPrivateKey);
     world.registerNamespace(namespaceResource);
 
