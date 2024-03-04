@@ -24,7 +24,7 @@
   },
   "engines": {
     "node": "18.x",
-    "pnpm": "8.8.0"
+    "pnpm": "6.35.0"
   },
   "dependencies": {
     "ethers": "^5.0.19"
