@@ -14,7 +14,7 @@ export default mudConfig({
         text: "bool",
         timestamp: "bool",
         action: "bool",
-      }
+      },
     },
     Pixel: {
       keySchema:{
@@ -98,10 +98,26 @@ export default mudConfig({
         instruction: "string"
       }
     },
-    Text:{
+    QueueScheduled:{
+      keySchema: {
+        id: "bytes32"
+      },
       valueSchema:{
-        value:'string'
-      }
+        timestamp: "uint256",
+        name_space: "string",
+        name: "string",
+        call_data: "bytes"
+      },
+      offchainOnly: true
+    },
+    QueueProcessed: {
+      keySchema: {
+        id: "bytes32"
+      },
+      valueSchema: {
+        caller: "address"
+      },
+      offchainOnly: true
     }
   },
 });

@@ -12,5 +12,4 @@ import { AppUser, AppUserTableId } from "./tables/AppUser.sol";
 import { AppName, AppNameTableId } from "./tables/AppName.sol";
 import { CoreActionAddress, CoreActionAddressTableId } from "./tables/CoreActionAddress.sol";
 import { Instruction, InstructionTableId } from "./tables/Instruction.sol";
-import { QueueScheduled, QueueScheduledData, QueueScheduledTableId } from "./tables/QueueScheduled.sol";
 import { QueueProcessed, QueueProcessedTableId } from "./tables/QueueProcessed.sol";

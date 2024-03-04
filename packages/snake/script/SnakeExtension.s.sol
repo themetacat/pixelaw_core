@@ -13,13 +13,13 @@ import { WorldResourceIdLib } from "@latticexyz/world/src/WorldResourceId.sol";
 import { RESOURCE_SYSTEM } from "@latticexyz/world/src/worldResourceTypes.sol";
  
 // For registering the table
-// import { Messages, MessagesTableId } from "../src/codegen/index.sol";
+import { Snake, SnakeTableId, SnakeSegment, SnakeSegmentTableId } from "../src/codegen/index.sol";
 import { IStore } from "@latticexyz/store/src/IStore.sol";
 import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 import { DefaultParameters } from "../src/index.sol";
  
 // For deploying MessageSystem
-import { PaintSystem } from "../src/systems/PaintSystem.sol";
+import { SnakeSystem } from "../src/systems/SnakeSystem.sol";
  
 contract PaintExtension is Script {
   function run() external {
@@ -34,19 +34,21 @@ contract PaintExtension is Script {
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
  
     vm.startBroadcast(deployerPrivateKey);
-    world.registerNamespace(namespaceResource);
+    // world.registerNamespace(namespaceResource);
 
-    // forge script script/PaintExtension.s.sol --rpc-url http://localhost:8545 --broadcast
-    // StoreSwitch.setStoreAddress(worldAddress);
-    // Messages.register();
+    // forge script script/SnakeExtension.s.sol --rpc-url http://localhost:8545 --broadcast
+    StoreSwitch.setStoreAddress(worldAddress);
+    Snake.register();
+    SnakeSegment.register();
  
-    PaintSystem paintSystem = new PaintSystem();
-    console.log("SnakeSystem address: ", address(paintSystem));
+    SnakeSystem snakeSystem = new SnakeSystem();
+    console.log("SnakeSystem address: ", address(snakeSystem));
  
-    world.registerSystem(systemResource, paintSystem, true);
+    world.registerSystem(systemResource, snakeSystem, true);
     world.registerFunctionSelector(systemResource, "init()");
     // world.registerFunctionSelector(systemResource, "interact(DefaultParameters)");
-    world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string))");
+    world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string),uint8)");
+    world.registerFunctionSelector(systemResource, "move(address)");
     // world.registerFunctionSelector(systemResource, "put_color(DefaultParameters)");
  
     vm.stopBroadcast();

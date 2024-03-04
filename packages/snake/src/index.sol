@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.21;
+
 struct PermissionsData {
   bool app;
   bool color;
@@ -6,7 +9,6 @@ struct PermissionsData {
   bool timestamp;
   bool action;
 }
-
 
 struct PixelData {
   address app;
@@ -29,7 +31,6 @@ struct PixelUpdateData {
   string text;
   string action;
 }
-
 
 struct DefaultParameters{
     address for_player;
