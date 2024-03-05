@@ -410,7 +410,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   return (
     <>
-      <div className={style.container}>
+      {/* <div className={style.container}>
         <img  className={style.containerImg}
           src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
@@ -455,7 +455,7 @@ export default function Header({ hoveredData, handleData }: Props) {
                 ) : null}</span>
         </div>
      
-      </div>
+      </div> */}
 <div style={{display:'flex'}}>
       <div
         style={{
