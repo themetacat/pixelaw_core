@@ -97,7 +97,7 @@ console.log(networkConfig,'-------------------')
       /*
        * Create an object for communicating with the deployed World.
        */
-      const worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
+      const worldAbiUrl = "https://pixelaw-game.vercel.app/Snake.abi.json";
       fetch(worldAbiUrl)
         .then(response => response.json())
         .then(abi => {

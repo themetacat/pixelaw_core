@@ -40,8 +40,29 @@ const redstone = defineChain({
     },
     testnet: true,
   })
+
+const core_foundry = defineChain({
+  id: 31_338,
+  name: 'Core Foundry',
+  network: 'core foundry',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: {
+      http: ['http://127.0.0.1:8545'],
+      webSocket: ['ws://127.0.0.1:8545'],
+    },
+    public: {
+      http: ['http://127.0.0.1:8545'],
+      webSocket: ['ws://127.0.0.1:8545'],
+    },
+  },
+})
 /*
  * See https://mud.dev/tutorials/minimal/deploy#run-the-user-interface
  * for instructions on how to add networks.
  */
-export const supportedChains: MUDChain[] = [mudFoundry, latticeTestnet, redstone];
+export const supportedChains: MUDChain[] = [mudFoundry, latticeTestnet, redstone, core_foundry];

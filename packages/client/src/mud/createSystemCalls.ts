@@ -66,9 +66,10 @@ if(entityVal===null){
      * is in the root namespace, `.increment` can be called directly
      * on the World contract.
      */
-    // const txData = await worldContract.write.paint_PaintSystem_init()
+    // const txData = await systemContract.write.snake_SnakeSystem_init()
     // const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
-    const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
+    // const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
+    const txData = await systemContract.write.snake_SnakeSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0xf7Cd8fa9b94DB2Aa972023b379c7f72c65E4De9D',position: {x: 3, y: 2}, color: "#fe9200"}, 2]);
     await waitForTransaction(txData);
 
   };

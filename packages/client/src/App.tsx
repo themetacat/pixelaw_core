@@ -156,7 +156,7 @@ export const App = () => {
       {/* <div>
       
         Counter: <span>{counter?.value ?? "??"}</span>
-      </div>
+      </div> */}
       <button
         type="button"
         onClick={async (event) => {
@@ -165,7 +165,7 @@ export const App = () => {
         }}
       >
         Increment
-      </button> */}
+      </button>
        </div>
   
   );

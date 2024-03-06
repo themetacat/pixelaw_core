@@ -297,11 +297,11 @@ export default function Header({ hoveredData, handleData }: Props) {
     setTranslateY(event.clientY);
     if (hoveredSquare && selectedColor) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-      const increData = increment(
-        hoveredSquare.x,
-        hoveredSquare.y,
-        selectedColor
-      );
+      // const increData = increment(
+      //   hoveredSquare.x,
+      //   hoveredSquare.y,
+      //   selectedColor
+      // );
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
       handleData(hoveredSquare);
@@ -410,6 +410,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   return (
     <>
+    
       {/* <div className={style.container}>
         <img  className={style.containerImg}
           src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
@@ -421,7 +422,6 @@ export default function Header({ hoveredData, handleData }: Props) {
             onClick={btnLower}
           >
            <img  className={numberData === 25?style.gray:style.btn1} src={powerIcon} alt="" /> 
-           {/* <span className={style.btn1}>-</span> */}
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
@@ -455,23 +455,21 @@ export default function Header({ hoveredData, handleData }: Props) {
                 ) : null}</span>
         </div>
      
-      </div> */}
+      </div>
 <div style={{display:'flex'}}>
       <div
         style={{
           width: `calc(100vw)`,
-          // height: `${CONTENT_WIDTH}px`,
           overflow: "hidden",
           position: "relative",
           display: "flex",
-          // margin: "0 auto",
         }}
         className={style.bodyCon}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleLeave}
-        onMouseEnter={handleMouseEnter} // 添加这一行
+        onMouseEnter={handleMouseEnter}
       >
         <div
           ref={visibleAreaRef}
@@ -537,18 +535,9 @@ export default function Header({ hoveredData, handleData }: Props) {
         ))}
       </div>
 
-      {/* <div className={style.rightPart}> */}
-        {/* <img onMouseEnter={()=>{
-          setPanning(true)
-        }} 
-        onMouseLeave={()=>{
-          setPanning(false)
-        }}
-        
-        src={panning === false?leftIcon:rightIcon} alt=""   className={style.pointer}/> */}
         <RightPart coordinates={coordinates} entityData={entityData}/>
-      {/* </div> */}
-      </div>
+    
+      </div> */}
     </>
   );
 }
