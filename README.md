@@ -49,6 +49,13 @@ This repository includes **core components and systems**, which inspired by [Pix
 - [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Foundry](https://book.getfoundry.sh/getting-started/installation)
 - [pnpm](https://pnpm.io/)
-```
+`
 sudo npm install -g pnpm
-```
+`
+
+## Quickstart(Deploy Locally)
+### Step 1: Clone repo
+`git clone https://github.com/themetacat/pixelaw_core.git`
+
+### Step 2: Deploy and Start
+`cd pixelaw_core && sh ./start.sh`
