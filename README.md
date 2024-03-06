@@ -59,3 +59,6 @@ sudo npm install -g pnpm
 
 ### Step 2: Deploy and Start
 `cd pixelaw_core && sh ./start.sh`
+
+## License
+PixeLAW Core(MUD Based) is open-source software [under the MIT license](https://github.com/themetacat/pixelaw_core/blob/main/LICENSE).
