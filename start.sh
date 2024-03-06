@@ -5,8 +5,8 @@ cd packages/contracts
 #pnpm install
 
 echo -e "Check if anvil is running('pnpm mud deploy' need this)."
-anvil_total=`ps -ef | grep anvil | grep -v grep | wc -l`
-if [ $anvil_total -eq 0 ]
+anvil_p_total=`ps -ef | grep anvil | grep -v grep | wc -l`
+if [ $anvil_p_total -eq 0 ]
 then
     echo -e "Start anvil first!"
     exit 0
@@ -17,7 +17,12 @@ pnpm mud deploy
 
 echo -e "Run 'pnpm vite' to start the frontend server of PixeLAW Core, which will listening on http://127.0.0.1:3000."
 cd ../client
-pnpm vite > /dev/null 2>&1 &
+
+vite_p_total=`ps -ef | grep vite.js | grep -v grep | wc -l`
+if [ $vite_p_total -eq 0 ]
+then
+    pnpm vite > /dev/null 2>&1 &
+fi
 
 echo -e "Register call_system to World contract."
 cd ../call_system
