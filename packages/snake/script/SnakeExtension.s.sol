@@ -16,7 +16,7 @@ import { RESOURCE_SYSTEM } from "@latticexyz/world/src/worldResourceTypes.sol";
 import { Snake, SnakeTableId, SnakeSegment, SnakeSegmentTableId } from "../src/codegen/index.sol";
 import { IStore } from "@latticexyz/store/src/IStore.sol";
 import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
-import { DefaultParameters } from "../src/index.sol";
+import { DefaultParameters } from "../src/core_codegen/index.sol";
  
 // For deploying MessageSystem
 import { SnakeSystem } from "../src/systems/SnakeSystem.sol";

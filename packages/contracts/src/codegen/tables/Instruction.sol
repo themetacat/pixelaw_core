@@ -26,8 +26,13 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant InstructionTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0000000100000000000000000000000000000000000000000000000000000000
+  0x0004010104000000000000000000000000000000000000000000000000000000
 );
+
+struct InstructionData {
+  bytes4 selector;
+  string instruction;
+}
 
 library Instruction {
   /**
@@ -43,9 +48,8 @@ library Instruction {
    * @return _keySchema The key schema for the table.
    */
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _keySchema = new SchemaType[](2);
+    SchemaType[] memory _keySchema = new SchemaType[](1);
     _keySchema[0] = SchemaType.ADDRESS;
-    _keySchema[1] = SchemaType.BYTES4;
 
     return SchemaLib.encode(_keySchema);
   }
@@ -55,8 +59,9 @@ library Instruction {
    * @return _valueSchema The value schema for the table.
    */
   function getValueSchema() internal pure returns (Schema) {
-    SchemaType[] memory _valueSchema = new SchemaType[](1);
-    _valueSchema[0] = SchemaType.STRING;
+    SchemaType[] memory _valueSchema = new SchemaType[](2);
+    _valueSchema[0] = SchemaType.BYTES4;
+    _valueSchema[1] = SchemaType.STRING;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -66,9 +71,8 @@ library Instruction {
    * @return keyNames An array of strings with the names of key fields.
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
-    keyNames = new string[](2);
+    keyNames = new string[](1);
     keyNames[0] = "system";
-    keyNames[1] = "selector";
   }
 
   /**
@@ -76,8 +80,9 @@ library Instruction {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](1);
-    fieldNames[0] = "instruction";
+    fieldNames = new string[](2);
+    fieldNames[0] = "selector";
+    fieldNames[1] = "instruction";
   }
 
   /**
@@ -95,12 +100,53 @@ library Instruction {
   }
 
   /**
+   * @notice Get selector.
+   */
+  function getSelector(address system) internal view returns (bytes4 selector) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (bytes4(_blob));
+  }
+
+  /**
+   * @notice Get selector.
+   */
+  function _getSelector(address system) internal view returns (bytes4 selector) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (bytes4(_blob));
+  }
+
+  /**
+   * @notice Set selector.
+   */
+  function setSelector(address system, bytes4 selector) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((selector)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set selector.
+   */
+  function _setSelector(address system, bytes4 selector) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((selector)), _fieldLayout);
+  }
+
+  /**
    * @notice Get instruction.
    */
-  function getInstruction(address system, bytes4 selector) internal view returns (string memory instruction) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function getInstruction(address system) internal view returns (string memory instruction) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
 
     bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -109,34 +155,9 @@ library Instruction {
   /**
    * @notice Get instruction.
    */
-  function _getInstruction(address system, bytes4 selector) internal view returns (string memory instruction) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function _getInstruction(address system) internal view returns (string memory instruction) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
-    return (string(_blob));
-  }
-
-  /**
-   * @notice Get instruction.
-   */
-  function get(address system, bytes4 selector) internal view returns (string memory instruction) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
-    return (string(_blob));
-  }
-
-  /**
-   * @notice Get instruction.
-   */
-  function _get(address system, bytes4 selector) internal view returns (string memory instruction) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
 
     bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -145,10 +166,9 @@ library Instruction {
   /**
    * @notice Set instruction.
    */
-  function setInstruction(address system, bytes4 selector, string memory instruction) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function setInstruction(address system, string memory instruction) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
 
     StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((instruction)));
   }
@@ -156,303 +176,267 @@ library Instruction {
   /**
    * @notice Set instruction.
    */
-  function _setInstruction(address system, bytes4 selector, string memory instruction) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function _setInstruction(address system, string memory instruction) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
 
     StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((instruction)));
   }
 
   /**
-   * @notice Set instruction.
+   * @notice Get the length of instruction.
+   */
+  function lengthInstruction(address system) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of instruction.
+   */
+  function _lengthInstruction(address system) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get an item of instruction.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItemInstruction(address system, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of instruction.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItemInstruction(address system, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to instruction.
+   */
+  function pushInstruction(address system, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to instruction.
+   */
+  function _pushInstruction(address system, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from instruction.
+   */
+  function popInstruction(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from instruction.
+   */
+  function _popInstruction(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Update a slice of instruction at `_index`.
+   */
+  function updateInstruction(address system, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of instruction at `_index`.
+   */
+  function _updateInstruction(address system, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Get the full data.
+   */
+  function get(address system) internal view returns (InstructionData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
+      _tableId,
+      _keyTuple,
+      _fieldLayout
+    );
+    return decode(_staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Get the full data.
+   */
+  function _get(address system) internal view returns (InstructionData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
+      _tableId,
+      _keyTuple,
+      _fieldLayout
+    );
+    return decode(_staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Set the full data using individual values.
    */
   function set(address system, bytes4 selector, string memory instruction) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
+    bytes memory _staticData = encodeStatic(selector);
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((instruction)));
+    PackedCounter _encodedLengths = encodeLengths(instruction);
+    bytes memory _dynamicData = encodeDynamic(instruction);
+
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
 
   /**
-   * @notice Set instruction.
+   * @notice Set the full data using individual values.
    */
   function _set(address system, bytes4 selector, string memory instruction) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
+    bytes memory _staticData = encodeStatic(selector);
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((instruction)));
+    PackedCounter _encodedLengths = encodeLengths(instruction);
+    bytes memory _dynamicData = encodeDynamic(instruction);
+
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
 
   /**
-   * @notice Get the length of instruction.
+   * @notice Set the full data using the data struct.
    */
-  function lengthInstruction(address system, bytes4 selector) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
+  function set(address system, InstructionData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.selector);
 
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    PackedCounter _encodedLengths = encodeLengths(_table.instruction);
+    bytes memory _dynamicData = encodeDynamic(_table.instruction);
+
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Set the full data using the data struct.
+   */
+  function _set(address system, InstructionData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.selector);
+
+    PackedCounter _encodedLengths = encodeLengths(_table.instruction);
+    bytes memory _dynamicData = encodeDynamic(_table.instruction);
+
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
+  }
+
+  /**
+   * @notice Decode the tightly packed blob of static data using this table's field layout.
+   */
+  function decodeStatic(bytes memory _blob) internal pure returns (bytes4 selector) {
+    selector = (Bytes.slice4(_blob, 0));
+  }
+
+  /**
+   * @notice Decode the tightly packed blob of dynamic data using the encoded lengths.
+   */
+  function decodeDynamic(
+    PackedCounter _encodedLengths,
+    bytes memory _blob
+  ) internal pure returns (string memory instruction) {
+    uint256 _start;
+    uint256 _end;
     unchecked {
-      return _byteLength / 1;
+      _end = _encodedLengths.atIndex(0);
     }
+    instruction = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
 
   /**
-   * @notice Get the length of instruction.
+   * @notice Decode the tightly packed blobs using this table's field layout.
+   * @param _staticData Tightly packed static fields.
+   * @param _encodedLengths Encoded lengths of dynamic fields.
+   * @param _dynamicData Tightly packed dynamic fields.
    */
-  function _lengthInstruction(address system, bytes4 selector) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
+  function decode(
+    bytes memory _staticData,
+    PackedCounter _encodedLengths,
+    bytes memory _dynamicData
+  ) internal pure returns (InstructionData memory _table) {
+    (_table.selector) = decodeStatic(_staticData);
 
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get the length of instruction.
-   */
-  function length(address system, bytes4 selector) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get the length of instruction.
-   */
-  function _length(address system, bytes4 selector) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get an item of instruction.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function getItemInstruction(address system, bytes4 selector, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (string(_blob));
-    }
-  }
-
-  /**
-   * @notice Get an item of instruction.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function _getItemInstruction(address system, bytes4 selector, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (string(_blob));
-    }
-  }
-
-  /**
-   * @notice Get an item of instruction.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function getItem(address system, bytes4 selector, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (string(_blob));
-    }
-  }
-
-  /**
-   * @notice Get an item of instruction.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function _getItem(address system, bytes4 selector, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (string(_blob));
-    }
-  }
-
-  /**
-   * @notice Push a slice to instruction.
-   */
-  function pushInstruction(address system, bytes4 selector, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
-  }
-
-  /**
-   * @notice Push a slice to instruction.
-   */
-  function _pushInstruction(address system, bytes4 selector, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
-  }
-
-  /**
-   * @notice Push a slice to instruction.
-   */
-  function push(address system, bytes4 selector, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
-  }
-
-  /**
-   * @notice Push a slice to instruction.
-   */
-  function _push(address system, bytes4 selector, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
-  }
-
-  /**
-   * @notice Pop a slice from instruction.
-   */
-  function popInstruction(address system, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop a slice from instruction.
-   */
-  function _popInstruction(address system, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop a slice from instruction.
-   */
-  function pop(address system, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop a slice from instruction.
-   */
-  function _pop(address system, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Update a slice of instruction at `_index`.
-   */
-  function updateInstruction(address system, bytes4 selector, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update a slice of instruction at `_index`.
-   */
-  function _updateInstruction(address system, bytes4 selector, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update a slice of instruction at `_index`.
-   */
-  function update(address system, bytes4 selector, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update a slice of instruction at `_index`.
-   */
-  function _update(address system, bytes4 selector, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
-
-    unchecked {
-      bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
+    (_table.instruction) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(address system, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function deleteRecord(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -460,12 +444,19 @@ library Instruction {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(address system, bytes4 selector) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function _deleteRecord(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
+  }
+
+  /**
+   * @notice Tightly pack static (fixed length) data using this table's schema.
+   * @return The static data, encoded into a sequence of bytes.
+   */
+  function encodeStatic(bytes4 selector) internal pure returns (bytes memory) {
+    return abi.encodePacked(selector);
   }
 
   /**
@@ -493,8 +484,12 @@ library Instruction {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(string memory instruction) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData;
+  function encode(
+    bytes4 selector,
+    string memory instruction
+  ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
+    bytes memory _staticData = encodeStatic(selector);
+
     PackedCounter _encodedLengths = encodeLengths(instruction);
     bytes memory _dynamicData = encodeDynamic(instruction);
 
@@ -504,10 +499,9 @@ library Instruction {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(address system, bytes4 selector) internal pure returns (bytes32[] memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
+  function encodeKeyTuple(address system) internal pure returns (bytes32[] memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(uint160(system)));
-    _keyTuple[1] = bytes32(selector);
 
     return _keyTuple;
   }

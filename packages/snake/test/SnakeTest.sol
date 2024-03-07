@@ -8,8 +8,9 @@ import { MudTest } from "@latticexyz/world/test/MudTest.t.sol";
 import { getKeysWithValue } from "@latticexyz/world-modules/src/modules/keyswithvalue/getKeysWithValue.sol";
 // import { convertToBytes32 } from "../src/systems/CoreSystem.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData, SnakeData, Snake} from "../src/codegen/index.sol";
-import { DefaultParameters, Position } from "../src/index.sol";
+import {SnakeData, Snake} from "../src/codegen/index.sol";
+import {Permissions, PermissionsData, Pixel, PixelData, App, AppData, AppUser, AppName, CoreActionAddress, PixelUpdate, PixelUpdateData, DefaultParameters, Position}  from "../src/core_codegen/index.sol";
+// import { DefaultParameters, Position } from "../src/index.sol";
 import { Direction } from "../src/codegen/common.sol";
 
 contract SnakeTest is MudTest {

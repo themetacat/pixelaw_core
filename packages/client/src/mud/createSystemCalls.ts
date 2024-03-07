@@ -69,11 +69,11 @@ if(entityVal===null){
     // const txData = await systemContract.write.snake_SnakeSystem_init()
     // const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
 console.log(1)
-    // const tx = await systemContract.write?.snake_SnakeSystem_init();
+    const tx = await systemContract.write?.snake_SnakeSystem_init();
     // const tx = await systemContract.write?.paint_PaintSystem_init();
-    // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x8ce361602B935680E8DeC218b820ff5056BeB7af',position: {x: 8, y: 2}, color: "#ffffff"}]);
+    // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
 
-    const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x8ce361602B935680E8DeC218b820ff5056BeB7af',position: {x: 5, y: 2}, color: "#fe9200"}, 3]);
+    // const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x8ce361602B935680E8DeC218b820ff5056BeB7af',position: {x: 5, y: 2}, color: "#fe9200"}, 2]);
     // const tx = await worldContract.write.snake_SnakeSystem_move(['0xff92C2168179f45a4F3404ba2957Cc035314DEb7']);
 
 console.log(tx,6666)
