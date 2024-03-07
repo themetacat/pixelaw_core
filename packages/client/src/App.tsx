@@ -218,8 +218,8 @@ export const App = () => {
             {syncProgress.message} ({Math.floor(syncProgress.percentage)}%)
           </div>
         ) : (
-          // <Header hoveredData={hoveredData} handleData={handleMouseDown} />
-          <PopUpBox/>
+          <Header hoveredData={hoveredData} handleData={handleMouseDown} />
+          // <PopUpBox/>
         )
       ) : (
         <div style={{ color: "#000" }}>Hydrating from RPC(0) </div>
