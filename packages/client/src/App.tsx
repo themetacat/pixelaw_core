@@ -41,6 +41,7 @@ export const App = () => {
       SyncProgress,
       QueueScheduled,
       QueueProcessed,
+      Instruction
     },
     network: { playerEntity, publicClient },
     systemCalls: { increment, execute_queue },
@@ -134,8 +135,7 @@ export const App = () => {
 
 
     setTimeout(() => {
-      console.log("==========================");
-      console.log(22);
+      console.log("============setTimeout==============");
 
       const getQueueData = getQueue();
 
@@ -158,7 +158,7 @@ export const App = () => {
         }
       }
       })
-    }, 1000);
+    }, 3000);
 
 
   // 定时执行queue中的方法
@@ -237,7 +237,7 @@ export const App = () => {
       
         Counter: <span>{counter?.value ?? "??"}</span>
       </div>  */}
-      {/* <button
+      <button
         style={{zIndex: "99999999999999999999999999"}}
         type="button"
         onClick={async (event) => {
@@ -246,7 +246,7 @@ export const App = () => {
         }}
       >
         Increment
-      </button> */}
+      </button>
     </div>
   );
 };

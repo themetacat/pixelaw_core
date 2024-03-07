@@ -92,9 +92,9 @@ export default mudConfig({
     Instruction: {
       keySchema: {
         system: "address",
-        selector: "bytes4"
       },
       valueSchema:{
+        selector: "bytes4",
         instruction: "string"
       }
     },

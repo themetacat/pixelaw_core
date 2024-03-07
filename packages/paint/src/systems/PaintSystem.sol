@@ -6,8 +6,8 @@ import { System } from "@latticexyz/world/src/System.sol";
 // import { IWorld } from "https://github.com/MJumpKing/MUD_template/blob/main/packages/contracts/src/codegen/world/IWorld.sol";
 // import { PixelUpdateData } from "https://github.com/MJumpKing/MUD_template/blob/main/packages/contracts/src/codegen/tables/PixelUpdate.sol";
 // import { ICoreWorld } from "./CoreInterface/ICoreWorld.sol";
-import { ICoreSystem } from "./CoreInterface/ICoreSystem.sol";
-import { PermissionsData, DefaultParameters, Position, PixelUpdateData } from "../index.sol";
+import { ICoreSystem } from "../core_codegen/world/ICoreSystem.sol";
+import { PermissionsData, DefaultParameters, Position, PixelUpdateData } from "../core_codegen/index.sol";
 import { Pixel, PixelData } from "../codegen/index.sol";
 
 

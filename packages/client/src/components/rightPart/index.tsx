@@ -6,6 +6,7 @@ import {
   Has,
   HasValue,
   getComponentValueStrict,
+  getComponentValue
 } from "@latticexyz/recs";
 import {
   encodeEntity,
@@ -30,7 +31,7 @@ interface Props {
 }
 export default function RightPart({ coordinates, entityData }: Props) {
   const {
-    components: { App, Pixel, AppName },
+    components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
     systemCalls: { increment },
   } = useMUD();
@@ -71,6 +72,11 @@ export default function RightPart({ coordinates, entityData }: Props) {
       {/* </div> */}
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
+        console.log(entitya);
+        
+        const instruction = getComponentValue(Instruction, entitya) as any;
+        console.log(instruction);
+        
         return (
           <button
             key={`${index}`}
@@ -110,6 +116,7 @@ export default function RightPart({ coordinates, entityData }: Props) {
               item.coordinates.x === coordinates.x &&
               item.coordinates.y === coordinates.y
             ) {
+              
               const entityID = addressToEntityID(item.value.app);
               const type = `${app_info}`;
               const owner = item.value.owner;
