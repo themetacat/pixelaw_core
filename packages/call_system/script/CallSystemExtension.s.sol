@@ -33,7 +33,7 @@ contract CallSystemExtension is Script {
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
 
     vm.startBroadcast(deployerPrivateKey);
-    // world.registerNamespace(namespaceResource);
+    world.registerNamespace(namespaceResource);
 
     // forge script script/CallSystemExtension.s.sol --rpc-url https://rpc.holesky.redstone.xyz --broadcast
     // StoreSwitch.setStoreAddress(worldAddress);
@@ -43,8 +43,8 @@ contract CallSystemExtension is Script {
     console.log("QueueSystem address: ", address(callOtherSystem));
  
     world.registerSystem(systemResource, callOtherSystem, true);
-    // world.registerFunctionSelector(systemResource, "call_world_process_queue(bytes32,uint256,string,string,bytes)");
-    // world.registerFunctionSelector(systemResource, "call_other_system_fn(string,string,bytes)");
+    world.registerFunctionSelector(systemResource, "call_world_process_queue(bytes32,uint256,string,string,bytes)");
+    world.registerFunctionSelector(systemResource, "call_other_system_fn(string,string,bytes)");
     vm.stopBroadcast();
   }
 }

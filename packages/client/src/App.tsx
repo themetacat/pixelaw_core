@@ -23,7 +23,7 @@ import {
   decodeEntity,
   hexKeyTupleToEntity,
 } from "@latticexyz/store-sync/recs";
-import { addToQueue, getQueue } from "./bot/queue";
+import { addToQueue, getQueue, delQueue } from "./bot/queue";
 import { error } from "@latticexyz/common/src/debug";
 const stringToBytes32 = (inputString: string) => {
   // Pad the UTF-8 encoded bytes to 32 bytes
@@ -100,17 +100,27 @@ export const App = () => {
 
   useEffect(() => {
     // 从上次处理的位置开始遍历
-    for (let i = lastProcessedIndexRef.current;i < entities_queue_scheduled.length;i++) {
+    console.log('entryentryentryentryentryentryentryentryentryentry');
+    
+    for (let i = lastProcessedIndexRef.current; i < entities_queue_scheduled.length; i++) {
       const entity = entities_queue_scheduled[i] as any;
       const res = getComponentValueStrict(QueueScheduled, entity);
       const res_processed = getComponentValue(QueueProcessed, entity);
-      if (lastProcessedIndexRef.current !== entities_queue_scheduled.length) {
-        addToQueue([entity,res.timestamp,res.name_space,res.name,res.call_data,]);
-      }
+      // if (lastProcessedIndexRef.current !== entities_queue_scheduled.length) {
+      //   console.log(entity);
+        
+      //   addToQueue([entity, res.timestamp, res.name_space, res.name, res.call_data,]);
+      // }
+      // console.log(res_processed);
+      
       // console.log(res_processed);
       if (!res_processed) {
         // console.log(entities_queue_scheduled, 111, res);
-        addToQueue([entity,res.timestamp,res.name_space,res.name,res.call_data,]);
+        // console.log(entity);
+
+        // console.log(res);
+
+        addToQueue([entity, res.timestamp, res.name_space, res.name, res.call_data,]);
         // execute_queue({ id: entity, timestamp: res.timestamp, namespace: res.name_space, name: res.name, call_data: res.call_data });
         // removeComponent(QueueScheduled, entity);
       }
@@ -120,24 +130,35 @@ export const App = () => {
     lastProcessedIndexRef.current = entities_queue_scheduled.length;
   }, [entities_queue_scheduled, QueueProcessed, QueueScheduled]);
 
-  getQueue();
+  // getQueue();
 
 
-  setTimeout(() => {
-    const getQueueData = getQueue();
-    getQueueData.then((q) => {
-      // console.log(q);
-      let queueDataArray = Object.values(q);
-      entities_queue_scheduled.forEach((entity: any) => {
-        const res = getComponentValueStrict(QueueScheduled, entity) as any;
-        execute_queue({ id: entity, timestamp: res.timestamp, namespace: res.name_space, name: res.name, call_data: res.call_data });
-        // 在执行完execute_queue后，删除id和entity相等的项
-        queueDataArray = queueDataArray.filter((item) => item.id !== entity);
-    })
-    })
-  }, 2000);
+    setTimeout(() => {
+      console.log("==========================");
+      console.log(22);
 
+      const getQueueData = getQueue();
 
+      getQueueData.then((q) => {
+        console.log(q);
+        const unlockables = Object.values(q).sort((a, b) => Number(a.timestamp - b.timestamp));
+        console.log(unlockables);
+        
+        for (const res of unlockables) {
+        try {
+          // console.log(res);
+          
+          execute_queue({ id: res.id, timestamp: res.timestamp, namespace: res.namespace, name: res.name, call_data: res.call_data });
+          delQueue(res.id);
+          console.log("-----------");
+          
+          
+        }catch(error){
+          console.error("Error while processing ", res, error)
+        }
+      }
+      })
+    }, 1000);
 
 
   // 定时执行queue中的方法
@@ -215,8 +236,9 @@ export const App = () => {
       {/* <div>
       
         Counter: <span>{counter?.value ?? "??"}</span>
-      </div> */}
-      <button
+      </div>  */}
+      {/* <button
+        style={{zIndex: "99999999999999999999999999"}}
         type="button"
         onClick={async (event) => {
           event.preventDefault();
@@ -224,8 +246,7 @@ export const App = () => {
         }}
       >
         Increment
-      </button>
-       </div>
-  
+      </button> */}
+    </div>
   );
 };

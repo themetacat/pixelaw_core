@@ -45,12 +45,14 @@ export const fetchData = async (publicClient: any) => {
   }
 
   export const getQueue = async () => {
-   
-
 
 const queueData = queue;
 return queueData
     
   }
 
-
+  export const delQueue = async (id: any) => {
+  
+      delete queue[id];
+  }
+    

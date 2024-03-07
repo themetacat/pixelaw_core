@@ -73,14 +73,26 @@ contract SnakeSystem is System {
       is_dying: false
     });
 
+    string memory pixel_color;
+    if(bytes(pixel.color).length == 0){
+      pixel_color = '0';
+    }else{
+      pixel_color = pixel.color;
+    }
 
+    string memory pixel_text;
+    if(bytes(pixel.text).length == 0){
+      pixel_text = '_none';
+    }else{
+      pixel_text = pixel.text;
+    }
     SnakeSegmentData memory segment = SnakeSegmentData({
       previous_id: id,
       next_id: id,
       x: position.x,
       y: position.y,
-      pixel_original_color: pixel.color,
-      pixel_original_text: pixel.text
+      pixel_original_color: pixel_color,
+      pixel_original_text: pixel_text
     });
     Snake.set(player, snake);
     SnakeSegment.set(id, segment);
@@ -123,8 +135,8 @@ contract SnakeSystem is System {
           first_segment_id: 0,
           last_segment_id: 0,
           direction: Direction.None,
-          color: '',
-          text: '',
+          color: '0',
+          text: '_none',
           is_dying: false
         }));
         Snake.deleteRecord(owner);
@@ -200,13 +212,27 @@ contract SnakeSystem is System {
     existing_segment.previous_id = id;
     SnakeSegment.set(snake.first_segment_id, existing_segment);
 
-    SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel.color, pixel_original_text: pixel.text}));
+    string memory pixel_color;
+    if(bytes(pixel.color).length == 0){
+      pixel_color = '0';
+    }else{
+      pixel_color = pixel.color;
+    }
+
+    string memory pixel_text;
+    if(bytes(pixel.text).length == 0){
+      pixel_text = '_none';
+    }else{
+      pixel_text = pixel.text;
+    }
+
+    SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel_color, pixel_original_text: pixel_text}));
     
     ICoreSystem(_world()).update_pixel(PixelUpdateData({
       x: x,
       y: y,
       color: snake.color,
-      timestamp: 12,
+      timestamp: 0,
       text: snake.text,
       app: address(0),
       owner: address(0),
