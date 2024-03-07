@@ -10,6 +10,7 @@ import {
   Has,
   HasValue,
   getComponentValueStrict,
+  getComponentValue
 } from "@latticexyz/recs";
 import {
   encodeEntity,
@@ -73,9 +74,10 @@ const colorOptionsData = [
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
+  instruction:any
 }
 
-export default function Header({ hoveredData, handleData }: Props) {
+export default function Header({ hoveredData, handleData ,instruction}: Props) {
   const {
     components: { App, Pixel, AppName },
     network: { playerEntity, publicClient },
@@ -147,8 +149,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
+  // const [instruction, setInstruction] = useState(instruction);
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
-
+  console.log(instruction,'============================');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
@@ -414,6 +417,10 @@ export default function Header({ hoveredData, handleData }: Props) {
     );
   };
 
+
+
+
+
   return (
     <>
     
@@ -552,7 +559,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         ))}
       </div>
 
-        <RightPart coordinates={coordinates} entityData={entityData}/>
+        <RightPart coordinates={coordinates} entityData={entityData}   instruction={instruction}/>
     
       </div>
     </>

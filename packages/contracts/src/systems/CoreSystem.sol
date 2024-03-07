@@ -199,8 +199,8 @@ contract CoreSystem is System {
   function alert_player(Position memory position, address player, string memory message) public {
     AppData memory app = App.get(address(_msgSender()));
     // require(bytes(app.app_name).length != 0, 'cannot be called by a non-app');
-    Alert memory alert = Alert(position, address(_msgSender()), player, message, block.timestamp);
-    emit EventAlert(alert);
+    // Alert memory alert = Alert(position, address(_msgSender()), player, message, block.timestamp);
+    // emit EventAlert(alert);
   }
 
   function convertToBytes32(string memory input) public pure returns (bytes32) {
