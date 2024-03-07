@@ -28,8 +28,9 @@ export const ManifestContext = createContext<string>("");
 interface Props {
   coordinates: { x: number; y: number };
   entityData: any;
+  instruction:any
 }
-export default function RightPart({ coordinates, entityData }: Props) {
+export default function RightPart({ coordinates, entityData ,instruction}: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
@@ -75,7 +76,7 @@ export default function RightPart({ coordinates, entityData }: Props) {
         console.log(entitya);
         
         const instruction = getComponentValue(Instruction, entitya) as any;
-        console.log(instruction);
+        // console.log(instruction,'============================');
         
         return (
           <button
