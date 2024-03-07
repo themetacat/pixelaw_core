@@ -98,8 +98,17 @@ console.log(networkConfig.worldAddress,'-------------------')
       /*
        * Create an object for communicating with the deployed World.
        */
-      const worldAbiUrl = "https://pixelaw-game.vercel.app/Snake.abi.json";
-      fetch(worldAbiUrl)
+      const appName = localStorage.getItem('manifest')  as any
+      const parts = appName?.split("/") as any;
+      let worldAbiUrl;
+      // console.log(parts[0]); // 输出 "Base"
+      if(parts[0] === 'BASE'){
+        worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1]}`+".abi.json" as any;
+      }else{
+        worldAbiUrl =appName
+      }
+      const worldAbiUrlData = "https://pixelaw-game.vercel.app/Snake.abi.json";
+      fetch(worldAbiUrlData)
         .then(response => response.json())
         .then(abi => {
 

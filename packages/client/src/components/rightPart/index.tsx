@@ -71,8 +71,9 @@ export default function RightPart({ coordinates, entityData }: Props) {
       {/* </div> */}
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
+        console.log(value)
         return (
-          <button
+          <div
             key={`${index}`}
             onClick={() => {
               setManifestValue(value.manifest);
@@ -82,10 +83,12 @@ export default function RightPart({ coordinates, entityData }: Props) {
                 decodeEntity({ app_addr: "address" }, entitya).app_addr
               );
             }}
+             className={style.btnGame}
           >
-            <img className={style.imgCon} src={value?.icon} />
-            <span>{value.app_name}</span>
-          </button>
+            {/* <img className={style.imgCon} src={value?.icon} /> */}
+            <div  className={style.imgCon}  style={{fontSize: '32px', lineHeight: '50px', fontFamily:'Arial Unicode MS'}}>&#x1F40D;</div>
+            {panning === false?null:<span className={style.appName}>{value.app_name}</span>}
+          </div>
         );
       })}
       {panning === false ? (
