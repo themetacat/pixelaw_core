@@ -36,7 +36,7 @@ contract PaintExtension is Script {
     vm.startBroadcast(deployerPrivateKey);
     world.registerNamespace(namespaceResource);
 
-    // forge script script/SnakeExtension.s.sol --rpc-url http://localhost:8545 --broadcast
+    // forge script script/SnakeExtension.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
     StoreSwitch.setStoreAddress(worldAddress);
     Snake.register();
     SnakeSegment.register();

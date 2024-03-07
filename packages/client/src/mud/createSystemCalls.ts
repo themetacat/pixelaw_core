@@ -68,13 +68,18 @@ if(entityVal===null){
      */
     // const txData = await systemContract.write.snake_SnakeSystem_init()
     // const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
+console.log(1)
+    // const tx = await systemContract.write?.snake_SnakeSystem_init();
+    const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: '0xff92C2168179f45a4F3404ba2957Cc035314DEb7', for_system: '0xbBD46F9cEf5145Da5E54728782541105BFC0A6ad',position: {x: 3, y: 2}, color: "#fe9200"}, 2]);
+    // const tx = await worldContract.write.snake_SnakeSystem_move(['0xff92C2168179f45a4F3404ba2957Cc035314DEb7']);
+
+console.log(tx,6666)
     // const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
-    const txData = await systemContract.write.snake_SnakeSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0xf7Cd8fa9b94DB2Aa972023b379c7f72c65E4De9D',position: {x: 3, y: 2}, color: "#fe9200"}, 2]);
-    await waitForTransaction(txData);
+    // await waitForTransaction(tx);
 
   };
 
-
+  // increment()
   // const execute_instruction = async () => {
   //     // SnakeSystemAbi 使用 setupNetwork中worldAbiUrl中的abi
 

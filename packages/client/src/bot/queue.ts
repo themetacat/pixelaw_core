@@ -14,6 +14,9 @@ type QueueType = {
   call_data: any
 }
 
+
+
+
 export const fetchData = async (publicClient: any) => {
     const fromBlock = "earliest";
     
@@ -42,7 +45,12 @@ export const fetchData = async (publicClient: any) => {
   }
 
   export const getQueue = async () => {
+   
 
-    console.log(queue, '----------');
+
+const queueData = queue;
+return queueData
     
   }
+
+
