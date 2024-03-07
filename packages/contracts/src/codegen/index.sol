@@ -14,3 +14,4 @@ import { CoreActionAddress, CoreActionAddressTableId } from "./tables/CoreAction
 import { Instruction, InstructionTableId } from "./tables/Instruction.sol";
 import { QueueScheduled, QueueScheduledData, QueueScheduledTableId } from "./tables/QueueScheduled.sol";
 import { QueueProcessed, QueueProcessedTableId } from "./tables/QueueProcessed.sol";
+import { Alert, AlertData, AlertTableId } from "./tables/Alert.sol";

@@ -90,21 +90,21 @@ contract CoreSystem is System {
       return false;
     }
 
-    // if(bytes(pixel_update.color).length != 0 && !permissions.color){
-    //   return false;
-    // }
-
-    // if(bytes(pixel_update.text).length != 0 && !permissions.text){
-    //   return false;
-    // }
-
-    if(!permissions.color){
+    if(bytes(pixel_update.color).length != 0 && !permissions.color){
       return false;
     }
 
-    if(!permissions.text){
+    if(bytes(pixel_update.text).length != 0 && !permissions.text){
       return false;
     }
+
+    // if(!permissions.color){
+    //   return false;
+    // }
+
+    // if(!permissions.text){
+    //   return false;
+    // }
 
     if(pixel_update.timestamp != 0 && !permissions.timestamp){
       return false;
@@ -134,18 +134,18 @@ contract CoreSystem is System {
       pixel.app = pixel_update.app;
     }
 
-    // if(bytes(pixel_update.color).length != 0){
+    if(bytes(pixel_update.color).length != 0){
       pixel.color = pixel_update.color;
-    // }
+    }
 
     // not allowed transfer to 0x00...? is that True?
     if(pixel_update.owner != address(0)){
       pixel.owner = pixel_update.owner;
     }
 
-    // if(bytes(pixel_update.text).length != 0){
+    if(bytes(pixel_update.text).length != 0){
       pixel.text = pixel_update.text;
-    // }
+    }
 
     if(pixel_update.timestamp != 0){
       pixel.timestamp = pixel_update.timestamp;

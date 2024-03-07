@@ -161,7 +161,13 @@ export default function Header({ hoveredData, handleData }: Props) {
     entities.forEach((entity) => {
       const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
       const value = getComponentValueStrict(Pixel, entity);
-// console.log(value,'-----------')
+
+      if(value.text === "_none"){
+        value.text = ""
+      }
+      if(value.color === "0"){
+        value.color = "#2f1643"
+      }
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
 
@@ -411,7 +417,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   return (
     <>
     
-      {/* <div className={style.container}>
+      <div className={style.container}>
         <img  className={style.containerImg}
           src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
@@ -431,7 +437,18 @@ export default function Header({ hoveredData, handleData }: Props) {
           >
             <img  className={numberData === 100?style.gray:style.btn1} src={AddIcon} alt="" />
           </button>
+          
         </div>
+        <button
+        style={{zIndex: "99999999999999999999999999"}}
+        type="button"
+        onClick={async (event) => {
+          event.preventDefault();
+          console.log("new counter value:", await increment());
+        }}
+      >
+        Increment
+      </button>
         <div
           className={style.addr}
           style={{
@@ -537,7 +554,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
         <RightPart coordinates={coordinates} entityData={entityData}/>
     
-      </div> */}
+      </div>
     </>
   );
 }

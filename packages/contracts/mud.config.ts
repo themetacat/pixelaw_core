@@ -118,6 +118,20 @@ export default mudConfig({
         caller: "address"
       },
       offchainOnly: true
+    },
+    Alert: {
+      keySchema: {
+        id: "bytes32"
+      },
+      valueSchema: {
+        x: "uint32",
+        y: "uint32",
+        timestamp: "uint256",
+        caller: "address",
+        player: "address",
+        message: "string",
+      },
+      offchainOnly: true
     }
   },
 });
