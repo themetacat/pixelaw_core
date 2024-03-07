@@ -9,7 +9,7 @@ import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 
 import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
-import IWorldAbi from "../../../../packages/call_system/out/IWorld.sol/IWorld.abi.json";
+// import IWorldAbi from "../../../../packages/call_system/out/IWorld.sol/IWorld.abi.json";
 // import IWorldAbi from "../../../../packages/call_system/out/world/IWorld.sol/IWorld.abi.json";
 // import SnakeSystemAbi from "../../../../packages/snake/out/SnakeSystem.sol/SnakeSystem.abi.json";
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
@@ -88,8 +88,8 @@ console.log(networkConfig.worldAddress,'-------------------')
      
       const worldContract = getContract({
         address: networkConfig.worldAddress as Hex, 
-        abi: IWorldAbi,
-        // abi: [],
+        // abi: IWorldAbi,
+        abi: [],
         publicClient,
         walletClient: burnerWalletClient,
         onWrite: (write) => write$.next(write),

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useMUD } from "./MUDContext";
 import { singletonEntity } from "@latticexyz/store-sync/recs";
 import Header from "./components/herder";
+import PopUpBox from "./components/popUpBox";
 import toast, { Toaster } from "react-hot-toast";
 import { SyncStep } from "@latticexyz/store-sync";
 import style from "./app.module.css";
@@ -218,6 +219,7 @@ export const App = () => {
           </div>
         ) : (
           <Header hoveredData={hoveredData} handleData={handleMouseDown} />
+          // <PopUpBox/>
         )
       ) : (
         <div style={{ color: "#000" }}>Hydrating from RPC(0) </div>
