@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import style from "./index.module.css";
 import {
   ComponentValue,
@@ -28,16 +28,17 @@ export const ManifestContext = createContext<string>("");
 interface Props {
   coordinates: { x: number; y: number };
   entityData: any;
-  instruction:any
+  // onHandle:any;
+  
 }
-export default function RightPart({ coordinates, entityData ,instruction}: Props) {
+export default function RightPart({ coordinates, entityData, }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
     systemCalls: { increment },
   } = useMUD();
   const [value, setValue] = useState("");
-  const [manifestValue, setManifestValue] = useState("");
+  // const [manifestValue, setManifestValue] = useState("");
   const entities_app = useEntityQuery([Has(App)]);
   // const manifestValue = UseManifestValue();
   const [panning, setPanning] = useState(false);
@@ -51,7 +52,18 @@ export default function RightPart({ coordinates, entityData ,instruction}: Props
   );
   // console.log(entityData, "右边！！！！");
 
+  
+  // const handleInstruction = (instructionValue:any) => {
+  //   // 调用父组件传递过来的回调函数，并传递instruction值
+  //   onHandle(instructionValue);
+  // };
   // console.log(app_info,66666)
+  const [selectedIcon, setSelectedIcon] = useState(null);
+
+  const handleIconClick = (index:any) => {
+    // console.log(index)
+      setSelectedIcon(index);
+  };
   return (
    
     //  <div style={{width:"220px",position:"relative"}}>
@@ -73,16 +85,11 @@ export default function RightPart({ coordinates, entityData ,instruction}: Props
       {/* </div> */}
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
-        console.log(entitya);
-        
-        const instruction = getComponentValue(Instruction, entitya) as any;
-        // console.log(instruction,'============================');
-        
         return (
           <div
             key={`${index}`}
             onClick={() => {
-              setManifestValue(value.manifest);
+             handleIconClick(index)
               localStorage.setItem("manifest", value.manifest);
               localStorage.setItem(
                 "entityVal",
@@ -92,7 +99,10 @@ export default function RightPart({ coordinates, entityData ,instruction}: Props
              className={style.btnGame}
           >
             {/* <img className={style.imgCon} src={value?.icon} /> */}
-            <div  className={style.imgCon}  style={{fontSize: '32px', lineHeight: '50px', fontFamily:'Arial Unicode MS'}}>&#x1F40D;</div>
+            <div  className={selectedIcon === index ?style.imgCon1:style.imgCon}  style={{fontSize: '32px', lineHeight: '50px', fontFamily:'Arial Unicode MS'}}>
+              {/* &#x1F40D; */}
+              {String.fromCodePoint(parseInt( value.icon.substring(2), 16))}
+              </div>
             {panning === false?null:<span className={style.appName}>{value.app_name}</span>}
           </div>
         );

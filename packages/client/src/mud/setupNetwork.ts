@@ -81,7 +81,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
        * pass into MUD dev tools for transaction observability.
        */
       const write$ = new Subject<ContractWrite>();
-console.log(networkConfig.worldAddress,'-------------------')
+// console.log(networkConfig.worldAddress,'-------------------')
       /*
       * Create an object for communicating with the deployed World.
       */
@@ -148,16 +148,16 @@ console.log(networkConfig.worldAddress,'-------------------')
              */
             if (networkConfig.faucetServiceUrl) {
               const address = burnerAccount.address;
-              console.info("[Dev Faucet]: Player address -> ", address);
+              // console.info("[Dev Faucet]: Player address -> ", address);
 
               const faucet = createFaucetService(networkConfig.faucetServiceUrl);
 
               const requestDrip = async () => {
                 const balance = await publicClient.getBalance({ address });
-                console.info(`[Dev Faucet]: Player balance -> ${balance}`);
+                // console.info(`[Dev Faucet]: Player balance -> ${balance}`);
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
-                  console.info("[Dev Faucet]: Balance is low, dripping funds to player");
+                  // console.info("[Dev Faucet]: Balance is low, dripping funds to player");
                   // Double drip
                   await faucet.dripDev({ address });
                   await faucet.dripDev({ address });

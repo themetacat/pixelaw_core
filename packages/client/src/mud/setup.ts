@@ -18,7 +18,7 @@ export async function setup() {
   const components = createClientComponents(network);
   //console.log(components,'components')
   const systemCalls = createSystemCalls(network, components);
-  console.log(components);
+  // console.log(components);
   
   return {
     network,

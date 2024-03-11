@@ -19,6 +19,7 @@
     width: 100%;
     height: 50px;
     display: flex;
+    
 }
 .container button {
     margin-left: 10px;
@@ -39,6 +40,14 @@
     border-radius: 3px;
     display: inline-block;
     background-color: #1f102e;
+    text-align: center;
+}
+.imgCon1{
+    width: 50px;
+    height: 50px;
+    border-radius: 3px;
+    display: inline-block;
+    background-color: #7500ad;
     text-align: center;
 }
 .coordinates{

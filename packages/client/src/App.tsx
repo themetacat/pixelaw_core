@@ -79,16 +79,16 @@ export const App = () => {
   // 这里匹配符合条件的event
   // const entities_queue_scheduled = useEntityQuery([Has(QueueScheduled)])
   // const prevEntitiesRef = useRef<Entity[]>([]);//用来存储过滤过的数据
-  // // console.log(entities_queue_scheduled, '=======');
+  // // //console.log(entities_queue_scheduled, '=======');
   // entities_queue_scheduled.map((entity:any) =>{
   //     // value
   //     const res = getComponentValueStrict(QueueScheduled, entity);
   //     const res_processed = getComponentValue(QueueProcessed, entity);
   //     prevEntitiesRef.current = entities_queue_scheduled;
-  //     console.log(res_processed);
+  //     //console.log(res_processed);
   //     if(!res_processed){
-  //       // console.log(res);
-  //       console.log(entities_queue_scheduled,111,res);
+  //       // //console.log(res);
+  //       //console.log(entities_queue_scheduled,111,res);
 
   //       addToQueue([entity, res.timestamp, res.name_space, res.name, res.call_data])
   //       // execute_queue({id: entity, timestamp: res.timestamp, namespace: res.name_space, name: res.name, call_data: res.call_data})
@@ -102,25 +102,25 @@ export const App = () => {
 
   useEffect(() => {
     // 从上次处理的位置开始遍历
-    console.log('entryentryentryentryentryentryentryentryentryentry');
+    //console.log('entryentryentryentryentryentryentryentryentryentry');
     
     for (let i = lastProcessedIndexRef.current; i < entities_queue_scheduled.length; i++) {
       const entity = entities_queue_scheduled[i] as any;
       const res = getComponentValueStrict(QueueScheduled, entity);
       const res_processed = getComponentValue(QueueProcessed, entity);
       // if (lastProcessedIndexRef.current !== entities_queue_scheduled.length) {
-      //   console.log(entity);
+      //   //console.log(entity);
         
       //   addToQueue([entity, res.timestamp, res.name_space, res.name, res.call_data,]);
       // }
-      // console.log(res_processed);
+      // //console.log(res_processed);
       
-      // console.log(res_processed);
+      // //console.log(res_processed);
       if (!res_processed) {
-        // console.log(entities_queue_scheduled, 111, res);
-        // console.log(entity);
+        // //console.log(entities_queue_scheduled, 111, res);
+        // //console.log(entity);
 
-        // console.log(res);
+        // //console.log(res);
 
         addToQueue([entity, res.timestamp, res.name_space, res.name, res.call_data,]);
         // execute_queue({ id: entity, timestamp: res.timestamp, namespace: res.name_space, name: res.name, call_data: res.call_data });
@@ -136,26 +136,26 @@ export const App = () => {
 
 
     setTimeout(() => {
-      console.log("============setTimeout==============");
+      //console.log("============setTimeout==============");
 
       const getQueueData = getQueue();
 
       getQueueData.then((q) => {
-        console.log(q);
+        //console.log(q);
         const unlockables = Object.values(q).sort((a, b) => Number(a.timestamp - b.timestamp));
-        console.log(unlockables);
+        //console.log(unlockables);
         
         for (const res of unlockables) {
         try {
-          // console.log(res);
+          // //console.log(res);
           
           execute_queue({ id: res.id, timestamp: res.timestamp, namespace: res.namespace, name: res.name, call_data: res.call_data });
           delQueue(res.id);
-          console.log("-----------");
+          //console.log("-----------");
           
           
         }catch(error){
-          console.error("Error while processing ", res, error)
+          //console.error("Error while processing ", res, error)
         }
       }
       })
@@ -167,46 +167,46 @@ export const App = () => {
   //   try {
   //     await addToQueue()
   //   } catch (e) {
-  //     console.error('QueueBot failed to process unlockables due to: ', e)
+  //     //console.error('QueueBot failed to process unlockables due to: ', e)
   //   }
   // setTimeout(loop, config.refreshRate);
   // }
   // get queue!!!!!!!!!!!!!!!!!!!!!!!
 
   // const entities_app = useEntityQuery([Has(App)])
-  // // console.log(entities_app,'-------------------')
+  // // //console.log(entities_app,'-------------------')
   // entities_app.map((entity) =>{
   //   // key {x: 6, y: 2}
-  //   // console.log(decodeEntity({ app_addr: "address"}, entity));
+  //   // //console.log(decodeEntity({ app_addr: "address"}, entity));
   //   // // value
-  //   // console.log(getComponentValueStrict(App, entity));
+  //   // //console.log(getComponentValueStrict(App, entity));
 
   // })
   // const entities = useEntityQuery([Has(Pixel)])
-  // console.log(entities,'====1====')
+  // //console.log(entities,'====1====')
   // entities.map((entity) =>{
   //   // key {x: 6, y: 2}
-  //   console.log(decodeEntity({ x: "uint32", y: "uint32" }, entity));//每个块坐标
+  //   //console.log(decodeEntity({ x: "uint32", y: "uint32" }, entity));//每个块坐标
   //   // value
-  //   console.log(getComponentValueStrict(Pixel, entity));//快内容和68 一样
+  //   //console.log(getComponentValueStrict(Pixel, entity));//快内容和68 一样
   //   const data = getComponentValueStrict(Pixel, entity);
   //   setAllData((prevData) => [...prevData, data]);
   // })
 
   // const appName = useComponentValue(AppName, stringToEntityID("0x7061696e74000000000000000000000000000000000000000000000000000000"));
-  // console.log(stringToBytes32("paint"));
+  // //console.log(stringToBytes32("paint"));
 
-  // console.log(counter);
-  // console.log(pixel);//块内容，点击以后赋值上去(单个)
-  // console.log(appName);
+  // //console.log(counter);
+  // //console.log(pixel);//块内容，点击以后赋值上去(单个)
+  // //console.log(appName);
 
   // useEffect(()=>{
   //   setHoveredData(hoveredData)
-  //   console.log(hoveredData,99999999)
+  //   //console.log(hoveredData,99999999)
   // },[hoveredData])
   const handleMouseDown = (event: any) => {
     // ...其他逻辑
-    // console.log(event)
+    // //console.log(event)
     setHoveredData(event);
     // setHoveredData(hoveredData);
   };
@@ -244,7 +244,7 @@ export const App = () => {
         type="button"
         onClick={async (event) => {
           event.preventDefault();
-          console.log("new counter value:", await increment());
+          //console.log("new counter value:", await increment());
         }}
       >
         Increment

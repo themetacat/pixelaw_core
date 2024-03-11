@@ -29,6 +29,8 @@ import {
 } from "../../global/constants";
 import { useMUD } from "../../MUDContext";
 
+import PopUpBox from '../popUpBox'
+
 import powerIcon from '../../images/jian_sekuai.png'
 import AddIcon from '../../images/jia.png'
 const colorOptionsData = [
@@ -74,10 +76,10 @@ const colorOptionsData = [
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
-  instruction:any
+  // instruction:any
 }
 
-export default function Header({ hoveredData, handleData ,instruction}: Props) {
+export default function Header({ hoveredData, handleData }: Props) {
   const {
     components: { App, Pixel, AppName },
     network: { playerEntity, publicClient },
@@ -85,7 +87,7 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
   } = useMUD();
   const [numberData, setNumberData] = useState(50);
   const gridCanvasRef = React.useRef(null);
-  const [panning, setPanning] = useState(false);
+  const [popExhibit, setPopExhibit] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
 //获取地址
   const playerEntityNum = BigInt(playerEntity);
@@ -138,7 +140,6 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
   // const offsetXRef = useRef<number>(offsetX);
   // const offsetYRef = useRef<number>(offsetY);
   const [selectedColor, setSelectedColor] = useState("#ffffff");
-
   // 点击事件处理程序
   function handleColorOptionClick(color: any) {
     setSelectedColor(color);
@@ -149,9 +150,18 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
   };
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
-  // const [instruction, setInstruction] = useState(instruction);
+  const [instruC, setInstruC] = useState('');
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
-  console.log(instruction,'============================');
+
+  // const [receivedInstruction, setReceivedInstruction] = useState('');
+
+  const handleInstruction = (instructionValue:any) => {
+    // 在这里处理接收到的instruction值
+    // console.log(instructionValue,'============================');
+    // setReceivedInstruction(instructionValue);
+  };
+
+ 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
@@ -268,7 +278,13 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
     [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
   );
 
+
+  const handleChildValue = ()=>{
+    // console.log(1)
+  }
+
   useEffect(() => {
+    // setInstruC(instruction)
     const handleScroll = () => {
       setScrollOffset({ x: window.scrollX, y: window.scrollY });
     };
@@ -320,6 +336,8 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
   };
 
   const handleMouseUp = () => {
+    // console.log('我点了！！！')
+    setPopExhibit(true)
     setTranslateX(0);
     setTranslateY(0);
   };
@@ -419,7 +437,10 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
 
 
 
-
+const onHandleExe= ()=>{
+  // console.log('dianle')
+  setPopExhibit(false)
+}
 
   return (
     <>
@@ -451,7 +472,7 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
         type="button"
         onClick={async (event) => {
           event.preventDefault();
-          console.log("new counter value:", await increment());
+          // console.log("new counter value:", await increment());
         }}
       >
         Increment
@@ -559,9 +580,12 @@ export default function Header({ hoveredData, handleData ,instruction}: Props) {
         ))}
       </div>
 
-        <RightPart coordinates={coordinates} entityData={entityData}   instruction={instruction}/>
+        <RightPart coordinates={coordinates} entityData={entityData}
+      //  onHandle={handleInstruction} 
+          />
     
       </div>
+      {popExhibit === true ? <PopUpBox addressData={hexString} coordinates={coordinates}  onHandleExe={onHandleExe}/> : false} 
     </>
   );
 }

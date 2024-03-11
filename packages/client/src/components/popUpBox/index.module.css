@@ -41,6 +41,7 @@
     text-align: center;
     font-size: 32px;
     margin-bottom: 0px;
+    margin-top: 1.5rem;
 }
 .direction{
     text-transform: capitalize; /* 将每个单词的首字母大写 */
@@ -74,11 +75,11 @@ display: flex;
     font-weight: 500;
     --tw-ring-offset-color: var(--tw-background-color);
     transition-property: color; 
-    outline: none;
+    /* outline: none; */
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color), var(--tw-ring-offset-shadow, 0 0 #0000);
     --tw-ring-color: var(--tw-ring-offset-color); 
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-offset-color); 
-    cursor: not-allowed;
+    cursor: pointer;
     opacity: 0.5;
     background-color: rgba(0, 0, 0, 0.8);
     padding-left: 0.75rem; /* 水平方向的内边距 */
@@ -109,7 +110,8 @@ display: flex;
     --tw-ring-offset-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* 焦点时添加 2px 宽度的环形边框 */
     --tw-ring-color: #3b82f6; /* 焦点时环形边框的颜色 */
     --tw-ring-offset-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05); /* 焦点时环形边框的偏移量 */
-    pointer-events: none; /* 禁用状态时禁止指针事件 */
-    background-color: #f59e0b; /* 当状态为打开时背景色为强调色 */
+    pointer-events: auto; /* 禁用状态时禁止指针事件 */
+    background-color: #2f1643; /* 当状态为打开时背景色为强调色 */
     color: #6b7280; /* 当状态为打开时文本颜色为淡化前景色 */
+    z-index: 22222222222;
 }

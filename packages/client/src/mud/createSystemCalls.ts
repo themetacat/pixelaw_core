@@ -59,7 +59,7 @@ if(entityVal===null){
     
     return '0x' + hexString;
   }
-  const increment = async () => {
+  const increment = async (incrementData:any,coordinates:any,entityaData:any,addressData:any) => {
     /*
      * Because IncrementSystem
      * (https://mud.dev/templates/typescript/contracts#incrementsystemsol)
@@ -68,15 +68,20 @@ if(entityVal===null){
      */
     // const txData = await systemContract.write.snake_SnakeSystem_init()
     // const tx = await worldContract?.write?.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system:entityVal,position: {x: xDATA, y: yData}, color: color}]);
-console.log(1)
-    const tx = await systemContract.write?.snake_SnakeSystem_init();
+//console.log(1)
+    // const tx = await systemContract.write?.snake_SnakeSystem_init();
     // const tx = await systemContract.write?.paint_PaintSystem_init();
     // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
 
-    // const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x8ce361602B935680E8DeC218b820ff5056BeB7af',position: {x: 5, y: 2}, color: "#fe9200"}, 2]);
+    const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: 
+      // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
+    {addressData}, for_system:
+    //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
+    {entityaData},
+    position: {x:coordinates.x,y:coordinates.y}, color: "#fe9200"}, incrementData]);
     // const tx = await worldContract.write.snake_SnakeSystem_move(['0xff92C2168179f45a4F3404ba2957Cc035314DEb7']);
 
-console.log(tx,6666)
+//console.log(tx,6666)
     // const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
     // await waitForTransaction(tx);
 
@@ -115,7 +120,7 @@ console.log(tx,6666)
     //   })
     // )
     // await waitForTransaction(txData);
-    console.log(queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data);
+    //console.log(queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data);
     
     const txData = await worldContract.write.call_CallOtherSystem_call_world_process_queue([queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data])
     // const txData = await worldContract.write.process_queue([queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data])
