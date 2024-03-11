@@ -5,9 +5,7 @@ const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.a
 const IWorldAbi = await response.json();
 
 
-// const {
-//     network: {publicClient}
-// } = useMUD();
+
 
 type QueueType = {
   id: any,
