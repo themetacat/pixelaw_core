@@ -103,10 +103,11 @@ export default function RightPart({ coordinates, entityData, }: Props) {
             <div  className={selectedIcon === index ?style.imgCon1:style.imgCon}  style={{fontSize: '32px', lineHeight: '50px', fontFamily:'Arial Unicode MS'}}>
               {/* &#x1F40D; */}
              {/* {value?.icon?String?.fromCodePoint(parseInt( value?.icon?.substring(2), 16)):null}  */}
-             {value.icon && /^[0-9A-Fa-f]{4,}$/.test(value.icon) ?
+             {
+    value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon) ?
         String.fromCodePoint(parseInt(value.icon.substring(2), 16)) :
         null
-    }
+}
               </div>
             {panning === false?null:<span className={style.appName}>{value.app_name}</span>}
           </div>

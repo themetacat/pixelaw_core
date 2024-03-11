@@ -442,6 +442,9 @@ const onHandleExe= ()=>{
   setPopExhibit(false)
 }
 
+
+
+
   return (
     <>
     
@@ -585,7 +588,7 @@ const onHandleExe= ()=>{
           />
     
       </div>
-      {popExhibit === true ? <PopUpBox addressData={hexString} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/> : false} 
+      {localStorage.getItem('mainfest')?.includes('Sanke')&&popExhibit === true ? <PopUpBox addressData={hexString} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}
     </>
   );
 }
