@@ -3,14 +3,13 @@
  * (https://viem.sh/docs/getting-started.html).
  * This line imports the functions we need from it.
  */
-import { createPublicClient, fallback, webSocket, http, createWalletClient, Hex, parseEther, ClientConfig } from "viem";
+import { createPublicClient, fallback, webSocket, http, createWalletClient, Hex, parseEther, ClientConfig, createTestClient } from "viem";
 import { createFaucetService } from "@latticexyz/services/faucet";
 import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
-
 import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
 // import IWorldAbi from "../../../../packages/call_system/out/IWorld.sol/IWorld.abi.json";
-// import IWorldAbi from "../../../../packages/call_system/out/world/IWorld.sol/IWorld.abi.json";
+import ICallSystemAbi from "../../../../packages/call_system/out/ICallOtherSystem.sol/ICallOtherSystem.abi.json";
 // import SnakeSystemAbi from "../../../../packages/snake/out/SnakeSystem.sol/SnakeSystem.abi.json";
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
@@ -76,20 +75,25 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
         account: burnerAccount,
       });
 
+      const testClient = createTestClient({
+        // ...clientOptions,
+        chain: networkConfig.chain,
+        mode: 'anvil',
+        transport: transportObserver(fallback([webSocket(), http()])),
+      })
+
       /*
        * Create an observable for contract writes that we can
        * pass into MUD dev tools for transaction observability.
        */
       const write$ = new Subject<ContractWrite>();
-console.log(networkConfig.worldAddress,'-------------------')
       /*
       * Create an object for communicating with the deployed World.
       */
      
       const worldContract = getContract({
         address: networkConfig.worldAddress as Hex, 
-        // abi: IWorldAbi,
-        abi: [],
+        abi: ICallSystemAbi,
         publicClient,
         walletClient: burnerWalletClient,
         onWrite: (write) => write$.next(write),
@@ -130,6 +134,7 @@ console.log(networkConfig.worldAddress,'-------------------')
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
+            
             //console.log(components,'components')
    
             /*
@@ -137,28 +142,45 @@ console.log(networkConfig.worldAddress,'-------------------')
              * less than 1 ETH. Repeat every 20 seconds to ensure you don't
              * run out.
              */
-            if (networkConfig.faucetServiceUrl) {
-              const address = burnerAccount.address;
-              console.info("[Dev Faucet]: Player address -> ", address);
-
-              const faucet = createFaucetService(networkConfig.faucetServiceUrl);
-
+            const account_addr = burnerWalletClient.account.address
+            console.log(burnerWalletClient.account.address);
+            
               const requestDrip = async () => {
-                const balance = await publicClient.getBalance({ address });
+                const balance = await publicClient.getBalance({ address: account_addr });
                 console.info(`[Dev Faucet]: Player balance -> ${balance}`);
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   console.info("[Dev Faucet]: Balance is low, dripping funds to player");
                   // Double drip
-                  await faucet.dripDev({ address });
-                  await faucet.dripDev({ address });
+                  await testClient.setBalance({ address: account_addr, value: parseEther('2') });
                 }
               };
-
               requestDrip();
-              // Request a drip every 20 seconds
               setInterval(requestDrip, 20000);
-            }
+            // if (networkConfig.faucetServiceUrl) {
+            //   const address = burnerAccount.address;
+            //   console.info("[Dev Faucet]: Player address -> ", address);
+
+            //   const faucet = createFaucetService(networkConfig.faucetServiceUrl);
+
+            //   const requestDrip = async () => {
+            //     const balance = await publicClient.getBalance({ address });
+            //     console.info(`[Dev Faucet]: Player balance -> ${balance}`);
+            //     const lowBalance = balance < parseEther("1");
+            //     if (lowBalance) {
+            //       console.info("[Dev Faucet]: Balance is low, dripping funds to player");
+            //       // Double drip
+            //       await faucet.dripDev({ address });
+            //       await faucet.dripDev({ address });
+            //     }
+            //   };
+
+            //   requestDrip();
+            //   // Request a drip every 20 seconds
+            //   setInterval(requestDrip, 20000);
+            // }
+            console.log(burnerWalletClient.account.address, 1111111);
+            
 
             resolve({
               world,

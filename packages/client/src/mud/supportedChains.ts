@@ -43,8 +43,8 @@ const redstone = defineChain({
 
 const core_foundry = defineChain({
   id: 31_338,
-  name: 'Core Foundry',
-  network: 'core foundry',
+  name: 'Core Anvil',
+  network: 'core anvil',
   nativeCurrency: {
     decimals: 18,
     name: 'Ether',
@@ -52,12 +52,12 @@ const core_foundry = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['http://127.0.0.1:8545'],
-      webSocket: ['ws://127.0.0.1:8545'],
+      http: ['http://8.130.23.16:8545/'],
+      webSocket: ['http://8.130.23.16:8545/'],
     },
     public: {
-      http: ['http://127.0.0.1:8545'],
-      webSocket: ['ws://127.0.0.1:8545'],
+      http: ['http://8.130.23.16:8545/'],
+      webSocket: ['http://8.130.23.16:8545/'],
     },
   },
 })

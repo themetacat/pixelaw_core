@@ -10,8 +10,6 @@ import { ICoreSystem } from "../core_codegen/world/ICoreSystem.sol";
 import { Pixel, PermissionsData, PixelData, PixelUpdateData, DefaultParameters, Position } from "../core_codegen/index.sol";
 import { Snake, SnakeData, SnakeSegment, SnakeSegmentData } from "../codegen/index.sol";
 import { Direction } from "../codegen/common.sol";
-// import {DefaultParameters} from "../index.sol";
-// import { Position } from "../index.sol";
 
 contract SnakeSystem is System {
 
@@ -30,15 +28,12 @@ contract SnakeSystem is System {
   }
 
   uint256 SNAKE_MAX_LENGTH = 255;
-  string constant APP_ICON = '"U+1F40D"';
   string constant NAME_SPACE = 'snake';
   string constant SYSTEM_NAME = 'SnakeSystem';
-  string constant APP_NAME = 'SnakeSystem';
-    string constant APP_MANIFEST = 'BASE/Snake';
 
   function init() public {
     
-    ICoreSystem(_world()).update_app(APP_NAME, APP_ICON, APP_MANIFEST);
+    ICoreSystem(_world()).update_app("snake", "icon_snake", "BASE/");
     bytes4 INTERACT_SELECTOR =  bytes4(keccak256("interact(DefaultParameters, Direction)"));
     string memory INTERACT_INSTRUCTION = 'select direction for snake';
     ICoreSystem(_world()).set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
@@ -158,6 +153,8 @@ contract SnakeSystem is System {
       if(next_pixel.owner == address(0)){
         snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
         snake.last_segment_id = remove_last_segment(snake);
+      }else if(!has_write_access){
+        snake.is_dying = true;
       }else if(next_pixel.owner == owner){
         snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
         if (snake.length >= SNAKE_MAX_LENGTH){
@@ -165,8 +162,6 @@ contract SnakeSystem is System {
         }else{
           snake.length += 1;
         }
-      }else if(!has_write_access){
-        snake.is_dying = true;
       }else{
         if(snake.length == 1){
           snake.is_dying = true;
@@ -238,8 +233,8 @@ contract SnakeSystem is System {
       color: snake.color,
       timestamp: 0,
       text: snake.text,
-      app: pixel.app,
-      owner: pixel.owner,
+      app: address(0),
+      owner: address(0),
       action: ''
     }));
     return id;
@@ -248,11 +243,11 @@ contract SnakeSystem is System {
   function remove_last_segment(SnakeData memory snake) public returns(uint256){
  
     SnakeSegmentData memory last_segment = SnakeSegment.get(snake.last_segment_id);
-    // app and owner not should address(0)!!!
+
     ICoreSystem(_world()).update_pixel(PixelUpdateData({
       x: last_segment.x,
       y: last_segment.y,
-      color: last_segment.pixel_original_color,
+      color: last_segment.pixel_original_text,
       timestamp: 0,
       text: last_segment.pixel_original_text,
       app: address(0),

@@ -72,10 +72,6 @@ export default function RightPart({ coordinates, entityData }: Props) {
       {/* </div> */}
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
-        console.log(entitya);
-        
-        const instruction = getComponentValue(Instruction, entitya) as any;
-        console.log(instruction);
         
         return (
           <button
