@@ -585,7 +585,7 @@ const onHandleExe= ()=>{
           />
     
       </div>
-      {popExhibit === true ? <PopUpBox addressData={hexString} coordinates={coordinates}  onHandleExe={onHandleExe}/> : false} 
+      {popExhibit === true ? <PopUpBox addressData={hexString} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/> : false} 
     </>
   );
 }

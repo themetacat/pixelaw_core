@@ -25,9 +25,10 @@ import { Hex } from "viem";
 interface Props {
   onHandleExe: any;
   addressData: any;
+  selectedColor: any;
   coordinates: { x: number; y: number };
 }
-export default function PopUpBox({ addressData,onHandleExe,coordinates }: Props) {
+export default function PopUpBox({ addressData,selectedColor,onHandleExe,coordinates }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
@@ -37,7 +38,7 @@ export default function PopUpBox({ addressData,onHandleExe,coordinates }: Props)
 
   const [instruC, setInstruC] = useState(null);
   const [entityaData, setEntityaData] = useState('');
-// console.log(coordinates,555)
+// console.log(selectedColor,555)
   useEffect(() => {
     entities_app.map((entitya) => {
       const instruction = getComponentValue(Instruction, entitya) as any;
@@ -53,19 +54,19 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
 
   const onHandleLeft = ()=>{
     // console.log('点了没有',addressData)
-    increment(1,coordinates,entityaData,addressData)
+    increment(1,coordinates,entityaData,addressData,selectedColor)
   }
   const onHandleRight = ()=>{
     // console.log('点了没有',addressData)
-    increment(2,coordinates,entityaData,addressData)
+    increment(2,coordinates,entityaData,addressData,selectedColor)
   }
   const onHandleUp = ()=>{
     // console.log('点了没有',addressData)
-    increment(3,coordinates,entityaData,addressData)
+    increment(3,coordinates,entityaData,addressData,selectedColor)
   }
   const onHandleDown = ()=>{
     // console.log('点了没有',addressData)
-    increment(4,coordinates,entityaData,addressData)
+    increment(4,coordinates,entityaData,addressData,selectedColor)
   }
 
   return (

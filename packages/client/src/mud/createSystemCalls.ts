@@ -59,7 +59,7 @@ if(entityVal===null){
     
     return '0x' + hexString;
   }
-  const increment = async (incrementData:any,coordinates:any,entityaData:any,addressData:any) => {
+  const increment = async (incrementData:any,coordinates:any,entityaData:any,addressData:any,selectedColor:any) => {
     /*
      * Because IncrementSystem
      * (https://mud.dev/templates/typescript/contracts#incrementsystemsol)
@@ -73,12 +73,24 @@ if(entityVal===null){
     // const tx = await systemContract.write?.paint_PaintSystem_init();
     // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
 
-    const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: 
-      // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
-    {addressData}, for_system:
-    //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
-    {entityaData},
-    position: {x:coordinates.x,y:coordinates.y}, color: "#fe9200"}, incrementData]);
+    const appName = localStorage.getItem('manifest')  as any
+    if(appName&& appName.includes('Snake')){
+    const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: {addressData}, for_system:  {entityaData}, position: {x:coordinates.x,y:coordinates.y},  color: {selectedColor}}]);
+    }else if(appName&& appName.includes('Paint')){
+      const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: 
+        // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
+      {addressData}, for_system:
+      //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
+      {entityaData},
+      position: {x:coordinates.x,y:coordinates.y}, color: {selectedColor}}, incrementData]);
+    }
+
+    // const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: 
+    //   // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
+    // {addressData}, for_system:
+    // //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
+    // {entityaData},
+    // position: {x:coordinates.x,y:coordinates.y}, color: {selectedColor}}, incrementData]);
     // const tx = await worldContract.write.snake_SnakeSystem_move(['0xff92C2168179f45a4F3404ba2957Cc035314DEb7']);
 
 //console.log(tx,6666)
