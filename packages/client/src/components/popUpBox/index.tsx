@@ -45,7 +45,7 @@ export default function PopUpBox({ addressData,onHandleExe,coordinates }: Props)
       const num = BigInt(entitya); // 将 16 进制字符串转换为 BigInt 类型的数值
 const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
 // console.log(result);
-      setInstruC(instruction.instruction);
+      setInstruC(instruction?.instruction);
       setEntityaData(result)
     });
   }, []);

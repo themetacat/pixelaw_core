@@ -85,6 +85,7 @@ export default function RightPart({ coordinates, entityData, }: Props) {
       {/* </div> */}
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
+        // console.log(value)
         return (
           <div
             key={`${index}`}
@@ -101,7 +102,11 @@ export default function RightPart({ coordinates, entityData, }: Props) {
             {/* <img className={style.imgCon} src={value?.icon} /> */}
             <div  className={selectedIcon === index ?style.imgCon1:style.imgCon}  style={{fontSize: '32px', lineHeight: '50px', fontFamily:'Arial Unicode MS'}}>
               {/* &#x1F40D; */}
-              {String.fromCodePoint(parseInt( value.icon.substring(2), 16))}
+             {/* {value?.icon?String?.fromCodePoint(parseInt( value?.icon?.substring(2), 16)):null}  */}
+             {value.icon && /^[0-9A-Fa-f]{4,}$/.test(value.icon) ?
+        String.fromCodePoint(parseInt(value.icon.substring(2), 16)) :
+        null
+    }
               </div>
             {panning === false?null:<span className={style.appName}>{value.app_name}</span>}
           </div>
