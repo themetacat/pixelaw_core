@@ -84,7 +84,7 @@ display: flex;
     background-color: rgba(0, 0, 0, 0.8);
     padding-left: 0.75rem; /* 水平方向的内边距 */
     padding-right: 0.75rem;
-    flex: 1; /* 自动填充剩余空间 */
+    flex: 1; 
     height: 44px; /* 设置高度 */
     background-color: #390754; /* 背景色 */
     border-radius: 8px; /* 圆角 */
