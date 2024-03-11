@@ -10,7 +10,7 @@ import { singletonEntity } from "@latticexyz/store-sync/recs";
 import { ManifestContext ,} from '../components/rightPart';
 import { encodeSystemCall, encodeSystemCalls } from '@latticexyz/world';
 import { resourceToHex } from "@latticexyz/common";
-import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
+// import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 
 export function createSystemCalls(
   
