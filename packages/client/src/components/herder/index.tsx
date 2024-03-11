@@ -81,7 +81,7 @@ interface Props {
 
 export default function Header({ hoveredData, handleData }: Props) {
   const {
-    components: { App, Pixel, AppName },
+    components: { App, Pixel, AppName ,Instruction},
     network: { playerEntity, publicClient },
     systemCalls: { increment },
   } = useMUD();
@@ -161,12 +161,25 @@ export default function Header({ hoveredData, handleData }: Props) {
     // setReceivedInstruction(instructionValue);
   };
 
- 
+  const [entityaData, setEntityaData] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
 //console.log(Has(Pixel),'Has(Pixel)',Has(App))
-  const entities = useEntityQuery([Has(Pixel)]);
+  const entities = useEntityQuery([Has(Pixel)]);   
+  const entities_app = useEntityQuery([Has(App)]);
+  useEffect(() => {
+    entities_app.map((entitya) => {
+      const instruction = getComponentValue(Instruction, entitya) as any;
+      // console.log(entitya, "=111111==========");
+      const num = BigInt(entitya); // 将 16 进制字符串转换为 BigInt 类型的数值
+const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
+// console.log(result);
+      setInstruC(instruction?.instruction);
+      setEntityaData(result)
+    });
+  }, []);
+
   // console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
     [];
@@ -322,11 +335,14 @@ export default function Header({ hoveredData, handleData }: Props) {
     setTranslateY(event.clientY);
     if (hoveredSquare && selectedColor) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-      // const increData = increment(
-      //   hoveredSquare.x,
-      //   hoveredSquare.y,
-      //   selectedColor
-      // );
+      const increData = increment(
+  null,
+        addressData,
+entityaData,
+coordinates,
+selectedColor
+
+      );
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
       handleData(hoveredSquare);
