@@ -104,17 +104,19 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
        * Create an object for communicating with the deployed World.
        */
       const appName = localStorage.getItem('manifest')  as any
+      // const appName = "BASE/Paint"
+      
       const parts = appName?.split("/") as any;
       let worldAbiUrl;
       // console.log(parts[0]); // 输出 "Base"
       if(appName){
         if(parts[0] === 'BASE'){
-          worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1]}`+".abi.json" as any;
+          worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
         }else{
           worldAbiUrl =appName
         }
       }else{
-        worldAbiUrl="https://pixelaw-game.vercel.app/Snake.abi.json"
+        worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
       }
      
       // const worldAbiUrl = "https://pixelaw-game.vercel.app/Snake.abi.json";

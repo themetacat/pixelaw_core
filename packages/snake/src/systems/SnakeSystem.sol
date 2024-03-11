@@ -33,7 +33,7 @@ contract SnakeSystem is System {
 
   function init() public {
     
-    ICoreSystem(_world()).update_app("snake", "icon_snake", "BASE/");
+    ICoreSystem(_world()).update_app("snake", "U+1F40D", "BASE/Snake");
     bytes4 INTERACT_SELECTOR =  bytes4(keccak256("interact(DefaultParameters, Direction)"));
     string memory INTERACT_INSTRUCTION = 'select direction for snake';
     ICoreSystem(_world()).set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
