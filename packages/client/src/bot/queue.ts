@@ -1,8 +1,8 @@
 import { useMUD } from "../MUDContext";
 // import IWorldAbi from "../../../contracts/out/IWorld.sol/IWorld.abi.json";
-// import IWorldAbi from "../../../contracts/out/CoreSystem.sol/CoreSystem.abi.json";
-const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.abi.json');
-const IWorldAbi = await response.json();
+import IWorldAbi from "../../../contracts/out/CoreSystem.sol/CoreSystem.abi.json";
+// const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.abi.json');
+// const IWorldAbi = await response.json();
 
 
 // const {
