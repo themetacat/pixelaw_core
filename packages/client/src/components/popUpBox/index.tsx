@@ -31,19 +31,19 @@ interface Props {
 export default function PopUpBox({ addressData,selectedColor,onHandleExe,coordinates }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
-    network: { playerEntity, publicClient },
+    network: { playerEntity, publicClient ,palyerAddress},
     systemCalls: { increment },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
-
+console.log(palyerAddress,'=-=-=-=-=-')
   const [instruC, setInstruC] = useState(null);
   const [entityaData, setEntityaData] = useState('');
 // console.log(selectedColor,555)
   useEffect(() => {
-    entities_app.map((entitya) => {
+    entities_app.map((entitya:any) => {
       // console.log(entities_app)
       const instruction = getComponentValue(Instruction, entitya) as any;
-      // console.log(instruction, "=111111==========");
+      console.log(entitya, "=111111==========",instruction);
       const num = BigInt(entitya); // 将 16 进制字符串转换为 BigInt 类型的数值
 const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
 // console.log(result,88888888888);
@@ -69,19 +69,19 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   }
   const onHandleLeft = ()=>{
     console.log('点了没有',worldAbiUrl)
-    increment(1,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
+    increment(1,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
   }
   const onHandleRight = ()=>{
     // console.log('点了没有',addressData)
-    increment(2,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
+    increment(2,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
   }
   const onHandleUp = ()=>{
     // console.log('点了没有',addressData)
-    increment(3,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
+    increment(3,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
   }
   const onHandleDown = ()=>{
     // console.log('点了没有',addressData)
-    increment(4,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
+    increment(4,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
   }
 
   return (
