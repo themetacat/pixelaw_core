@@ -60,18 +60,16 @@ if(entityVal===null){
     return '0x' + hexString;
   }
   const increment = async (incrementData:any,coordinates:any,entityaData:any,addressData:any,selectedColor:any) => {
-
+    
     // const tx = await systemContract.write?.snake_SnakeSystem_init();
     // const tx1 = await systemContract.write?.paint_PaintSystem_init();
     // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
-
+    
     const appName = localStorage.getItem('manifest')  as any
-    console.log(appName);
     
     if(appName&& appName.includes('Paint')){
-      console.log(addressData, entityaData, coordinates.x,coordinates.y);
       
-    const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: {addressData}, for_system:  {entityaData}, position: {x:coordinates.x,y:coordinates.y},  color: {selectedColor}}]);
+    const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x41DF5a174c25550EEEeEd53307f83b3fe9F5747b', for_system: "0xf7Cd8fa9b94DB2Aa972023b379c7f72c65E4De9D", position: {x:coordinates.x,y:coordinates.y},  color: {selectedColor}}]);
     }else if(appName&& appName.includes('Snake')){
       
       const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: 

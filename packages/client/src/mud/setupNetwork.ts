@@ -116,14 +116,14 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
           worldAbiUrl =appName
         }
       }else{
-        worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+        worldAbiUrl="https://pixelaw-game.vercel.app/Snake.abi.json"
       }
-     
-      // const worldAbiUrl = "https://pixelaw-game.vercel.app/Snake.abi.json";
+
       fetch(worldAbiUrl)
         .then(response => response.json())
         .then(abi => {
-
+          console.log(11111);
+          
           // 将获取到的ABI作为contract参数传递
           const systemContract = getContract({
             address: networkConfig.worldAddress as Hex,
@@ -160,7 +160,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
              * run out.
              */
             const account_addr = burnerWalletClient.account.address
-            console.log(burnerWalletClient.account.address);
+            console.log(account_addr);
             
               const requestDrip = async () => {
                 const balance = await publicClient.getBalance({ address: account_addr });

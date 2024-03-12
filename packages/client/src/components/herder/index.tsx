@@ -81,7 +81,7 @@ interface Props {
 
 export default function Header({ hoveredData, handleData }: Props) {
   const {
-    components: { App, Pixel, AppName },
+    components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
     systemCalls: { increment },
   } = useMUD();
@@ -97,6 +97,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     "..." +
     hexString.substring(hexString.length - 4).toUpperCase();
     //获取网络名称
+  const all_address = hexString
   const chainName = publicClient.chain.name;
   const capitalizedString = chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
     //获取余额
@@ -315,7 +316,19 @@ export default function Header({ hoveredData, handleData }: Props) {
     mouseX,
     mouseY,
   ]);
-
+  const entities_app = useEntityQuery([Has(App)]);
+  const [entityaData, setEntityaData] = useState('');
+  useEffect(() => {
+     entities_app.map((entitya) => {
+       const instruction = getComponentValue(Instruction, entitya) as any;
+       // console.log(entitya, "=111111==========");AppName
+       const num = BigInt(entitya); // 将 16 进制字符串转换为 BigInt 类型的数值
+ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
+ // console.log(result);
+       setInstruC(instruction?.instruction);
+       setEntityaData(result)
+     });
+   }, []);
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     //console.log("是点击事件吗");
     setTranslateX(event.clientX);
@@ -329,6 +342,13 @@ export default function Header({ hoveredData, handleData }: Props) {
       // );
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
+      const increData = increment(
+        null,
+      coordinates,
+      entityaData,
+      all_address,
+      selectedColor
+            );
       handleData(hoveredSquare);
     } else {
       //console.log("hoveredSquare或selectedColor为空");
@@ -448,7 +468,7 @@ const onHandleExe= ()=>{
   return (
     <>
     
-      <div className={style.container}>
+      {/* <div className={style.container}>
         <img  className={style.containerImg}
           src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
@@ -587,7 +607,7 @@ const onHandleExe= ()=>{
       //  onHandle={handleInstruction} 
           />
     
-      </div>
+      </div> */}
       {localStorage.getItem('mainfest')?.includes('Sanke')&&popExhibit === true ? <PopUpBox addressData={hexString} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}
     </>
   );
