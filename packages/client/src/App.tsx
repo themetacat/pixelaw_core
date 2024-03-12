@@ -110,31 +110,31 @@ export const App = () => {
   // getQueue();
 
 
-    setTimeout(() => {
-      //console.log("============setTimeout==============");
+    // setTimeout(() => {
+    //   //console.log("============setTimeout==============");
 
-      const getQueueData = getQueue();
+    //   const getQueueData = getQueue();
 
-      getQueueData.then((q) => {
-        //console.log(q);
-        const unlockables = Object.values(q).sort((a, b) => Number(a.timestamp - b.timestamp));
-        //console.log(unlockables);
+    //   getQueueData.then((q) => {
+    //     //console.log(q);
+    //     const unlockables = Object.values(q).sort((a, b) => Number(a.timestamp - b.timestamp));
+    //     //console.log(unlockables);
         
-        for (const res of unlockables) {
-        try {
-          // //console.log(res);
+    //     for (const res of unlockables) {
+    //     try {
+    //       // //console.log(res);
           
-          execute_queue({ id: res.id, timestamp: res.timestamp, namespace: res.namespace, name: res.name, call_data: res.call_data });
-          delQueue(res.id);
-          //console.log("-----------");
+    //       execute_queue({ id: res.id, timestamp: res.timestamp, namespace: res.namespace, name: res.name, call_data: res.call_data });
+    //       delQueue(res.id);
+    //       //console.log("-----------");
           
           
-        }catch(error){
-          //console.error("Error while processing ", res, error)
-        }
-      }
-      })
-    }, 3000);
+    //     }catch(error){
+    //       //console.error("Error while processing ", res, error)
+    //     }
+    //   }
+    //   })
+    // }, 3000);
 
 
   // 定时执行queue中的方法

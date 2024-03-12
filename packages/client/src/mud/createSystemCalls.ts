@@ -64,10 +64,8 @@ if(entityVal===null){
   const increment = async (incrementData:any,worldAbiUrl:any,coordinates:any,entityaData:any,addressData:any,selectedColor:any) => {
     // const tx = await systemContract.write?.snake_SnakeSystem_init();
     // const tx1 = await systemContract.write?.paint_PaintSystem_init();
-    // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
-    
+        
     const appName = localStorage.getItem('manifest')  as any
-
     // systemContract={worldAbiUrl}
     // const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
     // const systemContract = await response.json();
@@ -77,8 +75,6 @@ if(entityVal===null){
 console.log(tx,'进来了！！！！！')
 
     }else if(appName&& appName.includes('Snake')){
-      console.log('snake啊！！！！！！！',incrementData)
-      console.log(addressData, entityaData,);
 
       const txData = await systemContract.write.snake_SnakeSystem_interact([{for_player: 
         // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
@@ -88,6 +84,7 @@ console.log(tx,'进来了！！！！！')
       position: {x:coordinates.x,y:coordinates.y}, color: selectedColor}, incrementData]);
       console.log(txData,66666)
     }
+
     // const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
     // await waitForTransaction(tx);
 

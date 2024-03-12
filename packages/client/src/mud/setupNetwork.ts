@@ -109,7 +109,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
        * Create an object for communicating with the deployed World.
        */
       const appName = localStorage.getItem('manifest')  as any
-      // const appName = "BASE/Paint"
       
       const parts = appName?.split("/") as any;
       let worldAbiUrl;

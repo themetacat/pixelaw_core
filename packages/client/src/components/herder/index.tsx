@@ -98,7 +98,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     "..." +
     palyerAddress.substring(palyerAddress.length - 4);
     //获取网络名称
-  const all_address = hexString
   const chainName = publicClient.chain.name;
   const capitalizedString = chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
     //获取余额
@@ -360,18 +359,8 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   entityaData,
   palyerAddress,
 selectedColor
-
       );
-      console.log(selectedColor)
-      // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
-      // 调用handleData方法并传递需要的参数
-      const increData = increment(
-        null,
-      coordinates,
-      entityaData,
-      all_address,
-      selectedColor
-            );
+
       handleData(hoveredSquare);
     } else {
       //console.log("hoveredSquare或selectedColor为空");
@@ -487,13 +476,10 @@ const onHandleExe= ()=>{
   setPopExhibit(false)
 }
 
-
-
-
   return (
     <>
     
-      {/* <div className={style.container}>
+      <div className={style.container}>
         <img  className={style.containerImg}
           src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
