@@ -36,6 +36,8 @@ export function createSystemCalls(
   { worldContract, systemContract, waitForTransaction,publicClient ,playerEntity}: SetupNetworkResult,
   { Counter }: ClientComponents,
 ) {
+  
+  // console.log(systemContract,'55555555555')
 
 const entityVal = localStorage.getItem("entityVal") as any;
 if(entityVal===null){
@@ -59,27 +61,33 @@ if(entityVal===null){
     
     return '0x' + hexString;
   }
-  const increment = async (incrementData:any,coordinates:any,entityaData:any,addressData:any,selectedColor:any) => {
-    
+  const increment = async (incrementData:any,worldAbiUrl:any,coordinates:any,entityaData:any,addressData:any,selectedColor:any) => {
     // const tx = await systemContract.write?.snake_SnakeSystem_init();
     // const tx1 = await systemContract.write?.paint_PaintSystem_init();
     // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
     
     const appName = localStorage.getItem('manifest')  as any
-    
-    if(appName&& appName.includes('Paint')){
-      
-    const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x41DF5a174c25550EEEeEd53307f83b3fe9F5747b', for_system: "0xf7Cd8fa9b94DB2Aa972023b379c7f72c65E4De9D", position: {x:coordinates.x,y:coordinates.y},  color: {selectedColor}}]);
-    }else if(appName&& appName.includes('Snake')){
-      
-      const tx = await systemContract.write.snake_SnakeSystem_interact([{for_player: 
-        // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
-      {addressData}, for_system:
-      //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
-      {entityaData},
-      position: {x:coordinates.x,y:coordinates.y}, color: {selectedColor}}, incrementData]);
-    }
+ console.log(selectedColor,55841)
+    // systemContract={worldAbiUrl}
+    // const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
+    // const systemContract = await response.json();
+    console.log(systemContract,6666)
+    if( appName.includes('Paint')){
+      console.log(addressData, entityaData,);
+      // console.log('paint啊！！！！！！！！！',systemContract)
+    const tx = await systemContract.write.paint_PaintSystem_interact([{for_player:addressData, for_system: entityaData, position: {x:coordinates.x,y:coordinates.y},  color: selectedColor}]);
+console.log(tx,'进来了！！！！！')
 
+    }else if(appName&& appName.includes('Snake')){
+      console.log('snake啊！！！！！！！',incrementData)
+      const txData = await systemContract.write.snake_SnakeSystem_interact([{for_player: 
+        // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
+        addressData, for_system:
+      //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
+      entityaData,
+      position: {x:coordinates.x,y:coordinates.y}, color: selectedColor}, incrementData]);
+      console.log(txData,66666)
+    }
     // const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
     // await waitForTransaction(tx);
 
@@ -127,10 +135,11 @@ if(entityVal===null){
     // setTimeout(() => execute_queue(queue_data), 1000);
   };
 
-
+ 
   // execute_queue(queue_data)
   return {
     increment,
     execute_queue
   };
+  
 }

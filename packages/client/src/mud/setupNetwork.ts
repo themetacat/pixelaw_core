@@ -9,7 +9,10 @@ import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
 // import IWorldAbi from "../../../../packages/call_system/out/IWorld.sol/IWorld.abi.json";
-import ICallSystemAbi from "../../../../packages/call_system/out/ICallOtherSystem.sol/ICallOtherSystem.abi.json";
+// import ICallSystemAbi from "../../../../packages/call_system/out/ICallOtherSystem.sol/ICallOtherSystem.abi.json";
+
+const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.abi.json');
+const ICallSystemAbi = await response.json();
 // import SnakeSystemAbi from "../../../../packages/snake/out/SnakeSystem.sol/SnakeSystem.abi.json";
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
@@ -25,6 +28,7 @@ import { Subject, share } from "rxjs";
  * for the source of this information.
  */
 import mudConfig from "../../../contracts/mud.config";
+import { useEffect } from "react";
 
 
 
@@ -41,9 +45,9 @@ export type SetupNetworkResult = {
   waitForTransaction: any;
   worldContract: any;
   systemContract: any;
+  palyerAddress: any;
   write$: any;
 };
-
 export async function setupNetwork(): Promise<SetupNetworkResult> {
   return new Promise<SetupNetworkResult>((resolve, reject) => {
     const networkConfigPromise = getNetworkConfig();
@@ -52,6 +56,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       const passedValue = localStorage.getItem("manifest") as any;
       // 使用模板字符串拼接字符串
       const fullPath = `https://pixelaw-game.vercel.app/${passedValue?.replace("BASE/", "")}`;
+     
 
       /*
        * Create a viem public (read only) client
@@ -118,12 +123,12 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       }else{
         worldAbiUrl="https://pixelaw-game.vercel.app/Snake.abi.json"
       }
-
+  
+      // worldAbiUrl = "https://pixelaw-game.vercel.app/Snake.abi.json";
       fetch(worldAbiUrl)
+    
         .then(response => response.json())
         .then(abi => {
-          console.log(11111);
-          
           // 将获取到的ABI作为contract参数传递
           const systemContract = getContract({
             address: networkConfig.worldAddress as Hex,
@@ -133,6 +138,8 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             onWrite: (write) => write$.next(write),
           });
 
+
+          // console.log(systemContract,'---------------')
           /*
            * Sync on-chain state into RECS and keeps our client in sync.
            * Uses the MUD indexer if available, otherwise falls back
@@ -208,11 +215,14 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               waitForTransaction,
               worldContract,
               systemContract,
+              palyerAddress:burnerWalletClient.account.address,
               write$: write$.asObservable().pipe(share()),
             });
+          
           }).catch(reject);
         })
         .catch(reject);
     }).catch(reject);
+  
   });
 }

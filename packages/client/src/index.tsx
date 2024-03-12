@@ -10,6 +10,7 @@ const root = ReactDOM.createRoot(rootElement);
 
 // TODO: figure out if we actually want this to be async or if we should render something else in the meantime
 setup().then(async (result) => {
+  // console.log(result)
   root.render(
     <MUDProvider value={result}>
       <App />
