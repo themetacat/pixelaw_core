@@ -82,7 +82,7 @@ interface Props {
 export default function Header({ hoveredData, handleData }: Props) {
   const {
     components: { App, Pixel, AppName ,Instruction},
-    network: { playerEntity, publicClient },
+    network: { playerEntity, publicClient,palyerAddress },
     systemCalls: { increment },
   } = useMUD();
   const [numberData, setNumberData] = useState(50);
@@ -90,17 +90,18 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [popExhibit, setPopExhibit] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
 //获取地址
-  const playerEntityNum = BigInt(playerEntity);
-  const hexString = ("0x" + playerEntityNum.toString(16)) as any;
+  // const playerEntityNum = palyerAddress;
+  // const hexString = ("0x" + playerEntityNum.toString(16)) as any;
+  // console.log(palyerAddress)
   const addressData =
-    hexString.substring(0, 6) +
+  palyerAddress.substring(0, 6) +
     "..." +
-    hexString.substring(hexString.length - 4).toUpperCase();
+    palyerAddress.substring(palyerAddress.length - 4);
     //获取网络名称
   const chainName = publicClient.chain.name;
   const capitalizedString = chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
     //获取余额
-    const balanceFN = publicClient.getBalance({ address: hexString });
+    const balanceFN = publicClient.getBalance({ address: palyerAddress });
     balanceFN.then((a: any) => {
       setBalance(a);
     });
@@ -170,9 +171,11 @@ export default function Header({ hoveredData, handleData }: Props) {
   const entities_app = useEntityQuery([Has(App)]);
   useEffect(() => {
     entities_app.map((entitya) => {
-      const instruction = getComponentValue(Instruction, entitya) as any;
-      // console.log(entitya, "=111111==========");
-      const num = BigInt(entitya); // 将 16 进制字符串转换为 BigInt 类型的数值
+      // console.log(entities_app,3333333333)
+      const entityaData = entities_app[0]
+      const instruction = getComponentValue(Instruction, entityaData) as any;
+      // console.log(entityaData, "=111111==========");
+      const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
 const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
 // console.log(result);
       setInstruC(instruction?.instruction);
@@ -328,7 +331,21 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
     mouseX,
     mouseY,
   ]);
-
+  const appName = localStorage.getItem('manifest')  as any
+  // const appName = "BASE/Paint"
+  
+  const parts = appName?.split("/") as any;
+  let worldAbiUrl:any;
+  // console.log(parts[0]); // 输出 "Base"
+  if(appName){
+    if(parts[0] === 'BASE'){
+      worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
+    }else{
+      worldAbiUrl =appName
+    }
+  }else{
+    worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+  }
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     //console.log("是点击事件吗");
     setTranslateX(event.clientX);
@@ -337,12 +354,14 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
       const increData = increment(
   null,
-        addressData,
-entityaData,
-coordinates,
+  worldAbiUrl,
+  coordinates,
+  entityaData,
+  palyerAddress,
 selectedColor
 
       );
+      console.log(selectedColor)
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
       handleData(hoveredSquare);
@@ -352,7 +371,7 @@ selectedColor
   };
 
   const handleMouseUp = () => {
-    // console.log('我点了！！！')
+    console.log('我点了！！！')
     setPopExhibit(true)
     setTranslateX(0);
     setTranslateY(0);
@@ -361,6 +380,7 @@ selectedColor
   const mouseYRef = useRef(0);
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
+
       if (!visibleAreaRef.current || !canvasRef.current) return;
 
       const rect = visibleAreaRef.current.getBoundingClientRect();
@@ -382,8 +402,9 @@ selectedColor
     },
     [drawGrid, hoveredSquare]
   );
-  const handleMouseMove = useCallback(
+  const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
+
       setMouseX(event.clientX);
       setMouseY(event.clientY);
       if (event.buttons !== 1 || !visibleAreaRef.current) return;
@@ -506,7 +527,7 @@ const onHandleExe= ()=>{
         >
           <span>{capitalizedString}</span>
           <span    onClick={() => {
-            addressDataCopy(hexString);
+            addressDataCopy(palyerAddress);
           }} className={style.balanceNum}>{addressData}</span>
           <span className={style.balanceNum}> {publicClient && balance != null ? (
                   <>
@@ -531,7 +552,7 @@ const onHandleExe= ()=>{
         className={style.bodyCon}
         onMouseDown={handleMouseDown}
         onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMove}
+        onMouseMove={handleMouseMoveData}
         onMouseLeave={handleLeave}
         onMouseEnter={handleMouseEnter}
       >
@@ -604,7 +625,7 @@ const onHandleExe= ()=>{
           />
     
       </div>
-      {localStorage.getItem('mainfest')?.includes('Sanke')&&popExhibit === true ? <PopUpBox addressData={hexString} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}
+      {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}
     </>
   );
 }

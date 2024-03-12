@@ -41,32 +41,47 @@ export default function PopUpBox({ addressData,selectedColor,onHandleExe,coordin
 // console.log(selectedColor,555)
   useEffect(() => {
     entities_app.map((entitya) => {
+      // console.log(entities_app)
       const instruction = getComponentValue(Instruction, entitya) as any;
-      // console.log(entitya, "=111111==========");
+      // console.log(instruction, "=111111==========");
       const num = BigInt(entitya); // 将 16 进制字符串转换为 BigInt 类型的数值
 const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-// console.log(result);
+// console.log(result,88888888888);
       setInstruC(instruction?.instruction);
       setEntityaData(result)
     });
   }, []);
 
-
+  const appName = localStorage.getItem('manifest')  as any
+  // const appName = "BASE/Paint"
+  
+  const parts = appName?.split("/") as any;
+  let worldAbiUrl:any;
+  // console.log(parts[0]); // 输出 "Base"
+  if(appName){
+    if(parts[0] === 'BASE'){
+      worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
+    }else{
+      worldAbiUrl =appName
+    }
+  }else{
+    worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+  }
   const onHandleLeft = ()=>{
-    // console.log('点了没有',addressData)
-    increment(1,coordinates,entityaData,addressData,selectedColor)
+    console.log('点了没有',worldAbiUrl)
+    increment(1,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
   }
   const onHandleRight = ()=>{
     // console.log('点了没有',addressData)
-    increment(2,coordinates,entityaData,addressData,selectedColor)
+    increment(2,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
   }
   const onHandleUp = ()=>{
     // console.log('点了没有',addressData)
-    increment(3,coordinates,entityaData,addressData,selectedColor)
+    increment(3,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
   }
   const onHandleDown = ()=>{
     // console.log('点了没有',addressData)
-    increment(4,coordinates,entityaData,addressData,selectedColor)
+    increment(4,worldAbiUrl,coordinates,entityaData,addressData,selectedColor)
   }
 
   return (

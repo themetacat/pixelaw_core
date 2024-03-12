@@ -19,6 +19,7 @@ import { useMUD } from "../../MUDContext";
 import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
 import { Hex } from "viem";
+import { setup } from "../..//mud/setup";
 export const ManifestContext = createContext<string>("");
 
 // function UseManifestValue() {
@@ -63,6 +64,7 @@ export default function RightPart({ coordinates, entityData, }: Props) {
   const handleIconClick = (index:any) => {
     // console.log(index)
       setSelectedIcon(index);
+      setup()
   };
   return (
    
