@@ -4,6 +4,7 @@ import style from "./index.module.css";
 import { clsx } from "clsx";
 import { useRenderGrid } from "../../hooks/useRenderGrid";
 import DrawPanel from "../shared/DrawPanel";
+import {setupNetwork,SetupNetworkResult } from '../../mud/setupNetwork'
 import {
   ComponentValue,
   Entity,
@@ -162,7 +163,21 @@ export default function Header({ hoveredData, handleData }: Props) {
     // console.log(instructionValue,'============================');
     // setReceivedInstruction(instructionValue);
   };
+  const [receivedInstruction, setReceivedInstruction] = useState({});
 
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const networkData: SetupNetworkResult = await setupNetwork();
+        // 在这里可以访问 systemContract
+        setReceivedInstruction(networkData.systemContract);
+      } catch (error) {
+        console.error('Error setting up network:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
   const [entityaData, setEntityaData] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
@@ -355,14 +370,14 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
       const increData = increment(
   null,
-  worldAbiUrl,
+  receivedInstruction,
   coordinates,
   entityaData,
   palyerAddress,
 selectedColor
 
       );
-      console.log(selectedColor)
+      console.log(increData)
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
       const increData = increment(
@@ -629,7 +644,7 @@ const onHandleExe= ()=>{
       </div>
 
         <RightPart coordinates={coordinates} entityData={entityData}
-      //  onHandle={handleInstruction} 
+      //  setupDataTotal={setupDataTotal} 
           />
     
       </div>
