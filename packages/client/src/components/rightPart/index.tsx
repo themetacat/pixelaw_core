@@ -20,6 +20,7 @@ import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
 import { Hex } from "viem";
 import { setup } from "../..//mud/setup";
+import {setupNetwork,SetupNetworkResult } from '../../mud/setupNetwork'
 export const ManifestContext = createContext<string>("");
 
 // function UseManifestValue() {
@@ -29,10 +30,10 @@ export const ManifestContext = createContext<string>("");
 interface Props {
   coordinates: { x: number; y: number };
   entityData: any;
-  // onHandle:any;
+  // setupDataTotal:any;
   
 }
-export default function RightPart({ coordinates, entityData, }: Props) {
+export default function RightPart({ coordinates, entityData,}: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
@@ -59,12 +60,47 @@ export default function RightPart({ coordinates, entityData, }: Props) {
   //   onHandle(instructionValue);
   // };
   // console.log(app_info,66666)
-  const [selectedIcon, setSelectedIcon] = useState(null);
+  // const [selectedIcon, setSelectedIcon] = useState(null);
+  // const [setupDataTotal, setSetupDataTotal] = useState({});
+  const [networkSetup, setNetworkSetup] = useState<SetupNetworkResult | null>(null);
+  const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
+  // useEffect(() => {
+  //   setupNetwork().then((result) => {
+  //     setNetworkSetup(result);
+  //     console.log(result.systemContract)
+  //   }).catch((error) => {
+  //     console.error('Failed to setup network:', error);
+  //   });
+  // }, []);
 
-  const handleIconClick = (index:any) => {
-    // console.log(index)
-      setSelectedIcon(index);
-      setup()
+  const handleIconClick = (index: number) => {
+    setSelectedIcon(index);
+    setupNetwork().then((result) => {
+      setNetworkSetup(result);
+      // updateNetworkSetup(result); // 将result的值更新到外部文件setupNetwork中
+      console.log(result.systemContract)
+    }).catch((error) => {
+      console.error('Failed to setup network:', error);
+    });
+
+
+  //   if (networkSetup && index !== null) {
+  //     // 在这里更新 systemContract 的值
+  //     const updatedSystemContract = { ...networkSetup.systemContract };
+  //     // 执行你的更新操作，例如：
+  //     // updatedSystemContract.someProperty = 'newValue';
+  
+  //     setNetworkSetup(prevNetworkSetup => {
+  //       if (!prevNetworkSetup) {
+  //         return prevNetworkSetup;
+  //       }
+  // console.log(networkSetup.systemContract )
+  //       return {
+  //         ...prevNetworkSetup,
+  //         systemContract: updatedSystemContract,
+  //       };
+  //     });
+  //   }
   };
   return (
    

@@ -138,8 +138,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             onWrite: (write) => write$.next(write),
           });
 
-
-          // console.log(systemContract,'---------------')
+// console.log(systemContract,256)
           /*
            * Sync on-chain state into RECS and keeps our client in sync.
            * Uses the MUD indexer if available, otherwise falls back
@@ -167,7 +166,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
              * run out.
              */
             const account_addr = burnerWalletClient.account.address
-            console.log(burnerWalletClient.account.address);
+            // console.log(burnerWalletClient.account.address);
             
               const requestDrip = async () => {
                 const balance = await publicClient.getBalance({ address: account_addr });

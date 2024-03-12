@@ -21,7 +21,9 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
+import { setup } from "../..//mud/setup";
 import { Hex } from "viem";
+import {setupNetwork,SetupNetworkResult } from '../../mud/setupNetwork'
 interface Props {
   onHandleExe: any;
   addressData: any;
@@ -35,22 +37,38 @@ export default function PopUpBox({ addressData,selectedColor,onHandleExe,coordin
     systemCalls: { increment },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
-console.log(palyerAddress,'=-=-=-=-=-')
+const [receivedInstruction, setReceivedInstruction] = useState({});
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const networkData: SetupNetworkResult = await setupNetwork();
+        // 在这里可以访问 systemContract
+        setReceivedInstruction(networkData.systemContract);
+      } catch (error) {
+        console.error('Error setting up network:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
   const [instruC, setInstruC] = useState(null);
   const [entityaData, setEntityaData] = useState('');
 // console.log(selectedColor,555)
-  useEffect(() => {
-    entities_app.map((entitya:any) => {
-      // console.log(entities_app)
-      const instruction = getComponentValue(Instruction, entitya) as any;
-      console.log(entitya, "=111111==========",instruction);
-      const num = BigInt(entitya); // 将 16 进制字符串转换为 BigInt 类型的数值
+
+useEffect(() => {
+  entities_app.map((entitya) => {
+    // console.log(entities_app,3333333333)
+    const entityaData = entities_app[1]
+    const instruction = getComponentValue(Instruction, entityaData) as any;
+    // console.log(instruction, "=111111==========");
+    const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
 const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-// console.log(result,88888888888);
-      setInstruC(instruction?.instruction);
-      setEntityaData(result)
-    });
-  }, []);
+console.log(result);
+    setInstruC(instruction?.instruction);
+    setEntityaData(result)
+  });
+}, []);
 
   const appName = localStorage.getItem('manifest')  as any
   // const appName = "BASE/Paint"
@@ -67,21 +85,30 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   }else{
     worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
   }
+  // const [setupDataTotal, setSetupDataTotal] = useState({});
+  // const setupData = setup()
+  // setupData.then((worldAbiUrl)=>{
+  //   setSetupDataTotal(worldAbiUrl.network)
+  // })
   const onHandleLeft = ()=>{
-    console.log('点了没有',worldAbiUrl)
-    increment(1,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
+    console.log('点了没有',receivedInstruction)
+    increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+    onHandleExe()
   }
   const onHandleRight = ()=>{
     // console.log('点了没有',addressData)
-    increment(2,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
+    increment(2,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+    onHandleExe()
   }
   const onHandleUp = ()=>{
     // console.log('点了没有',addressData)
-    increment(3,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
+    increment(3,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+    onHandleExe()
   }
   const onHandleDown = ()=>{
     // console.log('点了没有',addressData)
-    increment(4,worldAbiUrl,coordinates,entityaData,palyerAddress,selectedColor)
+    increment(4,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+    onHandleExe()
   }
 
   return (
@@ -121,9 +148,9 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            // stroke-width="2"
+            // stroke-linecap="round"
+            // stroke-linejoin="round"
             className="h-4 w-4"
           >
             <path d="M18 6 6 18"></path>
