@@ -2,7 +2,7 @@
  * Create the system calls that the client can use to ask
  * for changes in the World state (using the System contracts).
  */
-import React, { useContext } from 'react';
+import { useContext } from "react";
 import { getComponentValue } from "@latticexyz/recs";
 import { ClientComponents } from "./createClientComponents";
 // import { SetupNetworkResult } from "./setupNetwork";
@@ -10,11 +10,11 @@ import { singletonEntity } from "@latticexyz/store-sync/recs";
 import { ManifestContext ,} from '../components/rightPart';
 import { encodeSystemCall, encodeSystemCalls } from '@latticexyz/world';
 import { resourceToHex } from "@latticexyz/common";
-import {setupNetwork,SetupNetworkResult } from './setupNetwork'
-// import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
+import {SetupNetworkResult } from './setupNetwork';
 
+import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
+// import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 export function createSystemCalls(
-  
   /*
    * The parameter list informs TypeScript that:
    *
@@ -34,12 +34,11 @@ export function createSystemCalls(
    *   syncToRecs
    *   (https://github.com/latticexyz/mud/blob/main/templates/react/packages/client/src/mud/setupNetwork.ts#L77-L83).
    */
-  { worldContract, systemContract, waitForTransaction,publicClient ,playerEntity}: SetupNetworkResult,
+  { worldContract,  waitForTransaction,publicClient ,playerEntity,walletClient,write$}: SetupNetworkResult,
   { Counter }: ClientComponents,
 ) {
   
   // //console.log(systemContract,'55555555555')
-
 const entityVal = localStorage.getItem("entityVal") as any;
 if(entityVal===null){
   localStorage.setItem(
@@ -62,66 +61,70 @@ if(entityVal===null){
     
     return '0x' + hexString;
   }
-//   const increment = async (incrementData:any,worldAbiUrl:any,coordinates:any,entityaData:any,addressData:any,selectedColor:any) => {
-//     // const tx = await systemContract.write?.snake_SnakeSystem_init();
-//     // const tx1 = await systemContract.write?.paint_PaintSystem_init();
-//     // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
-//     setupNetwork().then((result) => {
-//       // updateNetworkSetup(result); // 将result的值更新到外部文件setupNetwork中
-//       //console.log(result.systemContract)
-//     }).catch((error) => {
-//       //console.error('Failed to setup network:', error);
-//     });
-//     const appName = localStorage.getItem('manifest')  as any
-// //console.log(worldAbiUrl,556889)
-//     // systemContract={worldAbiUrl}
-//     // const response =await  fetch(worldAbiUrl); // 获取 ABI JSON 文件
-//     // const systemData = await response.json();
-//     // //console.log(systemData,'systemData')
-//     if( appName.includes('Paint')){
-//       //console.log('paint啊！！！！！！！！！',worldAbiUrl)
-//     const tx = await worldAbiUrl.write.paint_PaintSystem_interact([{for_player:addressData, for_system: entityaData, position: {x:coordinates.x,y:coordinates.y},  color: selectedColor}]);
-// //console.log(tx,'进来了！！！！！')
+  const increment = async (incrementData:any,worldAbiUrl:any,coordinates:any,entityaData:any,addressData:any,selectedColor:any) => {
+    // const tx = await systemContract.write?.snake_SnakeSystem_init();
+    // const tx1 = await systemContract.write?.paint_PaintSystem_init();
+    // const tx = await systemContract.write.paint_PaintSystem_interact([{for_player: '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc', for_system: '0x2a264F26859166C5BF3868A54593eE716AeBC848',position: {x: 8, y: 2}, color: "#ffffff"}]);
+  
+    const appName = localStorage.getItem('manifest')  as any
+//console.log(worldAbiUrl,556889)
+    // systemContract={worldAbiUrl}
+    const response =await  fetch(worldAbiUrl); // 获取 ABI JSON 文件
+    const systemData = await response.json();
+    console.log(systemData,'systemData')
 
-//     }else if(appName&& appName.includes('Snake')){
-//       //console.log('snake啊！！！！！！！',worldAbiUrl)
-//       // //console.log(addressData, entityaData,);
+    // const worldContract = getContract({
+    //   address: '0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c', 
+    //   abi: ICallSystemAbi,
+    //   publicClient,
+    //   walletClient: walletClient,
+    //   onWrite: (write) => write$.next(write),
+    // });
 
-//       const txData = await worldAbiUrl.write.snake_SnakeSystem_interact([{for_player: 
-//         // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
-//         addressData, for_system:
-//       //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
-//       entityaData,
-//       position: {x:coordinates.x,y:coordinates.y}, color: selectedColor}, incrementData]);
-//       //console.log(txData,66666)
-//     }
-//     // const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
-//     // await waitForTransaction(tx);
+    if( appName.includes('Paint')){
+      //console.log('paint啊！！！！！！！！！',worldAbiUrl)
+    const tx = await worldAbiUrl.write.paint_PaintSystem_interact([{for_player:addressData, for_system: entityaData, position: {x:coordinates.x,y:coordinates.y},  color: selectedColor}]);
+//console.log(tx,'进来了！！！！！')
 
-//   };
+    }else if(appName&& appName.includes('Snake')){
+      //console.log('snake啊！！！！！！！',worldAbiUrl)
+      // //console.log(addressData, entityaData,);
 
-
-const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
-  try {
-    const result = await setupNetwork();
-    //console.log(result.systemContract);
-
-    const appName = localStorage.getItem('manifest') as any;
-    //console.log(worldAbiUrl, 556889);
-
-    if (appName.includes('Paint')) {
-      //console.log('paint啊！！！！！！！！！', result.systemContract);
-      const tx = await result.systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
-      //console.log(tx, '进来了！！！！！');
-    } else if (appName && appName.includes('Snake')) {
-      //console.log('snake啊！！！！！！！', result.systemContract);
-      const txData = await result.systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
-      //console.log(txData, 66666);
+      const txData = await worldAbiUrl.write.snake_SnakeSystem_interact([{for_player: 
+        // '0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'
+        addressData, for_system:
+      //  '0x8ce361602B935680E8DeC218b820ff5056BeB7af'
+      entityaData,
+      position: {x:coordinates.x,y:coordinates.y}, color: selectedColor}, incrementData]);
+      //console.log(txData,66666)
     }
-  } catch (error) {
-    //console.error('Failed to setup network:', error);
-  }
-};
+    // const txData = await systemContract.write.snake_SnakeSystem_move(['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc'])
+    // await waitForTransaction(tx);
+
+  };
+
+
+// const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
+//   try {
+//     const result = await setupNetwork();
+//     //console.log(result.systemContract);
+
+//     const appName = localStorage.getItem('manifest') as any;
+//     //console.log(worldAbiUrl, 556889);
+
+//     if (appName.includes('Paint')) {
+//       //console.log('paint啊！！！！！！！！！', result.systemContract);
+//       const tx = await result.systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
+//       //console.log(tx, '进来了！！！！！');
+//     } else if (appName && appName.includes('Snake')) {
+//       //console.log('snake啊！！！！！！！', result.systemContract);
+//       const txData = await result.systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
+//       //console.log(txData, 66666);
+//     }
+//   } catch (error) {
+//     //console.error('Failed to setup network:', error);
+//   }
+// };
 
   // increment()
   // const execute_instruction = async () => {
@@ -145,6 +148,16 @@ const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any,
     timestamp: any;
     call_data: any
   }
+
+     
+  // const systemContract = getContract({
+  //   address: '0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c', 
+  //   abi: ICallSystemAbi,
+  //   publicClient,
+  //   walletClient: walletClient,
+  //   onWrite: (write) => write$.next(write),
+  // });
+
 
   const execute_queue = async(queue_data: QueueData) => {
 

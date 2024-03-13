@@ -72,16 +72,39 @@ export default function RightPart({ coordinates, entityData,}: Props) {
   //     console.error('Failed to setup network:', error);
   //   });
   // }, []);
-
+  // const { systemContract, setSystemContract } = useContext(NetworkContext);
   const handleIconClick = (index: number) => {
     setSelectedIcon(index);
-    setupNetwork().then((result) => {
-      setNetworkSetup(result);
-      // updateNetworkSetup(result); // 将result的值更新到外部文件setupNetwork中
-      console.log(result.systemContract)
-    }).catch((error) => {
-      console.error('Failed to setup network:', error);
-    });
+   setTimeout(async () => {
+    const appName = localStorage.getItem('manifest')  as any
+    // const appName = "BASE/Paint"
+    
+    const parts = appName?.split("/") as any;
+    let worldAbiUrl:any;
+    // console.log(parts[0]); // 输出 "Base"
+    if(appName){
+      if(parts[0] === 'BASE'){
+        worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
+      }else{
+        worldAbiUrl =appName
+      }
+    }else{
+      worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+    }
+    const response =await  fetch(worldAbiUrl); // 获取 ABI JSON 文件
+    const systemData = await response.json();
+
+    console.log(worldAbiUrl)
+   }, 1000);
+  //   setupNetwork().then((result) => {
+  //     setNetworkSetup(result);
+  //     // updateNetworkSetup(result); // 将result的值更新到外部文件setupNetwork中
+  //     // setSystemContract(result.systemContract)
+  //     console.log(result.systemContract)
+  // console.log(networkSetup,'networkSetup')
+  //   }).catch((error) => {
+  //     console.error('Failed to setup network:', error);
+  //   });
 
 
   //   if (networkSetup && index !== null) {
@@ -222,3 +245,4 @@ export default function RightPart({ coordinates, entityData,}: Props) {
     // </div>
   );
 }
+

@@ -112,7 +112,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       // const appName = "BASE/Paint"
       
       const parts = appName?.split("/") as any;
-      let worldAbiUrl;
+      let worldAbiUrl:any;
       // console.log(parts[0]); // 输出 "Base"
       if(appName){
         if(parts[0] === 'BASE'){
@@ -123,7 +123,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       }else{
         worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
       }
-  
+
       // worldAbiUrl = "https://pixelaw-game.vercel.app/Snake.abi.json";
       fetch(worldAbiUrl)
     
