@@ -31,9 +31,6 @@ import mudConfig from "../../../contracts/mud.config";
 import { useEffect } from "react";
 
 
-
-//console.log(mudConfig,555)
-
 export type SetupNetworkResult = {
   world: any;
   components: any;
@@ -47,8 +44,11 @@ export type SetupNetworkResult = {
   systemContract: any;
   palyerAddress: any;
   write$: any;
+  write: any;
+  abi: any
 };
 export async function setupNetwork(): Promise<SetupNetworkResult> {
+
   return new Promise<SetupNetworkResult>((resolve, reject) => {
     const networkConfigPromise = getNetworkConfig();
     networkConfigPromise.then(networkConfig => {
@@ -65,7 +65,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       const clientOptions = {
         chain: networkConfig.chain,
         transport: transportObserver(fallback([webSocket(), http()])),
-        pollingInterval: 1000,
+        pollingInterval: 3000,
       } as const satisfies ClientConfig;
 
       const publicClient = createPublicClient(clientOptions);
@@ -123,7 +123,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
         worldAbiUrl="https://pixelaw-game.vercel.app/Snake.abi.json"
       }
   
-      // worldAbiUrl = "https://pixelaw-game.vercel.app/Snake.abi.json";
       fetch(worldAbiUrl)
     
         .then(response => response.json())
@@ -137,17 +136,12 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             onWrite: (write) => write$.next(write),
           });
 
-// console.log(systemContract,256)
           /*
            * Sync on-chain state into RECS and keeps our client in sync.
            * Uses the MUD indexer if available, otherwise falls back
            * to the viem publicClient to make RPC calls to fetch MUD
            * events from the chain.
            */
-                   //console.log(networkConfig.worldAddress,'address')
-                   //console.log(mudConfig,'config')
-                   //console.log(world,'world')
-            //console.log(publicClient,'publicClient')
 
           syncToRecs({
             world,
@@ -157,7 +151,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             startBlock: BigInt(networkConfig.initialBlockNumber),
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
             
-            //console.log(components,'components')
    
             /*
              * If there is a faucet, request (test) ETH if you have
@@ -165,7 +158,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
              * run out.
              */
             const account_addr = burnerWalletClient.account.address
-            // console.log(burnerWalletClient.account.address);
             
               const requestDrip = async () => {
                 const balance = await publicClient.getBalance({ address: account_addr });
@@ -173,12 +165,11 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   // console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-                  // Double drip
                   await testClient.setBalance({ address: account_addr, value: parseEther('2') });
                 };
               };
               requestDrip();
-              setInterval(requestDrip, 20000);
+              // setInterval(requestDrip, 20000);
             // if (networkConfig.faucetServiceUrl) {
             //   const address = burnerAccount.address;
             //   console.info("[Dev Faucet]: Player address -> ", address);
@@ -215,6 +206,8 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               systemContract,
               palyerAddress:burnerWalletClient.account.address,
               write$: write$.asObservable().pipe(share()),
+              write: write$,
+              abi: abi,
             });
           
           }).catch(reject);

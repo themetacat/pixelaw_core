@@ -75,7 +75,6 @@ console.log(result);
   
   const parts = appName?.split("/") as any;
   let worldAbiUrl:any;
-  // console.log(parts[0]); // 输出 "Base"
   if(appName){
     if(parts[0] === 'BASE'){
       worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
@@ -85,11 +84,7 @@ console.log(result);
   }else{
     worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
   }
-  // const [setupDataTotal, setSetupDataTotal] = useState({});
-  // const setupData = setup()
-  // setupData.then((worldAbiUrl)=>{
-  //   setSetupDataTotal(worldAbiUrl.network)
-  // })
+
   const onHandleLeft = ()=>{
     console.log('点了没有',receivedInstruction)
     increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)

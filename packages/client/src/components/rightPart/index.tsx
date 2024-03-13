@@ -37,7 +37,7 @@ export default function RightPart({ coordinates, entityData,}: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
-    systemCalls: { increment },
+    systemCalls: { increment, update_abi },
   } = useMUD();
   const [value, setValue] = useState("");
   // const [manifestValue, setManifestValue] = useState("");
@@ -75,33 +75,24 @@ export default function RightPart({ coordinates, entityData,}: Props) {
 
   const handleIconClick = (index: number) => {
     setSelectedIcon(index);
-    setupNetwork().then((result) => {
-      setNetworkSetup(result);
-      // updateNetworkSetup(result); // 将result的值更新到外部文件setupNetwork中
-      console.log(result.systemContract)
-    }).catch((error) => {
-      console.error('Failed to setup network:', error);
-    });
-
-
-  //   if (networkSetup && index !== null) {
-  //     // 在这里更新 systemContract 的值
-  //     const updatedSystemContract = { ...networkSetup.systemContract };
-  //     // 执行你的更新操作，例如：
-  //     // updatedSystemContract.someProperty = 'newValue';
   
-  //     setNetworkSetup(prevNetworkSetup => {
-  //       if (!prevNetworkSetup) {
-  //         return prevNetworkSetup;
-  //       }
-  // console.log(networkSetup.systemContract )
-  //       return {
-  //         ...prevNetworkSetup,
-  //         systemContract: updatedSystemContract,
-  //       };
-  //     });
-  //   }
   };
+  const updateAbiUrl = async(manifest: string)  => {
+    const parts = manifest?.split("/") as any;
+    let worldAbiUrl:any;
+    if(manifest){
+      if(parts[0] === 'BASE'){
+        worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
+      }else{
+        worldAbiUrl =manifest
+      }
+    }else{
+      worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+    }
+    const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
+    const systemData = await response.json();
+    update_abi(systemData);
+  }
   return (
    
     //  <div style={{width:"220px",position:"relative"}}>
@@ -129,6 +120,7 @@ export default function RightPart({ coordinates, entityData,}: Props) {
             key={`${index}`}
             onClick={() => {
              handleIconClick(index)
+             updateAbiUrl(value.manifest);
               localStorage.setItem("manifest", value.manifest);
               localStorage.setItem(
                 "entityVal",
