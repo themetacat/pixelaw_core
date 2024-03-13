@@ -40,21 +40,21 @@ export default function PopUpBox({ addressData,selectedColor,onHandleLoading,onH
     systemCalls: { increment },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
-const [receivedInstruction, setReceivedInstruction] = useState({});
+// const [receivedInstruction, setReceivedInstruction] = useState({});
 // console.log(coordinates,"传进来的")
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const networkData: SetupNetworkResult = await setupNetwork();
-        // 在这里可以访问 systemContract
-        setReceivedInstruction(networkData.systemContract);
-      } catch (error) {
-        console.error('Error setting up network:', error);
-      }
-    }
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const networkData: SetupNetworkResult = await setupNetwork();
+  //       // 在这里可以访问 systemContract
+  //       setReceivedInstruction(networkData.systemContract);
+  //     } catch (error) {
+  //       console.error('Error setting up network:', error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
   const [instruC, setInstruC] = useState(null);
   const [entityaData, setEntityaData] = useState('');
 // console.log(selectedColor,555)
@@ -91,7 +91,7 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
 
   const onHandleLeft = ()=>{
     setLoading(true)
-   const increData=   increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+   const increData=   increment(1,coordinates,entityaData,palyerAddress,selectedColor)
    increData.then((increDataVal:any)=>{
 
     increDataVal[1].then((a:any)=>{
@@ -107,7 +107,7 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   }
   const onHandleRight = ()=>{
     setLoading(true)
-    const increData=   increment(2,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+    const increData=   increment(2,coordinates,entityaData,palyerAddress,selectedColor)
     increData.then((increDataVal:any)=>{
 
       increDataVal[1].then((a:any)=>{
@@ -123,7 +123,7 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   }
   const onHandleUp = ()=>{
     setLoading(true)
-    const increData=  increment(3,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+    const increData=  increment(3,coordinates,entityaData,palyerAddress,selectedColor)
     increData.then((increDataVal:any)=>{
 
       increDataVal[1].then((a:any)=>{
@@ -139,7 +139,7 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   }
   const onHandleDown = ()=>{
     setLoading(true)
-    const increData=  increment(4,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+    const increData=  increment(4,coordinates,entityaData,palyerAddress,selectedColor)
     increData.then((increDataVal:any)=>{
 
       increDataVal[1].then((a:any)=>{

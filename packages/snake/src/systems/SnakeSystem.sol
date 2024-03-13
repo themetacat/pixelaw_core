@@ -153,8 +153,6 @@ contract SnakeSystem is System {
       if(next_pixel.owner == address(0)){
         snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
         snake.last_segment_id = remove_last_segment(snake);
-      }else if(!has_write_access){
-        snake.is_dying = true;
       }else if(next_pixel.owner == owner){
         snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
         if (snake.length >= SNAKE_MAX_LENGTH){
@@ -162,6 +160,8 @@ contract SnakeSystem is System {
         }else{
           snake.length += 1;
         }
+      }else if(!has_write_access){
+        snake.is_dying = true;
       }else{
         if(snake.length == 1){
           snake.is_dying = true;
@@ -247,7 +247,7 @@ contract SnakeSystem is System {
     ICoreSystem(_world()).update_pixel(PixelUpdateData({
       x: last_segment.x,
       y: last_segment.y,
-      color: last_segment.pixel_original_text,
+      color: last_segment.pixel_original_color,
       timestamp: 0,
       text: last_segment.pixel_original_text,
       app: address(0),
