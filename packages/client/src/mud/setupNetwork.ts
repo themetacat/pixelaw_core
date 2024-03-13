@@ -44,7 +44,7 @@ export type SetupNetworkResult = {
   systemContract: any;
   palyerAddress: any;
   write$: any;
-  write: any;
+  write_sub: any;
   abi: any
 };
 export async function setupNetwork(): Promise<SetupNetworkResult> {
@@ -165,7 +165,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   // console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-                  await testClient.setBalance({ address: account_addr, value: parseEther('2') });
+                  await testClient.setBalance({ address: account_addr, value: parseEther('4') });
                 };
               };
               requestDrip();
@@ -206,7 +206,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               systemContract,
               palyerAddress:burnerWalletClient.account.address,
               write$: write$.asObservable().pipe(share()),
-              write: write$,
+              write_sub: write$,
               abi: abi,
             });
           

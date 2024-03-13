@@ -14,7 +14,6 @@ import {setupNetwork,SetupNetworkResult } from './setupNetwork'
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { getContract } from "@latticexyz/common";
 
-import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 export function createSystemCalls(
   /*
@@ -36,7 +35,7 @@ export function createSystemCalls(
    *   syncToRecs
    *   (https://github.com/latticexyz/mud/blob/main/templates/react/packages/client/src/mud/setupNetwork.ts#L77-L83).
    */
-  { worldContract, systemContract, waitForTransaction,publicClient, walletClient,write, abi}: SetupNetworkResult,
+  { worldContract, waitForTransaction,publicClient, walletClient,write_sub, abi}: SetupNetworkResult,
   { }: ClientComponents,
 ) {
   let abi_json: any = abi;
@@ -77,7 +76,7 @@ const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any,
     abi: abi_json,
     publicClient,
     walletClient: walletClient,
-    onWrite: (w) => write.next(w),
+    onWrite: (write) => write_sub.next(write),
   });
   try {
     const appName = localStorage.getItem('manifest') as any;
