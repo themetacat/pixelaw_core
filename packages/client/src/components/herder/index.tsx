@@ -374,11 +374,11 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   entityaData,
   palyerAddress,
 selectedColor
-
       );
       // console.log(increData)
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
+
       handleData(hoveredSquare);
     } else {
       //console.log("hoveredSquare或selectedColor为空");
@@ -386,7 +386,7 @@ selectedColor
   };
 
   const handleMouseUp = () => {
-    console.log('我点了！！！')
+    // console.log('我点了！！！')
     setPopExhibit(true)
     setTranslateX(0);
     setTranslateY(0);
@@ -489,13 +489,11 @@ selectedColor
 
 
 
-const onHandleExe= ()=>{
+const onHandleExe= (e:any)=>{
+  e.stopPropagation(); // 阻止事件冒泡
   // console.log('dianle')
   setPopExhibit(false)
 }
-
-
-
 
   return (
     <>
@@ -635,9 +633,7 @@ const onHandleExe= ()=>{
         ))}
       </div>
 
-        <RightPart coordinates={coordinates} entityData={entityData}
-      //  setupDataTotal={setupDataTotal} 
-          />
+        <RightPart coordinates={coordinates} entityData={entityData}/>
     
       </div>
       {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}

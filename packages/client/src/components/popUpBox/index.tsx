@@ -64,7 +64,7 @@ useEffect(() => {
     // console.log(instruction, "=111111==========");
     const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
 const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-console.log(result);
+// console.log(result);
     setInstruC(instruction?.instruction);
     setEntityaData(result)
   });
@@ -75,7 +75,6 @@ console.log(result);
   
   const parts = appName?.split("/") as any;
   let worldAbiUrl:any;
-  // console.log(parts[0]); // 输出 "Base"
   if(appName){
     if(parts[0] === 'BASE'){
       worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
@@ -85,13 +84,9 @@ console.log(result);
   }else{
     worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
   }
-  // const [setupDataTotal, setSetupDataTotal] = useState({});
-  // const setupData = setup()
-  // setupData.then((worldAbiUrl)=>{
-  //   setSetupDataTotal(worldAbiUrl.network)
-  // })
+
   const onHandleLeft = ()=>{
-    console.log('点了没有',receivedInstruction)
+    // console.log('点了没有',receivedInstruction)
     increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
     onHandleExe()
   }

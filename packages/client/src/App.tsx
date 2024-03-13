@@ -71,31 +71,6 @@ export const App = () => {
     "..." +
     hexString.substring(hexString.length - 4).toUpperCase();
 
-  // get queue!!!!!!!!!!!!!!!!!!!!!!!
-  // entry
-  // 获取QueueScheduled和QueueProcessed，在QueueScheduled中筛选出QueueProcessed没有的，然后添加到queue中，./bot/queue.ts addToQueue
-  //  处理完成之后 监听QueueScheduled中新增的数据放到queue中（继续调用addToQueue）
-
-  // 这里匹配符合条件的event
-  // const entities_queue_scheduled = useEntityQuery([Has(QueueScheduled)])
-  // const prevEntitiesRef = useRef<Entity[]>([]);//用来存储过滤过的数据
-  // // //console.log(entities_queue_scheduled, '=======');
-  // entities_queue_scheduled.map((entity:any) =>{
-  //     // value
-  //     const res = getComponentValueStrict(QueueScheduled, entity);
-  //     const res_processed = getComponentValue(QueueProcessed, entity);
-  //     prevEntitiesRef.current = entities_queue_scheduled;
-  //     //console.log(res_processed);
-  //     if(!res_processed){
-  //       // //console.log(res);
-  //       //console.log(entities_queue_scheduled,111,res);
-
-  //       addToQueue([entity, res.timestamp, res.name_space, res.name, res.call_data])
-  //       // execute_queue({id: entity, timestamp: res.timestamp, namespace: res.name_space, name: res.name, call_data: res.call_data})
-  //       // removeComponent(QueueScheduled, entity)
-  //       return;
-  //     }
-  // })
 
   const entities_queue_scheduled = useEntityQuery([Has(QueueScheduled)]);
   const lastProcessedIndexRef = useRef<number>(0); // 用于记录上次处理的位置
@@ -239,7 +214,7 @@ export const App = () => {
       
         Counter: <span>{counter?.value ?? "??"}</span>
       </div>  */}
-      <button
+      {/* <button
         style={{zIndex: "99999999999999999999999999"}}
         type="button"
         onClick={async (event) => {
@@ -248,7 +223,7 @@ export const App = () => {
         }}
       >
         Increment
-      </button>
+      </button> */}
     </div>
   );
 };
