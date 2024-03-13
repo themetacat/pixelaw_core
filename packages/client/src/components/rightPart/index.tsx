@@ -1,26 +1,20 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import style from "./index.module.css";
 import {
-  ComponentValue,
-  Entity,
   Has,
-  HasValue,
   getComponentValueStrict,
-  getComponentValue,
 } from "@latticexyz/recs";
 import {
   encodeEntity,
   syncToRecs,
   decodeEntity,
-  hexKeyTupleToEntity,
 } from "@latticexyz/store-sync/recs";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
 import { Hex } from "viem";
-import { setup } from "../..//mud/setup";
-import { setupNetwork, SetupNetworkResult } from "../../mud/setupNetwork";
+import { SetupNetworkResult } from "../../mud/setupNetwork";
 export const ManifestContext = createContext<string>("");
 
 // function UseManifestValue() {
@@ -31,21 +25,16 @@ interface Props {
   coordinates: { x: number; y: number };
   entityData: any;
   setPanningState: any;
-  // setupDataTotal:any;
 }
 export default function RightPart({ coordinates, entityData ,setPanningState}: Props) {
   const {
-    components: { App, Pixel, AppName, Instruction },
-    network: { playerEntity, publicClient },
-    systemCalls: { increment, update_abi },
+    components: { App},
+    systemCalls: { update_abi },
   } = useMUD();
   const [value, setValue] = useState("");
-  // const [manifestValue, setManifestValue] = useState("");
   const entities_app = useEntityQuery([Has(App)]);
-  // const manifestValue = UseManifestValue();
   const [panning, setPanning] = useState(false);
-  // console.log(coordinates,)
-  // console.log(entities_app, manifestValue, "-------------------");
+
   const addressToEntityID = (address: Hex) =>
     encodeEntity({ address: "address" }, { address });
   const app_info = useComponentValue(
@@ -174,11 +163,11 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
               )}...${owner.substring(owner.length - 4)}`;
               return (
                 <>
-                  <p key={item.coordinates.x && item.coordinates.y}>
+                  <p key={`Type-${item.coordinates.x}-${item.coordinates.y}`}>
                     <span className={style.a}>Type: </span>
                     <span className={style.fontCon}>{type}</span>
                   </p>
-                  <p key={item.coordinates.x && item.coordinates.y}>
+                  <p key={`Owner-${item.coordinates.x}-${item.coordinates.y}`}>
                     <span className={style.a}>Owner: </span>
                     <span className={style.fontCon}> {truncatedOwner}</span>
                   </p>
@@ -195,11 +184,11 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
               item.coordinates.y === coordinates.y
           ) ? null : (
             <>
-              <p>
+              <p key={`Type`}>
                 <span className={style.a}>Type :</span>{" "}
                 <span className={style.fontCon}>null</span>
               </p>
-              <p>
+              <p key={`Owner`}>
                 <span className={style.a}>Owner :</span>
                 <span className={style.fontCon}>null</span>
               </p>

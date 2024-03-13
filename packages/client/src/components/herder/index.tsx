@@ -367,14 +367,14 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
     setTranslateY(event.clientY);
     if (hoveredSquare && selectedColor) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-      const increData = increment(
-  null,
-  receivedInstruction,
-  coordinates,
-  entityaData,
-  palyerAddress,
-selectedColor
-      );
+//       const increData = increment(
+//   null,
+//   receivedInstruction,
+//   coordinates,
+//   entityaData,
+//   palyerAddress,
+// selectedColor
+//       );
       // console.log(increData)
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数

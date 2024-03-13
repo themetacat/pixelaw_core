@@ -68,9 +68,7 @@ if(entityVal===null){
 
 
 const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
-      // const tx = await systemContract.write?.snake_SnakeSystem_init();
-    // const tx1 = await systemContract.write?.paint_PaintSystem_init();
-  // console.log(abi_json);
+
   const systemContract = getContract({
     address: "0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c",
     abi: abi_json,
