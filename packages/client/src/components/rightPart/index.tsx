@@ -70,6 +70,7 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
   return (
     //  <div style={{width:"220px",position:"relative"}}>
     <div
+      key={`index`}
       className={panning === false ? style.container : style.container1}
       onClick={(e) => {
         e.stopPropagation(); // 阻止事件冒泡
@@ -90,10 +91,9 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
       {/* </div> */}
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
-        // console.log(value)
         return (
           <div
-            key={`${index}`}
+            // key={`${index}`}
             onClick={() => {
               handleIconClick(index);
               updateAbiUrl(value.manifest);
