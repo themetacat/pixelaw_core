@@ -394,8 +394,13 @@ selectedColor
       increData.then((increDataVal:any)=>{
 
 increDataVal[1].then((a:any)=>{
+  // console.log(a)
 if(a.status=== "success"){
   setLoading(false)
+}else{
+  setLoading(false)
+  onHandleLoading()
+  toast.error('An error was reported')
 }
 })
       })
@@ -524,6 +529,7 @@ if(a.status=== "success"){
 const onHandleExe= ()=>{
   // console.log('dianle')
   setPopExhibit(false)
+  setLoading(false)
 }
 const onHandleLoading= ()=>{
   // console.log('dianle')

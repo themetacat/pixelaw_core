@@ -211,7 +211,7 @@ font: normal normal normal 16px/20px Silkscreen; */
   }
   .loadingContainer{
     position: absolute;
-    right: 100px;
+    right: 150px;
     bottom:20px;
     width: 100px;
     height: 100px;

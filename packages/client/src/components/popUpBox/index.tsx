@@ -22,6 +22,7 @@ import { useMUD } from "../../MUDContext";
 import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
 import { setup } from "../..//mud/setup";
+import toast, { Toaster } from "react-hot-toast";
 import { Hex } from "viem";
 import {setupNetwork,SetupNetworkResult } from '../../mud/setupNetwork'
 import loadingImg from '../../images/loading.png'
@@ -96,6 +97,9 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
     increDataVal[1].then((a:any)=>{
     if(a.status=== "success"){
       onHandleLoading()
+    }else{
+      onHandleLoading()
+      toast.error('An error was reported')
     }
     })
           })
@@ -109,6 +113,9 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
       increDataVal[1].then((a:any)=>{
       if(a.status=== "success"){
         onHandleLoading()
+      }else{
+        onHandleLoading()
+        toast.error('An error was reported')
       }
       })
             })
@@ -122,6 +129,9 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
       increDataVal[1].then((a:any)=>{
       if(a.status=== "success"){
         onHandleLoading()
+      }else{
+        onHandleLoading()
+        toast.error('An error was reported')
       }
       })
             })
@@ -135,6 +145,9 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
       increDataVal[1].then((a:any)=>{
       if(a.status=== "success"){
         onHandleLoading()
+      }else{
+        onHandleLoading()
+        toast.error('An error was reported')
       }
       })
             })
