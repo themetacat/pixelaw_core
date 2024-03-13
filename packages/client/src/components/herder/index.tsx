@@ -388,6 +388,7 @@ selectedColor
   const handleMouseUp = () => {
     // console.log('我点了！！！')
     setPopExhibit(true)
+    // e.stopPropagation();
     setTranslateX(0);
     setTranslateY(0);
   };
@@ -488,12 +489,16 @@ selectedColor
   };
 
 
-
+  const [panningFromChild, setPanningFromChild] = useState(false);
+  const handlePanningChange = (newPanningValue:any) => {
+    // console.log(newPanningValue)
+    setPopExhibit(false)
+    setPanningFromChild(newPanningValue);
+  };
 const onHandleExe= ()=>{
   // console.log('dianle')
   setPopExhibit(false)
 }
-
   return (
     <>
     
@@ -633,7 +638,7 @@ const onHandleExe= ()=>{
         ))}
       </div>
 
-        <RightPart coordinates={coordinates} entityData={entityData}/>
+        <RightPart coordinates={coordinates} entityData={entityData}  setPanningState={handlePanningChange} />
     
       </div>
       {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}

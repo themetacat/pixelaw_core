@@ -86,22 +86,18 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   }
 
   const onHandleLeft = ()=>{
-    // console.log('点了没有',receivedInstruction)
     increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
     onHandleExe()
   }
   const onHandleRight = ()=>{
-    // console.log('点了没有',addressData)
     increment(2,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
     onHandleExe()
   }
   const onHandleUp = ()=>{
-    // console.log('点了没有',addressData)
     increment(3,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
     onHandleExe()
   }
   const onHandleDown = ()=>{
-    // console.log('点了没有',addressData)
     increment(4,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
     onHandleExe()
   }
@@ -110,15 +106,11 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
     <div className={style.container}>
       <div className={style.content}>
         <h2 className={style.title}>
-          {/* //    className="text-[#FFC400] text-center uppercase text-[32px] font-silkscreen" */}
-          {/* select direction for snake2222 */}
           {instruC}
         </h2>
         <div>
           <div className={style.bottomBox}>
             <label
-              // className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-center text-white capitalize"
-              // for="enum-group-direction"
               className={style.direction}
             >
               direction
@@ -143,9 +135,6 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            // stroke-width="2"
-            // stroke-linecap="round"
-            // stroke-linejoin="round"
             className="h-4 w-4"
           >
             <path d="M18 6 6 18"></path>

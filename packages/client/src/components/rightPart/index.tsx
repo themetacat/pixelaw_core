@@ -6,7 +6,7 @@ import {
   Has,
   HasValue,
   getComponentValueStrict,
-  getComponentValue
+  getComponentValue,
 } from "@latticexyz/recs";
 import {
   encodeEntity,
@@ -20,7 +20,7 @@ import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
 import { Hex } from "viem";
 import { setup } from "../..//mud/setup";
-import {setupNetwork,SetupNetworkResult } from '../../mud/setupNetwork'
+import { setupNetwork, SetupNetworkResult } from "../../mud/setupNetwork";
 export const ManifestContext = createContext<string>("");
 
 // function UseManifestValue() {
@@ -30,10 +30,10 @@ export const ManifestContext = createContext<string>("");
 interface Props {
   coordinates: { x: number; y: number };
   entityData: any;
+  setPanningState: any;
   // setupDataTotal:any;
-  
 }
-export default function RightPart({ coordinates, entityData,}: Props) {
+export default function RightPart({ coordinates, entityData ,setPanningState}: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient },
@@ -52,99 +52,48 @@ export default function RightPart({ coordinates, entityData,}: Props) {
     App,
     addressToEntityID("0xb40422217F29Ec33b4EB2b6d790b6932601671eB")
   );
-  // console.log(entityData, "右边！！！！");
-
-  
-  // const handleInstruction = (instructionValue:any) => {
-  //   // 调用父组件传递过来的回调函数，并传递instruction值
-  //   onHandle(instructionValue);
-  // };
-  // console.log(app_info,66666)
-  // const [selectedIcon, setSelectedIcon] = useState(null);
-  // const [setupDataTotal, setSetupDataTotal] = useState({});
-  const [networkSetup, setNetworkSetup] = useState<SetupNetworkResult | null>(null);
+  const [networkSetup, setNetworkSetup] = useState<SetupNetworkResult | null>(
+    null
+  );
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
-  // useEffect(() => {
-  //   setupNetwork().then((result) => {
-  //     setNetworkSetup(result);
-  //     console.log(result.systemContract)
-  //   }).catch((error) => {
-  //     console.error('Failed to setup network:', error);
-  //   });
-  // }, []);
-  // const { systemContract, setSystemContract } = useContext(NetworkContext);
+ 
   const handleIconClick = (index: number) => {
     setSelectedIcon(index);
-   setTimeout(async () => {
-    const appName = localStorage.getItem('manifest')  as any
-    // const appName = "BASE/Paint"
-    
-    const parts = appName?.split("/") as any;
-    let worldAbiUrl:any;
-    // console.log(parts[0]); // 输出 "Base"
-    if(appName){
-      if(parts[0] === 'BASE'){
-        worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
-      }else{
-        worldAbiUrl =appName
-      }
-    }else{
-      worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
-    }
-    const response =await  fetch(worldAbiUrl); // 获取 ABI JSON 文件
-    const systemData = await response.json();
-
-    // console.log(worldAbiUrl)
-   }, 1000);
-  //   setupNetwork().then((result) => {
-  //     setNetworkSetup(result);
-  //     // updateNetworkSetup(result); // 将result的值更新到外部文件setupNetwork中
-  //     // setSystemContract(result.systemContract)
-  //     console.log(result.systemContract)
-  // console.log(networkSetup,'networkSetup')
-  //   }).catch((error) => {
-  //     console.error('Failed to setup network:', error);
-  //   });
-
-
-  //   if (networkSetup && index !== null) {
-  //     // 在这里更新 systemContract 的值
-  //     const updatedSystemContract = { ...networkSetup.systemContract };
-  //     // 执行你的更新操作，例如：
-  //     // updatedSystemContract.someProperty = 'newValue';
-  
   };
-  const updateAbiUrl = async(manifest: string)  => {
+  const updateAbiUrl = async (manifest: string) => {
     const parts = manifest?.split("/") as any;
-    let worldAbiUrl:any;
-    if(manifest){
-      if(parts[0] === 'BASE'){
-        worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
-      }else{
-        worldAbiUrl =manifest
+    let worldAbiUrl: any;
+    if (manifest) {
+      if (parts[0] === "BASE") {
+        worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
+          `${parts[1].replace(/\.abi\.json/g, "")}` +
+          ".abi.json") as any;
+      } else {
+        worldAbiUrl = manifest;
       }
-    }else{
-      worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+    } else {
+      worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
     }
     const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
     const systemData = await response.json();
     update_abi(systemData);
-  }
+  };
   return (
-   
     //  <div style={{width:"220px",position:"relative"}}>
-    <div className={panning === false ? style.container : style.container1}
-    onClick={(e) => {
-      e.stopPropagation(); // 阻止事件冒泡
-      setPanning(!panning);
-    }}
+    <div
+      className={panning === false ? style.container : style.container1}
+      onClick={(e) => {
+        e.stopPropagation(); // 阻止事件冒泡
+        setPanning(!panning);
+        setPanningState(!panning);
+      }}
     >
       {/* <div  className={style.pointerBox} > */}
       <img
-        onClick={() => {
-          setPanning(!panning);
-        }}
-        src={panning === false ? rightIcon :  leftIcon}
+        // onClick={() => {
+        //   setPanning(!panning);
+        // }}
+        src={panning === false ? rightIcon : leftIcon}
         alt=""
         className={panning === false ? style.pointer : style.pointer1}
       />
@@ -157,30 +106,38 @@ export default function RightPart({ coordinates, entityData,}: Props) {
           <div
             key={`${index}`}
             onClick={() => {
-             handleIconClick(index)
-             updateAbiUrl(value.manifest);
+              handleIconClick(index);
+              updateAbiUrl(value.manifest);
               localStorage.setItem("manifest", value.manifest);
               localStorage.setItem(
                 "entityVal",
                 decodeEntity({ app_addr: "address" }, entitya).app_addr
               );
             }}
-             className={style.btnGame}
+            className={style.btnGame}
           >
             {/* <img className={style.imgCon} src={value?.icon} /> */}
-            <div  className={selectedIcon === index ?style.imgCon1:style.imgCon}  style={{fontSize: '32px', lineHeight: '50px', fontFamily:'Arial Unicode MS'}}>
+            <div
+              className={selectedIcon === index ? style.imgCon1 : style.imgCon}
+              style={{
+                fontSize: "32px",
+                lineHeight: "50px",
+                fontFamily: "Arial Unicode MS",
+              }}
+            >
               {/* &#x1F40D; */}
-             {/* {value?.icon?String?.fromCodePoint(parseInt( value?.icon?.substring(2), 16)):null}  */}
-             {/* {value.icon && /^[0-9A-Fa-f]{4,}$/.test(value.icon) ?
+              {/* {value?.icon?String?.fromCodePoint(parseInt( value?.icon?.substring(2), 16)):null}  */}
+              {/* {value.icon && /^[0-9A-Fa-f]{4,}$/.test(value.icon) ?
         String.fromCodePoint(parseInt(value.icon.substring(2), 16)) :
         null
-    } */}      {
-    value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon) ?
-    String.fromCodePoint(parseInt(value.icon.substring(2), 16)) :
-    null
-}
-              </div>
-            {panning === false?null:<span className={style.appName}>{value.app_name}</span>}
+    } */}{" "}
+              {value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon)
+                ? String.fromCodePoint(parseInt(value.icon.substring(2), 16))
+                : null}
+            </div>
+            {panning === false ? null : (
+              <span className={style.appName}>{value.app_name}</span>
+            )}
           </div>
         );
       })}
@@ -199,14 +156,15 @@ export default function RightPart({ coordinates, entityData,}: Props) {
         <div className={style.bottomCon}>
           <p>
             <span className={style.a}>Coordinates: </span>
-            <span className={style.fontCon}>{coordinates.x},{coordinates.y}</span>
+            <span className={style.fontCon}>
+              {coordinates.x},{coordinates.y}
+            </span>
           </p>
           {entityData.map((item: any) => {
             if (
               item.coordinates.x === coordinates.x &&
               item.coordinates.y === coordinates.y
             ) {
-              
               const entityID = addressToEntityID(item.value.app);
               const type = `${app_info}`;
               const owner = item.value.owner;
@@ -216,14 +174,13 @@ export default function RightPart({ coordinates, entityData,}: Props) {
               )}...${owner.substring(owner.length - 4)}`;
               return (
                 <>
-                  <p key={item.coordinates.x&&item.coordinates.y}>
+                  <p key={item.coordinates.x && item.coordinates.y}>
                     <span className={style.a}>Type: </span>
-                    <span  className={style.fontCon}>{type}</span>
+                    <span className={style.fontCon}>{type}</span>
                   </p>
-                  <p key={item.coordinates.x&&item.coordinates.y}>
+                  <p key={item.coordinates.x && item.coordinates.y}>
                     <span className={style.a}>Owner: </span>
-                    <span  className={style.fontCon}>        {truncatedOwner}</span>
-            
+                    <span className={style.fontCon}> {truncatedOwner}</span>
                   </p>
                 </>
               );
@@ -239,10 +196,12 @@ export default function RightPart({ coordinates, entityData,}: Props) {
           ) ? null : (
             <>
               <p>
-                <span className={style.a}>Type :</span> <span  className={style.fontCon}>null</span>
+                <span className={style.a}>Type :</span>{" "}
+                <span className={style.fontCon}>null</span>
               </p>
               <p>
-                <span className={style.a}>Owner :</span><span  className={style.fontCon}>null</span>
+                <span className={style.a}>Owner :</span>
+                <span className={style.fontCon}>null</span>
               </p>
             </>
           )}
@@ -252,4 +211,3 @@ export default function RightPart({ coordinates, entityData,}: Props) {
     // </div>
   );
 }
-
