@@ -74,6 +74,7 @@ const colorOptionsData = [
   // 其他颜色选项...
 ];
 
+import loadingImg from '../../images/loading.png'
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
@@ -349,7 +350,7 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   ]);
   const appName = localStorage.getItem('manifest')  as any
   // const appName = "BASE/Paint"
-  
+  const [loading, setLoading] = useState(false);
   const parts = appName?.split("/") as any;
   let worldAbiUrl:any;
   // console.log(parts[0]); // 输出 "Base"
@@ -364,6 +365,7 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   }
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     //console.log("是点击事件吗");
+    setLoading(true)
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
     const canvas = canvasRef.current as any;
@@ -389,7 +391,16 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   palyerAddress,
 selectedColor
       );
-      // console.log(increData)
+      increData.then((increDataVal:any)=>{
+
+increDataVal[1].then((a:any)=>{
+if(a.status=== "success"){
+  setLoading(false)
+}
+})
+      })
+     
+ 
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
 
@@ -402,6 +413,7 @@ selectedColor
   const handleMouseUp = () => {
     // console.log('我点了！！！')
     setPopExhibit(true)
+    setLoading(true)
     // e.stopPropagation();
     setTranslateX(0);
     setTranslateY(0);
@@ -512,6 +524,10 @@ selectedColor
 const onHandleExe= ()=>{
   // console.log('dianle')
   setPopExhibit(false)
+}
+const onHandleLoading= ()=>{
+  // console.log('dianle')
+  setLoading(false)
 }
   return (
     <>
@@ -651,11 +667,17 @@ const onHandleExe= ()=>{
           </span>
         ))}
       </div>
+     
 
         <RightPart coordinates={coordinates} entityData={entityData}  setPanningState={handlePanningChange} />
     
       </div>
-      {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinatesData}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}
+
+      <div className={style.loadingContainer}> {loading ===true ?<img src={loadingImg} alt=""   className={`${style.commonCls1} ${style.spinAnimation}`} />:null}</div>
+
+
+      {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinatesData}  onHandleExe={onHandleExe} selectedColor={selectedColor} onHandleLoading={onHandleLoading}/>:''}
+     
     </>
   );
 }
