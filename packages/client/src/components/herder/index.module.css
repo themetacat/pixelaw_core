@@ -190,3 +190,29 @@ font: normal normal normal 16px/20px Silkscreen; */
   .canvasWrapper::-webkit-scrollbar-thumb:hover {
     background-color: #2f1643;
   }
+
+
+  .commonCls1{
+    animation: spin 5s linear infinite;
+    -webkit-transform: rotate(3600deg);
+    transform: rotate(3600deg);
+    -webkit-transition: -webkit-transform 5s linear;
+    transition: transform 5s linear;
+    width: 78px;
+    height: 78px;
+  }
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .loadingContainer{
+    position: absolute;
+    right: 150px;
+    bottom:20px;
+    width: 100px;
+    height: 100px;
+  }
