@@ -529,7 +529,7 @@ if(a.status=== "success"){
 const onHandleExe= ()=>{
   // console.log('dianle')
   setPopExhibit(false)
-  setLoading(false)
+  // setLoading(false)
 }
 const onHandleLoading= ()=>{
   // console.log('dianle')
