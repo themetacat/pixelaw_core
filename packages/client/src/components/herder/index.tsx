@@ -375,7 +375,7 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   palyerAddress,
 selectedColor
       );
-      console.log(increData)
+      // console.log(increData)
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
 
@@ -386,7 +386,7 @@ selectedColor
   };
 
   const handleMouseUp = () => {
-    console.log('我点了！！！')
+    // console.log('我点了！！！')
     setPopExhibit(true)
     setTranslateX(0);
     setTranslateY(0);
@@ -499,7 +499,8 @@ const onHandleExe= ()=>{
     
       <div className={style.container}>
         <img  className={style.containerImg}
-          src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
+          // src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
+          src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
         />
         <div className={style.content}>
@@ -519,7 +520,7 @@ const onHandleExe= ()=>{
           </button>
           
         </div>
-        <button
+        {/* <button
         style={{zIndex: "99999999999999999999999999"}}
         type="button"
         onClick={async (event) => {
@@ -528,7 +529,7 @@ const onHandleExe= ()=>{
         }}
       >
         Increment
-      </button>
+      </button> */}
         <div
           className={style.addr}
           style={{
@@ -632,9 +633,7 @@ const onHandleExe= ()=>{
         ))}
       </div>
 
-        <RightPart coordinates={coordinates} entityData={entityData}
-      //  setupDataTotal={setupDataTotal} 
-          />
+        <RightPart coordinates={coordinates} entityData={entityData}/>
     
       </div>
       {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}

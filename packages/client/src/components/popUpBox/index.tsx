@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import React, { useEffect, useState } from "react";
+import React, { useEffect,useContext , useState } from "react";
 
 import style from "./index.module.css";
 
@@ -64,7 +64,7 @@ useEffect(() => {
     // console.log(instruction, "=111111==========");
     const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
 const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-console.log(result);
+// console.log(instruction);
     setInstruC(instruction?.instruction);
     setEntityaData(result)
   });
@@ -86,7 +86,7 @@ console.log(result);
   }
 
   const onHandleLeft = ()=>{
-    console.log('点了没有',receivedInstruction)
+    // console.log('点了没有',receivedInstruction)
     increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
     onHandleExe()
   }

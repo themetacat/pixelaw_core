@@ -72,9 +72,46 @@ export default function RightPart({ coordinates, entityData,}: Props) {
   //     console.error('Failed to setup network:', error);
   //   });
   // }, []);
-
+  // const { systemContract, setSystemContract } = useContext(NetworkContext);
   const handleIconClick = (index: number) => {
     setSelectedIcon(index);
+   setTimeout(async () => {
+    const appName = localStorage.getItem('manifest')  as any
+    // const appName = "BASE/Paint"
+    
+    const parts = appName?.split("/") as any;
+    let worldAbiUrl:any;
+    // console.log(parts[0]); // 输出 "Base"
+    if(appName){
+      if(parts[0] === 'BASE'){
+        worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
+      }else{
+        worldAbiUrl =appName
+      }
+    }else{
+      worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+    }
+    const response =await  fetch(worldAbiUrl); // 获取 ABI JSON 文件
+    const systemData = await response.json();
+
+    // console.log(worldAbiUrl)
+   }, 1000);
+  //   setupNetwork().then((result) => {
+  //     setNetworkSetup(result);
+  //     // updateNetworkSetup(result); // 将result的值更新到外部文件setupNetwork中
+  //     // setSystemContract(result.systemContract)
+  //     console.log(result.systemContract)
+  // console.log(networkSetup,'networkSetup')
+  //   }).catch((error) => {
+  //     console.error('Failed to setup network:', error);
+  //   });
+
+
+  //   if (networkSetup && index !== null) {
+  //     // 在这里更新 systemContract 的值
+  //     const updatedSystemContract = { ...networkSetup.systemContract };
+  //     // 执行你的更新操作，例如：
+  //     // updatedSystemContract.someProperty = 'newValue';
   
   };
   const updateAbiUrl = async(manifest: string)  => {
@@ -97,7 +134,8 @@ export default function RightPart({ coordinates, entityData,}: Props) {
    
     //  <div style={{width:"220px",position:"relative"}}>
     <div className={panning === false ? style.container : style.container1}
-    onClick={() => {
+    onClick={(e) => {
+      e.stopPropagation(); // 阻止事件冒泡
       setPanning(!panning);
     }}
     >
@@ -214,3 +252,4 @@ export default function RightPart({ coordinates, entityData,}: Props) {
     // </div>
   );
 }
+

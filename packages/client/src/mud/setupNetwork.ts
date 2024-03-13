@@ -111,7 +111,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       const appName = localStorage.getItem('manifest')  as any
       
       const parts = appName?.split("/") as any;
-      let worldAbiUrl;
+      let worldAbiUrl:any;
       // console.log(parts[0]); // 输出 "Base"
       if(appName){
         if(parts[0] === 'BASE'){

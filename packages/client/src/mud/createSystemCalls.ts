@@ -2,7 +2,7 @@
  * Create the system calls that the client can use to ask
  * for changes in the World state (using the System contracts).
  */
-import React, { useContext } from 'react';
+import { useContext } from "react";
 import { getComponentValue } from "@latticexyz/recs";
 import { ClientComponents } from "./createClientComponents";
 // import { SetupNetworkResult } from "./setupNetwork";
@@ -14,8 +14,8 @@ import {setupNetwork,SetupNetworkResult } from './setupNetwork'
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { getContract } from "@latticexyz/common";
 
+// import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 export function createSystemCalls(
-  
   /*
    * The parameter list informs TypeScript that:
    *
@@ -44,7 +44,6 @@ export function createSystemCalls(
   }
   
   // //console.log(systemContract,'55555555555')
-
 const entityVal = localStorage.getItem("entityVal") as any;
 if(entityVal===null){
   localStorage.setItem(
@@ -71,7 +70,7 @@ if(entityVal===null){
 const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
       // const tx = await systemContract.write?.snake_SnakeSystem_init();
     // const tx1 = await systemContract.write?.paint_PaintSystem_init();
-  console.log(abi_json);
+  // console.log(abi_json);
   const systemContract = getContract({
     address: "0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c",
     abi: abi_json,
@@ -85,11 +84,8 @@ const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any,
     if (appName.includes('Paint')) {
       const tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
     } else if (appName && appName.includes('Snake')) {
-      console.log('snake');
-      
-      const txData = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, 1]);
-      console.log(txData);
-      
+      // console.log('snake', systemContract);
+      const txData = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
     }
   } catch (error) {
     console.error('Failed to setup network:', error);
@@ -118,6 +114,16 @@ const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any,
     timestamp: any;
     call_data: any
   }
+
+     
+  // const systemContract = getContract({
+  //   address: '0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c', 
+  //   abi: ICallSystemAbi,
+  //   publicClient,
+  //   walletClient: walletClient,
+  //   onWrite: (write) => write$.next(write),
+  // });
+
 
   const execute_queue = async(queue_data: QueueData) => {
 
