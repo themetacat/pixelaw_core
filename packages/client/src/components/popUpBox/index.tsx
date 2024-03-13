@@ -38,7 +38,7 @@ export default function PopUpBox({ addressData,selectedColor,onHandleExe,coordin
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
 const [receivedInstruction, setReceivedInstruction] = useState({});
-
+// console.log(coordinates,"传进来的")
   useEffect(() => {
     async function fetchData() {
       try {

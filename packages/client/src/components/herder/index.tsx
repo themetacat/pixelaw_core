@@ -154,6 +154,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [translateY, setTranslateY] = useState(0);
   const [instruC, setInstruC] = useState('');
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+  const [coordinatesData, setCoordinatesData] = useState({ x: 0, y: 0 });
 
   // const [receivedInstruction, setReceivedInstruction] = useState('');
 
@@ -365,6 +366,19 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
     //console.log("是点击事件吗");
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
+    const canvas = canvasRef.current as any;
+    const rect = canvas.getBoundingClientRect();
+  
+    // 计算鼠标点击位置在网格中的坐标
+    const mouseX = event.clientX - rect.left + scrollOffset.x;
+    const mouseY = event.clientY - rect.top + scrollOffset.y;
+  
+    const gridX = Math.floor(mouseX / GRID_SIZE);
+    const gridY = Math.floor(mouseY / GRID_SIZE);
+  // console.log(gridX,gridY)
+    // 将点击位置的网格坐标传递给 setCoordinates 函数
+    setCoordinatesData({ x: gridX, y: gridY });
+  
     if (hoveredSquare && selectedColor) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
       const increData = increment(
@@ -641,7 +655,7 @@ const onHandleExe= ()=>{
         <RightPart coordinates={coordinates} entityData={entityData}  setPanningState={handlePanningChange} />
     
       </div>
-      {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinates}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}
+      {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinatesData}  onHandleExe={onHandleExe} selectedColor={selectedColor}/>:''}
     </>
   );
 }
