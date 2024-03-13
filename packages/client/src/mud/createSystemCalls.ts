@@ -76,14 +76,21 @@ const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any,
     walletClient: walletClient,
     onWrite: (write) => write_sub.next(write),
   });
+  
   try {
     const appName = localStorage.getItem('manifest') as any;
+
 
     if (appName.includes('Paint')) {
       const tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
     } else if (appName && appName.includes('Snake')) {
-      // console.log('snake', systemContract);
-      const txData = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
+      if(incrementData){
+ // console.log('snake', systemContract);
+ const txData = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
+      }
+     
+
+
     }
   } catch (error) {
     console.error('Failed to setup network:', error);

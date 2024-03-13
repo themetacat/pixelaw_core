@@ -22,18 +22,18 @@ setup().then(async (result) => {
 
   // https://vitejs.dev/guide/env-and-mode.html
   
-  // if (import.meta.env.DEV) {
-  //   const { mount: mountDevTools } = await import("@latticexyz/dev-tools");
-  //   mountDevTools({
-  //     config: mudConfig,
-  //     publicClient: result.network.publicClient,
-  //     walletClient: result.network.walletClient,
-  //     latestBlock$: result.network.latestBlock$,
-  //     storedBlockLogs$: result.network.storedBlockLogs$,
-  //     worldAddress: result.network.systemContract.address,
-  //     worldAbi: result.network.systemContract.abi,
-  //     write$: result.network.write$,
-  //     recsWorld: result.network.world,
-  //   });
-  // }
+  if (import.meta.env.DEV) {
+    const { mount: mountDevTools } = await import("@latticexyz/dev-tools");
+    mountDevTools({
+      config: mudConfig,
+      publicClient: result.network.publicClient,
+      walletClient: result.network.walletClient,
+      latestBlock$: result.network.latestBlock$,
+      storedBlockLogs$: result.network.storedBlockLogs$,
+      worldAddress: result.network.systemContract.address,
+      worldAbi: result.network.systemContract.abi,
+      write$: result.network.write$,
+      recsWorld: result.network.world,
+    });
+  }
 });

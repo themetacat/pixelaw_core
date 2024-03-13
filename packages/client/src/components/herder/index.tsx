@@ -192,7 +192,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       const instruction = getComponentValue(Instruction, entityaData) as any;
       // console.log(entityaData, "=111111==========");
       const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
-const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
+const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
 // console.log(result);
       setInstruC(instruction?.instruction);
       setEntityaData(result)
@@ -381,14 +381,14 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   
     if (hoveredSquare && selectedColor) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-//       const increData = increment(
-//   null,
-//   receivedInstruction,
-//   coordinates,
-//   entityaData,
-//   palyerAddress,
-// selectedColor
-//       );
+      const increData = increment(
+  null,
+  receivedInstruction,
+  coordinates,
+  entityaData,
+  palyerAddress,
+selectedColor
+      );
       // console.log(increData)
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数

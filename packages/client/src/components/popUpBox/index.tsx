@@ -61,13 +61,14 @@ useEffect(() => {
     // console.log(entities_app,3333333333)
     const entityaData = entities_app[1]
     const instruction = getComponentValue(Instruction, entityaData) as any;
-    // console.log(instruction, "=111111==========");
+    // console.log(entityaData, "=111111==========");
     const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
-const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-// console.log(instruction);
+const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
+console.log(num);
     setInstruC(instruction?.instruction);
     setEntityaData(result)
   });
+
 }, []);
 
   const appName = localStorage.getItem('manifest')  as any
@@ -86,8 +87,8 @@ const result = "0x" + num.toString(16); // 将 BigInt 转换为 16 进制字符�
   }
 
   const onHandleLeft = ()=>{
-    increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
-    onHandleExe()
+      increment(1,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
+      onHandleExe()
   }
   const onHandleRight = ()=>{
     increment(2,receivedInstruction,coordinates,entityaData,palyerAddress,selectedColor)
