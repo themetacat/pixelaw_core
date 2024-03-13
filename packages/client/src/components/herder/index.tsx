@@ -489,8 +489,7 @@ selectedColor
 
 
 
-const onHandleExe= (e:any)=>{
-  e.stopPropagation(); // 阻止事件冒泡
+const onHandleExe= ()=>{
   // console.log('dianle')
   setPopExhibit(false)
 }
@@ -500,7 +499,8 @@ const onHandleExe= (e:any)=>{
     
       <div className={style.container}>
         <img  className={style.containerImg}
-          src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
+          // src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
+          src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
         />
         <div className={style.content}>
@@ -520,7 +520,7 @@ const onHandleExe= (e:any)=>{
           </button>
           
         </div>
-        <button
+        {/* <button
         style={{zIndex: "99999999999999999999999999"}}
         type="button"
         onClick={async (event) => {
@@ -529,7 +529,7 @@ const onHandleExe= (e:any)=>{
         }}
       >
         Increment
-      </button>
+      </button> */}
         <div
           className={style.addr}
           style={{
