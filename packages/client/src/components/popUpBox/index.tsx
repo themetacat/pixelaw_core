@@ -21,7 +21,6 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
-import { setup } from "../..//mud/setup";
 import toast, { Toaster } from "react-hot-toast";
 import { Hex } from "viem";
 import { setupNetwork, SetupNetworkResult } from "../../mud/setupNetwork";
@@ -48,21 +47,21 @@ export default function PopUpBox({
     systemCalls: { increment },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
-  const [receivedInstruction, setReceivedInstruction] = useState({});
-  // console.log(coordinates,"传进来的")
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const networkData: SetupNetworkResult = await setupNetwork();
-        // 在这里可以访问 systemContract
-        setReceivedInstruction(networkData.systemContract);
-      } catch (error) {
-        console.error("Error setting up network:", error);
-      }
-    }
+  // const [receivedInstruction, setReceivedInstruction] = useState({});
+  // // console.log(coordinates,"传进来的")
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const networkData: SetupNetworkResult = await setupNetwork();
+  //       // 在这里可以访问 systemContract
+  //       setReceivedInstruction(networkData.systemContract);
+  //     } catch (error) {
+  //       console.error("Error setting up network:", error);
+  //     }
+  //   }
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
   const [instruC, setInstruC] = useState(null);
   const [entityaData, setEntityaData] = useState("");
   // console.log(selectedColor,555)
@@ -102,7 +101,6 @@ export default function PopUpBox({
     onHandleLoadingFun()
     const increData = increment(
       1,
-      receivedInstruction,
       coordinates,
       entityaData,
       palyerAddress,
@@ -124,7 +122,6 @@ export default function PopUpBox({
     onHandleLoadingFun()
     const increData = increment(
       2,
-      receivedInstruction,
       coordinates,
       entityaData,
       palyerAddress,
@@ -146,7 +143,6 @@ export default function PopUpBox({
     onHandleLoadingFun()
     const increData = increment(
       3,
-      receivedInstruction,
       coordinates,
       entityaData,
       palyerAddress,
@@ -168,7 +164,6 @@ export default function PopUpBox({
     onHandleLoadingFun()
     const increData = increment(
       4,
-      receivedInstruction,
       coordinates,
       entityaData,
       palyerAddress,
