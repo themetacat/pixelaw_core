@@ -31,6 +31,7 @@ interface Props {
   addressData: any;
   selectedColor: any;
   onHandleLoading: any;
+  onHandleLoadingFun: any;
   coordinates: { x: number; y: number };
 }
 export default function PopUpBox({
@@ -39,6 +40,7 @@ export default function PopUpBox({
   onHandleLoading,
   onHandleExe,
   coordinates,
+  onHandleLoadingFun,
 }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
@@ -68,7 +70,7 @@ export default function PopUpBox({
   useEffect(() => {
     entities_app.map((entitya) => {
       // console.log(entities_app,3333333333)
-      const entityaData = entities_app[1];
+      const entityaData = entities_app[0];
       const instruction = getComponentValue(Instruction, entityaData) as any;
       // console.log(entityaData, "=111111==========");
       const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
@@ -97,7 +99,7 @@ export default function PopUpBox({
   }
 
   const onHandleLeft = () => {
-    // setLoading(true);
+    onHandleLoadingFun()
     const increData = increment(
       1,
       receivedInstruction,
@@ -119,7 +121,7 @@ export default function PopUpBox({
     onHandleExe();
   };
   const onHandleRight = () => {
-    // setLoading(true);
+    onHandleLoadingFun()
     const increData = increment(
       2,
       receivedInstruction,
@@ -141,7 +143,7 @@ export default function PopUpBox({
     onHandleExe();
   };
   const onHandleUp = () => {
-    // setLoading(true);
+    onHandleLoadingFun()
     const increData = increment(
       3,
       receivedInstruction,
@@ -163,7 +165,7 @@ export default function PopUpBox({
     onHandleExe();
   };
   const onHandleDown = () => {
-    // setLoading(true);
+    onHandleLoadingFun()
     const increData = increment(
       4,
       receivedInstruction,
