@@ -5,12 +5,8 @@
 import { useContext } from "react";
 import { getComponentValue } from "@latticexyz/recs";
 import { ClientComponents } from "./createClientComponents";
-// import { SetupNetworkResult } from "./setupNetwork";
-import { singletonEntity } from "@latticexyz/store-sync/recs";
-import { ManifestContext ,} from '../components/rightPart';
-import { encodeSystemCall, encodeSystemCalls } from '@latticexyz/world';
-import { resourceToHex } from "@latticexyz/common";
-import {setupNetwork,SetupNetworkResult } from './setupNetwork'
+
+import { SetupNetworkResult } from './setupNetwork'
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { getContract } from "@latticexyz/common";
 
@@ -67,7 +63,7 @@ if(entityVal===null){
   }
 
 
-const increment = async (incrementData: any, worldAbiUrl: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
+const increment = async (incrementData: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
 
   const systemContract = getContract({
     address: "0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c",
