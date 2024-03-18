@@ -58,6 +58,7 @@
     width: 100%;
     z-index: 99999999;
     margin-bottom: 15px;
+    font-family: Arial, Helvetica, sans-serif !important;
 }
 .appName{
     color: #58b4ce;
@@ -118,6 +119,8 @@ opacity: 1;
     /* background-color: aqua; */
     position: fixed;
     bottom: 12px;
+    font-weight: 600;
+    font-family: Arial, Helvetica, sans-serif !important;
     /* margin-bottom: 20px; */
     color: #fff;
 }

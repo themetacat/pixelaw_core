@@ -31,9 +31,10 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
     components: { App},
     systemCalls: { update_abi },
   } = useMUD();
-  const [value, setValue] = useState("");
+  const [manifestValue, setManifestValue] = useState("");
   const entities_app = useEntityQuery([Has(App)]);
   const [panning, setPanning] = useState(false);
+  const manifestVal = window.localStorage.getItem("manifest")
 
   const addressToEntityID = (address: Hex) =>
     encodeEntity({ address: "address" }, { address });
@@ -67,6 +68,10 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
     const systemData = await response.json();
     update_abi(systemData);
   };
+
+  function capitalizeFirstLetter(str:any) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
   return (
     //  <div style={{width:"220px",position:"relative"}}>
     <div
@@ -105,21 +110,14 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
             }}
             className={style.btnGame}
           >
-            {/* <img className={style.imgCon} src={value?.icon} /> */}
             <div
-              className={selectedIcon === index ? style.imgCon1 : style.imgCon}
+              className={selectedIcon === index ||manifestVal?.includes(capitalizeFirstLetter(value.app_name))? style.imgCon1 : style.imgCon}
               style={{
                 fontSize: "32px",
                 lineHeight: "50px",
-                fontFamily: "Arial Unicode MS",
+                fontFamily: "Arial Unicode MS",   
               }}
             >
-              {/* &#x1F40D; */}
-              {/* {value?.icon?String?.fromCodePoint(parseInt( value?.icon?.substring(2), 16)):null}  */}
-              {/* {value.icon && /^[0-9A-Fa-f]{4,}$/.test(value.icon) ?
-        String.fromCodePoint(parseInt(value.icon.substring(2), 16)) :
-        null
-    } */}{" "}
               {value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon)
                 ? String.fromCodePoint(parseInt(value.icon.substring(2), 16))
                 : null}
