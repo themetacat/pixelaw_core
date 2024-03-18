@@ -32,10 +32,10 @@ contract PaintExtension is Script {
     ResourceId systemResource = WorldResourceIdLib.encode(RESOURCE_SYSTEM, "snake", "SnakeSystem");
     console.log("Namespace ID: %x", uint256(ResourceId.unwrap(namespaceResource)));
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
- 
+
     vm.startBroadcast(deployerPrivateKey);
     world.registerNamespace(namespaceResource);
-
+  
     // forge script script/SnakeExtension.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
     StoreSwitch.setStoreAddress(worldAddress);
     Snake.register();
