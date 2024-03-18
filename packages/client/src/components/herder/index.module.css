@@ -36,13 +36,12 @@ z-index: 9999999;
     position: absolute;
     right: 100px;
     /* width:150px; */
+    margin-top: 4px;
     height: auto;
     line-height: 50px;
     display: flex;
 }
-/* button{
-  height: 20px !important;
-} */
+
 canvas{
   border:none;
 }
@@ -58,7 +57,7 @@ canvas{
     height: 51px;
     position: absolute;
     /* top:50%; */
-    top:0;
+    top:4px;
     right:0;
     bottom:0;
     left:0;
