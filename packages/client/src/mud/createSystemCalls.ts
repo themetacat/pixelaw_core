@@ -5,15 +5,11 @@
 import { useContext } from "react";
 import { getComponentValue } from "@latticexyz/recs";
 import { ClientComponents } from "./createClientComponents";
-// import { SetupNetworkResult } from "./setupNetwork";
-import { singletonEntity } from "@latticexyz/store-sync/recs";
-import { ManifestContext ,} from '../components/rightPart';
-import { encodeSystemCall, encodeSystemCalls } from '@latticexyz/world';
 import { resourceToHex } from "@latticexyz/common";
-import {setupNetwork,SetupNetworkResult } from './setupNetwork'
+import { SetupNetworkResult } from './setupNetwork'
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { getContract } from "@latticexyz/common";
-
+import { encodeSystemCall } from '@latticexyz/world';
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 export function createSystemCalls(
   /*
@@ -77,18 +73,21 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
     onWrite: (write) => write_sub.next(write),
   });
   let tx;
-  
   try {
     const appName = localStorage.getItem('manifest') as any;
+
 
     if (appName.includes('Paint')) {
        tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
 
+
     } else if (appName && appName.includes('Snake')) {
       if(incrementData){
-        // console.log('snake', systemContract);
-          tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
+ // console.log('snake', systemContract);
+  tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
+ 
       }
+      
     }
   } catch (error) {
     console.error('Failed to setup network:', error);
@@ -97,23 +96,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       return [tx,hashValpublic]
 
 };
-
-  // increment()
-  // const execute_instruction = async () => {
-  //     // SnakeSystemAbi 使用 setupNetwork中worldAbiUrl中的abi
-
-  //     const txData = await worldContract.write.call(encodeSystemCall({
-  //     abi: SnakeSystemAbi,
-  //     systemId: resourceToHex({"type": "system", "namespace": queue_data.namespace, "name": queue_data.name}),
-  //     functionName: queue_data.functionName,
-  //     args: ['0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc']
-  //     })
-  //   )
-  //   await waitForTransaction(txData);
-
-  // };
-
-  interface QueueData {
+  interface AppData {
     id: any,
     name: any;
     namespace: any;
@@ -121,7 +104,26 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
     call_data: any
   }
 
-     
+  const interact = async (incrementData: any,
+     coordinates: any, 
+     entityaData: any, 
+     addressData: any, 
+     selectedColor: any, 
+     app_data: any,
+     other_params: any) => {
+
+      const txData = await worldContract.write.call(encodeSystemCall({
+      abi: abi_json,
+      systemId: resourceToHex({"type": "system", "namespace": app_data.namespace, "name": app_data.name}),
+      functionName: app_data.name + '_' + app_data.namespace + '_interact',
+      args: [{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, other_params]
+      })
+    )
+    await waitForTransaction(txData);
+
+  };
+
+
   // const systemContract = getContract({
   //   address: '0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c', 
   //   abi: ICallSystemAbi,
@@ -130,19 +132,11 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
   //   onWrite: (write) => write$.next(write),
   // });
 
-
-  const execute_queue = async(queue_data: QueueData) => {
-
-    const txData = await worldContract.write?.call_CallOtherSystem_call_world_process_queue([queue_data.id, queue_data.timestamp, queue_data.namespace, queue_data.name, queue_data.call_data])
-
-    await waitForTransaction(txData);
-  };
-
  
   return {
     increment,
-    execute_queue,
-    update_abi
+    update_abi,
+    interact
   };
   
 }
