@@ -5,7 +5,7 @@
 }
 .content{
     position: relative;
-    filter: brightness(125%);
+    filter: brightness(130%);
     padding: 0.25rem; /* 小屏幕时的内边距，根据需要调整 */
     border-color: #220630; /* 边框颜色 */
     border-radius: 16px; /* 圆角效果 */
@@ -81,16 +81,28 @@ display: flex;
     border-width: 1px; /* 边框宽度 */
     border-style: solid; /* 边框样式 */
     border-color: #7C0BB4; /* 边框颜色 */
-    color: #19C0DB; /* 文字颜色 */
+    color: #19c0db; /* 文字颜色 */
+    filter: brightness(140%);
     text-transform: uppercase; /* 文字转换为大写 */
     font-size: 18px; /* 文字大小 */
+    font-weight: 500;
     font-family: 'Silkscreen', sans-serif; /* 字体 */
+}
+.btn:hover{
+    background-color: #f4f2f8;
+    filter: brightness(260%);
+    opacity: 0.6;
+    color: #0ad6f5; /* 文字颜色 */
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(.4,0,.2,1);
+    transition-duration: .15s;
 }
 .closeBtn{
     position: absolute; /* 绝对定位 */
+
     right: 1rem; /* 距离右边 1rem */
     top: 1rem; /* 距离顶部 1rem */
-    border-radius: 0.125rem; /* 使用较小的圆角 */
+    border-radius: 0.225rem; /* 使用较小的圆角 */
     opacity: 0.7; /* 不透明度为 70% */
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); /* 使用背景色作为焦点环的偏移颜色 */
     transition-property: opacity; /* 设置透明度过渡效果 */
