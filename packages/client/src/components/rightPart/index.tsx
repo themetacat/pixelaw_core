@@ -15,6 +15,7 @@ import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
 import { Hex } from "viem";
 import { SetupNetworkResult } from "../../mud/setupNetwork";
+import loadingImg from "../../images/loading.png";
 export const ManifestContext = createContext<string>("");
 
 // function UseManifestValue() {
@@ -25,8 +26,9 @@ interface Props {
   coordinates: { x: number; y: number };
   entityData: any;
   setPanningState: any;
+  loading: any;
 }
-export default function RightPart({ coordinates, entityData ,setPanningState}: Props) {
+export default function RightPart({ coordinates, loading,entityData ,setPanningState}: Props) {
   const {
     components: { App},
     systemCalls: { update_abi },
@@ -46,7 +48,6 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
     null
   );
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
- 
   const handleIconClick = (index: number) => {
     setSelectedIcon(index);
   };
@@ -92,7 +93,7 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
         className={panning === false ? style.pointer : style.pointer1}
       />
 
-      {/* </div> */}
+      {/* </div> */} 
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
         // console.log(value)
@@ -100,6 +101,9 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
           <div
             key={`${index}`}
             onClick={() => {
+              if (loading===true) {
+                return; // 禁止点击
+              }
               handleIconClick(index);
               updateAbiUrl(value.manifest);
               localStorage.setItem("manifest", value.manifest);
@@ -118,9 +122,16 @@ export default function RightPart({ coordinates, entityData ,setPanningState}: P
                 fontFamily: "Arial Unicode MS",   
               }}
             >
+                {loading === true&&manifestVal?.includes(capitalizeFirstLetter(value.app_name)) ? (
+          <img
+            src={loadingImg}
+            alt=""
+            className={`${style.commonCls1} ${style.spinAnimation}`}
+          />
+        ) : <>
               {value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon)
                 ? String.fromCodePoint(parseInt(value.icon.substring(2), 16))
-                : null}
+                : null}</>}
             </div>
             {panning === false ? null : (
               <span className={style.appName}>{value.app_name}</span>

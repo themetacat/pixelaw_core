@@ -184,7 +184,7 @@ export default function PopUpBox({
 
   return (
     <>
-      <div className={style.container}>
+      <div className={style.container}   style={{ zIndex: 99999999999999 }} >
         <div className={style.content}>
           <h2 className={style.title}>{instruC}</h2>
           <div>
@@ -223,23 +223,11 @@ export default function PopUpBox({
               <path d="M18 6 6 18"></path>
               <path d="m6 6 12 12"></path>
             </svg>
-            <span className="sr-only">Close</span>
+           
           </button>
         </div>
       </div>
-      {/* <div
-        style={{
-          position: "absolute",
-          right: "260px",
-          top: "20px",
-          width: "100px",
-          height: "100px",
-          zIndex: "9999999999999999",
-        }}
-      >
-        {" "}
-        {loading === true ? <img src={loadingImg} alt="" /> : null}
-      </div> */}
+    
     </>
   );
 }

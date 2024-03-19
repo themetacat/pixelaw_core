@@ -4,14 +4,11 @@
    position: relative;
 }
 .content{
-    /* width: 300px;
-    height: 200px; */
-    /* margin: 0 auto; */
     position: relative;
+    filter: brightness(125%);
     padding: 0.25rem; /* 小屏幕时的内边距，根据需要调整 */
     border-color: #220630; /* 边框颜色 */
     border-radius: 16px; /* 圆角效果 */
-        /* justify-content: center; */
     position: fixed;
     top: 50%;
     left: 50%;
@@ -26,14 +23,7 @@
     transition-duration: 0.2s; /* 过渡时间为 0.2s，根据需要调整 */
     opacity: 0; /* 渐隐效果 */
     opacity: 1; /* 渐显效果 */
-    /* transform: scale(0.95); 
-    transform: scale(0.95); 
-    transform: translateX(-50\%);
-    transform: translateY(-48\%);
-    transform: translateX(-50\%); 
-    transform: translateY(-48\%);  */
     border-radius: 0.375rem; /* 小屏幕时的圆角效果，根据需要调整 */
-    /* width: 100%; 中等屏幕时的宽度 */
     background-color: #220630; /* 背景色 */
 }
 .title{

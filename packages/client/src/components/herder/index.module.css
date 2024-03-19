@@ -9,6 +9,16 @@
 canvas{
   z-index: 1 !important;
 }
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10000000000000;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色 */
+  pointer-events: auto !important; 
+}
 .container{
     background-color: #171717;
     height: 60px;
