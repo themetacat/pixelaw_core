@@ -1,30 +1,14 @@
-/* eslint-disable react/no-unknown-property */
-import React, { useEffect, useContext, useState } from "react";
 
+import React, { useEffect, useContext, useState } from "react";
 import style from "./index.module.css";
 
 import {
-  ComponentValue,
-  Entity,
   Has,
-  HasValue,
-  getComponentValueStrict,
   getComponentValue,
 } from "@latticexyz/recs";
-import {
-  encodeEntity,
-  syncToRecs,
-  decodeEntity,
-  hexKeyTupleToEntity,
-} from "@latticexyz/store-sync/recs";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
-import leftIcon from "../../images/zuojiantou.png";
-import rightIcon from "../../images/youjiantou.png";
 import toast, { Toaster } from "react-hot-toast";
-import { Hex } from "viem";
-import { setupNetwork, SetupNetworkResult } from "../../mud/setupNetwork";
-import loadingImg from "../../images/loading.png";
 interface Props {
   onHandleExe: any;
   addressData: any;
@@ -47,42 +31,12 @@ export default function PopUpBox({
     systemCalls: { increment },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
-  // const [receivedInstruction, setReceivedInstruction] = useState({});
-  // // console.log(coordinates,"传进来的")
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const networkData: SetupNetworkResult = await setupNetwork();
-  //       // 在这里可以访问 systemContract
-  //       setReceivedInstruction(networkData.systemContract);
-  //     } catch (error) {
-  //       console.error("Error setting up network:", error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
   const [instruC, setInstruC] = useState(null);
   const [entityaData, setEntityaData] = useState("");
-  // console.log(selectedColor,555)
 
-  useEffect(() => {
-    entities_app.map((entitya) => {
-      // console.log(entities_app,3333333333)
-      const entityaData = entities_app[0];
-      const instruction = getComponentValue(Instruction, entityaData) as any;
-      // console.log(entityaData, "=111111==========");
-      const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
-      const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-      // console.log(num);
-      setInstruC(instruction?.instruction);
-      setEntityaData(result);
-    });
-  }, []);
+ 
 
   const appName = localStorage.getItem("manifest") as any;
-  // const appName = "BASE/Paint"
-  // const [loading, setLoading] = useState(false);
   const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
   if (appName) {
@@ -112,7 +66,7 @@ export default function PopUpBox({
           onHandleLoading();
         } else {
           onHandleLoading();
-          toast.error("An error was reported");
+          alert("An error was reported");
         }
       });
     });
@@ -182,12 +136,47 @@ export default function PopUpBox({
     onHandleExe();
   };
 
+  const handleKeyDown = (e:any) => {
+    switch (e.key) {
+      case 'ArrowLeft':
+        onHandleLeft();
+        break;
+      case 'ArrowRight':
+        onHandleRight();
+        break;
+      case 'ArrowUp':
+        onHandleUp();
+        break;
+      case 'ArrowDown':
+        onHandleDown();
+        break;
+      default:
+        break;
+    }
+  };
+
+
+  useEffect(() => {
+    entities_app.map((entitya) => {
+      const entityaData = entities_app[0];
+      const instruction = getComponentValue(Instruction, entityaData) as any;
+      const num = BigInt(entityaData); 
+      const result = "0x" + num?.toString(16);
+      setInstruC(instruction?.instruction);
+      setEntityaData(result);
+    });
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [entities_app,Instruction,entityaData]);
+
+
   return (
-    <>
       <div className={style.container}   style={{ zIndex: 99999999999999 }} >
         <div className={style.content}>
           <h2 className={style.title}>{instruC}</h2>
-          <div>
             <div className={style.bottomBox}>
               <label className={style.direction}>direction</label>
               <div className={style.btnBox}>
@@ -205,7 +194,6 @@ export default function PopUpBox({
                 </button>
               </div>
             </div>
-          </div>
           <button
             type="button"
             className={style.closeBtn}
@@ -227,7 +215,6 @@ export default function PopUpBox({
           </button>
         </div>
       </div>
-    
-    </>
+   
   );
 }

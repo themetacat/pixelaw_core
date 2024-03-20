@@ -18,10 +18,7 @@ import { SetupNetworkResult } from "../../mud/setupNetwork";
 import loadingImg from "../../images/loading.png";
 export const ManifestContext = createContext<string>("");
 
-// function UseManifestValue() {
-//   const manifestValue = useContext(ManifestContext);
-//   return manifestValue;
-// }
+
 interface Props {
   coordinates: { x: number; y: number };
   entityData: any;
@@ -33,7 +30,6 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
     components: { App},
     systemCalls: { update_abi },
   } = useMUD();
-  const [manifestValue, setManifestValue] = useState("");
   const entities_app = useEntityQuery([Has(App)]);
   const [panning, setPanning] = useState(false);
   const manifestVal = window.localStorage.getItem("manifest")
@@ -44,9 +40,7 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
     App,
     addressToEntityID("0xb40422217F29Ec33b4EB2b6d790b6932601671eB")
   );
-  const [networkSetup, setNetworkSetup] = useState<SetupNetworkResult | null>(
-    null
-  );
+
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   const handleIconClick = (index: number) => {
     setSelectedIcon(index);
@@ -74,26 +68,20 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
   return (
-    //  <div style={{width:"220px",position:"relative"}}>
     <div
       className={panning === false ? style.container : style.container1}
       onClick={(e) => {
-        e.stopPropagation(); // 阻止事件冒泡
+        e.stopPropagation();
         setPanning(!panning);
         setPanningState(!panning);
       }}
     >
-      {/* <div  className={style.pointerBox} > */}
       <img
-        // onClick={() => {
-        //   setPanning(!panning);
-        // }}
         src={panning === false ? rightIcon : leftIcon}
         alt=""
         className={panning === false ? style.pointer : style.pointer1}
       />
 
-      {/* </div> */} 
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
         // console.log(value)
@@ -206,6 +194,5 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
         </div>
       )}
     </div>
-    // </div>
   );
 }
