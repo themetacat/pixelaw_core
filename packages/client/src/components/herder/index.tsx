@@ -10,7 +10,7 @@ import {
   Has,
   HasValue,
   getComponentValueStrict,
-  getComponentValue
+  getComponentValue,
 } from "@latticexyz/recs";
 import {
   encodeEntity,
@@ -29,10 +29,10 @@ import {
 } from "../../global/constants";
 import { useMUD } from "../../MUDContext";
 
-import PopUpBox from '../popUpBox'
+import PopUpBox from "../popUpBox";
 
-import powerIcon from '../../images/jian_sekuai.png'
-import AddIcon from '../../images/jia.png'
+import powerIcon from "../../images/jian_sekuai.png";
+import AddIcon from "../../images/jia.png";
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -73,7 +73,7 @@ const colorOptionsData = [
   // 其他颜色选项...
 ];
 
-import loadingImg from '../../images/loading.png'
+import loadingImg from "../../images/loading.png";
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
@@ -82,31 +82,32 @@ interface Props {
 
 export default function Header({ hoveredData, handleData }: Props) {
   const {
-    components: { App, Pixel, AppName ,Instruction},
-    network: { playerEntity, publicClient,palyerAddress },
+    components: { App, Pixel, AppName, Instruction },
+    network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { increment },
   } = useMUD();
   const [numberData, setNumberData] = useState(50);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
-//获取地址
+  //获取地址
   // const playerEntityNum = palyerAddress;
   // const hexString = ("0x" + playerEntityNum.toString(16)) as any;
   // console.log(palyerAddress)
   const addressData =
-  palyerAddress.substring(0, 6) +
+    palyerAddress.substring(0, 6) +
     "..." +
     palyerAddress.substring(palyerAddress.length - 4);
-    //获取网络名称
+  //获取网络名称
   const chainName = publicClient.chain.name;
-  const capitalizedString = chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
-    //获取余额
-    const balanceFN = publicClient.getBalance({ address: palyerAddress });
-    balanceFN.then((a: any) => {
-      setBalance(a);
-    });
-    const natIve = publicClient.chain.nativeCurrency.decimals;
+  const capitalizedString =
+    chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
+  //获取余额
+  const balanceFN = publicClient.getBalance({ address: palyerAddress });
+  balanceFN.then((a: any) => {
+    setBalance(a);
+  });
+  const natIve = publicClient.chain.nativeCurrency.decimals;
   const [GRID_SIZE, setGRID_SIZE] = useState(64);
   const btnLower = () => {
     setNumberData(numberData - 5); // 每次点击减号减少5
@@ -152,13 +153,13 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
-  const [instruC, setInstruC] = useState('');
+  const [instruC, setInstruC] = useState("");
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
   const [coordinatesData, setCoordinatesData] = useState({ x: 0, y: 0 });
 
   // const [receivedInstruction, setReceivedInstruction] = useState('');
 
-  const handleInstruction = (instructionValue:any) => {
+  const handleInstruction = (instructionValue: any) => {
     // 在这里处理接收到的instruction值
     // console.log(instructionValue,'============================');
     // setReceivedInstruction(instructionValue);
@@ -178,24 +179,25 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   //   fetchData();
   // }, []);
-  const [entityaData, setEntityaData] = useState('');
+  const [entityaData, setEntityaData] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
-//console.log(Has(Pixel),'Has(Pixel)',Has(App))
-  const entities = useEntityQuery([Has(Pixel)]);   
+  const [showOverlay, setShowOverlay] = useState(false);
+  //console.log(Has(Pixel),'Has(Pixel)',Has(App))
+  const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
   useEffect(() => {
     entities_app.map((entitya) => {
       // console.log(entities_app,3333333333)
-      const entityaData = entities_app[0]
+      const entityaData = entities_app[0];
       const instruction = getComponentValue(Instruction, entityaData) as any;
       // console.log(entityaData, "=111111==========");
       const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
-const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-// console.log(result);
+      const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
+      // console.log(result);
       setInstruC(instruction?.instruction);
-      setEntityaData(result)
+      setEntityaData(result);
     });
   }, []);
 
@@ -207,11 +209,11 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
       const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
       const value = getComponentValueStrict(Pixel, entity);
 
-      if(value.text === "_none"){
-        value.text = ""
+      if (value.text === "_none") {
+        value.text = "";
       }
-      if(value.color === "0"){
-        value.color = "#2f1643"
+      if (value.color === "0") {
+        value.color = "#2f1643";
       }
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
@@ -229,14 +231,14 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
       // 清除之前绘制的格子
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
       ctx.lineWidth = 10;
-      ctx.strokeStyle = "#2e1140"; 
+      ctx.strokeStyle = "#2e1140";
       for (let x = 0.5; x < 12000; x += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, 12000);
         ctx.stroke();
       }
- 
+
       for (let y = 0.5; y < 12000; y += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -273,7 +275,7 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
             );
           }
           // ctx.fillStyle = "#fff"; // 设置文字颜色
-      
+
           // ctx.fillText(
           //   `${i},${j}`,
           //   i * GRID_SIZE + 2 - scrollOffset.x,
@@ -310,10 +312,9 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
     [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
   );
 
-
-  const handleChildValue = ()=>{
+  const handleChildValue = () => {
     // console.log(1)
-  }
+  };
 
   useEffect(() => {
     // setInstruC(instruction)
@@ -347,68 +348,65 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
     mouseX,
     mouseY,
   ]);
-  const appName = localStorage.getItem('manifest')  as any
+  const appName = localStorage.getItem("manifest") as any;
   // const appName = "BASE/Paint"
   const [loading, setLoading] = useState(false);
   const parts = appName?.split("/") as any;
-  let worldAbiUrl:any;
+  let worldAbiUrl: any;
   // console.log(parts[0]); // 输出 "Base"
-  if(appName){
-    if(parts[0] === 'BASE'){
-      worldAbiUrl = "https://pixelaw-game.vercel.app/"+`${parts[1].replace(/\.abi\.json/g, '')}`+".abi.json" as any;
-    }else{
-      worldAbiUrl =appName
+  if (appName) {
+    if (parts[0] === "BASE") {
+      worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
+        `${parts[1].replace(/\.abi\.json/g, "")}` +
+        ".abi.json") as any;
+    } else {
+      worldAbiUrl = appName;
     }
-  }else{
-    worldAbiUrl="https://pixelaw-game.vercel.app/Paint.abi.json"
+  } else {
+    worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     // console.log("是点击事件吗",appName,parts[1]);
-   
-  
+
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
     const canvas = canvasRef.current as any;
     const rect = canvas.getBoundingClientRect();
-  
+
     // 计算鼠标点击位置在网格中的坐标
     const mouseX = event.clientX - rect.left + scrollOffset.x;
     const mouseY = event.clientY - rect.top + scrollOffset.y;
-  
+
     const gridX = Math.floor(mouseX / GRID_SIZE);
     const gridY = Math.floor(mouseY / GRID_SIZE);
-  // console.log(gridX,gridY)
+    // console.log(gridX,gridY)
     // 将点击位置的网格坐标传递给 setCoordinates 函数
     setCoordinatesData({ x: gridX, y: gridY });
-  
+
     if (hoveredSquare && selectedColor) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-      if(parts[1]!=='Snake'){
-        setLoading(true)
+      if (parts[1] !== "Snake") {
+        setLoading(true);
         const increData = increment(
           null,
           coordinates,
           entityaData,
           palyerAddress,
-        selectedColor
-              );
-              increData.then((increDataVal:any)=>{
-        
-        increDataVal[1].then((a:any)=>{
-          // console.log(a)
-        if(a.status=== "success"){
-          setLoading(false)
-        }else{
-          setLoading(false)
-          onHandleLoading()
-          toast.error('An error was reported')
-        }
-        })
-     
-     
-      })
-     
-  }
+          selectedColor
+        );
+        increData.then((increDataVal: any) => {
+          increDataVal[1].then((a: any) => {
+            // console.log(a)
+            if (a.status === "success") {
+              setLoading(false);
+            } else {
+              setLoading(false);
+              onHandleLoading();
+              toast.error("An error was reported");
+            }
+          });
+        });
+      }
       // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
       // 调用handleData方法并传递需要的参数
 
@@ -420,10 +418,11 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
 
   const handleMouseUp = () => {
     // console.log('我点了！！！')
-    setPopExhibit(true)
-    if(parts[1]!=='Snake'){
-    setLoading(true)
-  }
+    setPopExhibit(true);
+    setShowOverlay(true)
+    if (parts[1] !== "Snake") {
+      setLoading(true);
+    }
     // e.stopPropagation();
     setTranslateX(0);
     setTranslateY(0);
@@ -432,7 +431,6 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   const mouseYRef = useRef(0);
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-
       if (!visibleAreaRef.current || !canvasRef.current) return;
 
       const rect = visibleAreaRef.current.getBoundingClientRect();
@@ -456,7 +454,6 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
   );
   const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-
       setMouseX(event.clientX);
       setMouseY(event.clientY);
       if (event.buttons !== 1 || !visibleAreaRef.current) return;
@@ -524,41 +521,47 @@ const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符
     );
   };
 
-
   const [panningFromChild, setPanningFromChild] = useState(false);
-  const handlePanningChange = (newPanningValue:any) => {
+  const handlePanningChange = (newPanningValue: any) => {
     // console.log(newPanningValue)
-    setPopExhibit(false)
+    setPopExhibit(false);
+    setShowOverlay(false)
     setPanningFromChild(newPanningValue);
   };
-const onHandleExe= ()=>{
-  // console.log('dianle')
-  setPopExhibit(false)
-  // setLoading(false)
-}
-const onHandleLoading= ()=>{
-  // console.log('dianle')
-  setLoading(false)
-}
-const onHandleLoadingFun= ()=>{
-  // console.log('dianle')
-  setLoading(true)
-}
+  const onHandleExe = () => {
+    // console.log('dianle')
+    setPopExhibit(false);
+    setShowOverlay(false)
+    // setLoading(false)
+  };
+  const onHandleLoading = () => {
+    // console.log('dianle')
+    setLoading(false);
+  };
+  const onHandleLoadingFun = () => {
+    // console.log('dianle')
+    setLoading(true);
+  };
   return (
     <>
-    
       <div className={style.container}>
-        <img  className={style.containerImg}
+        <img
+          className={style.containerImg}
           // src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
         />
         <div className={style.content}>
-          <button  className={style.btnBox}
+          <button
+            className={style.btnBox}
             disabled={numberData === 25}
             onClick={btnLower}
           >
-           <img  className={numberData === 25?style.gray:style.btn1} src={powerIcon} alt="" /> 
+            <img
+              className={numberData === 25 ? style.gray : style.btn1}
+              src={powerIcon}
+              alt=""
+            />
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
@@ -566,9 +569,12 @@ const onHandleLoadingFun= ()=>{
             disabled={numberData === 100}
             onClick={btnAdd}
           >
-            <img  className={numberData === 100?style.gray:style.btn1} src={AddIcon} alt="" />
+            <img
+              className={numberData === 100 ? style.gray : style.btn1}
+              src={AddIcon}
+              alt=""
+            />
           </button>
-          
         </div>
         {/* <button
         style={{zIndex: "9999999999"}}
@@ -586,113 +592,140 @@ const onHandleLoadingFun= ()=>{
             cursor: "pointer",
             marginLeft: "32px",
           }}
-       
         >
           <span>{capitalizedString}</span>
-          <span    onClick={() => {
-            addressDataCopy(palyerAddress);
-          }} className={style.balanceNum}>{addressData}</span>
-          <span className={style.balanceNum}> {publicClient && balance != null ? (
-                  <>
-                    {formatUnits(balance, natIve).replace(
-                      /(\.\d{4})\d+$/,
-                      "$1"
-                    )}{" "}
-                    {publicClient.chain.nativeCurrency.symbol}
-                  </>
-                ) : null}</span>
+          <span
+            onClick={() => {
+              addressDataCopy(palyerAddress);
+            }}
+            className={style.balanceNum}
+          >
+            {addressData}
+          </span>
+          <span className={style.balanceNum}>
+            {" "}
+            {publicClient && balance != null ? (
+              <>
+                {formatUnits(balance, natIve).replace(/(\.\d{4})\d+$/, "$1")}{" "}
+                {publicClient.chain.nativeCurrency.symbol}
+              </>
+            ) : null}
+          </span>
         </div>
-     
       </div>
-<div style={{display:'flex'}}>
-      <div
-        style={{
-          width: `calc(100vw)`,
-          overflow: "hidden",
-          position: "relative",
-          display: "flex",
-        }}
-        className={style.bodyCon}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseMove={handleMouseMoveData}
-        onMouseLeave={handleLeave}
-        onMouseEnter={handleMouseEnter}
-      >
+      <div style={{ display: "flex" }}>
         <div
-          ref={visibleAreaRef}
-          className={style.canvasWrapper}
           style={{
-            width: `${CONTENT_WIDTH}px`,
-            height: `900px`,
-            overflow: "auto",
+            width: `calc(100vw)`,
+            overflow: "hidden",
+            position: "relative",
+            display: "flex",
+          }}
+          className={style.bodyCon}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMoveData}
+          onMouseLeave={handleLeave}
+          onMouseEnter={handleMouseEnter}
+        >
+          <div
+            ref={visibleAreaRef}
+            className={style.canvasWrapper}
+            style={{
+              width: `${CONTENT_WIDTH}px`,
+              height: `900px`,
+              overflow: "auto",
+            }}
+          >
+            <canvas
+              ref={canvasRef}
+              width={CANVAS_WIDTH}
+              height={CANVAS_WIDTH}
+              style={{ border: "1px solid black" }}
+            />
+          </div>
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: "5%",
+            bottom: "0px",
+            cursor: "pointer",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            backgroundColor: "#230732",
+            padding: "6px 6px 6px 6px",
           }}
         >
-          <canvas
-            ref={canvasRef}
-            width={CANVAS_WIDTH}
-            height={CANVAS_WIDTH}
-            style={{ border: "1px solid black" }}
-          />
-        
+          {Array.from(colorOptionsData).map((option, index) => (
+            <span
+              key={index}
+              className={`color-option${
+                selectedColor === option.color ? " selected" : ""
+              }`}
+              data-color={option.color}
+              style={{
+                backgroundColor: option.color,
+                width: "48px",
+                height: "48px",
+                display: "inline-block",
+              }}
+              onClick={() => handleColorOptionClick(option.color)}
+            >
+              {selectedColor === option.color && (
+                <div
+                  className="selected-circle"
+                  style={{
+                    backgroundColor: "black",
+                    borderRadius: "50%",
+                    width: "40px",
+                    height: "40px",
+                    margin: "5px auto",
+                  }}
+                ></div>
+              )}
+            </span>
+          ))}
         </div>
-     
-      </div>
-      <div
-        style={{
-          position: "absolute",
-          left: "5%",
-          bottom: "0px",
-          cursor: "pointer",
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "flex-start",
-          alignItems: "flex-start",
-          backgroundColor:"#230732",
-          padding:"6px 6px 6px 6px"
-        }}
-      >
-        {Array.from(colorOptionsData).map((option, index) => (
-          <span
-            key={index}
-            className={`color-option${
-              selectedColor === option.color ? " selected" : ""
-            }`}
-            data-color={option.color}
-            style={{
-              backgroundColor: option.color,
-              width: "48px",
-              height: "48px",
-              display: "inline-block",
-            }}
-            onClick={() => handleColorOptionClick(option.color)}
-          >                                                             
-            {selectedColor === option.color && (
-              <div
-                className="selected-circle"
-                style={{
-                  backgroundColor: "black",
-                  borderRadius: "50%",
-                  width: "40px",
-                  height: "40px",
-                  margin: "5px auto",
-                }}
-              ></div>
-            )}
-          </span>
-        ))}
-      </div>
-     
 
-        <RightPart coordinates={coordinates} entityData={entityData}  setPanningState={handlePanningChange} />
-    
+        <RightPart
+          coordinates={coordinates}
+          entityData={entityData}
+          setPanningState={handlePanningChange}
+          loading={loading}
+        />
       </div>
 
-      <div className={style.loadingContainer}> {loading ===true ?<img src={loadingImg} alt=""   className={`${style.commonCls1} ${style.spinAnimation}`} />:null}</div>
+      {/* <div className={style.loadingContainer}>
+        {" "}
+        {loading === true ? (
+          <img
+            src={loadingImg}
+            alt=""
+            className={`${style.commonCls1} ${style.spinAnimation}`}
+          />
+        ) : null}
+      </div> */}
 
-
-      {localStorage.getItem('manifest')?.includes('Snake')&&popExhibit === true ? <PopUpBox addressData={addressData} coordinates={coordinatesData}  onHandleExe={onHandleExe} selectedColor={selectedColor} onHandleLoading={onHandleLoading} onHandleLoadingFun={onHandleLoadingFun}/>:''}
-     
+      {localStorage.getItem("manifest")?.includes("Snake") &&
+      popExhibit === true ? (
+        <>
+        {showOverlay && <div className={style.overlay} />}
+        <PopUpBox
+        
+          addressData={addressData}
+          coordinates={coordinatesData}
+          onHandleExe={onHandleExe}
+          selectedColor={selectedColor}
+          onHandleLoading={onHandleLoading}
+          onHandleLoadingFun={onHandleLoadingFun}
+        />
+        </>
+      ) : (
+        ""
+      )}
     </>
   );
 }

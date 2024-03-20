@@ -193,7 +193,7 @@ export const App = () => {
           </div>
         ) : (
           <Header hoveredData={hoveredData} handleData={handleMouseDown} />
-          // <PopUpBox/>
+       
         )
       ) : (
         <div style={{ color: "#000" }}>Hydrating from RPC(0) </div>
