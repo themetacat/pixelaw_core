@@ -149,6 +149,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             address: networkConfig.worldAddress as Hex,
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
+            indexerUrl: "https://api.metacat.world/",
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
             
    
