@@ -1,32 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import style from "./index.module.css";
-// import { useDrawPanel } from '@/providers/DrawPanelProvider.tsx'
-import { clsx } from "clsx";
-import { useRenderGrid } from "../../hooks/useRenderGrid";
-import DrawPanel from "../shared/DrawPanel";
 import {
-  ComponentValue,
-  Entity,
   Has,
-  HasValue,
   getComponentValueStrict,
   getComponentValue,
 } from "@latticexyz/recs";
-import {
-  encodeEntity,
-  syncToRecs,
-  decodeEntity,
-  hexKeyTupleToEntity,
-} from "@latticexyz/store-sync/recs";
+import { decodeEntity } from "@latticexyz/store-sync/recs";
 import { formatUnits } from "viem";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart from "../rightPart";
-import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
-  MAX_ROWS_COLS,
-} from "../../global/constants";
 import { useMUD } from "../../MUDContext";
 
 import PopUpBox from "../popUpBox";
@@ -73,7 +56,6 @@ const colorOptionsData = [
   // 其他颜色选项...
 ];
 
-import loadingImg from "../../images/loading.png";
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
@@ -86,14 +68,39 @@ export default function Header({ hoveredData, handleData }: Props) {
     network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { increment },
   } = useMUD();
+
   const [numberData, setNumberData] = useState(50);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
-  //获取地址
-  // const playerEntityNum = palyerAddress;
-  // const hexString = ("0x" + playerEntityNum.toString(16)) as any;
-  // console.log(palyerAddress)
+  const [translateX, setTranslateX] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
+  const [instruC, setInstruC] = useState("");
+  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+  const [coordinatesData, setCoordinatesData] = useState({ x: 0, y: 0 });
+  const [entityaData, setEntityaData] = useState("");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const visibleAreaRef = useRef<HTMLDivElement>(null);
+  const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [panningFromChild, setPanningFromChild] = useState(false);
+  const [GRID_SIZE, setGRID_SIZE] = useState(64);
+  const entities = useEntityQuery([Has(Pixel)]);
+  const entities_app = useEntityQuery([Has(App)]);
+  const CANVAS_WIDTH = window.innerWidth;
+  const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
+  const CONTENT_WIDTH = gridCount * GRID_SIZE;
+  const [hoveredSquare, setHoveredSquare] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const mouseXRef = useRef(0);
+  const mouseYRef = useRef(0);
+
   const addressData =
     palyerAddress.substring(0, 6) +
     "..." +
@@ -108,42 +115,21 @@ export default function Header({ hoveredData, handleData }: Props) {
     setBalance(a);
   });
   const natIve = publicClient.chain.nativeCurrency.decimals;
-  const [GRID_SIZE, setGRID_SIZE] = useState(64);
   const btnLower = () => {
-    setNumberData(numberData - 5); // 每次点击减号减少5
+    setNumberData(numberData - 5);
     setGRID_SIZE(GRID_SIZE - 5);
-    setScrollOffset({ x: 0, y: 0 }); // 或者根据实际情况设置合适的值
+    setScrollOffset({ x: 0, y: 0 });
     setTranslateX(0);
     setTranslateY(0);
   };
   const btnAdd = () => {
-    setNumberData(numberData + 5); // 每次点击加号增加5
+    setNumberData(numberData + 5);
     setGRID_SIZE(GRID_SIZE + 5);
-    setScrollOffset({ x: 0, y: 0 }); // 或者根据实际情况设置合适的值
+    setScrollOffset({ x: 0, y: 0 });
     setTranslateX(0);
     setTranslateY(0);
   };
-  const CANVAS_WIDTH = window.innerWidth;
-  // 计算每行可容纳的网格数量
-  const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
 
-  // 根据每行的网格数量计算内容区域的宽度
-  const CONTENT_WIDTH = gridCount * GRID_SIZE;
-  // const CANVAS_WIDTH = window.innerWidth;
-  // const CANVAS_HEIGHT = window.innerHeight;
-
-  // const [offsetX, setOffsetX] = useState(0);
-  // const [offsetY, setOffsetY] = useState(0);
-  const [hoveredSquare, setHoveredSquare] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-  // const startXRef = useRef<number>(0);
-  // const startYRef = useRef<number>(0);
-  // const offsetXRef = useRef<number>(offsetX);
-  // const offsetYRef = useRef<number>(offsetY);
-  const [selectedColor, setSelectedColor] = useState("#ffffff");
-  // 点击事件处理程序
   function handleColorOptionClick(color: any) {
     setSelectedColor(color);
   }
@@ -151,55 +137,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   const handleLeave = () => {
     setHoveredSquare(null);
   };
-  const [translateX, setTranslateX] = useState(0);
-  const [translateY, setTranslateY] = useState(0);
-  const [instruC, setInstruC] = useState("");
-  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
-  const [coordinatesData, setCoordinatesData] = useState({ x: 0, y: 0 });
-
-  // const [receivedInstruction, setReceivedInstruction] = useState('');
-
-  const handleInstruction = (instructionValue: any) => {
-    // 在这里处理接收到的instruction值
-    // console.log(instructionValue,'============================');
-    // setReceivedInstruction(instructionValue);
-  };
-  // const [receivedInstruction, setReceivedInstruction] = useState({});
-
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const networkData: SetupNetworkResult = await setupNetwork();
-  //       // 在这里可以访问 systemContract
-  //       setReceivedInstruction(networkData.systemContract);
-  //     } catch (error) {
-  //       console.error('Error setting up network:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-  const [entityaData, setEntityaData] = useState("");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const visibleAreaRef = useRef<HTMLDivElement>(null);
-  const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
-  const [showOverlay, setShowOverlay] = useState(false);
-  //console.log(Has(Pixel),'Has(Pixel)',Has(App))
-  const entities = useEntityQuery([Has(Pixel)]);
-  const entities_app = useEntityQuery([Has(App)]);
-  useEffect(() => {
-    entities_app.map((entitya) => {
-      // console.log(entities_app,3333333333)
-      const entityaData = entities_app[0];
-      const instruction = getComponentValue(Instruction, entityaData) as any;
-      // console.log(entityaData, "=111111==========");
-      const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
-      const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-      // console.log(result);
-      setInstruC(instruction?.instruction);
-      setEntityaData(result);
-    });
-  }, []);
 
   // console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
@@ -274,13 +211,6 @@ export default function Header({ hoveredData, handleData }: Props) {
               GRID_SIZE - 1
             );
           }
-          // ctx.fillStyle = "#fff"; // 设置文字颜色
-
-          // ctx.fillText(
-          //   `${i},${j}`,
-          //   i * GRID_SIZE + 2 - scrollOffset.x,
-          //   j * GRID_SIZE + 10 - scrollOffset.y
-          // );
           if (entity && entity.value.text) {
             ctx.fillStyle = "#000"; // 设置文本颜色
             ctx.fillText(
@@ -302,7 +232,6 @@ export default function Header({ hoveredData, handleData }: Props) {
         );
       }
 
-      // 改变鼠标样式为小手
       if (hoveredSquare) {
         ctx.canvas.style.cursor = "pointer";
       } else {
@@ -312,45 +241,9 @@ export default function Header({ hoveredData, handleData }: Props) {
     [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
   );
 
-  const handleChildValue = () => {
-    // console.log(1)
-  };
-
-  useEffect(() => {
-    // setInstruC(instruction)
-    const handleScroll = () => {
-      setScrollOffset({ x: window.scrollX, y: window.scrollY });
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-  const [mouseX, setMouseX] = useState(0);
-  const [mouseY, setMouseY] = useState(0);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas && entityData.length > 0) {
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
-        drawGrid(ctx, hoveredSquare, mouseX, mouseY);
-      }
-    }
-  }, [
-    drawGrid,
-    CANVAS_WIDTH,
-    entityData.length,
-    hoveredSquare,
-    mouseX,
-    mouseY,
-  ]);
   const appName = localStorage.getItem("manifest") as any;
   // const appName = "BASE/Paint"
-  const [loading, setLoading] = useState(false);
+
   const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
   // console.log(parts[0]); // 输出 "Base"
@@ -407,8 +300,6 @@ export default function Header({ hoveredData, handleData }: Props) {
           });
         });
       }
-      // hoveredData({ x:hoveredSquare.x,y:hoveredSquare.y })
-      // 调用handleData方法并传递需要的参数
 
       handleData(hoveredSquare);
     } else {
@@ -419,7 +310,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const handleMouseUp = () => {
     // console.log('我点了！！！')
     setPopExhibit(true);
-    setShowOverlay(true)
+    setShowOverlay(true);
     if (parts[1] !== "Snake") {
       setLoading(true);
     }
@@ -427,8 +318,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     setTranslateX(0);
     setTranslateY(0);
   };
-  const mouseXRef = useRef(0);
-  const mouseYRef = useRef(0);
+
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!visibleAreaRef.current || !canvasRef.current) return;
@@ -475,6 +365,84 @@ export default function Header({ hoveredData, handleData }: Props) {
     },
     [translateX, translateY]
   );
+
+  const addressDataCopy = (text: any) => {
+    navigator.clipboard.writeText(text).then(
+      function () {
+        toast.success("Text copied to clipboard");
+      },
+      function (err) {
+        toast.error("Error in copying text");
+      }
+    );
+  };
+
+  const handlePanningChange = (newPanningValue: any) => {
+    // console.log(newPanningValue)
+    setPopExhibit(false);
+    setShowOverlay(false);
+    setPanningFromChild(newPanningValue);
+  };
+
+  const onHandleExe = () => {
+    // console.log('dianle')
+    setPopExhibit(false);
+    setShowOverlay(false);
+    // setLoading(false)
+  };
+
+  const onHandleLoading = () => {
+    // console.log('dianle')
+    setLoading(false);
+  };
+
+  const onHandleLoadingFun = () => {
+    // console.log('dianle')
+    setLoading(true);
+  };
+
+  useEffect(() => {
+    entities_app.map((entitya) => {
+      const entityaData = entities_app[0];
+      const instruction = getComponentValue(Instruction, entityaData) as any;
+      const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
+      const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
+      // console.log(result);
+      setInstruC(instruction?.instruction);
+      setEntityaData(result);
+    });
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollOffset({ x: window.scrollX, y: window.scrollY });
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas && entityData.length > 0) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
+        drawGrid(ctx, hoveredSquare, mouseX, mouseY);
+      }
+    }
+  }, [
+    drawGrid,
+    CANVAS_WIDTH,
+    entityData.length,
+    hoveredSquare,
+    mouseX,
+    mouseY,
+  ]);
+
   useEffect(() => {
     const canvas = canvasRef.current as any;
 
@@ -510,38 +478,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     };
   }, [canvasRef, scrollOffset]);
 
-  const addressDataCopy = (text: any) => {
-    navigator.clipboard.writeText(text).then(
-      function () {
-        toast.success("Text copied to clipboard");
-      },
-      function (err) {
-        toast.error("Error in copying text");
-      }
-    );
-  };
-
-  const [panningFromChild, setPanningFromChild] = useState(false);
-  const handlePanningChange = (newPanningValue: any) => {
-    // console.log(newPanningValue)
-    setPopExhibit(false);
-    setShowOverlay(false)
-    setPanningFromChild(newPanningValue);
-  };
-  const onHandleExe = () => {
-    // console.log('dianle')
-    setPopExhibit(false);
-    setShowOverlay(false)
-    // setLoading(false)
-  };
-  const onHandleLoading = () => {
-    // console.log('dianle')
-    setLoading(false);
-  };
-  const onHandleLoadingFun = () => {
-    // console.log('dianle')
-    setLoading(true);
-  };
   return (
     <>
       <div className={style.container}>
@@ -712,16 +648,15 @@ export default function Header({ hoveredData, handleData }: Props) {
       {localStorage.getItem("manifest")?.includes("Snake") &&
       popExhibit === true ? (
         <>
-        {showOverlay && <div className={style.overlay} />}
-        <PopUpBox
-        
-          addressData={addressData}
-          coordinates={coordinatesData}
-          onHandleExe={onHandleExe}
-          selectedColor={selectedColor}
-          onHandleLoading={onHandleLoading}
-          onHandleLoadingFun={onHandleLoadingFun}
-        />
+          {showOverlay && <div className={style.overlay} />}
+          <PopUpBox
+            addressData={addressData}
+            coordinates={coordinatesData}
+            onHandleExe={onHandleExe}
+            selectedColor={selectedColor}
+            onHandleLoading={onHandleLoading}
+            onHandleLoadingFun={onHandleLoadingFun}
+          />
         </>
       ) : (
         ""
