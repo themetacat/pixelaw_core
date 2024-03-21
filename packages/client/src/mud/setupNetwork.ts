@@ -3,7 +3,9 @@
  * (https://viem.sh/docs/getting-started.html).
  * This line imports the functions we need from it.
  */
-import { createPublicClient, fallback, webSocket, http, createWalletClient, Hex, parseEther, ClientConfig, createTestClient } from "viem";
+
+import { pad, createPublicClient, fallback, webSocket, http, createWalletClient, Hex, parseEther, ClientConfig, createTestClient } from "viem";
+      
 import { createFaucetService } from "@latticexyz/services/faucet";
 import { encodeEntity, syncToRecs } from "@latticexyz/store-sync/recs";
 import { getNetworkConfig } from "./getNetworkConfig";
@@ -15,7 +17,7 @@ const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.a
 const ICallSystemAbi = await response.json();
 // import SnakeSystemAbi from "../../../../packages/snake/out/SnakeSystem.sol/SnakeSystem.abi.json";
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
-import { createBurnerAccount, getContract, transportObserver, ContractWrite } from "@latticexyz/common";
+import { createBurnerAccount, getContract, transportObserver, ContractWrite, resourceToHex } from "@latticexyz/common";
 
 import { Subject, share } from "rxjs";
 
@@ -150,6 +152,23 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
             indexerUrl: "https://api.metacat.world/",
+            filters: [
+              {
+                tableId: resourceToHex({ type: "table", namespace: "", name: "Pixel" }),
+              },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "", name: "App" }),
+              },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "", name: "AppName" }),
+              },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "", name: "Instruction" }),
+              },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "", name: "Alert" }),
+              },
+            ],
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
             
    
