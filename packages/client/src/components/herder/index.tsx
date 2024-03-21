@@ -158,6 +158,93 @@ export default function Header({ hoveredData, handleData }: Props) {
     // console.log(entityData); // 打印数组
   }
 
+  // const drawGrid = useCallback(
+  //   (
+  //     ctx: CanvasRenderingContext2D,
+  //     hoveredSquare: { x: number; y: number } | null,
+  //     mouseX: number,
+  //     mouseY: number
+  //   ) => {
+  //     // 清除之前绘制的格子
+  //     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
+  //     ctx.lineWidth = 10;
+  //     ctx.strokeStyle = "#2e1140";
+  //     for (let x = 0.5; x < 12000; x += GRID_SIZE) {
+  //       ctx.beginPath();
+  //       ctx.moveTo(x, 0);
+  //       ctx.lineTo(x, 12000);
+  //       ctx.stroke();
+  //     }
+
+  //     for (let y = 0.5; y < 12000; y += GRID_SIZE) {
+  //       ctx.beginPath();
+  //       ctx.moveTo(0, y);
+  //       ctx.lineTo(12000, y);
+  //       ctx.stroke();
+  //     }
+
+  //     ctx.font = "10px Arial";
+  //     ctx.fillStyle = "#2f1643";
+
+  //     for (let i = 0; i <= 12000 / GRID_SIZE; i++) {
+  //       for (let j = 0; j <= 12000 / GRID_SIZE; j++) {
+  //         ctx.fillStyle = "#2f1643"; // 设置背景色
+  //         ctx.fillRect(
+  //           i * GRID_SIZE - scrollOffset.x,
+  //           j * GRID_SIZE - scrollOffset.y,
+  //           GRID_SIZE - 1,
+  //           GRID_SIZE - 1
+  //         );
+  //         const currentCoordinates = { x: i, y: j };
+  //         const entity = entityData.find((entity) => {
+  //           return (
+  //             entity.coordinates.x === currentCoordinates.x &&
+  //             entity.coordinates.y === currentCoordinates.y
+  //           );
+  //         });
+  //         if (entity) {
+  //           ctx.fillStyle = entity.value.color;
+  //           ctx.fillRect(
+  //             i * GRID_SIZE - scrollOffset.x,
+  //             j * GRID_SIZE - scrollOffset.y,
+  //             GRID_SIZE - 1,
+  //             GRID_SIZE - 1
+  //           );
+  //         }
+  //         if (entity && entity.value.text) {
+  //           ctx.fillStyle = "#000"; // 设置文本颜色
+  //           ctx.fillText(
+  //             entity.value.text,
+  //             i * GRID_SIZE + 2 - scrollOffset.x,
+  //             j * GRID_SIZE + 20 - scrollOffset.y
+  //           );
+  //         }
+  //       }
+  //     }
+
+  //     if (selectedColor && hoveredSquare) {
+  //       ctx.fillStyle = selectedColor;
+  //       ctx.fillRect(
+  //         hoveredSquare.x * GRID_SIZE - scrollOffset.x,
+  //         hoveredSquare.y * GRID_SIZE - scrollOffset.y,
+  //         GRID_SIZE,
+  //         GRID_SIZE
+  //       );
+  //     }
+
+  //     if (hoveredSquare) {
+  //       ctx.canvas.style.cursor = "pointer";
+  //     } else {
+  //       ctx.canvas.style.cursor = "default";
+  //     }
+  //   },
+  //   [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
+  // );
+
+  const getEntityAtCoordinates = (x: number, y: number) => {
+
+    return entityData.find(entity => entity.coordinates.x === x && entity.coordinates.y === y);
+  };
   const drawGrid = useCallback(
     (
       ctx: CanvasRenderingContext2D,
@@ -169,59 +256,49 @@ export default function Header({ hoveredData, handleData }: Props) {
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
       ctx.lineWidth = 10;
       ctx.strokeStyle = "#2e1140";
-      for (let x = 0.5; x < 12000; x += GRID_SIZE) {
+  
+      const startX = Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE));
+      const endX = Math.min(12000 / GRID_SIZE, Math.ceil((scrollOffset.x + CANVAS_WIDTH) / GRID_SIZE));
+      const startY = Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE));
+      const endY = Math.min(12000 / GRID_SIZE, Math.ceil((scrollOffset.y + CANVAS_WIDTH) / GRID_SIZE));
+  
+      for (let x = startX; x < endX; x++) {
         ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, 12000);
+        ctx.moveTo(x * GRID_SIZE - scrollOffset.x, 0);
+        ctx.lineTo(x * GRID_SIZE - scrollOffset.x, 12000);
         ctx.stroke();
       }
-
-      for (let y = 0.5; y < 12000; y += GRID_SIZE) {
+  
+      for (let y = startY; y < endY; y++) {
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(12000, y);
+        ctx.moveTo(0, y * GRID_SIZE - scrollOffset.y);
+        ctx.lineTo(12000, y * GRID_SIZE - scrollOffset.y);
         ctx.stroke();
       }
-
+  
       ctx.font = "10px Arial";
       ctx.fillStyle = "#2f1643";
-
-      for (let i = 0; i <= 12000 / GRID_SIZE; i++) {
-        for (let j = 0; j <= 12000 / GRID_SIZE; j++) {
+  
+      for (let i = startX; i <= endX; i++) {
+        for (let j = startY; j <= endY; j++) {
+          const currentX = i * GRID_SIZE - scrollOffset.x;
+          const currentY = j * GRID_SIZE - scrollOffset.y;
+  
           ctx.fillStyle = "#2f1643"; // 设置背景色
-          ctx.fillRect(
-            i * GRID_SIZE - scrollOffset.x,
-            j * GRID_SIZE - scrollOffset.y,
-            GRID_SIZE - 1,
-            GRID_SIZE - 1
-          );
-          const currentCoordinates = { x: i, y: j };
-          const entity = entityData.find((entity) => {
-            return (
-              entity.coordinates.x === currentCoordinates.x &&
-              entity.coordinates.y === currentCoordinates.y
-            );
-          });
+          ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
+  
+          const entity = getEntityAtCoordinates(i, j);
           if (entity) {
             ctx.fillStyle = entity.value.color;
-            ctx.fillRect(
-              i * GRID_SIZE - scrollOffset.x,
-              j * GRID_SIZE - scrollOffset.y,
-              GRID_SIZE - 1,
-              GRID_SIZE - 1
-            );
-          }
-          if (entity && entity.value.text) {
-            ctx.fillStyle = "#000"; // 设置文本颜色
-            ctx.fillText(
-              entity.value.text,
-              i * GRID_SIZE + 2 - scrollOffset.x,
-              j * GRID_SIZE + 20 - scrollOffset.y
-            );
+            ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
+            if (entity.value.text) {
+              ctx.fillStyle = "#000"; // 设置文本颜色
+              ctx.fillText(entity.value.text, currentX + 2, currentY + 20);
+            }
           }
         }
       }
-
+  
       if (selectedColor && hoveredSquare) {
         ctx.fillStyle = selectedColor;
         ctx.fillRect(
@@ -231,7 +308,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           GRID_SIZE
         );
       }
-
+  
       if (hoveredSquare) {
         ctx.canvas.style.cursor = "pointer";
       } else {
@@ -240,6 +317,8 @@ export default function Header({ hoveredData, handleData }: Props) {
     },
     [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
   );
+  
+  
 
   const appName = localStorage.getItem("manifest") as any;
   // const appName = "BASE/Paint"
