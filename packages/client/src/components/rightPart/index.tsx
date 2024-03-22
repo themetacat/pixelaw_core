@@ -13,9 +13,11 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import leftIcon from "../../images/zuojiantou.png";
 import rightIcon from "../../images/youjiantou.png";
-import { Hex } from "viem";
+import { Hex, fromBytes, hexToString, isHex } from "viem";
 import { SetupNetworkResult } from "../../mud/setupNetwork";
 import loadingImg from "../../images/loading.png";
+import { hexToUtf8 } from 'web3-utils';
+// import {setEntityaData } from "../herder/index"
 export const ManifestContext = createContext<string>("");
 
 // function UseManifestValue() {
@@ -28,6 +30,24 @@ interface Props {
   setPanningState: any;
   loading: any;
 }
+
+export function convertToString(bytes32Value: string) {
+//   const bigIntValue = BigInt(bytes32Value);
+//   const stringValue = bigIntValue.toString(16);
+//   let result = '';
+//   for (let i = 0; i < stringValue.length; i += 2) {
+//     const hexCharCode = stringValue.substr(i, 2);
+//     const charCode = parseInt(hexCharCode, 16);
+//     result += String.fromCharCode(charCode);
+// }
+
+        // 将十六进制字符串转换为 Uint8Array
+  const byteArray = new Uint8Array(bytes32Value.match(/[\da-f]{2}/gi).map(h => parseInt(h, 16)));
+  const filteredByteArray = byteArray.filter(byte => byte !== 0);
+        const result = fromBytes(filteredByteArray, 'string');
+  return result;
+}
+
 export default function RightPart({ coordinates, loading,entityData ,setPanningState}: Props) {
   const {
     components: { App},
@@ -48,8 +68,12 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
     null
   );
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
-  const handleIconClick = (index: number) => {
+  const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
+    localStorage.setItem("app_name", value.app_name);
+    localStorage.setItem("system_name", value.system_name);
+    localStorage.setItem("namespace", value.namespace);
+    localStorage.setItem("manifest", value.manifest);
   };
   const updateAbiUrl = async (manifest: string) => {
     const parts = manifest?.split("/") as any;
@@ -71,6 +95,7 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
   };
 
   function capitalizeFirstLetter(str:any) {
+    
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
   return (
@@ -96,7 +121,11 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
       {/* </div> */} 
       {entities_app.map((entitya, index) => {
         const value = getComponentValueStrict(App, entitya) as any;
-        // console.log(value)
+        
+        const app_name =  convertToString(entitya);
+
+        value.app_name = app_name;
+
         return (
           <div
             key={`${index}`}
@@ -104,9 +133,10 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
               if (loading===true) {
                 return; // 禁止点击
               }
-              handleIconClick(index);
+              handleIconClick(index, value);
               updateAbiUrl(value.manifest);
-              localStorage.setItem("manifest", value.manifest);
+              // setEntityaData()
+       
               localStorage.setItem(
                 "entityVal",
                 decodeEntity({ app_addr: "address" }, entitya).app_addr

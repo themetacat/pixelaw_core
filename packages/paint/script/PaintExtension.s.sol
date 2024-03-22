@@ -46,9 +46,7 @@ contract PaintExtension is Script {
  
     world.registerSystem(systemResource, paintSystem, true);
     world.registerFunctionSelector(systemResource, "init()");
-    // world.registerFunctionSelector(systemResource, "interact(DefaultParameters)");
-    world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string))");
-    // world.registerFunctionSelector(systemResource, "put_color(DefaultParameters)");
+    world.registerFunctionSelector(systemResource, "interact((address,string,(uint32,uint32),string))");
  
     vm.stopBroadcast();
   }

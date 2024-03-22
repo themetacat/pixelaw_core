@@ -26,7 +26,7 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant AppNameTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0014010014000000000000000000000000000000000000000000000000000000
+  0x0000000100000000000000000000000000000000000000000000000000000000
 );
 
 library AppName {
@@ -44,7 +44,7 @@ library AppName {
    */
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _keySchema = new SchemaType[](1);
-    _keySchema[0] = SchemaType.BYTES32;
+    _keySchema[0] = SchemaType.ADDRESS;
 
     return SchemaLib.encode(_keySchema);
   }
@@ -55,7 +55,7 @@ library AppName {
    */
   function getValueSchema() internal pure returns (Schema) {
     SchemaType[] memory _valueSchema = new SchemaType[](1);
-    _valueSchema[0] = SchemaType.ADDRESS;
+    _valueSchema[0] = SchemaType.STRING;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -66,7 +66,7 @@ library AppName {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](1);
-    keyNames[0] = "app_name";
+    keyNames[0] = "system";
   }
 
   /**
@@ -75,7 +75,7 @@ library AppName {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "system";
+    fieldNames[0] = "app_name";
   }
 
   /**
@@ -93,95 +93,335 @@ library AppName {
   }
 
   /**
-   * @notice Get system.
+   * @notice Get app_name.
    */
-  function getSystem(bytes32 app_name) internal view returns (address system) {
+  function getApp_name(address system) internal view returns (string memory app_name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (address(bytes20(_blob)));
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
-   * @notice Get system.
+   * @notice Get app_name.
    */
-  function _getSystem(bytes32 app_name) internal view returns (address system) {
+  function _getApp_name(address system) internal view returns (string memory app_name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (address(bytes20(_blob)));
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
-   * @notice Get system.
+   * @notice Get app_name.
    */
-  function get(bytes32 app_name) internal view returns (address system) {
+  function get(address system) internal view returns (string memory app_name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (address(bytes20(_blob)));
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
-   * @notice Get system.
+   * @notice Get app_name.
    */
-  function _get(bytes32 app_name) internal view returns (address system) {
+  function _get(address system) internal view returns (string memory app_name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (address(bytes20(_blob)));
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
-   * @notice Set system.
+   * @notice Set app_name.
    */
-  function setSystem(bytes32 app_name, address system) internal {
+  function setApp_name(address system, string memory app_name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((system)), _fieldLayout);
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((app_name)));
   }
 
   /**
-   * @notice Set system.
+   * @notice Set app_name.
    */
-  function _setSystem(bytes32 app_name, address system) internal {
+  function _setApp_name(address system, string memory app_name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((system)), _fieldLayout);
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((app_name)));
   }
 
   /**
-   * @notice Set system.
+   * @notice Set app_name.
    */
-  function set(bytes32 app_name, address system) internal {
+  function set(address system, string memory app_name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((system)), _fieldLayout);
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((app_name)));
   }
 
   /**
-   * @notice Set system.
+   * @notice Set app_name.
    */
-  function _set(bytes32 app_name, address system) internal {
+  function _set(address system, string memory app_name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((system)), _fieldLayout);
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((app_name)));
+  }
+
+  /**
+   * @notice Get the length of app_name.
+   */
+  function lengthApp_name(address system) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of app_name.
+   */
+  function _lengthApp_name(address system) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of app_name.
+   */
+  function length(address system) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of app_name.
+   */
+  function _length(address system) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get an item of app_name.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItemApp_name(address system, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of app_name.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItemApp_name(address system, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of app_name.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItem(address system, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of app_name.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItem(address system, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to app_name.
+   */
+  function pushApp_name(address system, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to app_name.
+   */
+  function _pushApp_name(address system, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to app_name.
+   */
+  function push(address system, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to app_name.
+   */
+  function _push(address system, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from app_name.
+   */
+  function popApp_name(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from app_name.
+   */
+  function _popApp_name(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from app_name.
+   */
+  function pop(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from app_name.
+   */
+  function _pop(address system) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Update a slice of app_name at `_index`.
+   */
+  function updateApp_name(address system, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of app_name at `_index`.
+   */
+  function _updateApp_name(address system, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of app_name at `_index`.
+   */
+  function update(address system, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of app_name at `_index`.
+   */
+  function _update(address system, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 app_name) internal {
+  function deleteRecord(address system) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -189,19 +429,30 @@ library AppName {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 app_name) internal {
+  function _deleteRecord(address system) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
 
   /**
-   * @notice Tightly pack static (fixed length) data using this table's schema.
-   * @return The static data, encoded into a sequence of bytes.
+   * @notice Tightly pack dynamic data lengths using this table's schema.
+   * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
-  function encodeStatic(address system) internal pure returns (bytes memory) {
-    return abi.encodePacked(system);
+  function encodeLengths(string memory app_name) internal pure returns (PackedCounter _encodedLengths) {
+    // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
+    unchecked {
+      _encodedLengths = PackedCounterLib.pack(bytes(app_name).length);
+    }
+  }
+
+  /**
+   * @notice Tightly pack dynamic (variable length) data using this table's schema.
+   * @return The dynamic data, encoded into a sequence of bytes.
+   */
+  function encodeDynamic(string memory app_name) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((app_name)));
   }
 
   /**
@@ -210,11 +461,10 @@ library AppName {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(address system) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(system);
-
-    PackedCounter _encodedLengths;
-    bytes memory _dynamicData;
+  function encode(string memory app_name) internal pure returns (bytes memory, PackedCounter, bytes memory) {
+    bytes memory _staticData;
+    PackedCounter _encodedLengths = encodeLengths(app_name);
+    bytes memory _dynamicData = encodeDynamic(app_name);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }
@@ -222,9 +472,9 @@ library AppName {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 app_name) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(address system) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = app_name;
+    _keyTuple[0] = bytes32(uint256(uint160(system)));
 
     return _keyTuple;
   }

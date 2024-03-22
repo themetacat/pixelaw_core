@@ -28,7 +28,7 @@ import {
   MAX_ROWS_COLS,
 } from "../../global/constants";
 import { useMUD } from "../../MUDContext";
-
+import {convertToString} from "../rightPart/index"
 import PopUpBox from "../popUpBox";
 
 import powerIcon from "../../images/jian_sekuai.png";
@@ -84,7 +84,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { increment },
+    systemCalls: { increment, interact },
   } = useMUD();
   const [numberData, setNumberData] = useState(50);
   const gridCanvasRef = React.useRef(null);
@@ -189,14 +189,17 @@ export default function Header({ hoveredData, handleData }: Props) {
   const entities_app = useEntityQuery([Has(App)]);
   useEffect(() => {
     entities_app.map((entitya) => {
-      // console.log(entities_app,3333333333)
-      const entityaData = entities_app[0];
-      const instruction = getComponentValue(Instruction, entityaData) as any;
+      const instruction = getComponentValue(Instruction, entitya) as any;
       // console.log(entityaData, "=111111==========");
-      const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
-      const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
+      // const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
+      // const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
       // console.log(result);
-      setInstruC(instruction?.instruction);
+      if(instruction?.instruction){
+        setInstruC(instruction?.instruction);
+      }
+      const result = convertToString(entitya);
+      console.log(result);
+      
       setEntityaData(result);
     });
   }, []);
@@ -385,16 +388,27 @@ export default function Header({ hoveredData, handleData }: Props) {
 
     if (hoveredSquare && selectedColor) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
+      console.log(parts);
+      
       if (parts[1] !== "Snake") {
         setLoading(true);
-        const increData = increment(
-          null,
+        // const increData = increment(
+        //   null,
+        //   coordinates,
+        //   entityaData,
+        //   palyerAddress,
+        //   selectedColor
+        // );
+        const interact_data = interact(
           coordinates,
-          entityaData,
           palyerAddress,
-          selectedColor
+          selectedColor,
+          selectedColor,
+          null
         );
-        increData.then((increDataVal: any) => {
+        interact_data.then((increDataVal: any) => {
+          console.log(increDataVal);
+          
           increDataVal[1].then((a: any) => {
             // console.log(a)
             if (a.status === "success") {
@@ -697,17 +711,6 @@ export default function Header({ hoveredData, handleData }: Props) {
           loading={loading}
         />
       </div>
-
-      {/* <div className={style.loadingContainer}>
-        {" "}
-        {loading === true ? (
-          <img
-            src={loadingImg}
-            alt=""
-            className={`${style.commonCls1} ${style.spinAnimation}`}
-          />
-        ) : null}
-      </div> */}
 
       {localStorage.getItem("manifest")?.includes("Snake") &&
       popExhibit === true ? (

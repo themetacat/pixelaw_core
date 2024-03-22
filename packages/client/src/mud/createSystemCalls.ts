@@ -38,6 +38,12 @@ export function createSystemCalls(
   const update_abi = (value: any) => {
     abi_json = value;
   }
+
+  let app_value: any;
+
+  const update_app_value = (value: any) => {
+    abi_json = value;
+  }
   
   // //console.log(systemContract,'55555555555')
 const entityVal = localStorage.getItem("entityVal") as any;
@@ -64,6 +70,7 @@ if(entityVal===null){
 
 
 const increment = async (incrementData: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
+  const app_name =  window.localStorage.getItem('app_name');
 
   const systemContract = getContract({
     address: "0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c",
@@ -76,21 +83,19 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
   try {
     const appName = localStorage.getItem('manifest') as any;
 
-
     if (appName.includes('Paint')) {
-       tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
+       tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
 
 
     } else if (appName && appName.includes('Snake')) {
       if(incrementData){
  // console.log('snake', systemContract);
-  tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
- 
+  tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
       }
-      
     }
   } catch (error) {
     console.error('Failed to setup network:', error);
+    return[null, null]
   }
   const hashValpublic=   publicClient.waitForTransactionReceipt({hash:tx})
       return [tx,hashValpublic]
@@ -104,23 +109,32 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
     call_data: any
   }
 
-  const interact = async (incrementData: any,
+  const interact = async (
      coordinates: any, 
-     entityaData: any, 
      addressData: any, 
      selectedColor: any, 
      app_data: any,
      other_params: any) => {
-
+      const app_name =  window.localStorage.getItem('app_name'); 
+      const system_name =  window.localStorage.getItem('system_name') as string; 
+      const namespace =  window.localStorage.getItem('namespace') as string; 
+      
+      const args = [{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]
+      if(other_params){
+        args.push(other_params);
+      }
+      console.log(args);
+      
       const txData = await worldContract.write.call(encodeSystemCall({
       abi: abi_json,
-      systemId: resourceToHex({"type": "system", "namespace": app_data.namespace, "name": app_data.name}),
-      functionName: app_data.name + '_' + app_data.namespace + '_interact',
-      args: [{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, other_params]
+      systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
+      functionName: namespace + '_' + system_name + '_interact',
+      args: args
       })
     )
-    await waitForTransaction(txData);
-
+    const tx = await waitForTransaction(txData);
+    const hashValpublic = publicClient.waitForTransactionReceipt({hash:tx})
+    return [tx,hashValpublic]
   };
 
 

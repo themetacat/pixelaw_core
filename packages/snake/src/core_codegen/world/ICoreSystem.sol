@@ -12,9 +12,15 @@ import { PermissionsData, PixelData, PixelUpdateData, Position } from "./../inde
 interface ICoreSystem {
   function init() external;
 
-  function update_permission(string memory app_name, PermissionsData memory permission_param) external;
+  function update_permission(string memory allowed_app_name, PermissionsData memory permission_param) external;
 
-  function update_app(string memory name, string memory icon, string memory manifest) external;
+  function update_app(
+    string memory name,
+    string memory icon,
+    string memory manifest,
+    string memory namespace,
+    string memory system_name
+  ) external;
 
   function has_write_access(PixelData memory pixel, PixelUpdateData memory pixel_update) external view returns (bool);
 
@@ -22,12 +28,7 @@ interface ICoreSystem {
 
   function set_instruction(bytes4 selector, string memory instruction) external;
 
-  function schedule_queue(
-    uint256 timestamp,
-    string memory name_space,
-    string memory name,
-    bytes calldata call_data
-  ) external;
+  function schedule_queue(uint256 timestamp, bytes calldata call_data) external;
 
   function process_queue(bytes32 id) external;
 
