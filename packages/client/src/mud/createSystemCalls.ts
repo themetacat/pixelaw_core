@@ -66,7 +66,7 @@ if(entityVal===null){
 const increment = async (incrementData: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
 
   const systemContract = getContract({
-    address: "0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c",
+    address: "0xC44504Ab6a2C4dF9a9ce82aecFc453FeC3C8771C",
     abi: abi_json,
     publicClient,
     walletClient: walletClient,
@@ -83,11 +83,14 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
 
     } else if (appName && appName.includes('Snake')) {
       if(incrementData){
- // console.log('snake', systemContract);
-  tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
- 
-      }
+      // console.log('snake', systemContract);
+      tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
+      } 
       
+    }else if (appName && appName.includes('Pix2048')) {
+      console.log('Pix2048');
+      tx = await systemContract.write.pix2048_Pix2048System_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
+  
     }
   } catch (error) {
     console.error('Failed to setup network:', error);

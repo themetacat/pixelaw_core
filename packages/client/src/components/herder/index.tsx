@@ -359,6 +359,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
       if (parts[1] !== "Snake") {
         setLoading(true);
+        
         const increData = increment(
           null,
           coordinates,
@@ -591,16 +592,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             />
           </button>
         </div>
-        {/* <button
-        style={{zIndex: "9999999999"}}
-        type="button"
-        onClick={async (event) => {
-          event.preventDefault();
-          // console.log("new counter value:", await increment());
-        }}
-      >
-        Increment
-      </button> */}
+  
         <div
           className={style.addr}
           style={{
@@ -628,6 +620,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           </span>
         </div>
       </div>
+      
       <div style={{ display: "flex" }}>
         <div
           style={{
