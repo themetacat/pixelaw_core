@@ -276,9 +276,10 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.stroke();
       }
   
-      ctx.font = "10px Arial";
+      ctx.font = "20px Arial";
       ctx.fillStyle = "#2f1643";
-  
+      
+      let pix_text = '';
       for (let i = startX; i <= endX; i++) {
         for (let j = startY; j <= endY; j++) {
           const currentX = i * GRID_SIZE - scrollOffset.x;
@@ -292,8 +293,21 @@ export default function Header({ hoveredData, handleData }: Props) {
             ctx.fillStyle = entity.value.color;
             ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
             if (entity.value.text) {
+              
               ctx.fillStyle = "#000"; // 设置文本颜色
-              ctx.fillText(entity.value.text, currentX + 2, currentY + 20);
+              ctx.textAlign = "center"; // 设置文本水平居中
+              ctx.textBaseline = "middle"; // 设置文本垂直居中
+   
+              if(entity.value.text && /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)){
+                pix_text = String.fromCodePoint(parseInt(entity.value.text.substring(2), 16));
+              }else{
+                pix_text = entity.value.text
+              }
+              const textX = currentX + GRID_SIZE / 2;
+              const textY = currentY + GRID_SIZE / 2;
+              // ctx.fillText(pix_text, currentX + 2, currentY + 20);
+              ctx.fillText(pix_text, textX, textY);
+
             }
           }
         }
@@ -368,16 +382,18 @@ export default function Header({ hoveredData, handleData }: Props) {
           selectedColor
         );
         increData.then((increDataVal: any) => {
-          increDataVal[1].then((a: any) => {
-            // console.log(a)
-            if (a.status === "success") {
-              setLoading(false);
-            } else {
-              setLoading(false);
-              onHandleLoading();
-              toast.error("An error was reported");
-            }
-          });
+          if (increDataVal[1]) {
+            increDataVal[1].then((a: any) => {
+              if (a.status === "success") {
+                setLoading(false);
+              } else {
+                handleError();
+              }
+            });
+          } else {
+            handleError();
+          }
+          
         });
       }
 
@@ -391,7 +407,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     // console.log('我点了！！！')
     setPopExhibit(true);
     setShowOverlay(true);
-    if (parts[1] !== "Snake") {
+    if (parts[1] === "paint") {
       setLoading(true);
     }
     // e.stopPropagation();
@@ -463,6 +479,12 @@ export default function Header({ hoveredData, handleData }: Props) {
     setShowOverlay(false);
     setPanningFromChild(newPanningValue);
   };
+  const handleError = () => {
+    setLoading(false);
+    onHandleLoading();
+    toast.error("An error was reported");
+  };
+  
 
   const onHandleExe = () => {
     // console.log('dianle')
@@ -706,16 +728,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         />
       </div>
 
-      {/* <div className={style.loadingContainer}>
-        {" "}
-        {loading === true ? (
-          <img
-            src={loadingImg}
-            alt=""
-            className={`${style.commonCls1} ${style.spinAnimation}`}
-          />
-        ) : null}
-      </div> */}
+
 
       {localStorage.getItem("manifest")?.includes("Snake") &&
       popExhibit === true ? (
@@ -733,6 +746,17 @@ export default function Header({ hoveredData, handleData }: Props) {
       ) : (
         ""
       )}
+
+            {/* <div className={style.loadingContainer}>
+        {" "}
+        {loading === true ? (
+          <img
+            src={loadingImg}
+            alt=""
+            className={`${style.commonCls1} ${style.spinAnimation}`}
+          />
+        ) : null}
+      </div> */}
     </>
   );
 }

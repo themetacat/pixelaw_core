@@ -33,18 +33,18 @@ contract PaintExtension is Script {
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
 
     vm.startBroadcast(deployerPrivateKey);
-    world.registerNamespace(namespaceResource);
+    // world.registerNamespace(namespaceResource);
   
     // forge script script/Pix2048Extension.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
-    StoreSwitch.setStoreAddress(worldAddress);
-    Game2048.register();
+    // StoreSwitch.setStoreAddress(worldAddress);
+    // Game2048.register();
  
     Pix2048System pix2048System = new Pix2048System();
     console.log("SnakeSystem address: ", address(pix2048System));
  
     world.registerSystem(systemResource, pix2048System, true);
-    world.registerFunctionSelector(systemResource, "init()");
-    world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string),uint8)");
+    // world.registerFunctionSelector(systemResource, "init()");
+    // world.registerFunctionSelector(systemResource, "interact((address,address,(uint32,uint32),string))");
     // world.registerFunctionSelector(systemResource, "move(address)");
  
     vm.stopBroadcast();

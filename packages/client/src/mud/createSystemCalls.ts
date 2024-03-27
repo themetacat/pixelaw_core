@@ -76,10 +76,8 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
   try {
     const appName = localStorage.getItem('manifest') as any;
 
-
     if (appName.includes('Paint')) {
        tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
-
 
     } else if (appName && appName.includes('Snake')) {
       if(incrementData){
@@ -88,15 +86,16 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       } 
       
     }else if (appName && appName.includes('Pix2048')) {
-      console.log('Pix2048');
       tx = await systemContract.write.pix2048_Pix2048System_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
   
     }
   } catch (error) {
     console.error('Failed to setup network:', error);
+    const hashValpublic = null; 
   }
-  const hashValpublic=   publicClient.waitForTransactionReceipt({hash:tx})
-      return [tx,hashValpublic]
+  const hashValpublic =   publicClient.waitForTransactionReceipt({hash:tx});
+  
+  return [tx,hashValpublic]
 
 };
   interface AppData {

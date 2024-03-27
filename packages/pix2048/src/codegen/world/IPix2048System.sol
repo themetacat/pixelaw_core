@@ -15,4 +15,6 @@ interface IPix2048System {
   function pix2048_Pix2048System_interact(DefaultParameters memory default_parameters) external;
 
   function pix2048_Pix2048System_move(DefaultParameters memory default_parameters) external;
+
+  function pix2048_Pix2048System_get_color(uint256 number) external pure returns (string memory);
 }
