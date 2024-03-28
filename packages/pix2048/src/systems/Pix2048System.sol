@@ -11,7 +11,7 @@ contract Pix2048System is System {
   string constant APP_ICON = 'U+1699';
   string constant NAMESPACE = 'pix2048';
   string constant SYSTEM_NAME = 'pix2048System';
-  string constant APP_NAME = 'Pix2048';
+  string constant APP_NAME = '2048';
   //abi json
   string constant APP_MANIFEST = 'BASE/Pix2048';
 
@@ -121,7 +121,7 @@ contract Pix2048System is System {
     }
 
     string memory string_matrix_value;
-    string memory pixel_text;
+    PixelData memory pixel;
     uint256 matrix_value;
     for(uint32 i; i < 4; i++){
       for(uint32 j; j < 4; j++){
@@ -132,10 +132,9 @@ contract Pix2048System is System {
         }else{
           string_matrix_value = Strings.toString(matrix_value);
         }
-        pixel_text = Pixel.getText(default_parameters.position.x + j, default_parameters.position.y + i);
-        
-        if(keccak256(abi.encodePacked(pixel_text)) != keccak256(abi.encodePacked(string_matrix_value))){
-          ICoreSystem(_world()).update_pixel(PixelUpdateData({
+        pixel = Pixel.get(default_parameters.position.x + j, default_parameters.position.y + i);
+        if(pixel.app != default_parameters.for_system){
+            ICoreSystem(_world()).update_pixel(PixelUpdateData({
             x: default_parameters.position.x + j,
             y: default_parameters.position.y + i,
             color: get_color(matrix_value),
@@ -145,7 +144,22 @@ contract Pix2048System is System {
             owner: default_parameters.for_player,
             action: ''
           }));
+        }else{
+          if(keccak256(abi.encodePacked(pixel.text)) != keccak256(abi.encodePacked(string_matrix_value))){
+            ICoreSystem(_world()).update_pixel(PixelUpdateData({
+              x: default_parameters.position.x + j,
+              y: default_parameters.position.y + i,
+              color: get_color(matrix_value),
+              timestamp: 0,
+              text: string_matrix_value,
+              app: default_parameters.for_system,
+              owner: default_parameters.for_player,
+              action: ''
+            }));
+          }
         }
+        
+        
       }
     }
     Game2048Data memory game = Game2048.get(default_parameters.position.x, default_parameters.position.y);
