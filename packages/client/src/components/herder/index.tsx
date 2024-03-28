@@ -4,6 +4,7 @@ import {
   Has,
   getComponentValueStrict,
   getComponentValue,
+  AnyComponentValue,
 } from "@latticexyz/recs";
 import { decodeEntity } from "@latticexyz/store-sync/recs";
 import { formatUnits } from "viem";
@@ -16,6 +17,7 @@ import PopUpBox from "../popUpBox";
 
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
+import { CANVAS_HEIGHT } from "../../global/constants";
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -69,7 +71,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     systemCalls: { increment },
   } = useMUD();
 
-  const [numberData, setNumberData] = useState(50);
+  const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
@@ -87,16 +89,20 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [panningFromChild, setPanningFromChild] = useState(false);
-  const [GRID_SIZE, setGRID_SIZE] = useState(64);
+  const [GRID_SIZE, setGRID_SIZE] = useState(30);
   const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
-  const CANVAS_WIDTH = window.innerWidth;
+  const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
+  const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
   const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
   const CONTENT_WIDTH = gridCount * GRID_SIZE;
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
     y: number;
   } | null>(null);
+
+  const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
+
   const [selectedColor, setSelectedColor] = useState("#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
@@ -169,25 +175,25 @@ export default function Header({ hoveredData, handleData }: Props) {
   //     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
   //     ctx.lineWidth = 10;
   //     ctx.strokeStyle = "#2e1140";
-  //     for (let x = 0.5; x < 12000; x += GRID_SIZE) {
+  //     for (let x = 0.5; x < CANVAS_WIDTH; x += GRID_SIZE) {
   //       ctx.beginPath();
   //       ctx.moveTo(x, 0);
-  //       ctx.lineTo(x, 12000);
+  //       ctx.lineTo(x, CANVAS_WIDTH);
   //       ctx.stroke();
   //     }
 
-  //     for (let y = 0.5; y < 12000; y += GRID_SIZE) {
+  //     for (let y = 0.5; y < CANVAS_WIDTH; y += GRID_SIZE) {
   //       ctx.beginPath();
   //       ctx.moveTo(0, y);
-  //       ctx.lineTo(12000, y);
+  //       ctx.lineTo(CANVAS_WIDTH, y);
   //       ctx.stroke();
   //     }
 
   //     ctx.font = "10px Arial";
   //     ctx.fillStyle = "#2f1643";
 
-  //     for (let i = 0; i <= 12000 / GRID_SIZE; i++) {
-  //       for (let j = 0; j <= 12000 / GRID_SIZE; j++) {
+  //     for (let i = 0; i <= CANVAS_WIDTH / GRID_SIZE; i++) {
+  //       for (let j = 0; j <= CANVAS_WIDTH / GRID_SIZE; j++) {
   //         ctx.fillStyle = "#2f1643"; // 设置背景色
   //         ctx.fillRect(
   //           i * GRID_SIZE - scrollOffset.x,
@@ -242,84 +248,10 @@ export default function Header({ hoveredData, handleData }: Props) {
   // );
 
   const getEntityAtCoordinates = (x: number, y: number) => {
-
-    return entityData.find(entity => entity.coordinates.x === x && entity.coordinates.y === y);
+    return entityData.find(
+      (entity) => entity.coordinates.x === x && entity.coordinates.y === y
+    );
   };
-  const drawGrid = useCallback(
-    (
-      ctx: CanvasRenderingContext2D,
-      hoveredSquare: { x: number; y: number } | null,
-      mouseX: number,
-      mouseY: number
-    ) => {
-      // 清除之前绘制的格子
-      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
-      ctx.lineWidth = 10;
-      ctx.strokeStyle = "#2e1140";
-  
-      const startX = Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE));
-      const endX = Math.min(12000 / GRID_SIZE, Math.ceil((scrollOffset.x + CANVAS_WIDTH) / GRID_SIZE));
-      const startY = Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE));
-      const endY = Math.min(12000 / GRID_SIZE, Math.ceil((scrollOffset.y + CANVAS_WIDTH) / GRID_SIZE));
-  
-      for (let x = startX; x < endX; x++) {
-        ctx.beginPath();
-        ctx.moveTo(x * GRID_SIZE - scrollOffset.x, 0);
-        ctx.lineTo(x * GRID_SIZE - scrollOffset.x, 12000);
-        ctx.stroke();
-      }
-  
-      for (let y = startY; y < endY; y++) {
-        ctx.beginPath();
-        ctx.moveTo(0, y * GRID_SIZE - scrollOffset.y);
-        ctx.lineTo(12000, y * GRID_SIZE - scrollOffset.y);
-        ctx.stroke();
-      }
-  
-      ctx.font = "10px Arial";
-      ctx.fillStyle = "#2f1643";
-  
-      for (let i = startX; i <= endX; i++) {
-        for (let j = startY; j <= endY; j++) {
-          const currentX = i * GRID_SIZE - scrollOffset.x;
-          const currentY = j * GRID_SIZE - scrollOffset.y;
-  
-          ctx.fillStyle = "#2f1643"; // 设置背景色
-          ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
-  
-          const entity = getEntityAtCoordinates(i, j);
-          if (entity) {
-            ctx.fillStyle = entity.value.color;
-            ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
-            if (entity.value.text) {
-              ctx.fillStyle = "#000"; // 设置文本颜色
-              ctx.fillText(entity.value.text, currentX + 2, currentY + 20);
-            }
-          }
-        }
-      }
-  
-      if (selectedColor && hoveredSquare) {
-        ctx.fillStyle = selectedColor;
-        ctx.fillRect(
-          hoveredSquare.x * GRID_SIZE - scrollOffset.x,
-          hoveredSquare.y * GRID_SIZE - scrollOffset.y,
-          GRID_SIZE,
-          GRID_SIZE
-        );
-      }
-  
-      if (hoveredSquare) {
-        ctx.canvas.style.cursor = "pointer";
-      } else {
-        ctx.canvas.style.cursor = "default";
-      }
-    },
-    [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
-  );
-  
-  
-
   const appName = localStorage.getItem("manifest") as any;
   // const appName = "BASE/Paint"
 
@@ -337,62 +269,229 @@ export default function Header({ hoveredData, handleData }: Props) {
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    // console.log("是点击事件吗",appName,parts[1]);
+  // const drawGrid = useCallback(
+  //   (
+  //     ctx: CanvasRenderingContext2D,
+  //     hoveredSquare: { x: number; y: number } | null,
+  //     mouseX: number,
+  //     mouseY: number
+  //   ) => {
+  //     // 清除之前绘制的格子
+  //     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
+  //     ctx.lineWidth = 10;
+  //     ctx.strokeStyle = "#2e1140";
 
+  //     const startX = Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE));
+  //     const endX = Math.min(
+  //       CANVAS_WIDTH / GRID_SIZE,
+  //       Math.ceil((scrollOffset.x + CANVAS_WIDTH) / GRID_SIZE)
+  //     );
+  //     const startY = Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE));
+  //     const endY = Math.min(
+  //       CANVAS_WIDTH / GRID_SIZE,
+  //       Math.ceil((scrollOffset.y + CANVAS_WIDTH) / GRID_SIZE)
+  //     );
+
+  //     for (let x = startX; x < endX; x++) {
+  //       ctx.beginPath();
+  //       ctx.moveTo(x * GRID_SIZE - scrollOffset.x, 0);
+  //       ctx.lineTo(x * GRID_SIZE - scrollOffset.x, CANVAS_WIDTH);
+  //       ctx.stroke();
+  //     }
+
+  //     for (let y = startY; y < endY; y++) {
+  //       ctx.beginPath();
+  //       ctx.moveTo(0, y * GRID_SIZE - scrollOffset.y);
+  //       ctx.lineTo(CANVAS_WIDTH, y * GRID_SIZE - scrollOffset.y);
+  //       ctx.stroke();
+  //     }
+
+  //     ctx.font = "10px Arial";
+  //     ctx.fillStyle = "#2f1643";
+
+  //     for (let i = startX; i <= endX; i++) {
+  //       for (let j = startY; j <= endY; j++) {
+  //         const currentX = i * GRID_SIZE - scrollOffset.x;
+  //         const currentY = j * GRID_SIZE - scrollOffset.y;
+
+  //         ctx.fillStyle = "#2f1643"; // 设置背景色
+  //         ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
+
+  //         const entity = getEntityAtCoordinates(i, j);
+  //         if (entity) {
+  //           ctx.fillStyle = entity.value.color;
+  //           ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
+  //           if (entity.value.text) {
+  //             ctx.fillStyle = "#000"; // 设置文本颜色
+  //             ctx.fillText(entity.value.text, currentX + 2, currentY + 20);
+  //           }
+  //         }
+  //       }
+  //     }
+
+  //     if (selectedColor && hoveredSquare) {
+  //       ctx.fillStyle = selectedColor;
+  //       ctx.fillRect(
+  //         hoveredSquare.x * GRID_SIZE - scrollOffset.x,
+  //         hoveredSquare.y * GRID_SIZE - scrollOffset.y,
+  //         GRID_SIZE,
+  //         GRID_SIZE
+  //       );
+  //     }
+
+  //     if (hoveredSquare) {
+  //       ctx.canvas.style.cursor = "pointer";
+  //     } else {
+  //       ctx.canvas.style.cursor = "default";
+  //     }
+  //   },
+  //   [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
+  // );
+
+  
+  const drawGrid = useCallback(
+    (ctx: CanvasRenderingContext2D, hoveredSquare: { x: number; y: number } | null, mouseX: number, mouseY: number,) => {
+  setHoveredSquare(coordinates)
+      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      console.log(hoveredSquare,99999,coordinates,6666,hoveredSquareRef.current
+        )
+      // 填充整个画布背景色
+      ctx.fillStyle = "#2f1643";
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#2e1140";
+
+      // 绘制竖条纹
+      for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(x - scrollOffset.x, 0);
+        ctx.lineTo(x - scrollOffset.x, CANVAS_HEIGHT);
+        ctx.stroke();
+      }
+
+      // 绘制横条纹
+      for (let y = 0; y < CANVAS_HEIGHT; y += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(0, y - scrollOffset.y);
+        ctx.lineTo(CANVAS_WIDTH, y - scrollOffset.y);
+        ctx.stroke();
+      }
+
+      ctx.font = "10px Arial";
+      ctx.fillStyle = "#2f1643";
+
+      for (let i = 0; i <= CANVAS_WIDTH / GRID_SIZE; i++) {
+        for (let j = 0; j <= CANVAS_HEIGHT / GRID_SIZE; j++) {
+          const currentX = i * GRID_SIZE - scrollOffset.x;
+          const currentY = j * GRID_SIZE - scrollOffset.y;
+
+          // 绘制背景色
+          ctx.fillStyle = "#2f1643";
+          ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+
+          const entity = getEntityAtCoordinates(i, j);
+          if (entity) {
+            ctx.fillStyle = entity.value.color;
+            ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+            if (entity.value.text) {
+              ctx.fillStyle = "#000";
+              ctx.fillText(entity.value.text, currentX + 2, currentY + 20);
+            }
+          }
+        }
+      }
+
+      if (selectedColor && hoveredSquare) {
+        // console.log(selectedColor)
+        ctx.fillStyle = selectedColor;
+        ctx.fillRect(
+          hoveredSquare.x * GRID_SIZE - scrollOffset.x,
+          hoveredSquare.y * GRID_SIZE - scrollOffset.y,
+          GRID_SIZE,
+          GRID_SIZE
+        );
+      }
+
+      if (hoveredSquare) {
+        ctx.canvas.style.cursor = "pointer";
+      } else {
+        ctx.canvas.style.cursor = "default";
+      }
+    },
+    [GRID_SIZE, CANVAS_WIDTH, getEntityAtCoordinates,CANVAS_HEIGHT, selectedColor, scrollOffset]
+  );
+
+
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true);
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
     const canvas = canvasRef.current as any;
     const rect = canvas.getBoundingClientRect();
-
-    // 计算鼠标点击位置在网格中的坐标
-    const mouseX = event.clientX - rect.left + scrollOffset.x;
-    const mouseY = event.clientY - rect.top + scrollOffset.y;
+    
+    const mouseX = event.clientX - rect.left ;
+    const mouseY = event.clientY - rect.top ;
 
     const gridX = Math.floor(mouseX / GRID_SIZE);
     const gridY = Math.floor(mouseY / GRID_SIZE);
-    // console.log(gridX,gridY)
-    // 将点击位置的网格坐标传递给 setCoordinates 函数
+    
     setCoordinatesData({ x: gridX, y: gridY });
+    const newHoveredSquare = { x: gridX, y: gridY };
+    setHoveredSquare(newHoveredSquare);
+    
+    if (selectedColor && coordinates) {
+        hoveredSquareRef.current = coordinates;
+        if (parts[1] !== "Snake") {
+            setLoading(true);
+            const increData = increment(
+                null,
+                coordinates,
+                entityaData,
+                palyerAddress,
+                selectedColor
+            );
+            increData.then((increDataVal: any) => {
+                increDataVal[1].then((a: any) => {
+                    if (a.status === "success") {
+                        setLoading(false);
+                    } else {
+                        setLoading(false);
+                        onHandleLoading();
+                        toast.error("An error was reported");
+                    }
+                });
+            });
+        }
 
-    if (hoveredSquare && selectedColor) {
-      // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-      if (parts[1] !== "Snake") {
-        setLoading(true);
-        const increData = increment(
-          null,
-          coordinates,
-          entityaData,
-          palyerAddress,
-          selectedColor
-        );
-        increData.then((increDataVal: any) => {
-          increDataVal[1].then((a: any) => {
-            // console.log(a)
-            if (a.status === "success") {
-              setLoading(false);
-            } else {
-              setLoading(false);
-              onHandleLoading();
-              toast.error("An error was reported");
-            }
-          });
-        });
-      }
-
-      handleData(hoveredSquare);
+        handleData(coordinates);
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+            // ctx.fillStyle = selectedColor;
+            // ctx.fillRect(
+            //     hoveredSquare.x * GRID_SIZE,
+            //     hoveredSquare.y * GRID_SIZE,
+            //     GRID_SIZE,
+            //     GRID_SIZE
+            // );
+            drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current); 
+        }
     } else {
-      //console.log("hoveredSquare或selectedColor为空");
+        //console.log("hoveredSquare或selectedColor为空");
     }
-  };
+};
+
 
   const handleMouseUp = () => {
-    // console.log('我点了！！！')
-    setPopExhibit(true);
+    console.log('我点了！！！')
+    setIsDragging(false);
+    // setPopExhibit(true);
     setShowOverlay(true);
     if (parts[1] !== "Snake") {
       setLoading(true);
     }
+   
+  
     // e.stopPropagation();
     setTranslateX(0);
     setTranslateY(0);
@@ -409,41 +508,132 @@ export default function Header({ hoveredData, handleData }: Props) {
       // 计算网格位置
       const gridX = Math.floor(mouseXRef.current / GRID_SIZE);
       const gridY = Math.floor(mouseYRef.current / GRID_SIZE);
-
+    
       // 更新hoveredSquare状态
       setHoveredSquare({ x: gridX, y: gridY });
 
       // 绘制蓝色背景
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
-        drawGrid(ctx, hoveredSquare, mouseXRef.current, mouseYRef.current); // 重新绘制网格并传递hoveredSquare和鼠标位置
+        console.log(mouseXRef.current, mouseYRef.current,1222)
+    // return
+        drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current); // 重新绘制网格并传递hoveredSquare和鼠标位置
       }
     },
     [drawGrid, hoveredSquare]
   );
+  const [isDragging, setIsDragging] = useState(false);
+  // const handleMouseMoveData = useCallback(
+  //   (event: React.MouseEvent<HTMLDivElement>) => {
+  //     if (!visibleAreaRef.current || !isDragging) return;
+  
+  //     const dx = event.clientX - translateX;
+  //     const dy = event.clientY - translateY;
+  
+  //     setTranslateX(event.clientX);
+  //     setTranslateY(event.clientY);
+  
+  //     setScrollOffset((prevOffset) => ({
+  //       x: prevOffset.x - dx,
+  //       y: prevOffset.y - dy
+  //     }));
+  
+  //     const canvas = canvasRef.current;
+  //     if (canvas) {
+  //       const rect = canvas.getBoundingClientRect();
+  //       const mouseX = event.clientX - rect.left + scrollOffset.x;
+  //       const mouseY = event.clientY - rect.top + scrollOffset.y;
+  //       setMouseX(mouseX);
+  //       setMouseY(mouseY);
+  
+  //       const gridX = Math.floor(mouseX / GRID_SIZE);
+  //       const gridY = Math.floor(mouseY / GRID_SIZE);
+  //       setHoveredSquare({ x: gridX, y: gridY });
+  
+  //       const ctx = canvas.getContext("2d");
+  //       if (ctx) {
+  //         drawGrid(ctx, hoveredSquare, mouseX, mouseY);
+  //       }
+  //     }
+  //   },
+  //   [translateX, translateY, visibleAreaRef, drawGrid, hoveredSquare, isDragging, scrollOffset, GRID_SIZE]
+  // );
+  
   const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      setMouseX(event.clientX);
-      setMouseY(event.clientY);
-      if (event.buttons !== 1 || !visibleAreaRef.current) return;
+        if (!visibleAreaRef.current || !isDragging) return;
 
-      const dx = event.clientX - translateX;
-      const dy = event.clientY - translateY;
+        const dx = event.clientX - translateX;
+        const dy = event.clientY - translateY;
+setHoveredSquare(coordinates)
+        setTranslateX(event.clientX);
+        setTranslateY(event.clientY);
 
-      setTranslateX(event.clientX);
-      setTranslateY(event.clientY);
+        setScrollOffset((prevOffset) => ({
+            x: Math.max(0, prevOffset.x + dx),
+            y: Math.max(0, prevOffset.y + dy)
+        }));
 
-      visibleAreaRef.current.scrollLeft -= dx;
-      visibleAreaRef.current.scrollTop -= dy;
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            setMouseX(mouseX);
+            setMouseY(mouseY);
+            const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
+            const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
+            hoveredSquareRef.current={ x: gridX, y: gridY }
+            // setHoveredSquare({ x: gridX, y: gridY });
 
-      // 更新鼠标位置
-      if (!canvasRef.current) return;
-      const rect = visibleAreaRef.current.getBoundingClientRect();
-      mouseXRef.current = event.clientX - rect.left;
-      mouseYRef.current = event.clientY - rect.top;
+            const ctx = canvas.getContext("2d");
+            if (ctx && selectedColor) {
+                ctx.fillStyle = selectedColor;
+                ctx.fillRect(
+                    gridX * GRID_SIZE,
+                    gridY * GRID_SIZE,
+                    GRID_SIZE,
+                    GRID_SIZE
+                );
+            }
+        }
     },
-    [translateX, translateY]
-  );
+    [translateX, translateY, visibleAreaRef, selectedColor, isDragging, scrollOffset]
+);
+
+  // const handleMouseMoveData = useCallback(
+  //   (event: React.MouseEvent<HTMLDivElement>) => {
+  //     setMouseX(event.clientX);
+  //     setMouseY(event.clientY);
+  //     if (event.buttons !== 1 || !visibleAreaRef.current) return;
+
+  //     const dx = event.clientX - translateX;
+  //     const dy = event.clientY - translateY;
+
+  //     // 重新绘制网格
+  //     if(canvasRef.current){
+  //       const ctx = canvasRef.current.getContext("2d");
+  //       if (ctx) {
+  //         drawGrid(ctx, hoveredSquare, mouseX, mouseY);
+  //       }
+  //     }
+    
+
+  //     setTranslateX(event.clientX);
+  //     setTranslateY(event.clientY);
+
+  //     visibleAreaRef.current.scrollLeft -= dx;
+  //     visibleAreaRef.current.scrollTop -= dy;
+
+  //     // 更新鼠标位置
+  //     if (!canvasRef.current) return;
+  //     const rect = visibleAreaRef.current.getBoundingClientRect();
+  //     mouseXRef.current = event.clientX - rect.left;
+  //     mouseYRef.current = event.clientY - rect.top;
+  //   },
+  //   [translateX, translateY]
+  // );
+
 
   const addressDataCopy = (text: any) => {
     navigator.clipboard.writeText(text).then(
@@ -471,12 +661,10 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const onHandleLoading = () => {
-    // console.log('dianle')
     setLoading(false);
   };
 
   const onHandleLoadingFun = () => {
-    // console.log('dianle')
     setLoading(true);
   };
 
@@ -505,17 +693,20 @@ export default function Header({ hoveredData, handleData }: Props) {
   }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = canvasRef.current; 
     if (canvas && entityData.length > 0) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
-        drawGrid(ctx, hoveredSquare, mouseX, mouseY);
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+console.log(hoveredSquare,'---------------',hoveredSquareRef.current)
+// setHoveredSquare(hoveredSquareRef.current)
+        drawGrid(ctx, hoveredSquareRef.current, mouseX, mouseY);
       }
     }
   }, [
     drawGrid,
     CANVAS_WIDTH,
+    CANVAS_HEIGHT,
     entityData.length,
     hoveredSquare,
     mouseX,
@@ -534,7 +725,8 @@ export default function Header({ hoveredData, handleData }: Props) {
       const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
       const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
       setCoordinates({ x: gridX, y: gridY });
-      setHoveredSquare({ x: gridX, y: gridY });
+      // setHoveredSquare({ x: gridX, y: gridY });
+      hoveredSquareRef.current={ x: gridX, y: gridY }
     };
 
     const handleScroll = () => {
@@ -557,50 +749,35 @@ export default function Header({ hoveredData, handleData }: Props) {
     };
   }, [canvasRef, scrollOffset]);
 
+
+
+  
+
   return (
     <>
       <div className={style.container}>
         <img
           className={style.containerImg}
-          // src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
         />
         <div className={style.content}>
           <button
-            className={style.btnBox}
+            className={numberData === 25 ? style.btnBoxY : style.btnBox}
             disabled={numberData === 25}
             onClick={btnLower}
           >
-            <img
-              className={numberData === 25 ? style.gray : style.btn1}
-              src={powerIcon}
-              alt=""
-            />
+            −
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
-            className={style.btnBox}
+            className={numberData === 100 ? style.btnBoxY : style.btnBox}
             disabled={numberData === 100}
             onClick={btnAdd}
           >
-            <img
-              className={numberData === 100 ? style.gray : style.btn1}
-              src={AddIcon}
-              alt=""
-            />
+            +
           </button>
         </div>
-        {/* <button
-        style={{zIndex: "9999999999"}}
-        type="button"
-        onClick={async (event) => {
-          event.preventDefault();
-          // console.log("new counter value:", await increment());
-        }}
-      >
-        Increment
-      </button> */}
         <div
           className={style.addr}
           style={{
@@ -608,7 +785,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             marginLeft: "32px",
           }}
         >
-          <span>{capitalizedString}</span>
+          {/* <span>{capitalizedString}</span> */}
           <span
             onClick={() => {
               addressDataCopy(palyerAddress);
@@ -656,7 +833,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               ref={canvasRef}
               width={CANVAS_WIDTH}
               height={CANVAS_WIDTH}
-              style={{ border: "1px solid black" }}
+              // style={{ border: "1px solid black" }}
             />
           </div>
         </div>
@@ -704,28 +881,16 @@ export default function Header({ hoveredData, handleData }: Props) {
             </span>
           ))}
         </div>
-
         <RightPart
           coordinates={coordinates}
           entityData={entityData}
           setPanningState={handlePanningChange}
           loading={loading}
+          onHandleExe={onHandleExe}
         />
       </div>
 
-      {/* <div className={style.loadingContainer}>
-        {" "}
-        {loading === true ? (
-          <img
-            src={loadingImg}
-            alt=""
-            className={`${style.commonCls1} ${style.spinAnimation}`}
-          />
-        ) : null}
-      </div> */}
-
-      {localStorage.getItem("manifest")?.includes("Snake") &&
-      popExhibit === true ? (
+      {localStorage.getItem("manifest")?.includes("Snake") && popExhibit === true  ? (
         <>
           {showOverlay && <div className={style.overlay} />}
           <PopUpBox

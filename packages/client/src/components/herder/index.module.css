@@ -44,7 +44,7 @@ z-index: 9999999;
     justify-content: right;
     color: #fff;
     position: absolute;
-    right: 100px;
+    right:2.5rem;
     /* width:150px; */
     margin-top: 4px;
     height: auto;
@@ -72,15 +72,10 @@ canvas{
     bottom:0;
     left:0;
     margin:auto;
-    /* margin-top:-100px; */
-    /* margin-left:-100px; */
-    /* width: 180px; */
     background-color: #000000;
-    /* padding-left: 50px;
-    padding-right: 50px; */
-    /* padding-top: 8px; */
     font-size: 20px;
     border-radius: 50px;
+    display: flex;
 }
 .spanData{
     display: inline-block;
@@ -90,17 +85,16 @@ canvas{
     padding-top: 8px;
     text-align: center;
     font-family: Silkscreen,cursive;
-    /* font: var(--unnamed-font-style-normal) normal var(--unnamed-font-weight-normal) 16px/20px var(--unnamed-font-family-silkscreen);
-letter-spacing: var(--unnamed-character-spacing-0);
-color: var(--secondary);
-text-align: center;
-font: normal normal normal 16px/20px Silkscreen; */
-/* letter-spacing: 0px; */
-/* color: #19C0DB; */
-/* opacity: 1; */
 }
 :root {
     --offset: 70px;
+  }
+  .cursor-not-allowed {
+    color: #a073e2; 
+  }
+  
+  .cursor-default {
+    cursor: default;
   }
   .btnBox{
     width: 80px;
@@ -108,7 +102,43 @@ font: normal normal normal 16px/20px Silkscreen; */
     border: none;
     outline: none;
     background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s;
+    outline: none; 
+    outline-offset: 2px;
+    font-family: 'your-emoji-font', sans-serif; 
+    font-weight: bold;
+    color: #a073e2; 
+    font-size: 34px;
+    gap: 8px; 
+    padding: 0;
+    flex-direction: column;
+    opacity: 1;
   }
+  .btnBoxY{
+    width: 80px;
+    border: none;
+    outline: none;
+    background-color: #000;
+    cursor: not-allowed !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s;
+    outline: none; 
+    outline-offset: 2px;
+    font-family: 'your-emoji-font', sans-serif; 
+    font-weight: bold;
+    color: #aba7b2; 
+    font-size: 34px;
+    gap: 8px; 
+    padding: 0;
+    flex-direction: column;
+    opacity: 0.3;
+  }
+
 .btn1{
     color: #a073e2;
     color: #000;
@@ -122,7 +152,7 @@ font: normal normal normal 16px/20px Silkscreen; */
     background-color: #000;
 }
 .gray {
-  filter: grayscale(100%); /* 将图片设置为灰色 */
+  filter: grayscale(100%); 
   color: #a073e2;
   color: #000;
   width: 20px;
@@ -135,21 +165,14 @@ font: normal normal normal 16px/20px Silkscreen; */
   background-color: #000;
 }
 .bodyCon{
-    /* width: 100%; */
     height: calc(100vh - 60px);
     margin-top: 60px !important;
-    /* background-color:#2f1643; */
     position:relative;
 }
-
-
-
-
 .color-picker {
     display: flex;
     flex-wrap: wrap;
   }
-  
   .color-option {
     height: 15px;
     width: 15px;
@@ -158,7 +181,6 @@ font: normal normal normal 16px/20px Silkscreen; */
     cursor: pointer;
     border-radius: 50%;
   }
-  
   .indicator {
     position: absolute;
     inset: 5px;
@@ -166,12 +188,10 @@ font: normal normal normal 16px/20px Silkscreen; */
     border-radius: 50%;
     opacity: 0;
   }
-  
   .color-option.selected .indicator {
     opacity: 1;
   }
   .rightPart{
-    /* position: fixed; */
     right: 0px;
     background-color: #2b0e3a;
     z-index: 9999999;
@@ -179,28 +199,23 @@ font: normal normal normal 16px/20px Silkscreen; */
   .canvasWrapper {
     width: 100%;
     height: 100%;
-    overflow: auto;
+    overflow-x: auto; /* 允许水平滚动 */
+    overflow-y: hidden; /* 禁止垂直滚动 */
+    white-space: nowrap; /* 保证内容横向排列 */
   }
-  
-  /* 自定义滚动条样式 */
   .canvasWrapper::-webkit-scrollbar {
     width: 8px;
   }
-  
   .canvasWrapper::-webkit-scrollbar-track {
-    background-color: #2a0d39;
+    background-color: #2f1643;
   }
-  
   .canvasWrapper::-webkit-scrollbar-thumb {
     background-color: #2f1643;
     border-radius: 4px;
   }
-  
   .canvasWrapper::-webkit-scrollbar-thumb:hover {
     background-color: #2f1643;
   }
-
-
   .commonCls1{
     animation: spin 5s linear infinite;
     -webkit-transform: rotate(3600deg);
