@@ -73,6 +73,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
     onWrite: (write) => write_sub.next(write),
   });
   let tx;
+  let hashValpublic = null; 
   try {
     const appName = localStorage.getItem('manifest') as any;
 
@@ -89,11 +90,11 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       tx = await systemContract.write.pix2048_Pix2048System_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
   
     }
+    hashValpublic =  publicClient.waitForTransactionReceipt({hash:tx});
+
   } catch (error) {
     console.error('Failed to setup network:', error);
-    const hashValpublic = null; 
   }
-  const hashValpublic =   publicClient.waitForTransactionReceipt({hash:tx});
   
   return [tx,hashValpublic]
 
