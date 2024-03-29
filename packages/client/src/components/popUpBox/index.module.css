@@ -97,8 +97,8 @@ display: flex;
     transition-duration: .15s;
 }
 .closeBtn{
-    position: absolute;
-    right: 1rem; 
+    position: absolute; 
+    right: 30px; 
     top: 1rem; 
     border-radius: 0.225rem;
     opacity: 0.7; 
