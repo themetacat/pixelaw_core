@@ -130,7 +130,7 @@ export default function RightPart({
                   if (loading === true) {
                     return; // 禁止点击
                   }
-                  handleIconClick(index);
+                  handleIconClick(index, value);
                   updateAbiUrl(value.manifest);
                   localStorage.setItem("manifest", value.manifest);
                   localStorage.setItem(
