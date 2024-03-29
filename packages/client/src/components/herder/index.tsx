@@ -518,8 +518,8 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!visibleAreaRef.current || !isDragging) return;
 
-      const dx = event.clientX - translateX;
-      const dy = event.clientY - translateY;
+      const dx =  translateX-event.clientX ;
+      const dy =  translateY-event.clientY ;
 
       setTranslateX(event.clientX);
       setTranslateY(event.clientY);
