@@ -830,7 +830,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           {showOverlay && <div className={style.overlay} />}
           <PopUpBox
             addressData={addressData}
-            coordinates={coordinatesData}
+            coordinates={coordinates}
             onHandleExe={onHandleExe}
             selectedColor={selectedColor}
             onHandleLoading={onHandleLoading}
