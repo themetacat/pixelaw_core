@@ -3,6 +3,7 @@ import style from "./index.module.css";
 import {
   Has,
   getComponentValueStrict,
+  getComponentValue
 } from "@latticexyz/recs";
 import {
   encodeEntity,
@@ -27,19 +28,17 @@ interface Props {
 }
 export default function RightPart({ coordinates, loading,entityData ,setPanningState}: Props) {
   const {
-    components: { App},
+    components: { App, Pixel },
     systemCalls: { update_abi },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
   const [panning, setPanning] = useState(false);
   const manifestVal = window.localStorage.getItem("manifest")
 
-  const addressToEntityID = (address: Hex) =>
-    encodeEntity({ address: "address" }, { address });
-  const app_info = useComponentValue(
-    App,
-    addressToEntityID("0xb40422217F29Ec33b4EB2b6d790b6932601671eB")
-  );
+  const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
+
+  const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
+  //console.log(decodeEntity({ x: "uint32", y: "uint32" }, entity));//每个块坐标
 
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   const handleIconClick = (index: number) => {
@@ -67,6 +66,23 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
   function capitalizeFirstLetter(str:any) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+  const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
+  const pixel_value = getComponentValue(Pixel, coor_entity) as any;
+  let app_value, truncatedOwner;
+  
+  if(pixel_value){
+
+    const address_entity = addressToEntityID(pixel_value.app);
+    app_value = getComponentValue(App, address_entity) as any;
+    const owner = pixel_value.owner;
+    truncatedOwner = `${owner?.substring(
+      0,
+      6
+    )}...${owner.substring(owner.length - 4)}`;
+  }
+
+  
+
   return (
     <div
       className={panning === false ? style.container : style.container1}
@@ -146,13 +162,28 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
               {coordinates.x},{coordinates.y}
             </span>
           </p>
-          {entityData.map((item: any) => {
+          <p key={`Type-${coordinates.x}-${coordinates.y}`}>
+            <span className={style.a}>Type: </span>
+            <span className={style.fontCon}>{app_value?.app_name}</span>
+            
+          </p>
+          <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
+            <span className={style.a}>Owner: </span>
+            <span className={style.fontCon}> {truncatedOwner}</span>
+          </p>
+          {/* 不使用该方法 */}
+          {/* {
+            item
+          } */}
+          {/* {entityData.map((item: any) => {
             if (
               item.coordinates.x === coordinates.x &&
               item.coordinates.y === coordinates.y
             ) {
-              const entityID = addressToEntityID(item.value.app);
-              const type = `${app_info}`;
+              const address_entity = addressToEntityID(item.value.app);
+            
+              const app_value = getComponentValue(App, address_entity) as any;
+           
               const owner = item.value.owner;
               const truncatedOwner = `${owner.substring(
                 0,
@@ -162,7 +193,7 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
                 <>
                   <p key={`Type-${item.coordinates.x}-${item.coordinates.y}`}>
                     <span className={style.a}>Type: </span>
-                    <span className={style.fontCon}>{type}</span>
+                    <span className={style.fontCon}>{app_value?.app_name}</span>
                   </p>
                   <p key={`Owner-${item.coordinates.x}-${item.coordinates.y}`}>
                     <span className={style.a}>Owner: </span>
@@ -173,9 +204,9 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
             } else {
               return null;
             }
-          })}
+          })} */}
 
-          {entityData.some(
+          {/* {entityData.some(
             (item: any) =>
               item.coordinates.x === coordinates.x &&
               item.coordinates.y === coordinates.y
@@ -190,7 +221,7 @@ export default function RightPart({ coordinates, loading,entityData ,setPanningS
                 <span className={style.fontCon}>null</span>
               </p>
             </>
-          )}
+          )} */}
         </div>
       )}
     </div>

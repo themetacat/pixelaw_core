@@ -76,7 +76,8 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
   let hashValpublic = null; 
   try {
     const appName = localStorage.getItem('manifest') as any;
-
+    const entityaData = localStorage.getItem('entityVal') as any;
+    
     if (appName.includes('Paint')) {
        tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
 

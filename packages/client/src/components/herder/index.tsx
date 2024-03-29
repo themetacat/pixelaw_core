@@ -386,7 +386,10 @@ export default function Header({ hoveredData, handleData }: Props) {
             increDataVal[1].then((a: any) => {
               if (a.status === "success") {
                 setLoading(false);
+                console.log(111111,a);
               } else {
+                console.log(222222,a);
+                
                 handleError();
               }
             });
