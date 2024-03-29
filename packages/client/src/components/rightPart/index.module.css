@@ -1,27 +1,62 @@
+.contBox{
+  /* justify-content: center;
+  text-align: center; */
+  padding-left: 15px;
+  padding-right: 15px;
+  flex: 1 1 0%;
+
+}
 .container{
-    width: 44px;
+    /* width: 72px; */
     margin-top: 60px;
-    background-color: #2a0d39;
+    background-color: #2f1643;
+    /* background-color: red !important; */
     height: calc(100vh - 60px);
     z-index: 9999999922222229;
+    padding-bottom: 15px;
+    position: absolute;
+    right: 0px;
     /* position: relative; */
 }
 .container1{
-    width: 213px;
-    padding-left: 20px;
+    /* width: 207px; */
+    /* padding-left: 20px; */
     margin-top: 60px;
-    background-color: #2a0d39;
+    background-color: #2f1643;
+    padding-bottom: 15px;
+    /* background-color: red !important; */
     height: calc(100vh - 60px);
     z-index: 999999222222222222299;
+    @keyframes slide-left {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-100%);
+      }
+    }
+    
+    .element {
+      animation: slide-left 0.3s linear forwards;
+    }
     /* position: relative; */
 }
 .btnGame{
     width: 100%;
     height: 50px;
     display: flex;
+    margin-bottom: 15px;
+    justify-content: flex-start;
+    align-items: center;
+    gap:15px;
+
+
     
 }
-.container button {
+.btnGame:first-child{
+  padding-top: 15px;
+}
+/* .container button {
     margin-left: 10px;
     width: 100px;
     height: 50px;
@@ -32,24 +67,33 @@
     align-items: center;
     justify-content: flex-start;
     padding-left: 15px;
-    margin-bottom: 10px; /* 添加间距 */
-}
+    margin-bottom: 10px;
+} */
 .imgCon{
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 3px;
     display: inline-block;
     background-color: #1f102e;
     text-align: center;
+    font-size: 32px;
+    line-height: 48px;
+    font-family: "Arial Unicode MS";
+    text-align:center;
 }
 .imgCon1{
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 3px;
     display: inline-block;
     background-color: #7500ad;
     text-align: center;
+    font-size: 32px;
+    line-height: 48px;
+    font-family: "Arial Unicode MS";
+    text-align:center;
 }
+
 .coordinates{
     display: inline-block;
     width: 50px;
@@ -62,11 +106,17 @@
 }
 .appName{
     color: #58b4ce;
-    color: 20px;
     line-height: 50px;
     font-size: 20px;
     font-family: Silkscreen;
     font-style: cursive;
+}
+.appName1{
+  color: #fff;
+  line-height: 50px;
+  font-size: 20px;
+  font-family: Silkscreen;
+  font-style: cursive;
 }
 .a{
     color:#b261ed;
@@ -74,7 +124,7 @@
   
 }
 p{
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 .commonCls1{
     animation: spin 5s linear infinite;
@@ -102,26 +152,28 @@ font: normal normal 600 14px/19px Segoe UI;
 letter-spacing: 0px;
 color: #FFFFFF;
 opacity: 1;
+font-weight: 600;
+margin-left: 0.25rem;
 }
 .pointer{
-    background-color: #130e0e;
-    position: absolute;
-    right: 44px;
+    background-color: #2a0d39;
+    /* position: absolute; */
+    /* left:-10px; */
     z-index: 999999999999999;
-    top: 60px;
+    /* top: 60px; */
     width:  6.29px;
-    height: 10.48px;
+    height: 7.48px;
     padding: 9.77px 3.86px 9.77px 5.86px;
     color: #000;
   }
 .pointer1{
-    background-color: #130e0e;
-    position: absolute;
-    right: 210px;
+    background-color: #2a0d39;
+    /* position: absolute; */
+    /* left:-10px; */
     z-index: 999999999999999;
-    top: 60px;
+    /* top: 60px; */
     width:  6.29px;
-    height: 10.48px;
+    height: 7.48px;
     padding: 9.77px 3.86px 9.77px 5.86px;
     color: #000;
   }
@@ -131,12 +183,12 @@ opacity: 1;
     height: 30px;
   } */
 .bottomCon{
-    width: 100vw;
+    /* width: 100vw; */
     /* height:120px; */
     /* background-color: aqua; */
     position: fixed;
     bottom: 12px;
-    font-weight: 600;
+    /* font-weight: 600; */
     font-family: Arial, Helvetica, sans-serif !important;
     /* margin-bottom: 20px; */
     color: #fff;

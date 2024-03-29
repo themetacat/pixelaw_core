@@ -4,6 +4,7 @@ import {
   Has,
   getComponentValueStrict,
   getComponentValue,
+  AnyComponentValue,
 } from "@latticexyz/recs";
 import { decodeEntity } from "@latticexyz/store-sync/recs";
 import { formatUnits } from "viem";
@@ -16,6 +17,7 @@ import PopUpBox from "../popUpBox";
 
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
+import { CANVAS_HEIGHT } from "../../global/constants";
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -69,7 +71,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     systemCalls: { increment },
   } = useMUD();
 
-  const [numberData, setNumberData] = useState(50);
+  const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
@@ -87,16 +89,20 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [panningFromChild, setPanningFromChild] = useState(false);
-  const [GRID_SIZE, setGRID_SIZE] = useState(64);
+  const [GRID_SIZE, setGRID_SIZE] = useState(30);
   const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
-  const CANVAS_WIDTH = window.innerWidth;
+  const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
+  const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
   const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
   const CONTENT_WIDTH = gridCount * GRID_SIZE;
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
     y: number;
   } | null>(null);
+
+  const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
+
   const [selectedColor, setSelectedColor] = useState("#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
@@ -136,16 +142,20 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const handleLeave = () => {
     setHoveredSquare(null);
+    if (downTimerRef.current) {
+      clearTimeout(downTimerRef.current);
+      downTimerRef.current = null;
+    }
+    setIsLongPress(false);
   };
 
-  // console.log(entities,'-----')
+  // //console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
     [];
   if (entities.length !== 0) {
     entities.forEach((entity) => {
       const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
       const value = getComponentValueStrict(Pixel, entity);
-
       if (value.text === "_none") {
         value.text = "";
       }
@@ -155,7 +165,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
 
-    // console.log(entityData); // 打印数组
+    //console.log(entityData); // 打印数组
   }
 
   // const drawGrid = useCallback(
@@ -169,25 +179,25 @@ export default function Header({ hoveredData, handleData }: Props) {
   //     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
   //     ctx.lineWidth = 10;
   //     ctx.strokeStyle = "#2e1140";
-  //     for (let x = 0.5; x < 12000; x += GRID_SIZE) {
+  //     for (let x = 0.5; x < CANVAS_WIDTH; x += GRID_SIZE) {
   //       ctx.beginPath();
   //       ctx.moveTo(x, 0);
-  //       ctx.lineTo(x, 12000);
+  //       ctx.lineTo(x, CANVAS_WIDTH);
   //       ctx.stroke();
   //     }
 
-  //     for (let y = 0.5; y < 12000; y += GRID_SIZE) {
+  //     for (let y = 0.5; y < CANVAS_WIDTH; y += GRID_SIZE) {
   //       ctx.beginPath();
   //       ctx.moveTo(0, y);
-  //       ctx.lineTo(12000, y);
+  //       ctx.lineTo(CANVAS_WIDTH, y);
   //       ctx.stroke();
   //     }
 
   //     ctx.font = "10px Arial";
   //     ctx.fillStyle = "#2f1643";
 
-  //     for (let i = 0; i <= 12000 / GRID_SIZE; i++) {
-  //       for (let j = 0; j <= 12000 / GRID_SIZE; j++) {
+  //     for (let i = 0; i <= CANVAS_WIDTH / GRID_SIZE; i++) {
+  //       for (let j = 0; j <= CANVAS_WIDTH / GRID_SIZE; j++) {
   //         ctx.fillStyle = "#2f1643"; // 设置背景色
   //         ctx.fillRect(
   //           i * GRID_SIZE - scrollOffset.x,
@@ -240,11 +250,30 @@ export default function Header({ hoveredData, handleData }: Props) {
   //   },
   //   [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
   // );
-
+  //console.log(entityData)
   const getEntityAtCoordinates = (x: number, y: number) => {
-
-    return entityData.find(entity => entity.coordinates.x === x && entity.coordinates.y === y);
+    return entityData.find(
+      (entity) => entity.coordinates.x === x && entity.coordinates.y === y
+    );
   };
+  const appName = localStorage.getItem("manifest") as any;
+  // const appName = "BASE/Paint"
+
+  const parts = appName?.split("/") as any;
+  let worldAbiUrl: any;
+  // //console.log(parts[0]); // 输出 "Base"
+  if (appName) {
+    if (parts[0] === "BASE") {
+      worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
+        `${parts[1].replace(/\.abi\.json/g, "")}` +
+        ".abi.json") as any;
+    } else {
+      worldAbiUrl = appName;
+    }
+  } else {
+    worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
+  }
+
   const drawGrid = useCallback(
     (
       ctx: CanvasRenderingContext2D,
@@ -252,48 +281,58 @@ export default function Header({ hoveredData, handleData }: Props) {
       mouseX: number,
       mouseY: number
     ) => {
-      // 清除之前绘制的格子
-      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
+      let pix_text ;
+      // setHoveredSquare(hoveredSquare)
+      // ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      //console.log(hoveredSquare,99999,coordinates,selectedColor)
+      // 填充整个画布背景色
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       ctx.lineWidth = 10;
-      ctx.strokeStyle = "#2e1140";
-  
-      const startX = Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE));
-      const endX = Math.min(12000 / GRID_SIZE, Math.ceil((scrollOffset.x + CANVAS_WIDTH) / GRID_SIZE));
-      const startY = Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE));
-      const endY = Math.min(12000 / GRID_SIZE, Math.ceil((scrollOffset.y + CANVAS_WIDTH) / GRID_SIZE));
-  
-      for (let x = startX; x < endX; x++) {
-        ctx.beginPath();
-        ctx.moveTo(x * GRID_SIZE - scrollOffset.x, 0);
-        ctx.lineTo(x * GRID_SIZE - scrollOffset.x, 12000);
-        ctx.stroke();
-      }
-  
-      for (let y = startY; y < endY; y++) {
-        ctx.beginPath();
-        ctx.moveTo(0, y * GRID_SIZE - scrollOffset.y);
-        ctx.lineTo(12000, y * GRID_SIZE - scrollOffset.y);
-        ctx.stroke();
-      }
-  
-      ctx.font = "20px Arial";
-      ctx.fillStyle = "#2f1643";
+      ctx.strokeStyle  = "#000000";
       
-      let pix_text = '';
-      for (let i = startX; i <= endX; i++) {
-        for (let j = startY; j <= endY; j++) {
+      // 绘制竖条纹
+      for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(x - scrollOffset.x, 0);
+        ctx.lineTo(x - scrollOffset.x, CANVAS_HEIGHT);
+        ctx.stroke();
+      }
+      // 绘制横条纹
+      for (let y = 0; y < CANVAS_HEIGHT; y += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(0, y - scrollOffset.y);
+        ctx.lineTo(CANVAS_WIDTH, y - scrollOffset.y);
+        ctx.stroke();
+      }
+      ctx.font = "10px Arial";
+      const visibleArea = {
+        x: Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE)),
+        y: Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE)),
+        width: Math.ceil(document.documentElement.clientWidth / GRID_SIZE),
+        height: Math.ceil(document.documentElement.clientHeight / GRID_SIZE),
+      };
+      for (let i = visibleArea.x; i < visibleArea.x + visibleArea.width; i++) {
+        for (
+          let j = visibleArea.y;
+          j < visibleArea.y + visibleArea.height;
+          j++
+        ) {
           const currentX = i * GRID_SIZE - scrollOffset.x;
           const currentY = j * GRID_SIZE - scrollOffset.y;
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "#2e1043";
+          ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
   
-          ctx.fillStyle = "#2f1643"; // 设置背景色
-          ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
-  
+          // 绘制背景色
+          ctx.fillStyle = "#2f1643";
+          ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+
           const entity = getEntityAtCoordinates(i, j);
+
           if (entity) {
             ctx.fillStyle = entity.value.color;
-            ctx.fillRect(currentX, currentY, GRID_SIZE - 1, GRID_SIZE - 1);
+            ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
             if (entity.value.text) {
-              
               ctx.fillStyle = "#000"; // 设置文本颜色
               ctx.textAlign = "center"; // 设置文本水平居中
               ctx.textBaseline = "middle"; // 设置文本垂直居中
@@ -307,115 +346,148 @@ export default function Header({ hoveredData, handleData }: Props) {
               const textY = currentY + GRID_SIZE / 2;
               // ctx.fillText(pix_text, currentX + 2, currentY + 20);
               ctx.fillText(pix_text, textX, textY);
-
             }
           }
         }
       }
-  
+
       if (selectedColor && hoveredSquare) {
+        //console.log(hoveredSquare)
+        //console.log(coordinates.x * GRID_SIZE - scrollOffset.x,
+        // coordinates.y * GRID_SIZE - scrollOffset.y,6968888)
         ctx.fillStyle = selectedColor;
         ctx.fillRect(
-          hoveredSquare.x * GRID_SIZE - scrollOffset.x,
-          hoveredSquare.y * GRID_SIZE - scrollOffset.y,
+          coordinates.x * GRID_SIZE - scrollOffset.x,
+          coordinates.y * GRID_SIZE - scrollOffset.y,
           GRID_SIZE,
           GRID_SIZE
         );
       }
-  
+
       if (hoveredSquare) {
         ctx.canvas.style.cursor = "pointer";
       } else {
         ctx.canvas.style.cursor = "default";
       }
     },
-    [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
+    [
+      GRID_SIZE,
+      coordinates,
+      CANVAS_WIDTH,
+      getEntityAtCoordinates,
+      CANVAS_HEIGHT,
+      selectedColor,
+      scrollOffset,
+    ]
   );
-  
-  
 
-  const appName = localStorage.getItem("manifest") as any;
-  // const appName = "BASE/Paint"
-
-  const parts = appName?.split("/") as any;
-  let worldAbiUrl: any;
-  // console.log(parts[0]); // 输出 "Base"
-  if (appName) {
-    if (parts[0] === "BASE") {
-      worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
-        `${parts[1].replace(/\.abi\.json/g, "")}` +
-        ".abi.json") as any;
-    } else {
-      worldAbiUrl = appName;
-    }
-  } else {
-    worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
-  }
+  // let timer: NodeJS.Timeout | null = null;
+  // let isLongPress = false;
+  const LongPressThreshold = 500; // 定义长按的时间阈值，单位为毫秒
+  let timeout: NodeJS.Timeout;
+  const [isDragging, setIsDragging] = useState(false);
+  const downTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isLongPress, setIsLongPress] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [lastDragEndX, setLastDragEndX] = useState(0);
+const [lastDragEndY, setLastDragEndY] = useState(0);
+  const ClickThreshold = 300; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    // console.log("是点击事件吗",appName,parts[1]);
-
+    setIsDragging(true);
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
-    const canvas = canvasRef.current as any;
-    const rect = canvas.getBoundingClientRect();
+    downTimerRef.current = setTimeout(() => {
+      setIsLongPress(true);
+      // 这里执行长按事件逻辑
+      // console.log("长按");
+    }, ClickThreshold);
+  };
 
-    // 计算鼠标点击位置在网格中的坐标
-    const mouseX = event.clientX - rect.left + scrollOffset.x;
-    const mouseY = event.clientY - rect.top + scrollOffset.y;
+  const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+    //console.log('我点了！！！')
+    setIsLongPress(false);
+    setIsDragging(false);
+  
+    if (downTimerRef.current) {
+      clearTimeout(downTimerRef.current);
+      downTimerRef.current = null;
+    }
+    if (!isLongPress) {
+      // console.log("我点了！！！");
+    }
+    if (isLongPress) {
+      // 长按事件的逻辑
+      // console.log("长按事件的逻辑");
+      setIsLongPress(false);
+      setIsDragging(false);
+      
+    } else {
+      // 点击事件的逻辑
+      // console.log("点击事件的逻辑");
+   
+      const canvas = canvasRef.current as any;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      const gridX = Math.floor(mouseX / GRID_SIZE);
+      const gridY = Math.floor(mouseY / GRID_SIZE);
+      setCoordinatesData({ x: gridX, y: gridY });
+      const newHoveredSquare = { x: gridX, y: gridY };
+      setHoveredSquare(newHoveredSquare);
 
-    const gridX = Math.floor(mouseX / GRID_SIZE);
-    const gridY = Math.floor(mouseY / GRID_SIZE);
-    // console.log(gridX,gridY)
-    // 将点击位置的网格坐标传递给 setCoordinates 函数
-    setCoordinatesData({ x: gridX, y: gridY });
-
-    if (hoveredSquare && selectedColor) {
-      // //console.log(hoveredSquare.x,hoveredSquare.y,selectedColor,)
-      if (parts[1] !== "Snake") {
-        setLoading(true);
-        
-        const increData = increment(
-          null,
-          coordinates,
-          entityaData,
-          palyerAddress,
-          selectedColor
-        );
-        increData.then((increDataVal: any) => {
-          if (increDataVal[1]) {
+      if (selectedColor && coordinates) {
+        hoveredSquareRef.current = coordinates;
+        if (parts[1] !== "Snake") {
+          setLoading(true);
+          setIsDragging(false);
+          const increData = increment(
+            null,
+            coordinates,
+            entityaData,
+            palyerAddress,
+            selectedColor
+          );
+          increData.then((increDataVal: any) => {
             increDataVal[1].then((a: any) => {
               if (a.status === "success") {
                 setLoading(false);
-                console.log(111111,a);
               } else {
-                console.log(222222,a);
-                
-                handleError();
+                setLoading(false);
+                onHandleLoading();
+                toast.error("An error was reported");
               }
             });
-          } else {
-            handleError();
-          }
-          
-        });
+          });
+        }
+        mouseXRef.current = mouseX;
+        mouseYRef.current = mouseY;
+        handleData(hoveredSquare as any);
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          const { x, y } = coordinates;
+          ctx.fillStyle = selectedColor;
+          ctx.fillRect(
+            x * GRID_SIZE - scrollOffset.x,
+            y * GRID_SIZE - scrollOffset.y,
+            GRID_SIZE,
+            GRID_SIZE
+          );
+          drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
+        }
+      } else {
+        ////console.log("hoveredSquare或selectedColor为空");
+      }
+      setIsDragging(false);
+      setPopExhibit(true);
+      setShowOverlay(true);
+      if (parts[1] !== "Snake") {
+        setLoading(true);
       }
 
-      handleData(hoveredSquare);
-    } else {
-      //console.log("hoveredSquare或selectedColor为空");
+      // e.stopPropagation();
+      setTranslateX(0);
+      setTranslateY(0);
     }
-  };
-
-  const handleMouseUp = () => {
-    // console.log('我点了！！！')
-    setPopExhibit(true);
-    setShowOverlay(true);
-    if (parts[1] === "paint") {
-      setLoading(true);
-    }
-    // e.stopPropagation();
-    setTranslateX(0);
-    setTranslateY(0);
   };
 
   const handleMouseEnter = useCallback(
@@ -441,11 +513,10 @@ export default function Header({ hoveredData, handleData }: Props) {
     },
     [drawGrid, hoveredSquare]
   );
+
   const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      setMouseX(event.clientX);
-      setMouseY(event.clientY);
-      if (event.buttons !== 1 || !visibleAreaRef.current) return;
+      if (!visibleAreaRef.current || !isDragging) return;
 
       const dx = event.clientX - translateX;
       const dy = event.clientY - translateY;
@@ -453,16 +524,41 @@ export default function Header({ hoveredData, handleData }: Props) {
       setTranslateX(event.clientX);
       setTranslateY(event.clientY);
 
-      visibleAreaRef.current.scrollLeft -= dx;
-      visibleAreaRef.current.scrollTop -= dy;
+      setScrollOffset((prevOffset) => ({
+        x: Math.max(0, prevOffset.x + dx),
+        y: Math.max(0, prevOffset.y + dy),
+      }));
 
-      // 更新鼠标位置
-      if (!canvasRef.current) return;
-      const rect = visibleAreaRef.current.getBoundingClientRect();
-      mouseXRef.current = event.clientX - rect.left;
-      mouseYRef.current = event.clientY - rect.top;
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        setMouseX(mouseX);
+        setMouseY(mouseY);
+
+        const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
+        const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
+
+        setHoveredSquare({ x: gridX, y: gridY });
+     
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          drawGrid(ctx, hoveredSquare, mouseX, mouseY); // 重新绘制画布并传入更新后的参数
+        }
+      }
     },
-    [translateX, translateY]
+    [
+      translateX,
+      translateY,
+      visibleAreaRef,
+      drawGrid,
+      hoveredSquare,
+      isDragging,
+      scrollOffset,
+      GRID_SIZE,
+    ]
   );
 
   const addressDataCopy = (text: any) => {
@@ -477,7 +573,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const handlePanningChange = (newPanningValue: any) => {
-    // console.log(newPanningValue)
+    // //console.log(newPanningValue)
     setPopExhibit(false);
     setShowOverlay(false);
     setPanningFromChild(newPanningValue);
@@ -490,19 +586,17 @@ export default function Header({ hoveredData, handleData }: Props) {
   
 
   const onHandleExe = () => {
-    // console.log('dianle')
+    // //console.log('dianle')
     setPopExhibit(false);
     setShowOverlay(false);
     // setLoading(false)
   };
 
   const onHandleLoading = () => {
-    // console.log('dianle')
     setLoading(false);
   };
 
   const onHandleLoadingFun = () => {
-    // console.log('dianle')
     setLoading(true);
   };
 
@@ -512,7 +606,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       const instruction = getComponentValue(Instruction, entityaData) as any;
       const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
       const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-      // console.log(result);
+      // //console.log(result);
       setInstruC(instruction?.instruction);
       setEntityaData(result);
     });
@@ -535,13 +629,17 @@ export default function Header({ hoveredData, handleData }: Props) {
     if (canvas && entityData.length > 0) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        //console.log(coordinates,'-----',coordinates)
+        // setHoveredSquare(hoveredSquareRef.current)
+        // setHoveredSquare(coordinates)
         drawGrid(ctx, hoveredSquare, mouseX, mouseY);
       }
     }
   }, [
     drawGrid,
     CANVAS_WIDTH,
+    CANVAS_HEIGHT,
     entityData.length,
     hoveredSquare,
     mouseX,
@@ -561,12 +659,14 @@ export default function Header({ hoveredData, handleData }: Props) {
       const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
       setCoordinates({ x: gridX, y: gridY });
       setHoveredSquare({ x: gridX, y: gridY });
+
+      // setHoveredSquare({ x: gridX, y: gridY });
+      hoveredSquareRef.current = { x: gridX, y: gridY };
     };
 
     const handleScroll = () => {
       const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-
       setScrollOffset({ x: scrollX, y: scrollY });
     };
 
@@ -588,33 +688,24 @@ export default function Header({ hoveredData, handleData }: Props) {
       <div className={style.container}>
         <img
           className={style.containerImg}
-          // src="https://demo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
         />
         <div className={style.content}>
           <button
-            className={style.btnBox}
+            className={numberData === 25 ? style.btnBoxY : style.btnBox}
             disabled={numberData === 25}
             onClick={btnLower}
           >
-            <img
-              className={numberData === 25 ? style.gray : style.btn1}
-              src={powerIcon}
-              alt=""
-            />
+            −
           </button>
           <span className={style.spanData}>{numberData}%</span>
           <button
-            className={style.btnBox}
+            className={numberData === 100 ? style.btnBoxY : style.btnBox}
             disabled={numberData === 100}
             onClick={btnAdd}
           >
-            <img
-              className={numberData === 100 ? style.gray : style.btn1}
-              src={AddIcon}
-              alt=""
-            />
+            +
           </button>
         </div>
   
@@ -625,7 +716,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             marginLeft: "32px",
           }}
         >
-          <span>{capitalizedString}</span>
+          {/* <span>{capitalizedString}</span> */}
           <span
             onClick={() => {
               addressDataCopy(palyerAddress);
@@ -667,14 +758,14 @@ export default function Header({ hoveredData, handleData }: Props) {
             style={{
               width: `${CONTENT_WIDTH}px`,
               height: `900px`,
-              overflow: "auto",
+              // overflow: "auto",
             }}
           >
             <canvas
               ref={canvasRef}
               width={CANVAS_WIDTH}
               height={CANVAS_WIDTH}
-              style={{ border: "1px solid black" }}
+              // style={{ border: "1px solid black" }}
             />
           </div>
         </div>
@@ -722,12 +813,12 @@ export default function Header({ hoveredData, handleData }: Props) {
             </span>
           ))}
         </div>
-
         <RightPart
           coordinates={coordinates}
           entityData={entityData}
           setPanningState={handlePanningChange}
           loading={loading}
+          onHandleExe={onHandleExe}
         />
       </div>
 
