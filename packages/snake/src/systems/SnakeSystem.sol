@@ -256,7 +256,7 @@ contract SnakeSystem is System {
   function generateUUID() public view returns (uint256) {
     uint256 timestamp = block.timestamp;
     address senderAddress = address(_msgSender());
-    uint256 randomNumber = uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), msg.sender)));
+    uint256 randomNumber = uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), address(_msgSender()))));
 
     uint256 uuid = uint256(keccak256(abi.encodePacked(senderAddress, timestamp, randomNumber)));
     return uuid;

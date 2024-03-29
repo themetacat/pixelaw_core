@@ -6,25 +6,25 @@
 .content{
     position: relative;
     filter: brightness(130%);
-    padding: 0.25rem; /* 小屏幕时的内边距，根据需要调整 */
-    border-color: #220630; /* 边框颜色 */
-    border-radius: 16px; /* 圆角效果 */
+    padding: 0.25rem; 
+    border-color: #220630; 
+    border-radius: 16px;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    display: grid; /* 使用网格布局 */
-    max-width: 32rem; /* 最大宽度为 32rem，根据需要调整 */
-    gap: 1rem; /* 间距为 1rem，根据需要调整 */
-    border-width: 1px; /* 边框宽度 */
-    border-style: solid; /* 边框样式 */
-    padding: 1.5rem; /* 内边距为 1.5rem，根据需要调整 */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 大型阴影效果，根据需要调整 */
-    transition-duration: 0.2s; /* 过渡时间为 0.2s，根据需要调整 */
-    opacity: 0; /* 渐隐效果 */
-    opacity: 1; /* 渐显效果 */
-    border-radius: 0.375rem; /* 小屏幕时的圆角效果，根据需要调整 */
-    background-color: #220630; /* 背景色 */
+    display: grid; 
+    max-width: 32rem; 
+    gap: 1rem; 
+    border-width: 1px;
+    border-style: solid; 
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    transition-duration: 0.2s;
+    opacity: 0; 
+    opacity: 1; 
+    border-radius: 0.375rem; 
+    background-color: #220630; 
 }
 .title{
     color: #FFC400;
@@ -34,12 +34,12 @@
     margin-top: 1.5rem;
 }
 .direction{
-    text-transform: capitalize; /* 将每个单词的首字母大写 */
-    color: #fff; /* 设置文本颜色为白色 */
-    text-align: center; /* 水平居中文本 */
-    opacity: 0.7; /* 设置禁用状态下的不透明度 */
-    cursor: not-allowed; /* 按照特定的命名约定设置禁用状态的鼠标指针 */
-    font-size: 0.875rem; /* 14px，根据需求调整大小 */
+    text-transform: capitalize; 
+    color: #fff; 
+    text-align: center; 
+    opacity: 0.7; 
+    cursor: not-allowed; 
+    font-size: 0.875rem; 
     font-weight: 500;
     line-height: 1;
  
@@ -47,73 +47,71 @@
 .bottomBox{
     display: flex;
     justify-content: center;
-    flex-direction: column; /* 设置为纵向排列 */
+    flex-direction: column; 
    margin: auto;
    width: 100%;
 }
 .btnBox{
-    gap: 0.25rem; /* 根据需要调整间距大小，此处为 4px */
-    gap: 20px; /* 设置指定间距大小 */
-   justify-content: space-between; /* 分散对齐 */
+    gap: 0.25rem; 
+    gap: 20px;
+   justify-content: space-between;
 display: flex;
 }
 .btn{
-    display: inline-flex; /* 使用内联 Flex 布局 */
+    display: inline-flex; 
     margin-top: 15px;
-    align-items: center; /* 垂直居中 */
+    align-items: center; 
     justify-content: center;
     font-weight: 500;
     --tw-ring-offset-color: var(--tw-background-color);
     transition-property: color; 
-    /* outline: none; */
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color), var(--tw-ring-offset-shadow, 0 0 #0000);
     --tw-ring-color: var(--tw-ring-offset-color); 
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-offset-color); 
     cursor: pointer;
     opacity: 0.5;
     background-color: rgba(0, 0, 0, 0.8);
-    padding-left: 0.75rem; /* 水平方向的内边距 */
+    padding-left: 0.75rem; 
     padding-right: 0.75rem;
     flex: 1; 
     height: 44px; 
-    background-color: #390754; /* 背景色 */
-    border-radius: 8px; /* 圆角 */
-    border-width: 1px; /* 边框宽度 */
-    border-style: solid; /* 边框样式 */
-    border-color: #7C0BB4; /* 边框颜色 */
-    color: #19c0db; /* 文字颜色 */
+    background-color: #390754; 
+    border-radius: 8px;
+    border-width: 1px; 
+    border-style: solid; 
+    border-color: #7C0BB4; 
+    color: #19c0db; 
     filter: brightness(140%);
-    text-transform: uppercase; /* 文字转换为大写 */
-    font-size: 18px; /* 文字大小 */
+    text-transform: uppercase; 
+    font-size: 18px; 
     font-weight: 500;
-    font-family: 'Silkscreen', sans-serif; /* 字体 */
+    font-family: 'Silkscreen', sans-serif; 
 }
 .btn:hover{
     background-color: #f4f2f8;
     filter: brightness(260%);
     opacity: 0.6;
-    color: #0ad6f5; /* 文字颜色 */
+    color: #0ad6f5; 
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(.4,0,.2,1);
     transition-duration: .15s;
 }
 .closeBtn{
-    position: absolute; /* 绝对定位 */
-
-    right: 1rem; /* 距离右边 1rem */
-    top: 1rem; /* 距离顶部 1rem */
-    border-radius: 0.225rem; /* 使用较小的圆角 */
-    opacity: 0.7; /* 不透明度为 70% */
-    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); /* 使用背景色作为焦点环的偏移颜色 */
-    transition-property: opacity; /* 设置透明度过渡效果 */
-    transition-duration: 150ms; /* 过渡持续时间 */
-    opacity: 1; /* 鼠标悬停时完全不透明 */
-    outline: 0; /* 焦点时移除外边框 */
-    --tw-ring-offset-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* 焦点时添加 2px 宽度的环形边框 */
-    --tw-ring-color: #3b82f6; /* 焦点时环形边框的颜色 */
-    --tw-ring-offset-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05); /* 焦点时环形边框的偏移量 */
-    pointer-events: auto; /* 禁用状态时禁止指针事件 */
-    background-color: #2f1643; /* 当状态为打开时背景色为强调色 */
-    color: #6b7280; /* 当状态为打开时文本颜色为淡化前景色 */
+    position: absolute; 
+    right: 30px; 
+    top: 1rem; 
+    border-radius: 0.225rem;
+    opacity: 0.7; 
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); 
+    transition-property: opacity;
+    transition-duration: 150ms;
+    opacity: 1; 
+    outline: 0; 
+    --tw-ring-offset-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    --tw-ring-color: #3b82f6; 
+    --tw-ring-offset-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+    pointer-events: auto;
+    background-color: #2f1643; 
+    color: #6b7280; 
     z-index: 22222222222;
 }

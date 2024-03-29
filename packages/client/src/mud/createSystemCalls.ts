@@ -70,35 +70,43 @@ if(entityVal===null){
 
 
 const increment = async (incrementData: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
-  const app_name =  window.localStorage.getItem('app_name');
+// console.log(coordinates,'=================',selectedColor)
 
   const systemContract = getContract({
-    address: "0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c",
+    address: "0xC44504Ab6a2C4dF9a9ce82aecFc453FeC3C8771C",
     abi: abi_json,
     publicClient,
     walletClient: walletClient,
     onWrite: (write) => write_sub.next(write),
   });
   let tx;
+  let hashValpublic = null; 
   try {
     const appName = localStorage.getItem('manifest') as any;
-
+    const entityaData = localStorage.getItem('entityVal') as any;
+    
     if (appName.includes('Paint')) {
        tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
 
-
     } else if (appName && appName.includes('Snake')) {
+      // console.log(224444)
       if(incrementData){
- // console.log('snake', systemContract);
-  tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
-      }
+      // console.log('snake', systemContract);
+      tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
+      } 
+      
+    }else if (appName && appName.includes('Pix2048')) {
+      tx = await systemContract.write.pix2048_Pix2048System_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
+  
     }
+    hashValpublic =  publicClient.waitForTransactionReceipt({hash:tx});
+
   } catch (error) {
     console.error('Failed to setup network:', error);
     return[null, null]
   }
-  const hashValpublic=   publicClient.waitForTransactionReceipt({hash:tx})
-      return [tx,hashValpublic]
+  
+  return [tx,hashValpublic]
 
 };
   interface AppData {

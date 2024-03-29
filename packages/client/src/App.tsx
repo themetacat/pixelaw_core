@@ -45,7 +45,7 @@ export const App = () => {
       Instruction
     },
     network: { playerEntity, publicClient },
-    systemCalls: { increment, execute_queue },
+    systemCalls: { increment,  },
   } = useMUD();
 
   const syncProgress = useComponentValue(SyncProgress, singletonEntity) as any;
@@ -180,7 +180,7 @@ export const App = () => {
   //   //console.log(hoveredData,99999999)
   // },[hoveredData])
   const handleMouseDown = (event: any) => {
-    // //console.log(event)
+    // console.log(event)
     setHoveredData(event);
     // setHoveredData(hoveredData);
   };
@@ -206,6 +206,7 @@ export const App = () => {
             color: "black",
             borderRadius: "8px",
             zIndex: "9999999999999",
+            marginTop:"50px"
           },
         }}
       />
