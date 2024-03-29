@@ -34,7 +34,7 @@ export default function PopUpBox({
   const [instruC, setInstruC] = useState(null);
   const [entityaData, setEntityaData] = useState("");
 
- 
+//  console.log(coordinates,9999999)
 
   const appName = localStorage.getItem("manifest") as any;
   const parts = appName?.split("/") as any;
