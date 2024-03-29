@@ -64,7 +64,8 @@ if(entityVal===null){
 
 
 const increment = async (incrementData: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
-console.log(coordinates,'=================')
+// console.log(coordinates,'=================',selectedColor)
+
   const systemContract = getContract({
     address: "0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c",
     abi: abi_json,
@@ -78,12 +79,11 @@ console.log(coordinates,'=================')
 
 
     if (appName.includes('Paint')) {
-      console.log(666666)
        tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
 
 
     } else if (appName && appName.includes('Snake')) {
-      console.log(224444)
+      // console.log(224444)
       if(incrementData){
  // console.log('snake', systemContract);
   tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);

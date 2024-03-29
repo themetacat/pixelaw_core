@@ -199,9 +199,9 @@ canvas{
   .canvasWrapper {
     width: 100%;
     height: 100%;
-    overflow-x: auto; /* 允许水平滚动 */
+    overflow-x: hidden; /* 允许水平滚动 */
     overflow-y: hidden; /* 禁止垂直滚动 */
-    white-space: nowrap; /* 保证内容横向排列 */
+    /* white-space: nowrap; 保证内容横向排列 */
   }
   .canvasWrapper::-webkit-scrollbar {
     width: 8px;

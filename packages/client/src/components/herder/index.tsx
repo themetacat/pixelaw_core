@@ -142,16 +142,20 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const handleLeave = () => {
     setHoveredSquare(null);
+    if (downTimerRef.current) {
+      clearTimeout(downTimerRef.current);
+      downTimerRef.current = null;
+    }
+    setIsLongPress(false);
   };
 
-  // console.log(entities,'-----')
+  // //console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
     [];
   if (entities.length !== 0) {
     entities.forEach((entity) => {
       const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
       const value = getComponentValueStrict(Pixel, entity);
-
       if (value.text === "_none") {
         value.text = "";
       }
@@ -161,7 +165,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
 
-    // console.log(entityData); // 打印数组
+    //console.log(entityData); // 打印数组
   }
 
   // const drawGrid = useCallback(
@@ -246,7 +250,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   //   },
   //   [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
   // );
-
+  //console.log(entityData)
   const getEntityAtCoordinates = (x: number, y: number) => {
     return entityData.find(
       (entity) => entity.coordinates.x === x && entity.coordinates.y === y
@@ -257,7 +261,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
-  // console.log(parts[0]); // 输出 "Base"
+  // //console.log(parts[0]); // 输出 "Base"
   if (appName) {
     if (parts[0] === "BASE") {
       worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
@@ -348,20 +352,21 @@ export default function Header({ hoveredData, handleData }: Props) {
   //   [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
   // );
 
-  
   const drawGrid = useCallback(
-    (ctx: CanvasRenderingContext2D, hoveredSquare: { x: number; y: number } | null, mouseX: number, mouseY: number,) => {
-  setHoveredSquare(coordinates)
-      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      console.log(hoveredSquare,99999,coordinates,6666,hoveredSquareRef.current
-        )
+    (
+      ctx: CanvasRenderingContext2D,
+      hoveredSquare: { x: number; y: number } | null,
+      mouseX: number,
+      mouseY: number
+    ) => {
+      // setHoveredSquare(hoveredSquare)
+      // ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      //console.log(hoveredSquare,99999,coordinates,selectedColor)
       // 填充整个画布背景色
-      ctx.fillStyle = "#2f1643";
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "#2e1140";
-
+      ctx.lineWidth = 10;
+      ctx.strokeStyle  = "#000000";
+      
       // 绘制竖条纹
       for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
         ctx.beginPath();
@@ -369,7 +374,6 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.lineTo(x - scrollOffset.x, CANVAS_HEIGHT);
         ctx.stroke();
       }
-
       // 绘制横条纹
       for (let y = 0; y < CANVAS_HEIGHT; y += GRID_SIZE) {
         ctx.beginPath();
@@ -377,20 +381,31 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.lineTo(CANVAS_WIDTH, y - scrollOffset.y);
         ctx.stroke();
       }
-
       ctx.font = "10px Arial";
-      ctx.fillStyle = "#2f1643";
-
-      for (let i = 0; i <= CANVAS_WIDTH / GRID_SIZE; i++) {
-        for (let j = 0; j <= CANVAS_HEIGHT / GRID_SIZE; j++) {
+      const visibleArea = {
+        x: Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE)),
+        y: Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE)),
+        width: Math.ceil(document.documentElement.clientWidth / GRID_SIZE),
+        height: Math.ceil(document.documentElement.clientHeight / GRID_SIZE),
+      };
+      for (let i = visibleArea.x; i < visibleArea.x + visibleArea.width; i++) {
+        for (
+          let j = visibleArea.y;
+          j < visibleArea.y + visibleArea.height;
+          j++
+        ) {
           const currentX = i * GRID_SIZE - scrollOffset.x;
           const currentY = j * GRID_SIZE - scrollOffset.y;
-
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#391618";
+          ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+  
           // 绘制背景色
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
 
           const entity = getEntityAtCoordinates(i, j);
+
           if (entity) {
             ctx.fillStyle = entity.value.color;
             ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
@@ -403,11 +418,13 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
 
       if (selectedColor && hoveredSquare) {
-        // console.log(selectedColor)
+        //console.log(hoveredSquare)
+        //console.log(coordinates.x * GRID_SIZE - scrollOffset.x,
+        // coordinates.y * GRID_SIZE - scrollOffset.y,6968888)
         ctx.fillStyle = selectedColor;
         ctx.fillRect(
-          hoveredSquare.x * GRID_SIZE - scrollOffset.x,
-          hoveredSquare.y * GRID_SIZE - scrollOffset.y,
+          coordinates.x * GRID_SIZE - scrollOffset.x,
+          coordinates.y * GRID_SIZE - scrollOffset.y,
           GRID_SIZE,
           GRID_SIZE
         );
@@ -419,82 +436,118 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.canvas.style.cursor = "default";
       }
     },
-    [GRID_SIZE, CANVAS_WIDTH, getEntityAtCoordinates,CANVAS_HEIGHT, selectedColor, scrollOffset]
+    [
+      GRID_SIZE,
+      coordinates,
+      CANVAS_WIDTH,
+      getEntityAtCoordinates,
+      CANVAS_HEIGHT,
+      selectedColor,
+      scrollOffset,
+    ]
   );
 
-
+  // let timer: NodeJS.Timeout | null = null;
+  // let isLongPress = false;
+  const LongPressThreshold = 500; // 定义长按的时间阈值，单位为毫秒
+  let timeout: NodeJS.Timeout;
+  const [isDragging, setIsDragging] = useState(false);
+  const downTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isLongPress, setIsLongPress] = useState(false);
+  const ClickThreshold = 300; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsDragging(true);
-    setTranslateX(event.clientX);
-    setTranslateY(event.clientY);
-    const canvas = canvasRef.current as any;
-    const rect = canvas.getBoundingClientRect();
-    
-    const mouseX = event.clientX - rect.left ;
-    const mouseY = event.clientY - rect.top ;
+    downTimerRef.current = setTimeout(() => {
+      setIsLongPress(true);
+      // 这里执行长按事件逻辑
+      console.log("长按");
+    }, ClickThreshold);
+  };
 
-    const gridX = Math.floor(mouseX / GRID_SIZE);
-    const gridY = Math.floor(mouseY / GRID_SIZE);
-    
-    setCoordinatesData({ x: gridX, y: gridY });
-    const newHoveredSquare = { x: gridX, y: gridY };
-    setHoveredSquare(newHoveredSquare);
-    
-    if (selectedColor && coordinates) {
+  const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+    //console.log('我点了！！！')
+    setIsLongPress(false);
+    setIsDragging(false);
+    if (downTimerRef.current) {
+      clearTimeout(downTimerRef.current);
+      downTimerRef.current = null;
+    }
+    if (!isLongPress) {
+      console.log("我点了！！！");
+    }
+    if (isLongPress) {
+      // 长按事件的逻辑
+      console.log("长按事件的逻辑");
+      setIsLongPress(false);
+      setIsDragging(false);
+    } else {
+      // 点击事件的逻辑
+      console.log("点击事件的逻辑");
+      setTranslateX(event.clientX);
+      setTranslateY(event.clientY);
+      const canvas = canvasRef.current as any;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      const gridX = Math.floor(mouseX / GRID_SIZE);
+      const gridY = Math.floor(mouseY / GRID_SIZE);
+      setCoordinatesData({ x: gridX, y: gridY });
+      const newHoveredSquare = { x: gridX, y: gridY };
+      setHoveredSquare(newHoveredSquare);
+
+      if (selectedColor && coordinates) {
         hoveredSquareRef.current = coordinates;
         if (parts[1] !== "Snake") {
-            setLoading(true);
-            const increData = increment(
-                null,
-                coordinates,
-                entityaData,
-                palyerAddress,
-                selectedColor
-            );
-            increData.then((increDataVal: any) => {
-                increDataVal[1].then((a: any) => {
-                    if (a.status === "success") {
-                        setLoading(false);
-                    } else {
-                        setLoading(false);
-                        onHandleLoading();
-                        toast.error("An error was reported");
-                    }
-                });
+          setLoading(true);
+          setIsDragging(false);
+          const increData = increment(
+            null,
+            coordinates,
+            entityaData,
+            palyerAddress,
+            selectedColor
+          );
+          increData.then((increDataVal: any) => {
+            increDataVal[1].then((a: any) => {
+              if (a.status === "success") {
+                setLoading(false);
+              } else {
+                setLoading(false);
+                onHandleLoading();
+                toast.error("An error was reported");
+              }
             });
+          });
         }
-
-        handleData(coordinates);
+        mouseXRef.current = mouseX;
+        mouseYRef.current = mouseY;
+        handleData(hoveredSquare as any);
         const ctx = canvas.getContext("2d");
         if (ctx) {
-            // ctx.fillStyle = selectedColor;
-            // ctx.fillRect(
-            //     hoveredSquare.x * GRID_SIZE,
-            //     hoveredSquare.y * GRID_SIZE,
-            //     GRID_SIZE,
-            //     GRID_SIZE
-            // );
-            drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current); 
+          const { x, y } = coordinates;
+          ctx.fillStyle = selectedColor;
+          ctx.fillRect(
+            x * GRID_SIZE - scrollOffset.x,
+            y * GRID_SIZE - scrollOffset.y,
+            GRID_SIZE,
+            GRID_SIZE
+          );
+          drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
         }
-    } else {
-        //console.log("hoveredSquare或selectedColor为空");
-    }
-};
+      } else {
+        ////console.log("hoveredSquare或selectedColor为空");
+      }
+      setIsDragging(false);
+      setPopExhibit(true);
+      setShowOverlay(true);
+      if (parts[1] !== "Snake") {
+        setLoading(true);
+      }
 
-
-  const handleMouseUp = () => {
-    console.log('我点了！！！')
-    setIsDragging(false);
-    // setPopExhibit(true);
-    setShowOverlay(true);
-    if (parts[1] !== "Snake") {
-      setLoading(true);
+      // e.stopPropagation();
+      setTranslateX(0);
+      setTranslateY(0);
     }
-   
-  
-    // e.stopPropagation();
-    setTranslateX(0);
-    setTranslateY(0);
   };
 
   const handleMouseEnter = useCallback(
@@ -508,132 +561,65 @@ export default function Header({ hoveredData, handleData }: Props) {
       // 计算网格位置
       const gridX = Math.floor(mouseXRef.current / GRID_SIZE);
       const gridY = Math.floor(mouseYRef.current / GRID_SIZE);
-    
+
       // 更新hoveredSquare状态
       setHoveredSquare({ x: gridX, y: gridY });
 
       // 绘制蓝色背景
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
-        console.log(mouseXRef.current, mouseYRef.current,1222)
-    // return
-        drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current); // 重新绘制网格并传递hoveredSquare和鼠标位置
+        drawGrid(ctx, hoveredSquare, mouseXRef.current, mouseYRef.current); // 重新绘制网格并传递hoveredSquare和鼠标位置
       }
     },
     [drawGrid, hoveredSquare]
   );
-  const [isDragging, setIsDragging] = useState(false);
-  // const handleMouseMoveData = useCallback(
-  //   (event: React.MouseEvent<HTMLDivElement>) => {
-  //     if (!visibleAreaRef.current || !isDragging) return;
-  
-  //     const dx = event.clientX - translateX;
-  //     const dy = event.clientY - translateY;
-  
-  //     setTranslateX(event.clientX);
-  //     setTranslateY(event.clientY);
-  
-  //     setScrollOffset((prevOffset) => ({
-  //       x: prevOffset.x - dx,
-  //       y: prevOffset.y - dy
-  //     }));
-  
-  //     const canvas = canvasRef.current;
-  //     if (canvas) {
-  //       const rect = canvas.getBoundingClientRect();
-  //       const mouseX = event.clientX - rect.left + scrollOffset.x;
-  //       const mouseY = event.clientY - rect.top + scrollOffset.y;
-  //       setMouseX(mouseX);
-  //       setMouseY(mouseY);
-  
-  //       const gridX = Math.floor(mouseX / GRID_SIZE);
-  //       const gridY = Math.floor(mouseY / GRID_SIZE);
-  //       setHoveredSquare({ x: gridX, y: gridY });
-  
-  //       const ctx = canvas.getContext("2d");
-  //       if (ctx) {
-  //         drawGrid(ctx, hoveredSquare, mouseX, mouseY);
-  //       }
-  //     }
-  //   },
-  //   [translateX, translateY, visibleAreaRef, drawGrid, hoveredSquare, isDragging, scrollOffset, GRID_SIZE]
-  // );
-  
+
   const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-        if (!visibleAreaRef.current || !isDragging) return;
+      if (!visibleAreaRef.current || !isDragging) return;
 
-        const dx = event.clientX - translateX;
-        const dy = event.clientY - translateY;
-setHoveredSquare(coordinates)
-        setTranslateX(event.clientX);
-        setTranslateY(event.clientY);
+      const dx = event.clientX - translateX;
+      const dy = event.clientY - translateY;
 
-        setScrollOffset((prevOffset) => ({
-            x: Math.max(0, prevOffset.x + dx),
-            y: Math.max(0, prevOffset.y + dy)
-        }));
+      setTranslateX(event.clientX);
+      setTranslateY(event.clientY);
 
-        const canvas = canvasRef.current;
-        if (canvas) {
-            const rect = canvas.getBoundingClientRect();
-            const mouseX = event.clientX - rect.left;
-            const mouseY = event.clientY - rect.top;
-            setMouseX(mouseX);
-            setMouseY(mouseY);
-            const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
-            const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
-            hoveredSquareRef.current={ x: gridX, y: gridY }
-            // setHoveredSquare({ x: gridX, y: gridY });
+      setScrollOffset((prevOffset) => ({
+        x: Math.max(0, prevOffset.x + dx),
+        y: Math.max(0, prevOffset.y + dy),
+      }));
 
-            const ctx = canvas.getContext("2d");
-            if (ctx && selectedColor) {
-                ctx.fillStyle = selectedColor;
-                ctx.fillRect(
-                    gridX * GRID_SIZE,
-                    gridY * GRID_SIZE,
-                    GRID_SIZE,
-                    GRID_SIZE
-                );
-            }
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        setMouseX(mouseX);
+        setMouseY(mouseY);
+
+        const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
+        const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
+
+        setHoveredSquare({ x: gridX, y: gridY });
+
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          drawGrid(ctx, hoveredSquare, mouseX, mouseY); // 重新绘制画布并传入更新后的参数
         }
+      }
     },
-    [translateX, translateY, visibleAreaRef, selectedColor, isDragging, scrollOffset]
-);
-
-  // const handleMouseMoveData = useCallback(
-  //   (event: React.MouseEvent<HTMLDivElement>) => {
-  //     setMouseX(event.clientX);
-  //     setMouseY(event.clientY);
-  //     if (event.buttons !== 1 || !visibleAreaRef.current) return;
-
-  //     const dx = event.clientX - translateX;
-  //     const dy = event.clientY - translateY;
-
-  //     // 重新绘制网格
-  //     if(canvasRef.current){
-  //       const ctx = canvasRef.current.getContext("2d");
-  //       if (ctx) {
-  //         drawGrid(ctx, hoveredSquare, mouseX, mouseY);
-  //       }
-  //     }
-    
-
-  //     setTranslateX(event.clientX);
-  //     setTranslateY(event.clientY);
-
-  //     visibleAreaRef.current.scrollLeft -= dx;
-  //     visibleAreaRef.current.scrollTop -= dy;
-
-  //     // 更新鼠标位置
-  //     if (!canvasRef.current) return;
-  //     const rect = visibleAreaRef.current.getBoundingClientRect();
-  //     mouseXRef.current = event.clientX - rect.left;
-  //     mouseYRef.current = event.clientY - rect.top;
-  //   },
-  //   [translateX, translateY]
-  // );
-
+    [
+      translateX,
+      translateY,
+      visibleAreaRef,
+      drawGrid,
+      hoveredSquare,
+      isDragging,
+      scrollOffset,
+      GRID_SIZE,
+    ]
+  );
 
   const addressDataCopy = (text: any) => {
     navigator.clipboard.writeText(text).then(
@@ -647,14 +633,14 @@ setHoveredSquare(coordinates)
   };
 
   const handlePanningChange = (newPanningValue: any) => {
-    // console.log(newPanningValue)
+    // //console.log(newPanningValue)
     setPopExhibit(false);
     setShowOverlay(false);
     setPanningFromChild(newPanningValue);
   };
 
   const onHandleExe = () => {
-    // console.log('dianle')
+    // //console.log('dianle')
     setPopExhibit(false);
     setShowOverlay(false);
     // setLoading(false)
@@ -674,7 +660,7 @@ setHoveredSquare(coordinates)
       const instruction = getComponentValue(Instruction, entityaData) as any;
       const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
       const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-      // console.log(result);
+      // //console.log(result);
       setInstruC(instruction?.instruction);
       setEntityaData(result);
     });
@@ -693,14 +679,15 @@ setHoveredSquare(coordinates)
   }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current; 
+    const canvas = canvasRef.current;
     if (canvas && entityData.length > 0) {
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-console.log(hoveredSquare,'---------------',hoveredSquareRef.current)
-// setHoveredSquare(hoveredSquareRef.current)
-        drawGrid(ctx, hoveredSquareRef.current, mouseX, mouseY);
+        //console.log(coordinates,'-----',coordinates)
+        // setHoveredSquare(hoveredSquareRef.current)
+        // setHoveredSquare(coordinates)
+        drawGrid(ctx, hoveredSquare, mouseX, mouseY);
       }
     }
   }, [
@@ -725,14 +712,15 @@ console.log(hoveredSquare,'---------------',hoveredSquareRef.current)
       const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
       const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
       setCoordinates({ x: gridX, y: gridY });
+      setHoveredSquare({ x: gridX, y: gridY });
+
       // setHoveredSquare({ x: gridX, y: gridY });
-      hoveredSquareRef.current={ x: gridX, y: gridY }
+      hoveredSquareRef.current = { x: gridX, y: gridY };
     };
 
     const handleScroll = () => {
       const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-
       setScrollOffset({ x: scrollX, y: scrollY });
     };
 
@@ -748,10 +736,6 @@ console.log(hoveredSquare,'---------------',hoveredSquareRef.current)
       window.removeEventListener("scroll", handleScroll);
     };
   }, [canvasRef, scrollOffset]);
-
-
-
-  
 
   return (
     <>
@@ -826,7 +810,7 @@ console.log(hoveredSquare,'---------------',hoveredSquareRef.current)
             style={{
               width: `${CONTENT_WIDTH}px`,
               height: `900px`,
-              overflow: "auto",
+              // overflow: "auto",
             }}
           >
             <canvas
@@ -890,7 +874,8 @@ console.log(hoveredSquare,'---------------',hoveredSquareRef.current)
         />
       </div>
 
-      {localStorage.getItem("manifest")?.includes("Snake") && popExhibit === true  ? (
+      {localStorage.getItem("manifest")?.includes("Snake") &&
+      popExhibit === true ? (
         <>
           {showOverlay && <div className={style.overlay} />}
           <PopUpBox
