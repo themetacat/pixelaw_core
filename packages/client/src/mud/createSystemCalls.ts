@@ -121,7 +121,6 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
      coordinates: any, 
      addressData: any, 
      selectedColor: any, 
-     app_data: any,
      other_params: any) => {
       const app_name =  window.localStorage.getItem('app_name'); 
       const system_name =  window.localStorage.getItem('system_name') as string; 

@@ -24,6 +24,14 @@ interface Props {
   loading: any;
   onHandleExe: any;
 }
+export function convertToString(bytes32Value: string) {
+
+    const byteArray = new Uint8Array(bytes32Value.match(/[\da-f]{2}/gi).map(h => parseInt(h, 16)));
+    const filteredByteArray = byteArray.filter(byte => byte !== 0);
+          const result = fromBytes(filteredByteArray, 'string');
+    return result;
+  }
+  
 export default function RightPart({
   coordinates,
   loading,
@@ -123,6 +131,10 @@ export default function RightPart({
         >
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
+            const app_name =  convertToString(entitya);
+
+            value.app_name = app_name;
+
             return (
               <div
                 key={`${index}`}
@@ -132,7 +144,6 @@ export default function RightPart({
                   }
                   handleIconClick(index, value);
                   updateAbiUrl(value.manifest);
-                  localStorage.setItem("manifest", value.manifest);
                   localStorage.setItem(
                     "entityVal",
                     decodeEntity({ app_addr: "address" }, entitya).app_addr
