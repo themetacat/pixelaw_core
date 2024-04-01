@@ -9,8 +9,9 @@ import { resourceToHex } from "@latticexyz/common";
 import { SetupNetworkResult } from './setupNetwork'
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { getContract } from "@latticexyz/common";
-import { encodeSystemCall } from '@latticexyz/world';
-// import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
+import { encodeSystemCall, SystemCall } from '@latticexyz/world';
+import interact_abi from "../../../paint/out/IPaintSystem.sol/IPaintSystem.abi.json";
+import { Abi, encodeFunctionData } from "viem";
 export function createSystemCalls(
   /*
    * The parameter list informs TypeScript that:
@@ -97,7 +98,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       
     }else if (appName && appName.includes('Pix2048')) {
       tx = await systemContract.write.pix2048_Pix2048System_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
-  
+
     }
     hashValpublic =  publicClient.waitForTransactionReceipt({hash:tx});
 
@@ -130,17 +131,42 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       if(other_params){
         args.push(other_params);
       }
+      let tx, hashValpublic;
       console.log(args);
-      
-      const txData = await worldContract.write.call(encodeSystemCall({
-      abi: abi_json,
-      systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
-      functionName: namespace + '_' + system_name + '_interact',
-      args: args
+
+      console.log(resourceToHex({"type": "system", "namespace": namespace, "name": system_name}));
+      // const x = namespace + '_' + system_name + '_interact';
+      // type MyFunctionName = `${string}_${string}_interact`; // 定义期望的格式
+
+      const x = `${namespace}_${system_name}_interact`;
+      const z = encodeFunctionData({
+        abi: interact_abi,
+        functionName: x,
+        args: args,
       })
-    )
-    const tx = await waitForTransaction(txData);
-    const hashValpublic = publicClient.waitForTransactionReceipt({hash:tx})
+      console.log(z);
+    
+      // const myCall: SystemCall<Abi, typeof interact_function_ame> = {
+      //   abi: interact_abi,
+      //   systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
+      //   functionName: interact_function_ame,
+      //   args: args,
+      // };
+      try{
+        const txData = await worldContract.write.call(encodeSystemCall({
+          abi: interact_abi,
+          systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
+          functionName: x,
+          args: args
+        }))
+        // const txData = await worldContract.write.call(encodeSystemCall(myCall))
+        const tx = await waitForTransaction(txData);
+        hashValpublic = publicClient.waitForTransactionReceipt({hash:tx})
+
+      }catch(error){
+        console.error('Failed to setup network:', error);
+        return[null, null];
+      }
     return [tx,hashValpublic]
   };
 
