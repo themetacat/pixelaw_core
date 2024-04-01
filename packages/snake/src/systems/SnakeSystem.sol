@@ -59,6 +59,7 @@ contract SnakeSystem is System {
 
     if(player_snake.length > 0){
       player_snake.direction = direction;
+      player_snake.step = 0;
       Snake.set(player, player_snake);
       return player_snake.first_segment_id;
     }
@@ -72,7 +73,8 @@ contract SnakeSystem is System {
       direction: direction,
       color: default_parameters.color,
       text: "",
-      is_dying: false
+      is_dying: false,
+      step: 0
     });
 
     string memory pixel_color;
@@ -129,8 +131,8 @@ contract SnakeSystem is System {
       if(snake.length == 0){
         Position memory position = Position({x: first_segment.x, y:first_segment.y});
         ICoreSystem(_world()).alert_player(position, owner, 'Snake died here');
-        Died memory died = Died(owner, first_segment.x, first_segment.y);
-        emit EventDied(died);
+        // Died memory died = Died(owner, first_segment.x, first_segment.y);
+        // emit EventDied(died);
 
         Snake.set(owner, SnakeData({
           length: 0,
@@ -139,9 +141,10 @@ contract SnakeSystem is System {
           direction: Direction.None,
           color: '0',
           text: '_none',
-          is_dying: false
+          is_dying: false,
+          step: 0
         }));
-        Snake.deleteRecord(owner);
+        // Snake.deleteRecord(owner);
       }
     }
 
@@ -149,8 +152,9 @@ contract SnakeSystem is System {
     uint32 next_x;
     uint32 next_y;
     (next_x, next_y) = next_position(first_segment.x, first_segment.y, snake.direction);
-    if(next_x != 0 && next_y != 0 && !snake.is_dying){
+    if(next_x != 0 && next_y != 0 && !snake.is_dying && snake.step <= 50){
       PixelData memory next_pixel = Pixel.get(next_x, next_y);
+      snake.step += 1;
       bool has_write_access = ICoreSystem(_world()).has_write_access(next_pixel, PixelUpdateData({x: next_x, y:next_y, color: snake.color, timestamp: 0, text: snake.text, app: address(0), owner: address(0), action: ''}));
       if(next_pixel.owner == address(0)){
         snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);

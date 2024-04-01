@@ -13,6 +13,7 @@ export default mudConfig({
       valueSchema:{
         is_dying: "bool",
         direction: "Direction",
+        step: "uint8",
         length: "uint8",
         first_segment_id: "uint256",
         last_segment_id: "uint256",
