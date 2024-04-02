@@ -448,15 +448,21 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
             selectedColor
           );
           increData.then((increDataVal: any) => {
-            increDataVal[1].then((a: any) => {
-              if (a.status === "success") {
-                setLoading(false);
-              } else {
-                setLoading(false);
-                onHandleLoading();
-                toast.error("An error was reported");
-              }
-            });
+
+            if (increDataVal[1]) {
+              increDataVal[1].then((a: any) => {
+                if (a.status === "success") {
+                  setLoading(false);
+                } else {
+                  // setLoading(false);
+                  // onHandleLoading();
+                  // toast.error("An error was reported");
+                  handleError();
+                }
+              });
+            } else {
+              handleError();
+            }
           });
         }
         mouseXRef.current = mouseX;
@@ -830,7 +836,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           {showOverlay && <div className={style.overlay} />}
           <PopUpBox
             addressData={addressData}
-            coordinates={coordinatesData}
+            coordinates={coordinates}
             onHandleExe={onHandleExe}
             selectedColor={selectedColor}
             onHandleLoading={onHandleLoading}
