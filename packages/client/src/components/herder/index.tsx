@@ -579,6 +579,24 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
       GRID_SIZE,
     ]
   );
+  const get_function_param = async(abi_json:any[], function_name: string, common_json: string) => {
+    // const response = await fetch(abi_url); // 获取 ABI JSON 文件
+    // const systemData = await response.json();
+    if(!abi_json){
+      return []
+    }
+    if(!function_name){
+      return []
+    }
+    let funciont_def = abi_json.filter(entry => entry.name === function_name && entry.type === 'function');
+    if (!funciont_def) {
+      funciont_def = abi_json.filter(entry => entry.name === 'interact' && entry.type === 'function');
+      if (!funciont_def) {
+        return []
+      }
+    }
+
+  }
 
   const addressDataCopy = (text: any) => {
     navigator.clipboard.writeText(text).then(

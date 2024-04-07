@@ -70,6 +70,84 @@ if(entityVal===null){
     return '0x' + hexString;
   }
 
+  const DEFAULT_PARAMETERS_TYPE = 'struct DefaultParameters'
+  const get_function_param = (abi_json:any[], function_name: string, common_json: any[] = []) => {
+    // const response = await fetch(abi_url); // 获取 ABI JSON 文件
+    // const systemData = await response.json();
+    const convertedParams: any = [];
+    let variants: {name: string, value: number}[] = []
+    if(!abi_json){
+      return []
+    }
+    if(!function_name){
+      return []
+    }
+    let funciont_def = abi_json.filter(entry => entry.name === function_name && entry.type === 'function');
+    if (!funciont_def) {
+      funciont_def = abi_json.filter(entry => entry.name === 'interact' && entry.type === 'function');
+
+      if (!funciont_def) {
+        return []
+      }
+    }
+    console.log(funciont_def);
+    
+    funciont_def.forEach(param => {
+      console.log(param.inputs);
+      param.inputs.forEach(component => {
+        
+        if(component.internalType.startsWith("struct ")){
+          const struct = get_struct(component.components);
+          convertedParams.push(struct);
+        }else if(component.internalType.startsWith("enum ")){
+          get_enum_value(component.internalType.replace("enum ", ""));
+          convertedParams.push({[component.name]: get_value_type(component.type), ["variants"]: get_enum_value(component.internalType.replace("enum ", ""))})
+        }
+        else{
+          convertedParams.push({[component.name]: get_value_type(component.type)});
+        }
+      })
+
+  });
+  console.log(convertedParams);
+  }
+
+  const get_struct = (components: any) => {
+    const res: any = {};
+    components.forEach(component => {
+      if(component.internalType.startsWith("struct ")){
+        const struct = get_struct(component.components);
+        res[component.name] = struct;
+      }else{
+        res[component.name] = get_value_type(component.type);
+      }
+    })
+    return res;;
+  }
+  
+  const get_enum_value = async(enumName: string) => {
+    const res = [];
+    const response = await fetch('https://pixelaw-game.vercel.app/SnakeSystemCommon.json');
+    const systemCommonData = await response.json();
+    // const enumData = systemCommonData.find(x => x.asd.nodes.name === 'Direction');
+    const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
+    enumData.members.forEach(member => {
+      if(member.name != "None" && member.nodeType === "EnumValue"){
+        res.push(member.name)
+      }
+    })
+    return res
+  }
+
+  const get_value_type = (type: string) => {
+    if(type.includes('int')){
+      return 'Number';
+    }else if(type === 'address'){
+      return 'string';
+    }else{
+      return type;
+    }
+  }
 
 const increment = async (incrementData: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
 // console.log(coordinates,'=================',selectedColor)
@@ -128,7 +206,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       const app_name =  window.localStorage.getItem('app_name'); 
       const system_name =  window.localStorage.getItem('system_name') as string; 
       const namespace =  window.localStorage.getItem('namespace') as string; 
-      
+
       const args = [{
         for_player: addressData,
         for_app: app_name,
@@ -138,6 +216,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
         },
         color: selectedColor
     }]
+    get_function_param(abi, action)
       if(other_params){
         args.push(other_params);
       }
