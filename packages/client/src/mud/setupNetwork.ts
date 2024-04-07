@@ -12,7 +12,7 @@ import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
 // import IWorldAbi from "../../../../packages/call_system/out/IWorld.sol/IWorld.abi.json";
 // import ICallSystemAbi from "../../../../packages/call_system/out/ICallOtherSystem.sol/ICallOtherSystem.abi.json";
-import IWorldAbi from "../../../contracts/out/IWorld.sol/IWorld.abi.json";
+import IWorldAbi from "../../../../packages/contracts/out/IWorld.sol/IWorld.abi.json";
 // const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.abi.json');
 // const ICallSystemAbi = await response.json();
 // import SnakeSystemAbi from "../../../../packages/snake/out/SnakeSystem.sol/SnakeSystem.abi.json";

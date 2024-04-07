@@ -183,6 +183,8 @@ export default function RightPart({
                         width: "48px",
                         display: "inline-block",
                         marginRight: "15px",
+                        color: "white", // 将图标颜色设置为白色
+                        fontFamily: "NotoEmoji, sans-serif"
                       }}
                     >
                       {value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon)

@@ -15,12 +15,14 @@ interface Props {
   selectedColor: any;
   onHandleLoading: any;
   onHandleLoadingFun: any;
+  interactHandle: any;
   coordinates: { x: number; y: number };
 }
 export default function PopUpBox({
   addressData,
   selectedColor,
   onHandleLoading,
+  interactHandle,
   onHandleExe,
   coordinates,
   onHandleLoadingFun,
@@ -60,86 +62,106 @@ export default function PopUpBox({
     //   palyerAddress,
     //   selectedColor
     // );
-    const interact_data = interact(
-      coordinates,
+    interactHandle( coordinates,
       palyerAddress,
       selectedColor,
       'interact',
-      1
-    );
-    interact_data.then((increDataVal: any) => {
-      increDataVal[1].then((a: any) => {
-        if (a.status === "success") {
-          onHandleLoading();
-        } else {
-          onHandleLoading();
-          alert("An error was reported");
-        }
-      });
-    });
+      1)
+    // const interact_data = interact(
+    //   coordinates,
+    //   palyerAddress,
+    //   selectedColor,
+    //   'interact',
+    //   1
+    // );
+    // interact_data.then((increDataVal: any) => {
+    //   increDataVal[1].then((a: any) => {
+    //     if (a.status === "success") {
+    //       onHandleLoading();
+    //     } else {
+    //       onHandleLoading();
+    //       alert("An error was reported");
+    //     }
+    //   });
+    // });
     onHandleExe();
   };
   const onHandleRight = () => {
     onHandleLoadingFun()
-    const increData = increment(
-      2,
-      coordinates,
-      entityaData,
+    interactHandle( coordinates,
       palyerAddress,
-      selectedColor
-    );
-    increData.then((increDataVal: any) => {
-      increDataVal[1].then((a: any) => {
-        if (a.status === "success") {
-          onHandleLoading();
-        } else {
-          onHandleLoading();
-          toast.error("An error was reported");
-        }
-      });
-    });
+      selectedColor,
+      'interact',
+      2)
+    // const increData = increment(
+    //   2,
+    //   coordinates,
+    //   entityaData,
+    //   palyerAddress,
+    //   selectedColor
+    // );
+    // increData.then((increDataVal: any) => {
+    //   increDataVal[1].then((a: any) => {
+    //     if (a.status === "success") {
+    //       onHandleLoading();
+    //     } else {
+    //       onHandleLoading();
+    //       toast.error("An error was reported");
+    //     }
+    //   });
+    // });
     onHandleExe();
   };
   const onHandleUp = () => {
     onHandleLoadingFun()
-    const increData = increment(
-      3,
-      coordinates,
-      entityaData,
+    interactHandle( coordinates,
       palyerAddress,
-      selectedColor
-    );
-    increData.then((increDataVal: any) => {
-      increDataVal[1].then((a: any) => {
-        if (a.status === "success") {
-          onHandleLoading();
-        } else {
-          onHandleLoading();
-          toast.error("An error was reported");
-        }
-      });
-    });
+      selectedColor,
+      'interact',
+      3)
+    // const increData = increment(
+    //   3,
+    //   coordinates,
+    //   entityaData,
+    //   palyerAddress,
+    //   selectedColor
+    // );
+    // increData.then((increDataVal: any) => {
+    //   increDataVal[1].then((a: any) => {
+    //     if (a.status === "success") {
+    //       onHandleLoading();
+    //     } else {
+    //       onHandleLoading();
+    //       toast.error("An error was reported");
+    //     }
+    //   });
+    // });
     onHandleExe();
   };
   const onHandleDown = () => {
     onHandleLoadingFun()
-    const increData = increment(
-      4,
-      coordinates,
-      entityaData,
+    interactHandle( coordinates,
       palyerAddress,
-      selectedColor
-    );
-    increData.then((increDataVal: any) => {
-      increDataVal[1].then((a: any) => {
-        if (a.status === "success") {
-          onHandleLoading();
-        } else {
-          onHandleLoading();
-          toast.error("An error was reported");
-        }
-      });
-    });
+      selectedColor,
+      'interact',
+      4)
+    // const increData = increment(
+    //   4,
+    //   coordinates,
+    //   entityaData,
+    //   palyerAddress,
+    //   selectedColor
+    // );
+    // increData.then((increDataVal: any) => {
+    //   increDataVal[1].then((a: any) => {
+    //     if (a.status === "success") {
+    //       onHandleLoading();
+    //     } else {
+    //       onHandleLoading();
+    //       toast.error("An error was reported");
+    //     }
+    //   });
+    // });
     onHandleExe();
   };
 
