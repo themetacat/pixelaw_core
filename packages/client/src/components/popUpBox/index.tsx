@@ -28,7 +28,7 @@ export default function PopUpBox({
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { increment },
+    systemCalls: { increment, interact },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
   const [instruC, setInstruC] = useState(null);
@@ -53,14 +53,21 @@ export default function PopUpBox({
 
   const onHandleLeft = () => {
     onHandleLoadingFun()
-    const increData = increment(
-      1,
+    // const increData = increment(
+    //   1,
+    //   coordinates,
+    //   entityaData,
+    //   palyerAddress,
+    //   selectedColor
+    // );
+    const interact_data = interact(
       coordinates,
-      entityaData,
       palyerAddress,
-      selectedColor
+      selectedColor,
+      'interact',
+      1
     );
-    increData.then((increDataVal: any) => {
+    interact_data.then((increDataVal: any) => {
       increDataVal[1].then((a: any) => {
         if (a.status === "success") {
           onHandleLoading();

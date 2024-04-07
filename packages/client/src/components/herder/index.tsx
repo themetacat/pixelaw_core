@@ -6,15 +6,18 @@ import {
   getComponentValue,
   AnyComponentValue,
 } from "@latticexyz/recs";
-import { decodeEntity } from "@latticexyz/store-sync/recs";
 import { formatUnits } from "viem";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart from "../rightPart";
 import { useMUD } from "../../MUDContext";
-
+import {convertToString, coorToEntityID} from "../rightPart/index"
 import PopUpBox from "../popUpBox";
-
+import {
+  encodeEntity,
+  syncToRecs,
+  decodeEntity,
+} from "@latticexyz/store-sync/recs";
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
@@ -68,7 +71,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { increment },
+    systemCalls: { increment, interact },
   } = useMUD();
 
   const [numberData, setNumberData] = useState(25);
@@ -106,6 +109,8 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [selectedColor, setSelectedColor] = useState("#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
+
+  // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
 
   const addressData =
     palyerAddress.substring(0, 6) +
@@ -367,23 +372,31 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
         if (parts[1] !== "Snake") {
           setLoading(true);
           setIsDragging(false);
-          const increData = increment(
-            null,
+          // const increData = increment(
+          //   null,
+          //   coordinates,
+          //   entityaData,
+          //   palyerAddress,
+          //   selectedColor
+          // );
+          const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
+          const pixel_value = getComponentValue(Pixel, coor_entity) as any;
+          const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
+          
+          const interact_data = interact(
             coordinates,
-            entityaData,
             palyerAddress,
-            selectedColor
+            selectedColor,
+            action,
+            null
           );
-          increData.then((increDataVal: any) => {
+          interact_data.then((increDataVal: any) => {
 
             if (increDataVal[1]) {
               increDataVal[1].then((a: any) => {
                 if (a.status === "success") {
                   setLoading(false);
                 } else {
-                  // setLoading(false);
-                  // onHandleLoading();
-                  // toast.error("An error was reported");
                   handleError();
                 }
               });
@@ -535,13 +548,15 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
 
   useEffect(() => {
     entities_app.map((entitya) => {
-      const entityaData = entities_app[0];
-      const instruction = getComponentValue(Instruction, entityaData) as any;
-      const num = BigInt(entityaData); // 将 16 进制字符串转换为 BigInt 类型的数值
-      const result = "0x" + num?.toString(16); // 将 BigInt 转换为 16 进制字符串，并添加前缀 "0x"
-      // //console.log(result);
-      setInstruC(instruction?.instruction);
+     
+      const instruction = getComponentValue(Instruction, entitya) as any;
+      if(instruction?.instruction){
+        // ！！！要用对象存值，有n个游戏存在instruction
+        setInstruC(instruction?.instruction);
+      }
+      const result = convertToString(entitya);
       setEntityaData(result);
+
     });
   }, []);
 

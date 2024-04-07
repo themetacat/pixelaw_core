@@ -9,8 +9,10 @@ import { resourceToHex } from "@latticexyz/common";
 import { SetupNetworkResult } from './setupNetwork'
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { getContract } from "@latticexyz/common";
-import { encodeSystemCall } from '@latticexyz/world';
-// import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
+import { encodeSystemCall, SystemCall } from '@latticexyz/world';
+// import interact_abi from "../../../paint/out/IPaintSystem.sol/IPaintSystem.abi.json";
+// import interact_abi from "../../../paint/out/PaintSystem.sol/PaintSystem.abi.json";
+import { Abi, encodeFunctionData } from "viem";
 export function createSystemCalls(
   /*
    * The parameter list informs TypeScript that:
@@ -36,6 +38,12 @@ export function createSystemCalls(
 ) {
   let abi_json: any = abi;
   const update_abi = (value: any) => {
+    abi_json = value;
+  }
+
+  let app_value: any;
+
+  const update_app_value = (value: any) => {
     abi_json = value;
   }
   
@@ -80,7 +88,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
     const entityaData = localStorage.getItem('entityVal') as any;
     
     if (appName.includes('Paint')) {
-       tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
+       tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
 
     } else if (appName && appName.includes('Snake')) {
       // console.log(224444)
@@ -91,12 +99,13 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       
     }else if (appName && appName.includes('Pix2048')) {
       tx = await systemContract.write.pix2048_Pix2048System_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
-  
+
     }
     hashValpublic =  publicClient.waitForTransactionReceipt({hash:tx});
 
   } catch (error) {
     console.error('Failed to setup network:', error);
+    return[null, null]
   }
   
   return [tx,hashValpublic]
@@ -110,35 +119,51 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
     call_data: any
   }
 
-  const interact = async (incrementData: any,
+  const interact = async (
      coordinates: any, 
-     entityaData: any, 
      addressData: any, 
      selectedColor: any, 
-     app_data: any,
+     action: string,
      other_params: any) => {
+      const app_name =  window.localStorage.getItem('app_name'); 
+      const system_name =  window.localStorage.getItem('system_name') as string; 
+      const namespace =  window.localStorage.getItem('namespace') as string; 
+      
+      const args = [{
+        for_player: addressData,
+        for_app: app_name,
+        position: {
+            x: coordinates.x,
+            y: coordinates.y
+        },
+        color: selectedColor
+    }]
+      if(other_params){
+        args.push(other_params);
+      }
+      let tx, hashValpublic;
 
-      const txData = await worldContract.write.call(encodeSystemCall({
-      abi: abi_json,
-      systemId: resourceToHex({"type": "system", "namespace": app_data.namespace, "name": app_data.name}),
-      functionName: app_data.name + '_' + app_data.namespace + '_interact',
-      args: [{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, other_params]
-      })
-    )
-    await waitForTransaction(txData);
+      // const x = `${namespace}_${system_name}_interact`;
+    
+      try{
+        const txData = await worldContract.write.call(encodeSystemCall({
+          abi: abi_json,
+          systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
+          functionName: action,
+          args: args
+        }))
+        const tx = await waitForTransaction(txData);
+        
+        hashValpublic = publicClient.waitForTransactionReceipt({hash:txData})
 
+      }catch(error){
+        console.error('Failed to setup network:', error);
+        return[null, null];
+      }
+    return [tx,hashValpublic]
   };
 
 
-  // const systemContract = getContract({
-  //   address: '0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c', 
-  //   abi: ICallSystemAbi,
-  //   publicClient,
-  //   walletClient: walletClient,
-  //   onWrite: (write) => write$.next(write),
-  // });
-
- 
   return {
     increment,
     update_abi,

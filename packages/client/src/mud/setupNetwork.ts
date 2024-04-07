@@ -12,13 +12,12 @@ import { getNetworkConfig } from "./getNetworkConfig";
 import { world } from "./world";
 // import IWorldAbi from "../../../../packages/call_system/out/IWorld.sol/IWorld.abi.json";
 // import ICallSystemAbi from "../../../../packages/call_system/out/ICallOtherSystem.sol/ICallOtherSystem.abi.json";
-
-const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.abi.json');
-const ICallSystemAbi = await response.json();
+import IWorldAbi from "../../../contracts/out/IWorld.sol/IWorld.abi.json";
+// const response = await fetch('https://pixelaw-game.vercel.app/ICallOtherSystem.abi.json');
+// const ICallSystemAbi = await response.json();
 // import SnakeSystemAbi from "../../../../packages/snake/out/SnakeSystem.sol/SnakeSystem.abi.json";
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { createBurnerAccount, getContract, transportObserver, ContractWrite, resourceToHex } from "@latticexyz/common";
-
 import { Subject, share } from "rxjs";
 
 /*
@@ -101,7 +100,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
      
       const worldContract = getContract({
         address: networkConfig.worldAddress as Hex, 
-        abi: ICallSystemAbi,
+        abi: IWorldAbi,
         publicClient,
         walletClient: burnerWalletClient,
         onWrite: (write) => write$.next(write),
@@ -130,6 +129,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
         .then(response => response.json())
         .then(abi => {
           // 将获取到的ABI作为contract参数传递
+          
           const systemContract = getContract({
             address: networkConfig.worldAddress as Hex,
             abi:abi,
@@ -151,7 +151,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             address: networkConfig.worldAddress as Hex,
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
-            indexerUrl: "https://api.metacat.world/",
+            // indexerUrl: "https://api.metacat.world/",
             filters: [
               {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Pixel" }),

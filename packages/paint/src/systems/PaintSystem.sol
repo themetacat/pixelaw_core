@@ -14,13 +14,15 @@ import { Pixel, PixelData } from "../codegen/index.sol";
 contract PaintSystem is System {
   // address core_actions_addr = Util.get_core_actions_address();
   // ICoreSystem core_actions = ICoreSystem(_world());
-
+  string constant APP_ICON = 'U+1F58C';
+  string constant NAMESPACE = 'paint';
+  string constant SYSTEM_NAME = 'PaintSystem';
+  string constant APP_NAME = 'paint';
+  string constant APP_MANIFEST = 'BASE/PaintSystem';
+  
   function init() public {
-  // string memory APP_KEY = "paint";
 
-  // string memory APP_ICON = "icon_test";
-    // ICoreSystem(_world()).init();
-    ICoreSystem(_world()).update_app("paint", "U+1F58C", "BASE/Paint.abi.json");
+    ICoreSystem(_world()).update_app(APP_NAME, APP_ICON, APP_MANIFEST, NAMESPACE, SYSTEM_NAME);
 
     ICoreSystem(_world()).update_permission("snake", 
     PermissionsData({
@@ -28,14 +30,10 @@ contract PaintSystem is System {
       })); 
   }
 
-  function interact(DefaultParameters memory default_parameters) public{
+  function interact(DefaultParameters memory default_parameters) public {
     Position memory position = default_parameters.position;
     address player = default_parameters.for_player;
-    address system = default_parameters.for_system;
 
-    // load pixel
-    // how to get
-    // PixelData memory pixel = ICoreSystem(_world()).get_pixel(position.x, position.y);
     PixelData memory pixel = Pixel.get(position.x, position.y);
 
     uint256 COOLDOWN_SECS = 5;
@@ -51,7 +49,7 @@ contract PaintSystem is System {
   function put_color(DefaultParameters memory default_parameters) public {
     Position memory position = default_parameters.position;
     address player = default_parameters.for_player;
-    address system = default_parameters.for_system;
+    string memory for_app = default_parameters.for_app;
     
     // pixel
     ICoreSystem(_world()).update_pixel(
@@ -61,7 +59,7 @@ contract PaintSystem is System {
         color: default_parameters.color,
         timestamp: 0,
         text: "",
-        app: system,
+        app: for_app,
         owner: player,
         action: ""
       }));

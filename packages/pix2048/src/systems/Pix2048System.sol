@@ -8,7 +8,7 @@ import { Game2048, Game2048Data, Game2048TableId  } from "../codegen/index.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract Pix2048System is System {
-  string constant APP_ICON = 'U+1699';
+  string constant APP_ICON = 'U+1F4A0';
   string constant NAMESPACE = 'pix2048';
   string constant SYSTEM_NAME = 'pix2048System';
   string constant APP_NAME = '2048';
@@ -50,7 +50,7 @@ contract Pix2048System is System {
       ICoreSystem(_world()).update_pixel(PixelUpdateData({
         x: position.x + 4,
         y: position.y,
-        color: '#FF00FF',
+        color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E7',
         app: system,
@@ -61,7 +61,7 @@ contract Pix2048System is System {
       ICoreSystem(_world()).update_pixel(PixelUpdateData({
         x: position.x + 4,
         y: position.y + 1,
-        color: '#FF00FF',
+        color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E9',
         app: system,
@@ -72,7 +72,7 @@ contract Pix2048System is System {
       ICoreSystem(_world()).update_pixel(PixelUpdateData({
         x: position.x + 4,
         y: position.y + 2,
-        color: '#FF00FF',
+        color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E6',
         app: system,
@@ -83,7 +83,7 @@ contract Pix2048System is System {
       ICoreSystem(_world()).update_pixel(PixelUpdateData({
         x: position.x + 4,
         y: position.y + 3,
-        color: '#FF00FF',
+        color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E8',
         app: system,
@@ -400,7 +400,7 @@ contract Pix2048System is System {
  function ownerless_space(Position memory position) internal view returns (bool){
     for(uint8 i; i<4; i++){
       for(uint8 j; j<5; j++){
-        PixelData memory pixel = Pixel.get(position.x+i, position.y+j);
+        PixelData memory pixel = Pixel.get(position.x+j, position.y+i);
         if(keccak256(abi.encodePacked(pixel.color)) != keccak256(abi.encodePacked('0')) && bytes(pixel.color).length != 0){
           return false;
         }else if(keccak256(abi.encodePacked(pixel.text)) != keccak256(abi.encodePacked('_none')) && bytes(pixel.text).length != 0){

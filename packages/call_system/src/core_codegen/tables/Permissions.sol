@@ -53,8 +53,8 @@ library Permissions {
    */
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _keySchema = new SchemaType[](2);
-    _keySchema[0] = SchemaType.ADDRESS;
-    _keySchema[1] = SchemaType.ADDRESS;
+    _keySchema[0] = SchemaType.BYTES32;
+    _keySchema[1] = SchemaType.BYTES32;
 
     return SchemaLib.encode(_keySchema);
   }
@@ -116,10 +116,10 @@ library Permissions {
   /**
    * @notice Get app.
    */
-  function getApp(address allowing_app, address allowed_app) internal view returns (bool app) {
+  function getApp(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool app) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -128,10 +128,10 @@ library Permissions {
   /**
    * @notice Get app.
    */
-  function _getApp(address allowing_app, address allowed_app) internal view returns (bool app) {
+  function _getApp(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool app) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -140,10 +140,10 @@ library Permissions {
   /**
    * @notice Set app.
    */
-  function setApp(address allowing_app, address allowed_app, bool app) internal {
+  function setApp(bytes32 allowing_app, bytes32 allowed_app, bool app) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((app)), _fieldLayout);
   }
@@ -151,10 +151,10 @@ library Permissions {
   /**
    * @notice Set app.
    */
-  function _setApp(address allowing_app, address allowed_app, bool app) internal {
+  function _setApp(bytes32 allowing_app, bytes32 allowed_app, bool app) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((app)), _fieldLayout);
   }
@@ -162,10 +162,10 @@ library Permissions {
   /**
    * @notice Get color.
    */
-  function getColor(address allowing_app, address allowed_app) internal view returns (bool color) {
+  function getColor(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool color) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -174,10 +174,10 @@ library Permissions {
   /**
    * @notice Get color.
    */
-  function _getColor(address allowing_app, address allowed_app) internal view returns (bool color) {
+  function _getColor(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool color) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -186,10 +186,10 @@ library Permissions {
   /**
    * @notice Set color.
    */
-  function setColor(address allowing_app, address allowed_app, bool color) internal {
+  function setColor(bytes32 allowing_app, bytes32 allowed_app, bool color) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((color)), _fieldLayout);
   }
@@ -197,10 +197,10 @@ library Permissions {
   /**
    * @notice Set color.
    */
-  function _setColor(address allowing_app, address allowed_app, bool color) internal {
+  function _setColor(bytes32 allowing_app, bytes32 allowed_app, bool color) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((color)), _fieldLayout);
   }
@@ -208,10 +208,10 @@ library Permissions {
   /**
    * @notice Get owner.
    */
-  function getOwner(address allowing_app, address allowed_app) internal view returns (bool owner) {
+  function getOwner(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool owner) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -220,10 +220,10 @@ library Permissions {
   /**
    * @notice Get owner.
    */
-  function _getOwner(address allowing_app, address allowed_app) internal view returns (bool owner) {
+  function _getOwner(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool owner) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -232,10 +232,10 @@ library Permissions {
   /**
    * @notice Set owner.
    */
-  function setOwner(address allowing_app, address allowed_app, bool owner) internal {
+  function setOwner(bytes32 allowing_app, bytes32 allowed_app, bool owner) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((owner)), _fieldLayout);
   }
@@ -243,10 +243,10 @@ library Permissions {
   /**
    * @notice Set owner.
    */
-  function _setOwner(address allowing_app, address allowed_app, bool owner) internal {
+  function _setOwner(bytes32 allowing_app, bytes32 allowed_app, bool owner) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((owner)), _fieldLayout);
   }
@@ -254,10 +254,10 @@ library Permissions {
   /**
    * @notice Get text.
    */
-  function getText(address allowing_app, address allowed_app) internal view returns (bool text) {
+  function getText(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool text) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -266,10 +266,10 @@ library Permissions {
   /**
    * @notice Get text.
    */
-  function _getText(address allowing_app, address allowed_app) internal view returns (bool text) {
+  function _getText(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool text) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -278,10 +278,10 @@ library Permissions {
   /**
    * @notice Set text.
    */
-  function setText(address allowing_app, address allowed_app, bool text) internal {
+  function setText(bytes32 allowing_app, bytes32 allowed_app, bool text) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((text)), _fieldLayout);
   }
@@ -289,10 +289,10 @@ library Permissions {
   /**
    * @notice Set text.
    */
-  function _setText(address allowing_app, address allowed_app, bool text) internal {
+  function _setText(bytes32 allowing_app, bytes32 allowed_app, bool text) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((text)), _fieldLayout);
   }
@@ -300,10 +300,10 @@ library Permissions {
   /**
    * @notice Get timestamp.
    */
-  function getTimestamp(address allowing_app, address allowed_app) internal view returns (bool timestamp) {
+  function getTimestamp(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool timestamp) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -312,10 +312,10 @@ library Permissions {
   /**
    * @notice Get timestamp.
    */
-  function _getTimestamp(address allowing_app, address allowed_app) internal view returns (bool timestamp) {
+  function _getTimestamp(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool timestamp) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -324,10 +324,10 @@ library Permissions {
   /**
    * @notice Set timestamp.
    */
-  function setTimestamp(address allowing_app, address allowed_app, bool timestamp) internal {
+  function setTimestamp(bytes32 allowing_app, bytes32 allowed_app, bool timestamp) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)), _fieldLayout);
   }
@@ -335,10 +335,10 @@ library Permissions {
   /**
    * @notice Set timestamp.
    */
-  function _setTimestamp(address allowing_app, address allowed_app, bool timestamp) internal {
+  function _setTimestamp(bytes32 allowing_app, bytes32 allowed_app, bool timestamp) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)), _fieldLayout);
   }
@@ -346,10 +346,10 @@ library Permissions {
   /**
    * @notice Get action.
    */
-  function getAction(address allowing_app, address allowed_app) internal view returns (bool action) {
+  function getAction(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool action) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -358,10 +358,10 @@ library Permissions {
   /**
    * @notice Get action.
    */
-  function _getAction(address allowing_app, address allowed_app) internal view returns (bool action) {
+  function _getAction(bytes32 allowing_app, bytes32 allowed_app) internal view returns (bool action) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
     return (_toBool(uint8(bytes1(_blob))));
@@ -370,10 +370,10 @@ library Permissions {
   /**
    * @notice Set action.
    */
-  function setAction(address allowing_app, address allowed_app, bool action) internal {
+  function setAction(bytes32 allowing_app, bytes32 allowed_app, bool action) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((action)), _fieldLayout);
   }
@@ -381,10 +381,10 @@ library Permissions {
   /**
    * @notice Set action.
    */
-  function _setAction(address allowing_app, address allowed_app, bool action) internal {
+  function _setAction(bytes32 allowing_app, bytes32 allowed_app, bool action) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((action)), _fieldLayout);
   }
@@ -392,10 +392,10 @@ library Permissions {
   /**
    * @notice Get the full data.
    */
-  function get(address allowing_app, address allowed_app) internal view returns (PermissionsData memory _table) {
+  function get(bytes32 allowing_app, bytes32 allowed_app) internal view returns (PermissionsData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
       _tableId,
@@ -408,10 +408,10 @@ library Permissions {
   /**
    * @notice Get the full data.
    */
-  function _get(address allowing_app, address allowed_app) internal view returns (PermissionsData memory _table) {
+  function _get(bytes32 allowing_app, bytes32 allowed_app) internal view returns (PermissionsData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
       _tableId,
@@ -425,8 +425,8 @@ library Permissions {
    * @notice Set the full data using individual values.
    */
   function set(
-    address allowing_app,
-    address allowed_app,
+    bytes32 allowing_app,
+    bytes32 allowed_app,
     bool app,
     bool color,
     bool owner,
@@ -440,8 +440,8 @@ library Permissions {
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -450,8 +450,8 @@ library Permissions {
    * @notice Set the full data using individual values.
    */
   function _set(
-    address allowing_app,
-    address allowed_app,
+    bytes32 allowing_app,
+    bytes32 allowed_app,
     bool app,
     bool color,
     bool owner,
@@ -465,8 +465,8 @@ library Permissions {
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -474,7 +474,7 @@ library Permissions {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(address allowing_app, address allowed_app, PermissionsData memory _table) internal {
+  function set(bytes32 allowing_app, bytes32 allowed_app, PermissionsData memory _table) internal {
     bytes memory _staticData = encodeStatic(
       _table.app,
       _table.color,
@@ -488,8 +488,8 @@ library Permissions {
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -497,7 +497,7 @@ library Permissions {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(address allowing_app, address allowed_app, PermissionsData memory _table) internal {
+  function _set(bytes32 allowing_app, bytes32 allowed_app, PermissionsData memory _table) internal {
     bytes memory _staticData = encodeStatic(
       _table.app,
       _table.color,
@@ -511,8 +511,8 @@ library Permissions {
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -553,10 +553,10 @@ library Permissions {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(address allowing_app, address allowed_app) internal {
+  function deleteRecord(bytes32 allowing_app, bytes32 allowed_app) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -564,10 +564,10 @@ library Permissions {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(address allowing_app, address allowed_app) internal {
+  function _deleteRecord(bytes32 allowing_app, bytes32 allowed_app) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -612,10 +612,10 @@ library Permissions {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(address allowing_app, address allowed_app) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 allowing_app, bytes32 allowed_app) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160(allowing_app)));
-    _keyTuple[1] = bytes32(uint256(uint160(allowed_app)));
+    _keyTuple[0] = allowing_app;
+    _keyTuple[1] = allowed_app;
 
     return _keyTuple;
   }

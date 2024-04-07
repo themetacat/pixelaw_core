@@ -26,18 +26,18 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant PixelUpdateTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0050050304041414200000000000000000000000000000000000000000000000
+  0x003c040404041420000000000000000000000000000000000000000000000000
 );
 
 struct PixelUpdateData {
   uint32 x;
   uint32 y;
-  address app;
   address owner;
   uint256 timestamp;
   string color;
   string text;
   string action;
+  string app;
 }
 
 library PixelUpdate {
@@ -69,8 +69,8 @@ library PixelUpdate {
     _valueSchema[0] = SchemaType.UINT32;
     _valueSchema[1] = SchemaType.UINT32;
     _valueSchema[2] = SchemaType.ADDRESS;
-    _valueSchema[3] = SchemaType.ADDRESS;
-    _valueSchema[4] = SchemaType.UINT256;
+    _valueSchema[3] = SchemaType.UINT256;
+    _valueSchema[4] = SchemaType.STRING;
     _valueSchema[5] = SchemaType.STRING;
     _valueSchema[6] = SchemaType.STRING;
     _valueSchema[7] = SchemaType.STRING;
@@ -95,12 +95,12 @@ library PixelUpdate {
     fieldNames = new string[](8);
     fieldNames[0] = "x";
     fieldNames[1] = "y";
-    fieldNames[2] = "app";
-    fieldNames[3] = "owner";
-    fieldNames[4] = "timestamp";
-    fieldNames[5] = "color";
-    fieldNames[6] = "text";
-    fieldNames[7] = "action";
+    fieldNames[2] = "owner";
+    fieldNames[3] = "timestamp";
+    fieldNames[4] = "color";
+    fieldNames[5] = "text";
+    fieldNames[6] = "action";
+    fieldNames[7] = "app";
   }
 
   /**
@@ -202,55 +202,13 @@ library PixelUpdate {
   }
 
   /**
-   * @notice Get app.
-   */
-  function getApp(bytes32 key) internal view returns (address app) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = key;
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (address(bytes20(_blob)));
-  }
-
-  /**
-   * @notice Get app.
-   */
-  function _getApp(bytes32 key) internal view returns (address app) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = key;
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (address(bytes20(_blob)));
-  }
-
-  /**
-   * @notice Set app.
-   */
-  function setApp(bytes32 key, address app) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = key;
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((app)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set app.
-   */
-  function _setApp(bytes32 key, address app) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = key;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((app)), _fieldLayout);
-  }
-
-  /**
    * @notice Get owner.
    */
   function getOwner(bytes32 key) internal view returns (address owner) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (address(bytes20(_blob)));
   }
 
@@ -261,7 +219,7 @@ library PixelUpdate {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (address(bytes20(_blob)));
   }
 
@@ -272,7 +230,7 @@ library PixelUpdate {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((owner)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((owner)), _fieldLayout);
   }
 
   /**
@@ -282,7 +240,7 @@ library PixelUpdate {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((owner)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((owner)), _fieldLayout);
   }
 
   /**
@@ -292,7 +250,7 @@ library PixelUpdate {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -303,7 +261,7 @@ library PixelUpdate {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -314,7 +272,7 @@ library PixelUpdate {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((timestamp)), _fieldLayout);
   }
 
   /**
@@ -324,7 +282,7 @@ library PixelUpdate {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((timestamp)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((timestamp)), _fieldLayout);
   }
 
   /**
@@ -814,6 +772,168 @@ library PixelUpdate {
   }
 
   /**
+   * @notice Get app.
+   */
+  function getApp(bytes32 key) internal view returns (string memory app) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 3);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Get app.
+   */
+  function _getApp(bytes32 key) internal view returns (string memory app) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 3);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Set app.
+   */
+  function setApp(bytes32 key, string memory app) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 3, bytes((app)));
+  }
+
+  /**
+   * @notice Set app.
+   */
+  function _setApp(bytes32 key, string memory app) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreCore.setDynamicField(_tableId, _keyTuple, 3, bytes((app)));
+  }
+
+  /**
+   * @notice Get the length of app.
+   */
+  function lengthApp(bytes32 key) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 3);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of app.
+   */
+  function _lengthApp(bytes32 key) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 3);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get an item of app.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItemApp(bytes32 key, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 3, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of app.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItemApp(bytes32 key, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 3, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to app.
+   */
+  function pushApp(bytes32 key, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 3, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to app.
+   */
+  function _pushApp(bytes32 key, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 3, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from app.
+   */
+  function popApp(bytes32 key) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 3, 1);
+  }
+
+  /**
+   * @notice Pop a slice from app.
+   */
+  function _popApp(bytes32 key) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 3, 1);
+  }
+
+  /**
+   * @notice Update a slice of app at `_index`.
+   */
+  function updateApp(bytes32 key, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 3, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of app at `_index`.
+   */
+  function _updateApp(bytes32 key, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = key;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 3, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
    * @notice Get the full data.
    */
   function get(bytes32 key) internal view returns (PixelUpdateData memory _table) {
@@ -850,17 +970,17 @@ library PixelUpdate {
     bytes32 key,
     uint32 x,
     uint32 y,
-    address app,
     address owner,
     uint256 timestamp,
     string memory color,
     string memory text,
-    string memory action
+    string memory action,
+    string memory app
   ) internal {
-    bytes memory _staticData = encodeStatic(x, y, app, owner, timestamp);
+    bytes memory _staticData = encodeStatic(x, y, owner, timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(color, text, action);
-    bytes memory _dynamicData = encodeDynamic(color, text, action);
+    PackedCounter _encodedLengths = encodeLengths(color, text, action, app);
+    bytes memory _dynamicData = encodeDynamic(color, text, action, app);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -875,17 +995,17 @@ library PixelUpdate {
     bytes32 key,
     uint32 x,
     uint32 y,
-    address app,
     address owner,
     uint256 timestamp,
     string memory color,
     string memory text,
-    string memory action
+    string memory action,
+    string memory app
   ) internal {
-    bytes memory _staticData = encodeStatic(x, y, app, owner, timestamp);
+    bytes memory _staticData = encodeStatic(x, y, owner, timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(color, text, action);
-    bytes memory _dynamicData = encodeDynamic(color, text, action);
+    PackedCounter _encodedLengths = encodeLengths(color, text, action, app);
+    bytes memory _dynamicData = encodeDynamic(color, text, action, app);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -897,10 +1017,10 @@ library PixelUpdate {
    * @notice Set the full data using the data struct.
    */
   function set(bytes32 key, PixelUpdateData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.x, _table.y, _table.app, _table.owner, _table.timestamp);
+    bytes memory _staticData = encodeStatic(_table.x, _table.y, _table.owner, _table.timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(_table.color, _table.text, _table.action);
-    bytes memory _dynamicData = encodeDynamic(_table.color, _table.text, _table.action);
+    PackedCounter _encodedLengths = encodeLengths(_table.color, _table.text, _table.action, _table.app);
+    bytes memory _dynamicData = encodeDynamic(_table.color, _table.text, _table.action, _table.app);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -912,10 +1032,10 @@ library PixelUpdate {
    * @notice Set the full data using the data struct.
    */
   function _set(bytes32 key, PixelUpdateData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.x, _table.y, _table.app, _table.owner, _table.timestamp);
+    bytes memory _staticData = encodeStatic(_table.x, _table.y, _table.owner, _table.timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(_table.color, _table.text, _table.action);
-    bytes memory _dynamicData = encodeDynamic(_table.color, _table.text, _table.action);
+    PackedCounter _encodedLengths = encodeLengths(_table.color, _table.text, _table.action, _table.app);
+    bytes memory _dynamicData = encodeDynamic(_table.color, _table.text, _table.action, _table.app);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = key;
@@ -928,16 +1048,14 @@ library PixelUpdate {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (uint32 x, uint32 y, address app, address owner, uint256 timestamp) {
+  ) internal pure returns (uint32 x, uint32 y, address owner, uint256 timestamp) {
     x = (uint32(Bytes.slice4(_blob, 0)));
 
     y = (uint32(Bytes.slice4(_blob, 4)));
 
-    app = (address(Bytes.slice20(_blob, 8)));
+    owner = (address(Bytes.slice20(_blob, 8)));
 
-    owner = (address(Bytes.slice20(_blob, 28)));
-
-    timestamp = (uint256(Bytes.slice32(_blob, 48)));
+    timestamp = (uint256(Bytes.slice32(_blob, 28)));
   }
 
   /**
@@ -946,7 +1064,7 @@ library PixelUpdate {
   function decodeDynamic(
     PackedCounter _encodedLengths,
     bytes memory _blob
-  ) internal pure returns (string memory color, string memory text, string memory action) {
+  ) internal pure returns (string memory color, string memory text, string memory action, string memory app) {
     uint256 _start;
     uint256 _end;
     unchecked {
@@ -965,6 +1083,12 @@ library PixelUpdate {
       _end += _encodedLengths.atIndex(2);
     }
     action = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+
+    _start = _end;
+    unchecked {
+      _end += _encodedLengths.atIndex(3);
+    }
+    app = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
 
   /**
@@ -978,9 +1102,9 @@ library PixelUpdate {
     PackedCounter _encodedLengths,
     bytes memory _dynamicData
   ) internal pure returns (PixelUpdateData memory _table) {
-    (_table.x, _table.y, _table.app, _table.owner, _table.timestamp) = decodeStatic(_staticData);
+    (_table.x, _table.y, _table.owner, _table.timestamp) = decodeStatic(_staticData);
 
-    (_table.color, _table.text, _table.action) = decodeDynamic(_encodedLengths, _dynamicData);
+    (_table.color, _table.text, _table.action, _table.app) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
@@ -1007,14 +1131,8 @@ library PixelUpdate {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(
-    uint32 x,
-    uint32 y,
-    address app,
-    address owner,
-    uint256 timestamp
-  ) internal pure returns (bytes memory) {
-    return abi.encodePacked(x, y, app, owner, timestamp);
+  function encodeStatic(uint32 x, uint32 y, address owner, uint256 timestamp) internal pure returns (bytes memory) {
+    return abi.encodePacked(x, y, owner, timestamp);
   }
 
   /**
@@ -1024,11 +1142,17 @@ library PixelUpdate {
   function encodeLengths(
     string memory color,
     string memory text,
-    string memory action
+    string memory action,
+    string memory app
   ) internal pure returns (PackedCounter _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
-      _encodedLengths = PackedCounterLib.pack(bytes(color).length, bytes(text).length, bytes(action).length);
+      _encodedLengths = PackedCounterLib.pack(
+        bytes(color).length,
+        bytes(text).length,
+        bytes(action).length,
+        bytes(app).length
+      );
     }
   }
 
@@ -1039,9 +1163,10 @@ library PixelUpdate {
   function encodeDynamic(
     string memory color,
     string memory text,
-    string memory action
+    string memory action,
+    string memory app
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(bytes((color)), bytes((text)), bytes((action)));
+    return abi.encodePacked(bytes((color)), bytes((text)), bytes((action)), bytes((app)));
   }
 
   /**
@@ -1053,17 +1178,17 @@ library PixelUpdate {
   function encode(
     uint32 x,
     uint32 y,
-    address app,
     address owner,
     uint256 timestamp,
     string memory color,
     string memory text,
-    string memory action
+    string memory action,
+    string memory app
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(x, y, app, owner, timestamp);
+    bytes memory _staticData = encodeStatic(x, y, owner, timestamp);
 
-    PackedCounter _encodedLengths = encodeLengths(color, text, action);
-    bytes memory _dynamicData = encodeDynamic(color, text, action);
+    PackedCounter _encodedLengths = encodeLengths(color, text, action, app);
+    bytes memory _dynamicData = encodeDynamic(color, text, action, app);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }

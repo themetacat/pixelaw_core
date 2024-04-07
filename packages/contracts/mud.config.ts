@@ -4,8 +4,8 @@ export default mudConfig({
   tables: {
     Permissions: {
       keySchema: {
-        allowing_app: "address",
-        allowed_app: "address",
+        allowing_app: "bytes32",
+        allowed_app: "bytes32",
       },
       valueSchema:{
         app: "bool",
@@ -22,7 +22,6 @@ export default mudConfig({
         y: "uint32",
       },
       valueSchema:{
-        app: "address",
         owner: "address",
         timestamp: "uint256",
         created_at: "uint256",
@@ -30,18 +29,19 @@ export default mudConfig({
         color: "string",
         text: "string",
         action: "string",
+        app: "string",
       }
     },
     PixelUpdate:{
       valueSchema:{
         x: "uint32",
         y: "uint32",
-        app: "address",
         owner: "address",
         timestamp: "uint256",
         color: "string",
         text: "string",
         action: "string",
+        app: "string",
       }
     },
     // game_id uint32
@@ -55,19 +55,22 @@ export default mudConfig({
     },
     App: {
       keySchema: {
-        system: "address"
+        app_name_key: "bytes32"
       },
       valueSchema: {
+        developer: "address",
+        system_addr: "address",
+        namespace: "string",
+        system_name: "string",
         manifest: "string",
-        app_name: "string",
         icon: "string",
-        action: "string"
+        action: "string",
       }
     },
     AppUser: {
       keySchema: {
-        system: "address",
-        player: "address"
+        player: "address",
+        app_name: "bytes32",
       },
       valueSchema: {
         action: "string"
@@ -75,10 +78,10 @@ export default mudConfig({
     },
     AppName:{
       keySchema: {
-        app_name: "bytes32",
+        system: "address",
       },
       valueSchema: {
-        system: "address"
+        app_name: "string",
       }
     },
     CoreActionAddress: {
@@ -91,7 +94,7 @@ export default mudConfig({
     },
     Instruction: {
       keySchema: {
-        system: "address",
+        app: "bytes32",
       },
       valueSchema:{
         selector: "bytes4",
