@@ -21,7 +21,9 @@ interface ICoreSystem {
     string memory namespace,
     string memory system_name
   ) external;
-  
+
+  function update_app_system(address new_system_addr, string memory app_name) external;
+
   function has_write_access(PixelData memory pixel, PixelUpdateData memory pixel_update) external view returns (bool);
 
   function update_pixel(PixelUpdateData memory pixel_update) external;
@@ -36,3 +38,4 @@ interface ICoreSystem {
 
   function convertToBytes32(string memory input) external pure returns (bytes32);
 }
+

@@ -129,7 +129,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
         .then(response => response.json())
         .then(abi => {
           // 将获取到的ABI作为contract参数传递
-          console.log(abi);
           
           const systemContract = getContract({
             address: networkConfig.worldAddress as Hex,

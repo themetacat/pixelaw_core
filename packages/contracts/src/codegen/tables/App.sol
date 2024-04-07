@@ -24,11 +24,12 @@ ResourceId constant _tableId = ResourceId.wrap(bytes32(abi.encodePacked(RESOURCE
 ResourceId constant AppTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0014010514000000000000000000000000000000000000000000000000000000
+  0x0028020514140000000000000000000000000000000000000000000000000000
 );
 
 struct AppData {
   address developer;
+  address system_addr;
   string namespace;
   string system_name;
   string manifest;
@@ -61,13 +62,14 @@ library App {
    * @return _valueSchema The value schema for the table.
    */
   function getValueSchema() internal pure returns (Schema) {
-    SchemaType[] memory _valueSchema = new SchemaType[](6);
+    SchemaType[] memory _valueSchema = new SchemaType[](7);
     _valueSchema[0] = SchemaType.ADDRESS;
-    _valueSchema[1] = SchemaType.STRING;
+    _valueSchema[1] = SchemaType.ADDRESS;
     _valueSchema[2] = SchemaType.STRING;
     _valueSchema[3] = SchemaType.STRING;
     _valueSchema[4] = SchemaType.STRING;
     _valueSchema[5] = SchemaType.STRING;
+    _valueSchema[6] = SchemaType.STRING;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -86,13 +88,14 @@ library App {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](6);
+    fieldNames = new string[](7);
     fieldNames[0] = "developer";
-    fieldNames[1] = "namespace";
-    fieldNames[2] = "system_name";
-    fieldNames[3] = "manifest";
-    fieldNames[4] = "icon";
-    fieldNames[5] = "action";
+    fieldNames[1] = "system_addr";
+    fieldNames[2] = "namespace";
+    fieldNames[3] = "system_name";
+    fieldNames[4] = "manifest";
+    fieldNames[5] = "icon";
+    fieldNames[6] = "action";
   }
 
   /**
@@ -149,6 +152,48 @@ library App {
     _keyTuple[0] = app_name_key;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((developer)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get system_addr.
+   */
+  function getSystem_addr(bytes32 app_name_key) internal view returns (address system_addr) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = app_name_key;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (address(bytes20(_blob)));
+  }
+
+  /**
+   * @notice Get system_addr.
+   */
+  function _getSystem_addr(bytes32 app_name_key) internal view returns (address system_addr) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = app_name_key;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (address(bytes20(_blob)));
+  }
+
+  /**
+   * @notice Set system_addr.
+   */
+  function setSystem_addr(bytes32 app_name_key, address system_addr) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = app_name_key;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((system_addr)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set system_addr.
+   */
+  function _setSystem_addr(bytes32 app_name_key, address system_addr) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = app_name_key;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((system_addr)), _fieldLayout);
   }
 
   /**
@@ -997,13 +1042,14 @@ library App {
   function set(
     bytes32 app_name_key,
     address developer,
+    address system_addr,
     string memory namespace,
     string memory system_name,
     string memory manifest,
     string memory icon,
     string memory action
   ) internal {
-    bytes memory _staticData = encodeStatic(developer);
+    bytes memory _staticData = encodeStatic(developer, system_addr);
 
     PackedCounter _encodedLengths = encodeLengths(namespace, system_name, manifest, icon, action);
     bytes memory _dynamicData = encodeDynamic(namespace, system_name, manifest, icon, action);
@@ -1020,13 +1066,14 @@ library App {
   function _set(
     bytes32 app_name_key,
     address developer,
+    address system_addr,
     string memory namespace,
     string memory system_name,
     string memory manifest,
     string memory icon,
     string memory action
   ) internal {
-    bytes memory _staticData = encodeStatic(developer);
+    bytes memory _staticData = encodeStatic(developer, system_addr);
 
     PackedCounter _encodedLengths = encodeLengths(namespace, system_name, manifest, icon, action);
     bytes memory _dynamicData = encodeDynamic(namespace, system_name, manifest, icon, action);
@@ -1041,7 +1088,7 @@ library App {
    * @notice Set the full data using the data struct.
    */
   function set(bytes32 app_name_key, AppData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.developer);
+    bytes memory _staticData = encodeStatic(_table.developer, _table.system_addr);
 
     PackedCounter _encodedLengths = encodeLengths(
       _table.namespace,
@@ -1068,7 +1115,7 @@ library App {
    * @notice Set the full data using the data struct.
    */
   function _set(bytes32 app_name_key, AppData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.developer);
+    bytes memory _staticData = encodeStatic(_table.developer, _table.system_addr);
 
     PackedCounter _encodedLengths = encodeLengths(
       _table.namespace,
@@ -1094,8 +1141,10 @@ library App {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(bytes memory _blob) internal pure returns (address developer) {
+  function decodeStatic(bytes memory _blob) internal pure returns (address developer, address system_addr) {
     developer = (address(Bytes.slice20(_blob, 0)));
+
+    system_addr = (address(Bytes.slice20(_blob, 20)));
   }
 
   /**
@@ -1158,7 +1207,7 @@ library App {
     PackedCounter _encodedLengths,
     bytes memory _dynamicData
   ) internal pure returns (AppData memory _table) {
-    (_table.developer) = decodeStatic(_staticData);
+    (_table.developer, _table.system_addr) = decodeStatic(_staticData);
 
     (_table.namespace, _table.system_name, _table.manifest, _table.icon, _table.action) = decodeDynamic(
       _encodedLengths,
@@ -1190,8 +1239,8 @@ library App {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(address developer) internal pure returns (bytes memory) {
-    return abi.encodePacked(developer);
+  function encodeStatic(address developer, address system_addr) internal pure returns (bytes memory) {
+    return abi.encodePacked(developer, system_addr);
   }
 
   /**
@@ -1240,13 +1289,14 @@ library App {
    */
   function encode(
     address developer,
+    address system_addr,
     string memory namespace,
     string memory system_name,
     string memory manifest,
     string memory icon,
     string memory action
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(developer);
+    bytes memory _staticData = encodeStatic(developer, system_addr);
 
     PackedCounter _encodedLengths = encodeLengths(namespace, system_name, manifest, icon, action);
     bytes memory _dynamicData = encodeDynamic(namespace, system_name, manifest, icon, action);

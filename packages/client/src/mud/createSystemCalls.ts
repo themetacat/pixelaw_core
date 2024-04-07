@@ -10,7 +10,8 @@ import { SetupNetworkResult } from './setupNetwork'
 // import SnakeSystemAbi from "contracts/out/SnakeSystem.sol/SnakeSystem.abi.json";
 import { getContract } from "@latticexyz/common";
 import { encodeSystemCall, SystemCall } from '@latticexyz/world';
-import interact_abi from "../../../paint/out/IPaintSystem.sol/IPaintSystem.abi.json";
+// import interact_abi from "../../../paint/out/IPaintSystem.sol/IPaintSystem.abi.json";
+// import interact_abi from "../../../paint/out/PaintSystem.sol/PaintSystem.abi.json";
 import { Abi, encodeFunctionData } from "viem";
 export function createSystemCalls(
   /*
@@ -122,46 +123,38 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
      coordinates: any, 
      addressData: any, 
      selectedColor: any, 
+     action: string,
      other_params: any) => {
       const app_name =  window.localStorage.getItem('app_name'); 
       const system_name =  window.localStorage.getItem('system_name') as string; 
       const namespace =  window.localStorage.getItem('namespace') as string; 
       
-      const args = [{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]
+      const args = [{
+        for_player: addressData,
+        for_app: app_name,
+        position: {
+            x: coordinates.x,
+            y: coordinates.y
+        },
+        color: selectedColor
+    }]
       if(other_params){
         args.push(other_params);
       }
       let tx, hashValpublic;
-      console.log(args);
 
-      console.log(resourceToHex({"type": "system", "namespace": namespace, "name": system_name}));
-      // const x = namespace + '_' + system_name + '_interact';
-      // type MyFunctionName = `${string}_${string}_interact`; // 定义期望的格式
-
-      const x = `${namespace}_${system_name}_interact`;
-      const z = encodeFunctionData({
-        abi: interact_abi,
-        functionName: x,
-        args: args,
-      })
-      console.log(z);
+      // const x = `${namespace}_${system_name}_interact`;
     
-      // const myCall: SystemCall<Abi, typeof interact_function_ame> = {
-      //   abi: interact_abi,
-      //   systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
-      //   functionName: interact_function_ame,
-      //   args: args,
-      // };
       try{
         const txData = await worldContract.write.call(encodeSystemCall({
-          abi: interact_abi,
+          abi: abi_json,
           systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
-          functionName: x,
+          functionName: action,
           args: args
         }))
-        // const txData = await worldContract.write.call(encodeSystemCall(myCall))
         const tx = await waitForTransaction(txData);
-        hashValpublic = publicClient.waitForTransactionReceipt({hash:tx})
+        
+        hashValpublic = publicClient.waitForTransactionReceipt({hash:txData})
 
       }catch(error){
         console.error('Failed to setup network:', error);
@@ -171,15 +164,6 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
   };
 
 
-  // const systemContract = getContract({
-  //   address: '0xc44504ab6a2c4df9a9ce82aecfc453fec3c8771c', 
-  //   abi: ICallSystemAbi,
-  //   publicClient,
-  //   walletClient: walletClient,
-  //   onWrite: (write) => write$.next(write),
-  // });
-
- 
   return {
     increment,
     update_abi,

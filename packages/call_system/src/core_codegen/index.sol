@@ -20,7 +20,6 @@ import { Alert, AlertData, AlertTableId } from "./tables/Alert.sol";
 struct DefaultParameters{
     address for_player;
     string for_app;
-
     Position position;
     string color;
   }

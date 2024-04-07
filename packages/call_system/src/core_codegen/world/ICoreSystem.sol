@@ -21,7 +21,9 @@ interface ICoreSystem {
     string memory namespace,
     string memory system_name
   ) external;
-  
+
+  function update_app_system(address new_system_addr, string memory app_name) external;
+
   function has_write_access(PixelData memory pixel, PixelUpdateData memory pixel_update) external view returns (bool);
 
   function update_pixel(PixelUpdateData memory pixel_update) external;
@@ -29,7 +31,7 @@ interface ICoreSystem {
   function set_instruction(bytes4 selector, string memory instruction) external;
 
   function schedule_queue(uint256 timestamp, bytes calldata call_data) external;
-  
+
   function process_queue(bytes32 id) external;
 
   function alert_player(Position memory position, address player, string memory message) external;

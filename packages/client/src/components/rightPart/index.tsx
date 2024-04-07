@@ -31,7 +31,10 @@ export function convertToString(bytes32Value: string) {
           const result = fromBytes(filteredByteArray, 'string');
     return result;
   }
-  
+export function coorToEntityID(x: number, y: number){
+  return encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
+}
+
 export default function RightPart({
   coordinates,
   loading,
@@ -40,7 +43,7 @@ export default function RightPart({
   setPanningState,
 }: Props) {
   const {
-    components: { App, Pixel },
+    components: { App, Pixel, AppName },
     systemCalls: { update_abi },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
@@ -49,7 +52,7 @@ export default function RightPart({
 
   const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
 
-  const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
+  // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   //console.log(decodeEntity({ x: "uint32", y: "uint32" }, entity));//每个块坐标
 
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
@@ -85,12 +88,14 @@ export default function RightPart({
 
   const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
-  let app_value, truncatedOwner;
-
+  let app_name, truncatedOwner;
+  
   if(pixel_value){
 
-    const address_entity = addressToEntityID(pixel_value.app);
-    app_value = getComponentValue(App, address_entity) as any;
+  //   const address_entity = addressToEntityID(pixel_value.app);
+  //   app_value = getComponentValue(App, address_entity) as any;
+  //   console.log(app_value);
+    app_name = pixel_value.app;
     const owner = pixel_value.owner;
     truncatedOwner = `${owner?.substring(
       0,
@@ -129,12 +134,13 @@ export default function RightPart({
           }}
           className={style.contBox}
         >
+          {/* ~~~~ 移动游戏图片才调用 */}
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
-            const app_name =  convertToString(entitya);
-
+            // const app_name =  convertToString(entitya);
+            const app_name = getComponentValue(AppName, addressToEntityID(value.system_addr))?.app_name;
             value.app_name = app_name;
-
+            
             return (
               <div
                 key={`${index}`}
@@ -224,62 +230,14 @@ export default function RightPart({
               </p>
               <p key={`Type-${coordinates.x}-${coordinates.y}`}>
             <span className={style.a}>Type: </span>
-            <span className={style.fontCon}>{app_value?.app_name?app_value?.app_name:'null'}</span>
+            <span className={style.fontCon}>{app_name?app_name:'null'}</span>
 
           </p>
           <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
             <span className={style.a}>Owner: </span>
             <span className={style.fontCon}> {truncatedOwner?truncatedOwner:'N/A'}</span>
           </p>
-              {/* {entityData.map((item: any) => {
-                if (
-                  item.coordinates.x === coordinates.x &&
-                  item.coordinates.y === coordinates.y
-                ) {
-                  const entityID = addressToEntityID(item.value.app);
-                  const type = `${app_info}`;
-                  const owner = item.value.owner;
-                  const truncatedOwner = `${owner.substring(
-                    0,
-                    6
-                  )}...${owner.substring(owner.length - 4)}`;
-                  return (
-                    <>
-                      <p
-                        key={`Type-${item.coordinates.x}-${item.coordinates.y}`}
-                      >
-                        <span className={style.a}>Type: </span>
-                        <span className={style.fontCon}>{type}</span>
-                      </p>
-                      <p
-                        key={`Owner-${item.coordinates.x}-${item.coordinates.y}`}
-                      >
-                        <span className={style.a}>Owner: </span>
-                        <span className={style.fontCon}> {truncatedOwner}</span>
-                      </p>
-                    </>
-                  );
-                } else {
-                  return null;
-                }
-              })} */}
-
-              {/* {entityData.some(
-                (item: any) =>
-                  item.coordinates.x === coordinates.x &&
-                  item.coordinates.y === coordinates.y
-              ) ? null : (
-                <>
-                  <p key={`Type`}>
-                    <span className={style.a}>Type :</span>{" "}
-                    <span className={style.fontCon}>null</span>
-                  </p>
-                  <p key={`Owner`}>
-                    <span className={style.a}>Owner :</span>
-                    <span className={style.fontCon}>null</span>
-                  </p>
-                </>
-              )} */}
+              
             </div>
           )}
         </div>

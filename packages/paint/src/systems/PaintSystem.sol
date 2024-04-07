@@ -18,7 +18,7 @@ contract PaintSystem is System {
   string constant NAMESPACE = 'paint';
   string constant SYSTEM_NAME = 'PaintSystem';
   string constant APP_NAME = 'paint';
-  string constant APP_MANIFEST = 'BASE/Paint';
+  string constant APP_MANIFEST = 'BASE/PaintSystem';
   
   function init() public {
 
@@ -30,7 +30,7 @@ contract PaintSystem is System {
       })); 
   }
 
-  function interact(DefaultParameters memory default_parameters) public{
+  function interact(DefaultParameters memory default_parameters) public {
     Position memory position = default_parameters.position;
     address player = default_parameters.for_player;
 

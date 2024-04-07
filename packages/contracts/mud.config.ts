@@ -59,6 +59,7 @@ export default mudConfig({
       },
       valueSchema: {
         developer: "address",
+        system_addr: "address",
         namespace: "string",
         system_name: "string",
         manifest: "string",

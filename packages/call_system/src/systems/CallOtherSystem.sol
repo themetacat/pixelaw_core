@@ -30,16 +30,4 @@ contract CallOtherSystem is System {
  
   }
 
-   function call_other_system_fn(string memory name_space, string memory name, bytes calldata call_data) public {
-
-    bytes14 namespace_bytes = bytes14(bytes(name_space));
-    bytes16 name_bytes = bytes16(bytes(name));
-    ResourceId systemId = WorldResourceIdLib.encode(RESOURCE_SYSTEM, namespace_bytes, name_bytes);
-    IWorld(_world()).call(
-      systemId,
-      call_data
-    );
- 
-  }
-
 }

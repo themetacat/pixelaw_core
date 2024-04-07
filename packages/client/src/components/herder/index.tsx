@@ -6,15 +6,18 @@ import {
   getComponentValue,
   AnyComponentValue,
 } from "@latticexyz/recs";
-import { decodeEntity } from "@latticexyz/store-sync/recs";
 import { formatUnits } from "viem";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart from "../rightPart";
 import { useMUD } from "../../MUDContext";
-import {convertToString} from "../rightPart/index"
+import {convertToString, coorToEntityID} from "../rightPart/index"
 import PopUpBox from "../popUpBox";
-
+import {
+  encodeEntity,
+  syncToRecs,
+  decodeEntity,
+} from "@latticexyz/store-sync/recs";
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
@@ -106,6 +109,8 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [selectedColor, setSelectedColor] = useState("#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
+
+  // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
 
   const addressData =
     palyerAddress.substring(0, 6) +
@@ -447,10 +452,15 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           //   palyerAddress,
           //   selectedColor
           // );
+          const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
+          const pixel_value = getComponentValue(Pixel, coor_entity) as any;
+          const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
+          
           const interact_data = interact(
             coordinates,
             palyerAddress,
             selectedColor,
+            action,
             null
           );
           interact_data.then((increDataVal: any) => {
@@ -460,9 +470,6 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
                 if (a.status === "success") {
                   setLoading(false);
                 } else {
-                  // setLoading(false);
-                  // onHandleLoading();
-                  // toast.error("An error was reported");
                   handleError();
                 }
               });

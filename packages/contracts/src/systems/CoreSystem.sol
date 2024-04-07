@@ -16,6 +16,7 @@ import {Position} from "../index.sol";
 import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
 contract CoreSystem is System {
   
+  bytes32 constant string_null = keccak256(abi.encodePacked("_Null"));
   function init() public{
     bytes32 key = convertToBytes32('core_actions');
     CoreActionAddress.set(key, _world());
@@ -46,10 +47,23 @@ contract CoreSystem is System {
     app.namespace = namespace;
     app.system_name = system_name;
     app.developer = tx.origin;
+    app.system_addr = address(_msgSender());
     App.set(convertToBytes32(name), app);
 
     AppName.set(system, name);
     return app;
+  }
+
+  function update_app_system(address new_system_addr, string memory app_name) public {
+    AppData memory app = App.get(convertToBytes32(app_name));
+    address developer = app.developer;
+    require(developer == address(_msgSender()), 'not game owner');
+    address old_system = app.system_addr;
+    AppName.set(new_system_addr, app_name);
+
+    app.system_addr = new_system_addr;
+    App.set(convertToBytes32(app_name), app);
+    AppName.deleteRecord(old_system);
   }
 
   function has_write_access(PixelData memory pixel, PixelUpdateData memory pixel_update) public view returns (bool) {
@@ -57,28 +71,26 @@ contract CoreSystem is System {
     if (pixel.owner == address(0) || pixel.owner == tx.origin){
       return true;
     }
-
     // AppData memory caller_app = App.get(for_system);
     string memory sender_app = AppName.getApp_name(address(_msgSender()));
     
     if (keccak256(abi.encodePacked(pixel.app)) == keccak256(abi.encodePacked(sender_app))){
       return true;
     }
-
     PermissionsData memory permissions = Permissions.get(convertToBytes32(pixel.app), convertToBytes32(sender_app));
-    if(bytes(pixel_update.app).length !=0 && !permissions.app){
+    if(keccak256(abi.encodePacked(pixel_update.app)) != string_null && !permissions.app){
       return false;
     }
     
-    if(pixel_update.owner != address(0) && !permissions.owner){
+    if(pixel_update.owner != address(1) && !permissions.owner){
       return false;
     }
 
-    if(bytes(pixel_update.color).length != 0 && !permissions.color){
+    if(keccak256(abi.encodePacked(pixel_update.color)) != string_null && !permissions.color){
       return false;
     }
 
-    if(bytes(pixel_update.text).length != 0 && !permissions.text){
+    if(keccak256(abi.encodePacked(pixel_update.text)) != string_null && !permissions.text){
       return false;
     }
 
@@ -86,7 +98,7 @@ contract CoreSystem is System {
       return false;
     }
 
-    if(bytes(pixel_update.action).length != 0 && !permissions.action){
+    if(keccak256(abi.encodePacked(pixel_update.action)) != string_null && !permissions.action){
       return false;
     }
 
@@ -95,6 +107,9 @@ contract CoreSystem is System {
 
   function update_pixel(PixelUpdateData memory pixel_update) public{
     // may be create the app first?
+    // bytes32 string_null;
+    
+    // string_null = keccak256(abi.encodePacked("_Null"));
 
     PixelData memory pixel = Pixel.get(pixel_update.x, pixel_update.y);
     require(has_write_access(pixel, pixel_update), "No access!");
@@ -104,19 +119,35 @@ contract CoreSystem is System {
       pixel.updated_at = block.timestamp;
     }
 
-    if(bytes(pixel_update.app).length != 0){
+    // if(bytes(pixel_update.app).length != 0){
+    //   pixel.app = pixel_update.app;
+    // }
+
+    // if(bytes(pixel_update.color).length != 0){
+    //   pixel.color = pixel_update.color;
+    // }
+
+    // if(pixel_update.owner != address(0)){
+    //   pixel.owner = pixel_update.owner;
+    // }
+
+    // if(bytes(pixel_update.text).length != 0){
+    //   pixel.text = pixel_update.text;
+    // }
+
+    if(keccak256(abi.encodePacked(pixel_update.app)) != string_null){
       pixel.app = pixel_update.app;
     }
 
-    if(bytes(pixel_update.color).length != 0){
+    if(keccak256(abi.encodePacked(pixel_update.color)) != string_null){
       pixel.color = pixel_update.color;
     }
 
-    if(pixel_update.owner != address(0)){
+    if(pixel_update.owner != address(1)){
       pixel.owner = pixel_update.owner;
     }
 
-    if(bytes(pixel_update.text).length != 0){
+    if(keccak256(abi.encodePacked(pixel_update.text)) != string_null){
       pixel.text = pixel_update.text;
     }
 
@@ -124,7 +155,7 @@ contract CoreSystem is System {
       pixel.timestamp = pixel_update.timestamp;
     }
 
-    if(bytes(pixel_update.action).length != 0){
+    if(keccak256(abi.encodePacked(pixel_update.action)) != string_null){
       pixel.action = pixel_update.action;
     }
 
@@ -135,13 +166,15 @@ contract CoreSystem is System {
   function set_instruction(bytes4 selector, string memory instruction) public {
     bytes32 bytes_app_name = convertToBytes32(AppName.getApp_name(address(_msgSender())));
     AppData memory app = App.get(bytes_app_name);
-    require(bytes(app.namespace).length != 0, 'cannot be called by a non-app');
+    require(bytes(app.namespace).length != 0 || bytes(app.system_name).length != 0, 'cannot be called by a non-app');
     Instruction.set(bytes_app_name, selector, instruction);
   }
 
   function schedule_queue(uint256 timestamp, bytes calldata call_data) public {
     bytes32 bytes_app_name = convertToBytes32(AppName.getApp_name(address(_msgSender())));
     AppData memory app = App.get(bytes_app_name);
+    require(bytes(app.namespace).length != 0 || bytes(app.system_name).length != 0, 'cannot be called by a non-app');
+
     string memory namespace = app.namespace;
     string memory system_name = app.system_name;
     bytes32 id = keccak256(abi.encodePacked(timestamp, namespace, system_name, call_data));
@@ -155,7 +188,8 @@ contract CoreSystem is System {
 
   function alert_player(Position memory position, address player, string memory message) public {
     AppData memory app = App.get(convertToBytes32(AppName.getApp_name(address(_msgSender()))));
-    require(bytes(app.namespace).length != 0, 'cannot be called by a non-app');
+      require(bytes(app.namespace).length != 0 || bytes(app.system_name).length != 0, 'cannot be called by a non-app');
+
     bytes32 id = keccak256(abi.encodePacked(position.x, position.y, message, block.timestamp, player, address(_msgSender())));
     Alert.set(id, AlertData(position.x, position.y, block.timestamp, address(_msgSender()), player, message));
   }

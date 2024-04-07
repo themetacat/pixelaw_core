@@ -32,7 +32,7 @@ contract SnakeSystem is System {
   string constant NAMESPACE = 'snake';
   string constant SYSTEM_NAME = 'SnakeSystem';
   string constant APP_NAME = 'snake';
-  string constant APP_MANIFEST = 'BASE/Snake';
+  string constant APP_MANIFEST = 'BASE/SnakeSystem';
 
   function init() public {
     
@@ -69,26 +69,26 @@ contract SnakeSystem is System {
       step: 0
     });
 
-    string memory pixel_color;
-    if(bytes(pixel.color).length == 0){
-      pixel_color = '0';
-    }else{
-      pixel_color = pixel.color;
-    }
+    // string memory pixel_color;
+    // if(bytes(pixel.color).length == 0){
+    //   pixel_color = '0';
+    // }else{
+    //   pixel_color = pixel.color;
+    // }
 
-    string memory pixel_text;
-    if(bytes(pixel.text).length == 0){
-      pixel_text = '_none';
-    }else{
-      pixel_text = pixel.text;
-    }
+    // string memory pixel_text;
+    // if(bytes(pixel.text).length == 0){
+    //   pixel_text = '_none';
+    // }else{
+    //   pixel_text = pixel.text;
+    // }
     SnakeSegmentData memory segment = SnakeSegmentData({
       previous_id: id,
       next_id: id,
       x: position.x,
       y: position.y,
-      pixel_original_color: pixel_color,
-      pixel_original_text: pixel_text
+      pixel_original_color: pixel.color,
+      pixel_original_text: pixel.text
     });
     Snake.set(player, snake);
     SnakeSegment.set(id, segment);
@@ -131,8 +131,8 @@ contract SnakeSystem is System {
           first_segment_id: 0,
           last_segment_id: 0,
           direction: Direction.None,
-          color: '0',
-          text: '_none',
+          color: '',
+          text: '',
           is_dying: false,
           step: 0
         }));
@@ -147,7 +147,7 @@ contract SnakeSystem is System {
     if(next_x != 0 && next_y != 0 && !snake.is_dying && snake.step <= 50){
       PixelData memory next_pixel = Pixel.get(next_x, next_y);
       snake.step += 1;
-      bool has_write_access = ICoreSystem(_world()).has_write_access(next_pixel, PixelUpdateData({x: next_x, y:next_y, color: snake.color, timestamp: 0, text: snake.text, app: address(0), owner: address(0), action: ''}));
+      bool has_write_access = ICoreSystem(_world()).has_write_access(next_pixel, PixelUpdateData({x: next_x, y:next_y, color: snake.color, timestamp: 0, text: snake.text, app: '_Null', owner: address(1), action: '_Null'}));
       if(next_pixel.owner == address(0)){
         snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
         snake.last_segment_id = remove_last_segment(snake);
@@ -207,21 +207,21 @@ contract SnakeSystem is System {
     existing_segment.previous_id = id;
     SnakeSegment.set(snake.first_segment_id, existing_segment);
 
-    string memory pixel_color;
-    if(bytes(pixel.color).length == 0){
-      pixel_color = '0';
-    }else{
-      pixel_color = pixel.color;
-    }
+    // string memory pixel_color;
+    // if(bytes(pixel.color).length == 0){
+    //   pixel_color = '0';
+    // }else{
+    //   pixel_color = pixel.color;
+    // }
 
-    string memory pixel_text;
-    if(bytes(pixel.text).length == 0){
-      pixel_text = '_none';
-    }else{
-      pixel_text = pixel.text;
-    }
+    // string memory pixel_text;
+    // if(bytes(pixel.text).length == 0){
+    //   pixel_text = '_none';
+    // }else{
+    //   pixel_text = pixel.text;
+    // }
 
-    SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel_color, pixel_original_text: pixel_text}));
+    SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel.color, pixel_original_text: pixel.text}));
     
     ICoreSystem(_world()).update_pixel(PixelUpdateData({
       x: x,
@@ -229,9 +229,9 @@ contract SnakeSystem is System {
       color: snake.color,
       timestamp: 0,
       text: snake.text,
-      app: '',
-      owner: address(0),
-      action: ''
+      app: '_Null',
+      owner: address(1),
+      action: '_Null'
     }));
     return id;
   }
@@ -246,9 +246,9 @@ contract SnakeSystem is System {
       color: last_segment.pixel_original_color,
       timestamp: 0,
       text: last_segment.pixel_original_text,
-      app: '',
-      owner: address(0),
-      action: ''
+      app: '_Null',
+      owner: address(1),
+      action: '_Null'
     }));
     uint256 result = last_segment.previous_id;
 
