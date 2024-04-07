@@ -382,28 +382,13 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
           const pixel_value = getComponentValue(Pixel, coor_entity) as any;
           const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
-          
-          const interact_data = interact(
-            coordinates,
+          interactHandle( coordinates,
             palyerAddress,
             selectedColor,
             action,
-            null
-          );
-          interact_data.then((increDataVal: any) => {
-
-            if (increDataVal[1]) {
-              increDataVal[1].then((a: any) => {
-                if (a.status === "success") {
-                  setLoading(false);
-                } else {
-                  handleError();
-                }
-              });
-            } else {
-              handleError();
-            }
-          });
+            null)
+          
+        
         }
         mouseXRef.current = mouseX;
         mouseYRef.current = mouseY;
@@ -435,6 +420,39 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
       setTranslateY(0);
     }
   };
+
+
+  const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,serialNumber:any)=>{
+ 
+// console.log(coordinates,
+//   palyerAddress,
+//   selectedColor,
+//   actionData,
+//   serialNumber)
+    const interact_data = interact(
+      coordinates,
+      palyerAddress,
+      selectedColor,
+      actionData,
+      serialNumber
+    );
+    interact_data.then((increDataVal: any) => {
+
+      if (increDataVal[1]) {
+        increDataVal[1].then((a: any) => {
+          if (a.status === "success") {
+            setLoading(false);
+            onHandleLoading()
+          } else {
+            handleError();
+            onHandleLoading();
+          }
+        });
+      } else {
+        handleError();
+      }
+    });
+  }
 
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -550,6 +568,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
     entities_app.map((entitya) => {
      
       const instruction = getComponentValue(Instruction, entitya) as any;
+      // console.log(instruction)
       if(instruction?.instruction){
         // ！！！要用对象存值，有n个游戏存在instruction
         setInstruC(instruction?.instruction);
@@ -781,6 +800,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
             coordinates={coordinates}
             onHandleExe={onHandleExe}
             selectedColor={selectedColor}
+            interactHandle={interactHandle}
             onHandleLoading={onHandleLoading}
             onHandleLoadingFun={onHandleLoadingFun}
           />
