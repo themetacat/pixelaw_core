@@ -337,8 +337,8 @@ export default function PopUpBox({
      {convertedParamsData !== null ? (
       <div className={style.contest}>
         {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
-          {/* {inputs} */}
-          {resultContent.length!==0?inputs:''}
+          {inputs}
+          {/* {resultContent.length!==0?inputs:''} */}
           {content}
           {
             inputs?.length!==0?
