@@ -279,24 +279,20 @@ export default function PopUpBox({
     const formDataCopy = { ...formData };
 
     // 获取按钮点击的信息
-    const buttonInfo = buttonInfoRef.current; // 假设 buttonInfoRef 是一个 useRef 创建的引用
+    const buttonInfo = buttonInfoRef.current; 
 
     console.log('Form Data:', formDataCopy);
-    // 检查 formDataCopy 中是否包含 x 和 y 属性
     if ('x' in formDataCopy && 'y' in formDataCopy) {
         // 解构赋值获取 x 和 y 的值
         const { x, y, ...rest } = formDataCopy;
 
-        // 创建新的对象，并将 x 和 y 整合到一个名为 position 的对象里
         const newData = {
-            ...rest, // 保留原有对象中除了 x 和 y 之外的其他属性
-            position: { x, y } // 创建 position 对象，包含 x 和 y 属性
+            ...rest, 
+            position: { x, y } 
         };
 
-        // 定义属性的顺序
         const propertyOrder = ['for_player', 'for_app', 'position', 'color'];
 
-        // 构建 args 数组，根据属性顺序来设置值
         const args = [propertyOrder.reduce((obj, key) => {
             if (key === 'position') {
                 obj[key] = {
