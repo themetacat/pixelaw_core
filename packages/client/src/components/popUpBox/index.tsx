@@ -203,8 +203,8 @@ export default function PopUpBox({
           console.log(resultContent);
           
         }
-      console.log(typeof value);
-      
+  
+      });
 
       // 如果值不是对象，则渲染输入框
       if (typeof value !== 'object' || value === null) {
@@ -333,7 +333,7 @@ export default function PopUpBox({
     }
     setContent(content);
   }
-  
+
   useEffect(() => {
     fon()
   //  const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
@@ -345,10 +345,15 @@ export default function PopUpBox({
      {convertedParamsData !== null ? (
       <div className={style.contest}>
         {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
-          {/* {inputs} */}
           {inputs}
+          {/* {resultContent.length!==0?inputs:''} */}
           {content}
-          <button onClick={handleConfirm} ref={buttonInfoRef} className={style.confirmBtn}>Confirm</button>
+          {
+            inputs?.length!==0?
+            <button onClick={handleConfirm} ref={buttonInfoRef} className={style.confirmBtn}>Confirm</button>:
+            null
+          }
+         
 
           {/* {content} */}
       </div>

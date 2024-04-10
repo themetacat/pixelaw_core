@@ -350,7 +350,6 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
       
     } else {
       // 点击事件的逻辑
-   
       const canvas = canvasRef.current as any;
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -363,15 +362,17 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 
       if (selectedColor && coordinates) {
         hoveredSquareRef.current = coordinates;
-        if (parts[1] !== "Snake") {
+        // if (parts[1] !== "Snake") {
           setLoading(true);
           setIsDragging(false);
-
-          interactHandle( coordinates,
-            palyerAddress,
-            selectedColor,
-            action,
-            null)
+if(popExhibit===false){
+  interactHandle( coordinates,
+    palyerAddress,
+    selectedColor,
+    action,
+    null)
+// }
+          
           
         
         }
@@ -529,6 +530,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         setParamInputs(param.inputs);
    
         (async () => {
+          console.log(param.inputs)
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
           // const filteredInputs = param.inputs;
           if(filteredInputs){
