@@ -14,7 +14,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     display: grid; 
-    max-width: 32rem; 
+    max-width: 24rem; 
     gap: 1rem; 
     border-width: 1px;
     border-style: solid; 
@@ -25,6 +25,7 @@
     opacity: 1; 
     border-radius: 0.375rem; 
     background-color: #220630; 
+    z-index: 999999999999999;
 }
 .title{
     color: #FFC400;
@@ -115,3 +116,52 @@ display: flex;
     color: #6b7280; 
     z-index: 22222222222;
 }
+.inputData{
+    /* width: 450px;
+    height: 10px; */
+    min-width: 300px;
+    border-radius: 0.375rem;
+    border: 1px solid;
+    border-color: #DDDDDD;
+    background-color: #FFFFFF;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-size: 0.875rem;
+  font-weight: 500;
+  color: #999999;
+  outline: none;
+  margin-bottom: 0.75rem;
+}
+.contest{
+    padding: 35px;
+    position: relative;
+}
+
+.confirmBtn {
+    position: absolute;
+    right: 0.8rem;
+    bottom: 5px;
+   /* margin-top: 15px; */
+
+    /* display: inline-flex; */
+    items: center;
+    justify-content: center;
+    font-size: small;
+    font-weight: medium;
+    ring-offset-background: transition-colors;
+    outline: none;
+    ring: 2px;
+    ring-offset: 2px;
+    cursor: pointer;
+    opacity: 1;
+    background-color: #990a4d; /* Red color */
+    color: #fff; /* White color */
+    font-family: 'Silkscreen', sans-serif;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    height: 2.25rem; /* Equal to 9px */
+    border-radius: 0.375rem; /* Equal to 3px */
+    padding: 0.75rem; /* Equal to 3px */
+  }

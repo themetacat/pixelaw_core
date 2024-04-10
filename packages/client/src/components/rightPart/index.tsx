@@ -22,6 +22,7 @@ interface Props {
   entityData: any;
   setPanningState: any;
   loading: any;
+  onUpdateAbiJson: any;
   onHandleExe: any;
 }
 export function convertToString(bytes32Value: string) {
@@ -40,6 +41,7 @@ export default function RightPart({
   loading,
   onHandleExe,
   entityData,
+  onUpdateAbiJson,
   setPanningState,
 }: Props) {
   const {
@@ -54,7 +56,7 @@ export default function RightPart({
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   //console.log(decodeEntity({ x: "uint32", y: "uint32" }, entity));//每个块坐标
-
+  const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
@@ -64,6 +66,7 @@ export default function RightPart({
     localStorage.setItem("manifest", value.manifest);
   };
   const updateAbiUrl = async (manifest: string) => {
+    
     const parts = manifest?.split("/") as any;
     let worldAbiUrl: any;
     if (manifest) {
@@ -80,8 +83,13 @@ export default function RightPart({
     const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
     const systemData = await response.json();
     update_abi(systemData);
+    setUpdate_abi_json(systemData)
+    onUpdateAbiJson(systemData);
   };
-
+  useEffect(()=>{
+    updateAbiUrl('BASE/SnakeSystem')
+  },[])
+ 
   function capitalizeFirstLetter(str: any) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -102,6 +110,8 @@ export default function RightPart({
       6
     )}...${owner.substring(owner.length - 4)}`;
   }
+
+  
 
 
   return (

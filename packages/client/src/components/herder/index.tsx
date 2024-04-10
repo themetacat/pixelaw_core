@@ -84,6 +84,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
   const [coordinatesData, setCoordinatesData] = useState({ x: 0, y: 0 });
   const [entityaData, setEntityaData] = useState("");
+  const [paramInputs, setParamInputs] = useState([]);
+  const [convertedParamsData, setConvertedParamsData] = useState(null);
+  const [updateAbiJson, setUpdate_abi_json] = useState('');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
@@ -105,7 +108,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   } | null>(null);
 
   const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
-
+// console.log(updateAbiJson)
   const [selectedColor, setSelectedColor] = useState("#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
@@ -119,7 +122,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   //获取网络名称
   const chainName = publicClient.chain.name;
   const capitalizedString =
-    chainName.charAt(0).toUpperCase() + chainName.slice(1).toLowerCase();
+    chainName.charAt(0).toUpperCase() + chainName?.slice(1).toLowerCase();
   //获取余额
   const balanceFN = publicClient.getBalance({ address: palyerAddress });
   balanceFN.then((a: any) => {
@@ -195,6 +198,27 @@ export default function Header({ hoveredData, handleData }: Props) {
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
+  
+  // const updateAbiUrl = async (manifest: string) => {
+  //   const parts = manifest?.split("/") as any;
+  //   let worldAbiUrl: any;
+  //   if (manifest) {
+  //     if (parts[0] === "BASE") {
+  //       worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
+  //         `${parts[1].replace(/\.abi\.json/g, "")}` +
+  //         ".abi.json") as any;
+  //     } else {
+  //       worldAbiUrl = manifest;
+  //     }
+  //   } else {
+  //     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
+  //   }
+  //   const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
+  //   const systemData = await response.json();
+  //   console.log(systemData);
+  //   // setUpdate_abi_json(systemData)
+  // };
+  // updateAbiUrl(appName)
 
   const drawGrid = useCallback(
     (
@@ -323,11 +347,17 @@ ctx.font = `${fontWeight} ${fontSize}px Arial`;
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [lastDragEndX, setLastDragEndX] = useState(0);
 const [lastDragEndY, setLastDragEndY] = useState(0);
+const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
+const pixel_value = getComponentValue(Pixel, coor_entity) as any;
+const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
   const ClickThreshold = 300; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    setIsDragging(true);
+
+  setIsDragging(true);
+
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
+    get_function_param(action)
     downTimerRef.current = setTimeout(() => {
       setIsLongPress(true);
       // 这里执行长按事件逻辑
@@ -379,9 +409,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           //   palyerAddress,
           //   selectedColor
           // );
-          const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
-          const pixel_value = getComponentValue(Pixel, coor_entity) as any;
-          const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
+    
           interactHandle( coordinates,
             palyerAddress,
             selectedColor,
@@ -390,6 +418,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           
         
         }
+      
         mouseXRef.current = mouseX;
         mouseYRef.current = mouseY;
         handleData(hoveredSquare as any);
@@ -409,12 +438,13 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
         ////console.log("hoveredSquare或selectedColor为空");
       }
       setIsDragging(false);
-      setPopExhibit(true);
+      if(enumValue!==null){
+        setPopExhibit(true);
+      }
       setShowOverlay(true);
       if (parts[1] !== "Snake") {
         setLoading(true);
       }
-
       // e.stopPropagation();
       setTranslateX(0);
       setTranslateY(0);
@@ -449,7 +479,10 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           }
         });
       } else {
-        handleError();
+        if(enumValue!==null){
+          handleError();
+        }
+      
       }
     });
   }
@@ -524,24 +557,164 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
       GRID_SIZE,
     ]
   );
-  const get_function_param = async(abi_json:any[], function_name: string, common_json: string) => {
+
+
+  
+  const DEFAULT_PARAMETERS_TYPE = 'struct DefaultParameters'
+
+  const processComponents = async (inputs:any) => {
+    const convertedParams = []
+    for (const component of inputs) {
+      console.log(component,33333)
+        if (component.internalType.startsWith("struct ")) {
+            // const struct = get_struct(component.components);
+            processComponents(component.components)
+            console.log(struct, 'structstructstruct');
+            convertedParams.push(struct);
+            // setConvertedParamsData(struct);
+        } else if (component.internalType.startsWith("enum ")) {
+            const enumValues = await get_enum_value(component.internalType.replace("enum ", ""));
+   
+            convertedParams.push({ [component.name]: get_value_type(component.type), ["variants"]: enumValues });
+            console.log(convertedParams,55565566)
+        } else {
+            convertedParams.push({ [component.name]: get_value_type(component.type) });
+        }
+        // 继续递归调用自身，直到 components 为空
+        // if (component.components && component.components.length > 0) {
+        //     await processComponents(component.components, convertedParams);
+        // }
+    }
+};
+
+const get_function_param = async (function_name: string, common_json: any[] = []) => {
     // const response = await fetch(abi_url); // 获取 ABI JSON 文件
     // const systemData = await response.json();
-    if(!abi_json){
-      return []
-    }
-    if(!function_name){
-      return []
-    }
-    let funciont_def = abi_json.filter(entry => entry.name === function_name && entry.type === 'function');
-    if (!funciont_def) {
-      funciont_def = abi_json.filter(entry => entry.name === 'interact' && entry.type === 'function');
-      if (!funciont_def) {
+    console.log(55555555555,updateAbiJson)
+    const abi_json = updateAbiJson;
+
+    const convertedParams: any = [];
+    // let variants: {name: string, value: number}[] = []
+    if (!abi_json) {
         return []
-      }
+    }
+    if (!function_name) {
+        return []
     }
 
+    console.log(abi_json)
+    let function_def = abi_json.filter(entry => entry.name === function_name && entry.type === 'function');
+    if (!function_def) {
+        function_def = abi_json.filter(entry => entry.name === 'interact' && entry.type === 'function');
+
+        if (!function_def) {
+            return []
+        }
+    }
+    console.log(function_def);
+let s ;
+    function_def.forEach(param => {
+        console.log(param.inputs);
+        setParamInputs(param.inputs);
+        // const filteredInputs = 
+    //  param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+        (async () => {
+          // s = await processComponents(param.inputs);
+          s =   get_struct(param.inputs)
+          //   console.log(convertedParams);
+          setConvertedParamsData(s)
+            // 注意: 这里处理完成后的逻辑
+        })();
+    });
+    console.log(s)
+
+    console.log(convertedParams);
+
+    return s;
+};
+
+  const get_struct = (components: any) => {
+    const res: any = {};
+    console.log(components,333357,paramInputs)
+    components.forEach(component => {
+      if(component.internalType.startsWith("struct ")){
+        res[component.name]= get_struct(component.components)
+      }else if (component.internalType.includes("enum ")) {
+        res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
+
+      } else{
+        res[component.name] = get_value_type(component.type);
+      }
+    });
+  
+    // components.forEach(component => {
+    //   console.log(component,43231,components)
+    //   if(component.internalType.startsWith("struct ")){
+    //     const struct = get_struct(component.components);
+    //     res[component.name] = struct;
+    //   }else if (component.internalType.includes("enum ")) {
+    //     const enumValues =  get_enum_value(component.internalType.replace("enum ", ""));
+    // // console.log(enumValues)
+    // } 
+    //   else{
+    //     // console.log('!!!!!!!!!!1')
+    //     res[component.name] = get_value_type(component.type);
+    //   }
+    // })
+    // console.log(res,666666)
+    return res;
   }
+  const [enumValue,setEnumValue] =useState(null)
+  const get_enum_value = async(enumName: string) => {
+    const res = [] as any;
+    // ${parts[1].replace(/\.abi\.json/g, "")}
+    const response = await fetch('https://pixelaw-game.vercel.app/'+`${parts[1]}`+'Common.json');
+  
+
+    const systemCommonData = await response.json();
+    // const enumData = systemCommonData.find(x => x.asd.nodes.name === 'Direction');
+    const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
+    let key = 0;
+
+    paramInputs.map((item:any)=>{
+// console.log(item.internalType.includes("enum "))
+if(item.internalType.includes("enum ")){
+    // 根据您的需求定义键值对
+// console.log(enumData)
+    enumData.members.forEach(member => {
+      if(member.name != "None" && member.nodeType === "EnumValue"){
+        // console.log(member)
+        const key = 'value'; // 请替换为您想要的键名
+        const value =member.name; // 请替换为您想要的值
+        res.push(member.name)
+        // res.push({ name: member.name, value:  member.name });
+        // res.push({ key: key++, name: member.name });
+        item[key] = res;
+      }
+    })
+    // 向对象添加键值对
+
+    // console.log(paramInputs,666)
+}
+    })
+ 
+   
+    setEnumValue(res)
+    // console.log(res,'-------------')
+    return res;
+  }
+
+  const get_value_type = (type: string) => {
+    if(type.includes('int')){
+      return 'number';
+    }else if(type === 'address'){
+      return 'string';
+    }else{
+      return type;
+    }
+  }
+
+
 
   const addressDataCopy = (text: any) => {
     navigator.clipboard.writeText(text).then(
@@ -568,7 +741,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
   
 
   const onHandleExe = () => {
-    // //console.log('dianle')
+    console.log('dianle')
     setPopExhibit(false);
     setShowOverlay(false);
     // setLoading(false)
@@ -580,6 +753,12 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
 
   const onHandleLoadingFun = () => {
     setLoading(true);
+  };
+
+  const handleUpdateAbiJson = (data:any) => {
+    // 处理传递的 update_abi_json 数据
+    console.log(data); // 这里可以进行进一步的处理
+    setUpdate_abi_json(data)
   };
 
   useEffect(() => {
@@ -799,11 +978,13 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
           ))}
         </div>
         <RightPart
+        // update_abi_json={setUpdate_abi_json}
           coordinates={coordinates}
           entityData={entityData}
           setPanningState={handlePanningChange}
           loading={loading}
           onHandleExe={onHandleExe}
+          onUpdateAbiJson={handleUpdateAbiJson} 
         />
       </div>
 
@@ -821,6 +1002,10 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
             interactHandle={interactHandle}
             onHandleLoading={onHandleLoading}
             onHandleLoadingFun={onHandleLoadingFun}
+            paramInputs={paramInputs}
+            convertedParamsData={convertedParamsData}
+            enumValue={enumValue}
+            action={action}
           />
         </>
       ) : (
