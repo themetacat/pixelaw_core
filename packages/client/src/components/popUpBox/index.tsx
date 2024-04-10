@@ -64,7 +64,7 @@ export default function PopUpBox({
 
 
   const handleKeyDown = (e: any) => {
-    enumValue.map((item,index)=>{
+    enumValue.map((item:any,index:any)=>{
       if(  e.key.includes(item)){
         switch (e.key) {
           case "ArrowLeft":
@@ -256,16 +256,16 @@ export default function PopUpBox({
     setContent(content);
   }
 
-  // useEffect(() => {
-  //   if(Object.keys(instruC).length !== 0){
-  //     fon()
-  //   }
-  // }, [instruC]);
-
-
   useEffect(() => {
+    if(Object.keys(instruC).length !== 0){
       fon()
-  }, []);
+    }
+  }, [instruC]);
+
+
+  // useEffect(() => {
+  //     fon()
+  // }, []);
 
   return (
     <div className={style.content}>
