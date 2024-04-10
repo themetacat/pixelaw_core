@@ -36,7 +36,7 @@ export function convertToString(bytes32Value: string) {
 export function coorToEntityID(x: number, y: number){
   return encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
 }
-
+export const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
 export default function RightPart({
   coordinates,
   loading,
@@ -54,7 +54,7 @@ export default function RightPart({
   const [panning, setPanning] = useState(false);
   const manifestVal = window.localStorage.getItem("manifest");
 
-  const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
+  
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
@@ -87,13 +87,13 @@ export default function RightPart({
     let systemData=[];
     let common_abi=[];
     try{
+      
       const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
-    
+      
       systemData = await response.json();
     }catch(error){
       console.log('error:', error);
     }
-
     try{
       const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
       common_abi = await response.json();

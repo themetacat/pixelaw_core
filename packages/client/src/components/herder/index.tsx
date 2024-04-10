@@ -363,18 +363,16 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
       if (selectedColor && coordinates) {
         hoveredSquareRef.current = coordinates;
         // if (parts[1] !== "Snake") {
-          setLoading(true);
+          // setLoading(true);
           setIsDragging(false);
-if(popExhibit===false){
-  interactHandle( coordinates,
-    palyerAddress,
-    selectedColor,
-    action,
-    null)
-// }
-          
-          
-        
+        if(popExhibit===false){
+          // setLoading(true);
+          interactHandle( coordinates,
+            palyerAddress,
+            selectedColor,
+            action,
+            null)
+        // }
         }
       
         mouseXRef.current = mouseX;
@@ -414,10 +412,9 @@ if(popExhibit===false){
     );
 
     interact_data.then((increDataVal: any) => {
-      console.log(increDataVal);
       
       if (increDataVal[1]) {
-        increDataVal[1].then((a: any) => {          
+        increDataVal[1].then((a: any) => {     
           if (a.status === "success") {
             setLoading(false);
             onHandleLoading()
@@ -446,7 +443,7 @@ if(popExhibit===false){
 
       // 更新hoveredSquare状态
       setHoveredSquare({ x: gridX, y: gridY });
-
+ 
       // 绘制蓝色背景
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {

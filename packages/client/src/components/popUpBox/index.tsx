@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import style from "./index.module.css";
-
-import { Has, getComponentValue } from "@latticexyz/recs";
+import { addressToEntityID } from "../rightPart"
+import { Has, getComponentValue, getComponentValueStrict } from "@latticexyz/recs";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import toast, { Toaster } from "react-hot-toast";
@@ -37,7 +37,7 @@ export default function PopUpBox({
     systemCalls: { increment, interact },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
-  const [instruC, setInstruC] = useState(null);
+  const [instruC, setInstruC] = useState({});
   const [entityaData, setEntityaData] = useState("");
   const [formData, setFormData] = useState({});
   const [hasRenderedSpecialContent, setHasRenderedSpecialContent] = useState(false);
@@ -59,103 +59,6 @@ export default function PopUpBox({
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
-
-  // getFunction_param()
-  // const onHandleLeft = () => {
-  //   onHandleLoadingFun();
-  //   // const increData = increment(
-  //   //   1,
-  //   //   coordinates,
-  //   //   entityaData,
-  //   //   palyerAddress,
-  //   //   selectedColor
-  //   // );
-  //   interactHandle(coordinates, palyerAddress, selectedColor, "interact", 1);
-  //   // const interact_data = interact(
-  //   //   coordinates,
-  //   //   palyerAddress,
-  //   //   selectedColor,
-  //   //   'interact',
-  //   //   1
-  //   // );
-  //   // interact_data.then((increDataVal: any) => {
-  //   //   increDataVal[1].then((a: any) => {
-  //   //     if (a.status === "success") {
-  //   //       onHandleLoading();
-  //   //     } else {
-  //   //       onHandleLoading();
-  //   //       alert("An error was reported");
-  //   //     }
-  //   //   });
-  //   // });
-  //   onHandleExe();
-  // };
-  // const onHandleRight = () => {
-  //   onHandleLoadingFun();
-  //   interactHandle(coordinates, palyerAddress, selectedColor, "interact", 2);
-  //   // const increData = increment(
-  //   //   2,
-  //   //   coordinates,
-  //   //   entityaData,
-  //   //   palyerAddress,
-  //   //   selectedColor
-  //   // );
-  //   // increData.then((increDataVal: any) => {
-  //   //   increDataVal[1].then((a: any) => {
-  //   //     if (a.status === "success") {
-  //   //       onHandleLoading();
-  //   //     } else {
-  //   //       onHandleLoading();
-  //   //       toast.error("An error was reported");
-  //   //     }
-  //   //   });
-  //   // });
-  //   onHandleExe();
-  // };
-  // const onHandleUp = () => {
-  //   onHandleLoadingFun();
-  //   interactHandle(coordinates, palyerAddress, selectedColor, "interact", 3);
-  //   // const increData = increment(
-  //   //   3,
-  //   //   coordinates,
-  //   //   entityaData,
-  //   //   palyerAddress,
-  //   //   selectedColor
-  //   // );
-  //   // increData.then((increDataVal: any) => {
-  //   //   increDataVal[1].then((a: any) => {
-  //   //     if (a.status === "success") {
-  //   //       onHandleLoading();
-  //   //     } else {
-  //   //       onHandleLoading();
-  //   //       toast.error("An error was reported");
-  //   //     }
-  //   //   });
-  //   // });
-  //   onHandleExe();
-  // };
-  // const onHandleDown = () => {
-  //   onHandleLoadingFun();
-  //   interactHandle(coordinates, palyerAddress, selectedColor, "interact", 4);
-  //   // const increData = increment(
-  //   //   4,
-  //   //   coordinates,
-  //   //   entityaData,
-  //   //   palyerAddress,
-  //   //   selectedColor
-  //   // );
-  //   // increData.then((increDataVal: any) => {
-  //   //   increDataVal[1].then((a: any) => {
-  //   //     if (a.status === "success") {
-  //   //       onHandleLoading();
-  //   //     } else {
-  //   //       onHandleLoading();
-  //   //       toast.error("An error was reported");
-  //   //     }
-  //   //   });
-  //   // });
-  //   onHandleExe();
-  // };
 
   const handleKeyDown = (e: any) => {
     switch (e.key) {
@@ -203,8 +106,6 @@ export default function PopUpBox({
           console.log(resultContent);
           
         }
-  
-      });
 
       // 如果值不是对象，则渲染输入框
       if (typeof value !== 'object' || value === null) {
@@ -227,10 +128,13 @@ export default function PopUpBox({
         renderedInputs.push(...inputs);
       }
       // 设置特殊内容，但只有在没有渲染过且 resultContent 长度大于 0 时才渲染
+    const app_name = localStorage.getItem("app_name");
+    // console.log(instruC.app_name);
+    
     if (!hasRenderedSpecialContent && value.length > 0) {
       specialContent = (
         <div>
-          <h2 className={style.title}>{instruC}</h2>
+          <h2 className={style.title}>{instruC.app_name}</h2>
           <div className={style.bottomBox}>
             {paramInputs.map((item: any, key: any) => {
               if (item.internalType.includes("enum ")) {
@@ -261,16 +165,23 @@ export default function PopUpBox({
     return { inputs: renderedInputs, content: specialContent };
   };
   
-
   useEffect(() => {
+
     entities_app.map((entitya) => {
-      const entityaData = entities_app[0];
-      const instruction = getComponentValue(Instruction, entityaData) as any;
+      const instruction = getComponentValue(Instruction, entitya) as any;
       const num = BigInt(entityaData);
       const result = "0x" + num?.toString(16);
-      setInstruC(instruction?.instruction);
+      console.log(instruction?.instruction);
+      if(instruction?.instruction){
+        const value = getComponentValueStrict(App, entitya) as any;
+        // const app_name =  convertToString(entitya);
+        const app_name = getComponentValue(AppName, addressToEntityID(value.system_addr))?.app_name;
+        setInstruC({app_name: instruction?.instruction});
+      }
+      
       setEntityaData(result);
     });
+
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -335,10 +246,10 @@ export default function PopUpBox({
   }
 
   useEffect(() => {
-    fon()
-  //  const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
-    // 其他操作...
-  }, []);
+    if(Object.keys(instruC).length !== 0){
+      fon()
+    }
+  }, [instruC]);
 
   return (
     <div className={style.content}>
@@ -354,36 +265,9 @@ export default function PopUpBox({
             null
           }
          
-
-          {/* {content} */}
       </div>
     ) : null}
     
-
-      {/* <div>
-        <h2 className={style.title}>{instruC}</h2>
-        <div className={style.bottomBox}>
-          {paramInputs.map((item: any, key: any) => {
-            if (item.internalType.includes("enum ")) {
-              return (
-                <label key={key} className={style.direction}>
-                  {item.name}
-                </label>
-              );
-            }
-          })}
-          <div className={style.btnBox}>
-            {enumValue?.map((item: any, key: any) => {
-              return (
-                <button className={style.btn} key={key} onClick={()=>{onFunction(key+1)}}>
-                  {item}
-                </button>
-              );
-            })}
-          </div>
-      
-        </div>
-        </div> */}
 
       <button
         type="button"
