@@ -24,6 +24,7 @@ interface Props {
   loading: any;
   onUpdateAbiJson: any;
   onHandleExe: any;
+  onUpdateAbiCommonJson: any;
 }
 export function convertToString(bytes32Value: string) {
 
@@ -43,6 +44,7 @@ export default function RightPart({
   entityData,
   onUpdateAbiJson,
   setPanningState,
+  onUpdateAbiCommonJson,
 }: Props) {
   const {
     components: { App, Pixel, AppName },
@@ -67,23 +69,41 @@ export default function RightPart({
   const updateAbiUrl = async (manifest: string) => {
     
     const parts = manifest?.split("/") as any;
-    let worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
+    let worldAbiUrl = "https://pixelaw-game.vercel.app/PaintSystem.abi.json";
+    let worldCommonAbiUrl = "https://pixelaw-game.vercel.app/PaintSystemCommon.abi.json";
     if (manifest) {
       if (parts[0] === "BASE") {
         worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
           `${parts[1].replace(/\.abi\.json/g, "")}` +
           ".abi.json") as any;
+          worldCommonAbiUrl = ("https://pixelaw-game.vercel.app/" +
+          `${parts[1].replace(/\.json/g, "")}` +
+          "Common.json") as any;
       } else {
+        // Common abi？
         worldAbiUrl = manifest;
       }
     }
-    const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
-    const systemData = await response.json();
-    console.log(systemData);
+    let systemData=[];
+    let common_abi=[];
+    try{
+      const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
+    
+      systemData = await response.json();
+    }catch(error){
+      console.log('error:', error);
+    }
+
+    try{
+      const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
+      common_abi = await response.json();
+    }catch(error){
+      console.log('error:', error);
+    }
     
     update_abi(systemData);
-    setUpdate_abi_json(systemData)
     onUpdateAbiJson(systemData);
+    onUpdateAbiCommonJson(common_abi);
   };
   useEffect(()=>{
     updateAbiUrl(localStorage.getItem("manifest"));
@@ -109,9 +129,6 @@ export default function RightPart({
       6
     )}...${owner.substring(owner.length - 4)}`;
   }
-
-  
-
 
   return (
     <div

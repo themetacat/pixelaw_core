@@ -87,6 +87,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [paramInputs, setParamInputs] = useState([]);
   const [convertedParamsData, setConvertedParamsData] = useState(null);
   const [updateAbiJson, setUpdate_abi_json] = useState('');
+  const [updateAbiCommonJson, setUpdate_abi_Common_json] = useState([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
@@ -505,33 +506,11 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
   
   const DEFAULT_PARAMETERS_TYPE = 'struct DefaultParameters'
 
-  const processComponents = async (inputs:any) => {
-    const convertedParams = []
-    for (const component of inputs) {
-        if (component.internalType.startsWith("struct ")) {
-            // const struct = get_struct(component.components);
-            processComponents(component.components)
-            convertedParams.push(struct);
-            // setConvertedParamsData(struct);
-        } else if (component.internalType.startsWith("enum ")) {
-            const enumValues = await get_enum_value(component.internalType.replace("enum ", ""));
-   
-            convertedParams.push({ [component.name]: get_value_type(component.type), ["variants"]: enumValues });
-        } else {
-            convertedParams.push({ [component.name]: get_value_type(component.type) });
-        }
-        // 继续递归调用自身，直到 components 为空
-        // if (component.components && component.components.length > 0) {
-        //     await processComponents(component.components, convertedParams);
-        // }
-    }
-};
-
 const get_function_param = async (function_name: string, common_json: any[] = []) => {
 
     const abi_json = updateAbiJson;
     
-    if (!abi_json) {
+    if (abi_json === '') {
         return []
     }
     if (!function_name) {
@@ -551,11 +530,13 @@ const get_function_param = async (function_name: string, common_json: any[] = []
    
         (async () => {
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
-          
+          // const filteredInputs = param.inputs;
           if(filteredInputs){
             res = get_struct(filteredInputs);
+            
             setConvertedParamsData(res);
           }
+   
         })();
     });
 
@@ -576,7 +557,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         res[component.name]= get_struct(component.components)
       }else if (component.internalType.includes("enum ")) {
         res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
-
+        // res[component.name] = ['Left', 'Right', 'Up', 'Down']
       } else{
         res[component.name] = get_value_type(component.type);
       }
@@ -584,32 +565,30 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     return res;
   }
   const [enumValue,setEnumValue] =useState(null)
-  const get_enum_value = async(enumName: string) => {
+  const get_enum_value = (enumName: string) => {
     const res = [] as any;
     // ${parts[1].replace(/\.abi\.json/g, "")}
-    const response = await fetch('https://pixelaw-game.vercel.app/'+`${parts[1]}`+'Common.json');
-  
 
-    const systemCommonData = await response.json();
-    // const enumData = systemCommonData.find(x => x.asd.nodes.name === 'Direction');
+    let systemCommonData = updateAbiCommonJson;
+
     const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
     let key = 0;
 
-    paramInputs.map((item:any)=>{
-    if(item.internalType.includes("enum ")){
+    // paramInputs.map((item:any)=>{
+    // if(item.internalType.includes("enum ")){
       enumData.members.forEach(member => {
         if(member.name != "None" && member.nodeType === "EnumValue"){
-          const key = 'value'; 
-          const value =member.name; 
+          // const key = 'value'; 
+          // const value =member.name; 
           res.push(member.name)
 
-          item[key] = res;
+          // item[key] = res;
         }
       })
-    }
-    })
- 
-   
+    // }
+    // })
+    console.log(res);
+    
     setEnumValue(res)
     return res;
   }
@@ -665,6 +644,10 @@ const get_function_param = async (function_name: string, common_json: any[] = []
 
   const handleUpdateAbiJson = (data:any) => {
     setUpdate_abi_json(data)
+  };
+  
+  const handleUpdateAbiCommonJson = (data:any) => {
+    setUpdate_abi_Common_json(data)
   };
 
   useEffect(() => {
@@ -887,6 +870,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
           loading={loading}
           onHandleExe={onHandleExe}
           onUpdateAbiJson={handleUpdateAbiJson} 
+          onUpdateAbiCommonJson={handleUpdateAbiCommonJson}
         />
       </div>
 

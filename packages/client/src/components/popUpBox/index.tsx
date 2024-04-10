@@ -192,16 +192,20 @@ export default function PopUpBox({
     const renderedInputs: JSX.Element[] = [];
     let specialContent: JSX.Element | null = null;
     let hasRenderedSpecialContent = false; // 添加状态来跟踪是否已经渲染过 specialContent
-  
+    console.log(data)
+    
     Object.entries(data).forEach(([key, value]) => {
-      const promiseData = Promise.resolve(value);
-      promiseData.then(result => {
-        if (Array.isArray(result) && result.length !== 0){
-          setResultContent(result as any)
+      
+        if (Array.isArray(value) && value.length !== 0){
+          console.log(value);
+          
+          setResultContent(value as any)
+          console.log(resultContent);
+          
         }
-  
-      });
-  
+      console.log(typeof value);
+      
+
       // 如果值不是对象，则渲染输入框
       if (typeof value !== 'object' || value === null) {
         renderedInputs.push(
@@ -217,15 +221,13 @@ export default function PopUpBox({
             }}
           />
         );
-      } else {
+      } else if(!Array.isArray(value)) {
         // 如果值是对象，则递归渲染子内容
         const { inputs } = renderInputsAndSpecialContent(value);
         renderedInputs.push(...inputs);
       }
-    });
-  
-    // 设置特殊内容，但只有在没有渲染过且 resultContent 长度大于 0 时才渲染
-    if (!hasRenderedSpecialContent && resultContent.length > 0) {
+      // 设置特殊内容，但只有在没有渲染过且 resultContent 长度大于 0 时才渲染
+    if (!hasRenderedSpecialContent && value.length > 0) {
       specialContent = (
         <div>
           <h2 className={style.title}>{instruC}</h2>
@@ -253,6 +255,9 @@ export default function PopUpBox({
       );
       setHasRenderedSpecialContent(true);
     }
+    });
+  
+    
     return { inputs: renderedInputs, content: specialContent };
   };
   
@@ -316,9 +321,12 @@ export default function PopUpBox({
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
   const fon = async () => {
+    
     const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
     setInputs(inputs);
-    const result = await Promise.all(Object.values(convertedParamsData)); // 等待所有异步操作完成
+    // const result = await Promise.all(Object.values(convertedParamsData)); // 等待所有异步操作完成
+    const result = Object.values(convertedParamsData);
+    
     const hasResultContent = result.some(r => Array.isArray(r) && r.length > 0);
     if (hasResultContent) {
       setResultContent(result.flat()); // 更新 resultContent 状态
@@ -328,9 +336,9 @@ export default function PopUpBox({
   
   useEffect(() => {
     fon()
-   // const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
+  //  const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
     // 其他操作...
-  }, [convertedParamsData, resultContent, hasRenderedSpecialContent]);
+  }, []);
 
   return (
     <div className={style.content}>
