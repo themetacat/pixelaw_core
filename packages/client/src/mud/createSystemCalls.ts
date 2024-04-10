@@ -142,6 +142,8 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       if(other_params){
         args.push(other_params);
       }
+      console.log(args);
+      
       let tx, hashValpublic;
 
       // const x = `${namespace}_${system_name}_interact`;

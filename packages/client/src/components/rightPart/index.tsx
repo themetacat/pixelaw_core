@@ -67,7 +67,7 @@ export default function RightPart({
   const updateAbiUrl = async (manifest: string) => {
     
     const parts = manifest?.split("/") as any;
-    let worldAbiUrl: any;
+    let worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
     if (manifest) {
       if (parts[0] === "BASE") {
         worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
@@ -76,17 +76,17 @@ export default function RightPart({
       } else {
         worldAbiUrl = manifest;
       }
-    } else {
-      worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
     }
     const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
     const systemData = await response.json();
+    console.log(systemData);
+    
     update_abi(systemData);
     setUpdate_abi_json(systemData)
     onUpdateAbiJson(systemData);
   };
   useEffect(()=>{
-    updateAbiUrl('BASE/SnakeSystem')
+    updateAbiUrl(localStorage.getItem("manifest"));
   },[])
  
   function capitalizeFirstLetter(str: any) {

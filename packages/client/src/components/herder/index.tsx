@@ -392,13 +392,8 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
         }
       } 
       setIsDragging(false);
-      if(enumValue!==null){
-        setPopExhibit(true);
-      }
       setShowOverlay(true);
-      if (parts[1] !== "Snake") {
-        setLoading(true);
-      }
+
       // e.stopPropagation();
       setTranslateX(0);
       setTranslateY(0);
@@ -406,19 +401,21 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
   };
 
 
-  const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,serialNumber:any)=>{
- 
+  const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,other_params:any)=>{
+    setLoading(true);
     const interact_data = interact(
       coordinates,
       palyerAddress,
       selectedColor,
       actionData,
-      serialNumber
+      other_params
     );
-    interact_data.then((increDataVal: any) => {
 
+    interact_data.then((increDataVal: any) => {
+      console.log(increDataVal);
+      
       if (increDataVal[1]) {
-        increDataVal[1].then((a: any) => {
+        increDataVal[1].then((a: any) => {          
           if (a.status === "success") {
             setLoading(false);
             onHandleLoading()
@@ -428,10 +425,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
           }
         });
       } else {
-        if(enumValue!==null){
           handleError();
-        }
-      
       }
     });
   }
@@ -536,9 +530,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 const get_function_param = async (function_name: string, common_json: any[] = []) => {
 
     const abi_json = updateAbiJson;
-
-    const convertedParams: any = [];
-    // let variants: {name: string, value: number}[] = []
+    
     if (!abi_json) {
         return []
     }
@@ -553,24 +545,33 @@ const get_function_param = async (function_name: string, common_json: any[] = []
             return []
         }
     }
-let s ;
+    let res = {};
     function_def.forEach(param => {
         setParamInputs(param.inputs);
    
         (async () => {
-          // s = await processComponents(param.inputs);
-          s =   get_struct(param.inputs)
-          setConvertedParamsData(s)
+          const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+          
+          if(filteredInputs){
+            res = get_struct(filteredInputs);
+            setConvertedParamsData(res);
+          }
         })();
     });
 
-
-    return s;
+    if(Object.keys(res).length !== 0){
+      setPopExhibit(true);
+    }else{
+      setPopExhibit(false);
+    }
+    return res;
 };
 
   const get_struct = (components: any) => {
     const res: any = {};
     components.forEach(component => {
+      console.log(component);
+      
       if(component.internalType.startsWith("struct ")){
         res[component.name]= get_struct(component.components)
       }else if (component.internalType.includes("enum ")) {
@@ -891,8 +892,7 @@ let s ;
 
 
 
-      {localStorage.getItem("manifest")?.includes("Snake") &&
-      popExhibit === true ? (
+      {popExhibit === true ? (
         <>
           {showOverlay && <div className={style.overlay} />}
           <PopUpBox
