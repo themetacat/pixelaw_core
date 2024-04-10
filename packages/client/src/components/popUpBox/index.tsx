@@ -201,7 +201,7 @@ export default function PopUpBox({
         }
   
       });
-  
+
       // 如果值不是对象，则渲染输入框
       if (typeof value !== 'object' || value === null) {
         renderedInputs.push(
@@ -325,7 +325,7 @@ export default function PopUpBox({
     }
     setContent(content);
   }
-  
+
   useEffect(() => {
     fon()
    // const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
@@ -338,9 +338,14 @@ export default function PopUpBox({
       <div className={style.contest}>
         {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
           {/* {inputs} */}
-          {inputs}
+          {resultContent.length!==0?inputs:''}
           {content}
-          <button onClick={handleConfirm} ref={buttonInfoRef} className={style.confirmBtn}>Confirm</button>
+          {
+            inputs?.length!==0?
+            <button onClick={handleConfirm} ref={buttonInfoRef} className={style.confirmBtn}>Confirm</button>:
+            null
+          }
+         
 
           {/* {content} */}
       </div>
