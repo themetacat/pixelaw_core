@@ -55,7 +55,6 @@ export default function RightPart({
   const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
-  //console.log(decodeEntity({ x: "uint32", y: "uint32" }, entity));//每个块坐标
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   const handleIconClick = (index: number, value: any) => {

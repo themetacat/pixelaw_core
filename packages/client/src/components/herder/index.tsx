@@ -108,7 +108,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   } | null>(null);
 
   const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
-// console.log(updateAbiJson)
   const [selectedColor, setSelectedColor] = useState("#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
@@ -157,7 +156,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     setIsLongPress(false);
   };
 
-  // //console.log(entities,'-----')
   const entityData: { coordinates: { x: number; y: number }; value: any }[] =
     [];
   if (entities.length !== 0) {
@@ -173,7 +171,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
 
-    //console.log(entityData); // 打印数组
   }
 
   const getEntityAtCoordinates = (x: number, y: number) => {
@@ -186,7 +183,6 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
-  // //console.log(parts[0]); // 输出 "Base"
   if (appName) {
     if (parts[0] === "BASE") {
       worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
@@ -198,27 +194,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
-  
-  // const updateAbiUrl = async (manifest: string) => {
-  //   const parts = manifest?.split("/") as any;
-  //   let worldAbiUrl: any;
-  //   if (manifest) {
-  //     if (parts[0] === "BASE") {
-  //       worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
-  //         `${parts[1].replace(/\.abi\.json/g, "")}` +
-  //         ".abi.json") as any;
-  //     } else {
-  //       worldAbiUrl = manifest;
-  //     }
-  //   } else {
-  //     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
-  //   }
-  //   const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
-  //   const systemData = await response.json();
-  //   console.log(systemData);
-  //   // setUpdate_abi_json(systemData)
-  // };
-  // updateAbiUrl(appName)
 
   const drawGrid = useCallback(
     (
@@ -228,9 +203,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       mouseY: number
     ) => {
       let pix_text ;
-      // setHoveredSquare(hoveredSquare)
-      // ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-      //console.log(hoveredSquare,99999,coordinates,selectedColor)
+ 
       // 填充整个画布背景色
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       ctx.lineWidth = 10;
@@ -251,8 +224,6 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.stroke();
       }
 
-
-      // console.log(numberData, 6969);
 const baseFontSize = 15;
 const fontSizeIncrement = 0.8;
 const fontWeight = 'normal'; // 设置字体粗细
@@ -307,9 +278,7 @@ ctx.font = `${fontWeight} ${fontSize}px Arial`;
       }
 
       if (selectedColor && hoveredSquare) {
-        //console.log(hoveredSquare)
-        //console.log(coordinates.x * GRID_SIZE - scrollOffset.x,
-        // coordinates.y * GRID_SIZE - scrollOffset.y,6968888)
+      
         ctx.fillStyle = selectedColor;
         ctx.fillRect(
           coordinates.x * GRID_SIZE - scrollOffset.x,
@@ -361,12 +330,10 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
     downTimerRef.current = setTimeout(() => {
       setIsLongPress(true);
       // 这里执行长按事件逻辑
-      // console.log("长按");
     }, ClickThreshold);
   };
 
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
-    //console.log('我点了！！！')
     setIsLongPress(false);
     setIsDragging(false);
   
@@ -374,18 +341,14 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
     }
-    if (!isLongPress) {
-      // console.log("我点了！！！");
-    }
+
     if (isLongPress) {
       // 长按事件的逻辑
-      // console.log("长按事件的逻辑");
       setIsLongPress(false);
       setIsDragging(false);
       
     } else {
       // 点击事件的逻辑
-      // console.log("点击事件的逻辑");
    
       const canvas = canvasRef.current as any;
       const rect = canvas.getBoundingClientRect();
@@ -402,14 +365,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
         if (parts[1] !== "Snake") {
           setLoading(true);
           setIsDragging(false);
-          // const increData = increment(
-          //   null,
-          //   coordinates,
-          //   entityaData,
-          //   palyerAddress,
-          //   selectedColor
-          // );
-    
+
           interactHandle( coordinates,
             palyerAddress,
             selectedColor,
@@ -434,9 +390,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
           );
           drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
         }
-      } else {
-        ////console.log("hoveredSquare或selectedColor为空");
-      }
+      } 
       setIsDragging(false);
       if(enumValue!==null){
         setPopExhibit(true);
@@ -454,11 +408,6 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 
   const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,serialNumber:any)=>{
  
-// console.log(coordinates,
-//   palyerAddress,
-//   selectedColor,
-//   actionData,
-//   serialNumber)
     const interact_data = interact(
       coordinates,
       palyerAddress,
@@ -565,18 +514,15 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
   const processComponents = async (inputs:any) => {
     const convertedParams = []
     for (const component of inputs) {
-      console.log(component,33333)
         if (component.internalType.startsWith("struct ")) {
             // const struct = get_struct(component.components);
             processComponents(component.components)
-            console.log(struct, 'structstructstruct');
             convertedParams.push(struct);
             // setConvertedParamsData(struct);
         } else if (component.internalType.startsWith("enum ")) {
             const enumValues = await get_enum_value(component.internalType.replace("enum ", ""));
    
             convertedParams.push({ [component.name]: get_value_type(component.type), ["variants"]: enumValues });
-            console.log(convertedParams,55565566)
         } else {
             convertedParams.push({ [component.name]: get_value_type(component.type) });
         }
@@ -588,9 +534,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 };
 
 const get_function_param = async (function_name: string, common_json: any[] = []) => {
-    // const response = await fetch(abi_url); // 获取 ABI JSON 文件
-    // const systemData = await response.json();
-    console.log(55555555555,updateAbiJson)
+
     const abi_json = updateAbiJson;
 
     const convertedParams: any = [];
@@ -601,8 +545,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     if (!function_name) {
         return []
     }
-
-    console.log(abi_json)
     let function_def = abi_json.filter(entry => entry.name === function_name && entry.type === 'function');
     if (!function_def) {
         function_def = abi_json.filter(entry => entry.name === 'interact' && entry.type === 'function');
@@ -611,31 +553,23 @@ const get_function_param = async (function_name: string, common_json: any[] = []
             return []
         }
     }
-    console.log(function_def);
 let s ;
     function_def.forEach(param => {
-        console.log(param.inputs);
         setParamInputs(param.inputs);
-        // const filteredInputs = 
-    //  param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+   
         (async () => {
           // s = await processComponents(param.inputs);
           s =   get_struct(param.inputs)
-          //   console.log(convertedParams);
           setConvertedParamsData(s)
-            // 注意: 这里处理完成后的逻辑
         })();
     });
-    console.log(s)
 
-    console.log(convertedParams);
 
     return s;
 };
 
   const get_struct = (components: any) => {
     const res: any = {};
-    console.log(components,333357,paramInputs)
     components.forEach(component => {
       if(component.internalType.startsWith("struct ")){
         res[component.name]= get_struct(component.components)
@@ -646,22 +580,6 @@ let s ;
         res[component.name] = get_value_type(component.type);
       }
     });
-  
-    // components.forEach(component => {
-    //   console.log(component,43231,components)
-    //   if(component.internalType.startsWith("struct ")){
-    //     const struct = get_struct(component.components);
-    //     res[component.name] = struct;
-    //   }else if (component.internalType.includes("enum ")) {
-    //     const enumValues =  get_enum_value(component.internalType.replace("enum ", ""));
-    // // console.log(enumValues)
-    // } 
-    //   else{
-    //     // console.log('!!!!!!!!!!1')
-    //     res[component.name] = get_value_type(component.type);
-    //   }
-    // })
-    // console.log(res,666666)
     return res;
   }
   const [enumValue,setEnumValue] =useState(null)
@@ -677,30 +595,21 @@ let s ;
     let key = 0;
 
     paramInputs.map((item:any)=>{
-// console.log(item.internalType.includes("enum "))
-if(item.internalType.includes("enum ")){
-    // 根据您的需求定义键值对
-// console.log(enumData)
-    enumData.members.forEach(member => {
-      if(member.name != "None" && member.nodeType === "EnumValue"){
-        // console.log(member)
-        const key = 'value'; // 请替换为您想要的键名
-        const value =member.name; // 请替换为您想要的值
-        res.push(member.name)
-        // res.push({ name: member.name, value:  member.name });
-        // res.push({ key: key++, name: member.name });
-        item[key] = res;
-      }
-    })
-    // 向对象添加键值对
+    if(item.internalType.includes("enum ")){
+      enumData.members.forEach(member => {
+        if(member.name != "None" && member.nodeType === "EnumValue"){
+          const key = 'value'; 
+          const value =member.name; 
+          res.push(member.name)
 
-    // console.log(paramInputs,666)
-}
+          item[key] = res;
+        }
+      })
+    }
     })
  
    
     setEnumValue(res)
-    // console.log(res,'-------------')
     return res;
   }
 
@@ -728,7 +637,6 @@ if(item.internalType.includes("enum ")){
   };
 
   const handlePanningChange = (newPanningValue: any) => {
-    // //console.log(newPanningValue)
     setPopExhibit(false);
     setShowOverlay(false);
     setPanningFromChild(newPanningValue);
@@ -741,7 +649,6 @@ if(item.internalType.includes("enum ")){
   
 
   const onHandleExe = () => {
-    console.log('dianle')
     setPopExhibit(false);
     setShowOverlay(false);
     // setLoading(false)
@@ -756,8 +663,6 @@ if(item.internalType.includes("enum ")){
   };
 
   const handleUpdateAbiJson = (data:any) => {
-    // 处理传递的 update_abi_json 数据
-    console.log(data); // 这里可以进行进一步的处理
     setUpdate_abi_json(data)
   };
 
@@ -765,7 +670,6 @@ if(item.internalType.includes("enum ")){
     entities_app.map((entitya) => {
      
       const instruction = getComponentValue(Instruction, entitya) as any;
-      // console.log(instruction)
       if(instruction?.instruction){
         // ！！！要用对象存值，有n个游戏存在instruction
         setInstruC(instruction?.instruction);
@@ -794,9 +698,6 @@ if(item.internalType.includes("enum ")){
       const ctx = canvas.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        //console.log(coordinates,'-----',coordinates)
-        // setHoveredSquare(hoveredSquareRef.current)
-        // setHoveredSquare(coordinates)
         drawGrid(ctx, hoveredSquare, mouseX, mouseY);
       }
     }

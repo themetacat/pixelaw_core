@@ -281,7 +281,6 @@ export default function PopUpBox({
     // 获取按钮点击的信息
     const buttonInfo = buttonInfoRef.current; 
 
-    console.log('Form Data:', formDataCopy);
     if ('x' in formDataCopy && 'y' in formDataCopy) {
         // 解构赋值获取 x 和 y 的值
         const { x, y, ...rest } = formDataCopy;
@@ -306,11 +305,10 @@ export default function PopUpBox({
         }, {})];
         args.push(buttonInfo.key);
 
-        console.log('Args:', args);
-        console.log(buttonInfo)
-    } else {
-        console.log('formDataCopy 中缺少 x 或 y 属性');
-    }
+    } 
+    // else {
+    //     console.log('formDataCopy 中缺少 x 或 y 属性');
+    // }
 }
 
 
