@@ -146,23 +146,23 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       
       let tx, hashValpublic;
 
-      // const x = `${namespace}_${system_name}_interact`;
+      const x = `${namespace}_${system_name}_interact`;
     
-      // try{
-      //   const txData = await worldContract.write.call(encodeSystemCall({
-      //     abi: abi_json,
-      //     systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
-      //     functionName: action,
-      //     args: args
-      //   }))
-      //   const tx = await waitForTransaction(txData);
+      try{
+        const txData = await worldContract.write.call(encodeSystemCall({
+          abi: abi_json,
+          systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
+          functionName: action,
+          args: args
+        }))
+        const tx = await waitForTransaction(txData);
         
-      //   hashValpublic = publicClient.waitForTransactionReceipt({hash:txData})
+        hashValpublic = publicClient.waitForTransactionReceipt({hash:txData})
 
-      // }catch(error){
-      //   console.error('Failed to setup network:', error);
-      //   return[null, null];
-      // }
+      }catch(error){
+        console.error('Failed to setup network:', error);
+        return[null, null];
+      }
     return [tx,hashValpublic]
   };
 

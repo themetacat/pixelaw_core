@@ -54,7 +54,6 @@ export default function RightPart({
   const [panning, setPanning] = useState(false);
   const manifestVal = window.localStorage.getItem("manifest");
 
-  
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
@@ -94,8 +93,10 @@ export default function RightPart({
     }catch(error){
       console.log('error:', error);
     }
+    
     try{
       const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
+      
       common_abi = await response.json();
     }catch(error){
       console.log('error:', error);
