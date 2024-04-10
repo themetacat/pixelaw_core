@@ -39,6 +39,7 @@ export default function PopUpBox({
   const entities_app = useEntityQuery([Has(App)]);
   const [instruC, setInstruC] = useState({});
   const [entityaData, setEntityaData] = useState("");
+  const [keyDown, setKeyDown] = useState(null);
   const [formData, setFormData] = useState({});
   const [hasRenderedSpecialContent, setHasRenderedSpecialContent] = useState(false);
   const [resultContent, setResultContent] = useState([]);
@@ -60,35 +61,45 @@ export default function PopUpBox({
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
 
+
+
   const handleKeyDown = (e: any) => {
-    switch (e.key) {
-      case "ArrowLeft":
-        // onHandleLeft();
-        onFunction(1,'Left');
-        break;
-      case "ArrowRight":
-        onFunction(2,'Right');
-        // onHandleRight();
-        break;
-      case "ArrowUp":
-        onFunction(3,'Up');
-        // onHandleUp();
-        break;
-      case "ArrowDown":
-        onFunction(4,'Down');
-        // onHandleDown();
-        break;
-      default:
-        break;
-    }
+    enumValue.map((item,index)=>{
+      if(  e.key.includes(item)){
+        switch (e.key) {
+          case "ArrowLeft":
+            // onHandleLeft();
+            onFunction(index+1,'Left');
+            break;
+          case "ArrowRight":
+            onFunction(index+1,'Right');
+            // onHandleRight();
+            break;
+          case "ArrowUp":
+            onFunction(index+1,'Up');
+            // onHandleUp();
+            break;
+          case "ArrowDown":
+            onFunction(index+1,'Down');
+            // onHandleDown();
+            break;
+          default:
+            break;
+        }
+      }
+     
+    
+    })
+
   };
 
   const onFunction = (numData: any,item:any) => {
-  
     buttonInfoRef.current = { key: numData + 1, value: item }; // 保存用户选择的按钮信息
     onHandleLoadingFun();
-    interactHandle(coordinates, palyerAddress, selectedColor, action, numData);
-
+    setKeyDown(buttonInfoRef.current.key)
+    const args = [coordinates, palyerAddress, selectedColor, action].concat(buttonInfoRef.current.key);
+    // console.log(args)
+    interactHandle(args);
   };
 
   const renderInputsAndSpecialContent = (data: any) => {
@@ -130,8 +141,9 @@ export default function PopUpBox({
       // 设置特殊内容，但只有在没有渲染过且 resultContent 长度大于 0 时才渲染
     const app_name = localStorage.getItem("app_name");
     // console.log(instruC.app_name);
-    
+    console.log(value)
     if (!hasRenderedSpecialContent && value.length > 0) {
+     
       specialContent = (
         <div>
           <h2 className={style.title}>{instruC.app_name}</h2>
@@ -181,7 +193,6 @@ export default function PopUpBox({
       
       setEntityaData(result);
     });
-
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -245,11 +256,16 @@ export default function PopUpBox({
     setContent(content);
   }
 
+  // useEffect(() => {
+  //   if(Object.keys(instruC).length !== 0){
+  //     fon()
+  //   }
+  // }, [instruC]);
+
+
   useEffect(() => {
-    if(Object.keys(instruC).length !== 0){
       fon()
-    }
-  }, [instruC]);
+  }, []);
 
   return (
     <div className={style.content}>
