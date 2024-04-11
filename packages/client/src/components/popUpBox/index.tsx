@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import style from "./index.module.css";
 import { addressToEntityID } from "../rightPart"
 import { Has, getComponentValue, getComponentValueStrict } from "@latticexyz/recs";
@@ -41,6 +41,9 @@ export default function PopUpBox({
   const [entityaData, setEntityaData] = useState("");
   const [formData, setFormData] = useState({});
   const [hasRenderedSpecialContent, setHasRenderedSpecialContent] = useState(false);
+  const [activeItem, setActiveItem] = useState(false);
+  const [inputs, setInputs] = useState(null);
+  const [content, setContent] = useState(null);
   const [resultContent, setResultContent] = useState([]);
 
   const buttonInfoRef = React.useRef(null) as any;
@@ -61,35 +64,59 @@ export default function PopUpBox({
   }
 
   const handleKeyDown = (e: any) => {
-    switch (e.key) {
-      case "ArrowLeft":
-        // onHandleLeft();
-        onFunction(1,'Left');
-        break;
-      case "ArrowRight":
-        onFunction(2,'Right');
-        // onHandleRight();
-        break;
-      case "ArrowUp":
-        onFunction(3,'Up');
-        // onHandleUp();
-        break;
-      case "ArrowDown":
-        onFunction(4,'Down');
-        // onHandleDown();
-        break;
-      default:
-        break;
-    }
+  
+    enumValue.map((item:any,index:any)=>{
+      if(  e.key.includes(item)){
+        switch (e.key) {
+          case "ArrowLeft":
+            // onHandleLeft();
+            onFunction(index+1,'Left',inputs);
+            break;
+          case "ArrowRight":
+            onFunction(index+1,'Right',inputs);
+            // onHandleRight();
+            break;
+          case "ArrowUp":
+            onFunction(index+1,'Up',inputs);
+            // onHandleUp();
+            break;
+          case "ArrowDown":
+            onFunction(index+1,'Down',inputs);
+            // onHandleDown();
+            break;
+          default:
+            break;
+        }
+      }
+     
+    
+    })
+
   };
 
-  const onFunction = (numData: any,item:any) => {
-  
+  const onFunction = (numData: any,item:any,renderedInputs:any) => {
     buttonInfoRef.current = { key: numData + 1, value: item }; // 保存用户选择的按钮信息
     onHandleLoadingFun();
-    interactHandle(coordinates, palyerAddress, selectedColor, action, numData);
+    setKeyDown(buttonInfoRef.current.key)
+    const args = [coordinates, palyerAddress, selectedColor, action, [numData + 1]];
+    console.log(args,inputs)
+    console.log(   coordinates,
+      palyerAddress,
+      selectedColor,
+      action,numData + 1
+    )
+    if(renderedInputs==null||renderedInputs.length===0){
+      console.log('jinlail')
+      interactHandle( coordinates,
+        palyerAddress,
+        selectedColor,
+        action,numData + 1);
+        onHandleExe()
+    }
 
   };
+
+  
 
   const renderInputsAndSpecialContent = (data: any) => {
     const renderedInputs: JSX.Element[] = [];
@@ -115,14 +142,17 @@ export default function PopUpBox({
             type="text"
             className={style.inputData}
             placeholder={key.toUpperCase()}
-            value={formData[key] || ''}
+            value={formData[key] as any}
             onChange={(e) => {
               const updatedValue = e.target.value;
-              setFormData({ ...formData, [key]: updatedValue });
+              // setFormData({ ...formData, [key]: updatedValue });
+              
+              setFormData((prevFormData) => ({ ...prevFormData, [key]: updatedValue }));
             }}
           />
         );
-      } else if(!Array.isArray(value)) {
+      }
+       else if(!Array.isArray(value)) {
         // 如果值是对象，则递归渲染子内容
         const { inputs } = renderInputsAndSpecialContent(value);
         renderedInputs.push(...inputs);
@@ -148,7 +178,10 @@ export default function PopUpBox({
             <div className={style.btnBox}>
               {enumValue?.map((item: any, key: any) => {
                 return (
-                  <button className={style.btn} key={key} onClick={() => { onFunction(key , item) }}>
+                  <button className={style.btn} key={key} onClick={() => {
+                    onFunction(key , item,renderedInputs) 
+                    console.log(8888888888,inputs,renderedInputs)
+                    }}>
                     {item}
                   </button>
                 );
@@ -164,36 +197,13 @@ export default function PopUpBox({
     
     return { inputs: renderedInputs, content: specialContent };
   };
-  
-  useEffect(() => {
-
-    entities_app.map((entitya) => {
-      const instruction = getComponentValue(Instruction, entitya) as any;
-      const num = BigInt(entityaData);
-      const result = "0x" + num?.toString(16);
-      console.log(instruction?.instruction);
-      if(instruction?.instruction){
-        const value = getComponentValueStrict(App, entitya) as any;
-        // const app_name =  convertToString(entitya);
-        const app_name = getComponentValue(AppName, addressToEntityID(value.system_addr))?.app_name;
-        setInstruC({app_name: instruction?.instruction});
-      }
-      
-      setEntityaData(result);
-    });
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [entities_app, Instruction, entityaData]);
 
 
-  function handleConfirm() {
+
+ function handleConfirm() {
     // 获取表单数据
     const formDataCopy = { ...formData };
-
+console.log(formDataCopy)
     // 获取按钮点击的信息
     const buttonInfo = buttonInfoRef.current; 
 
@@ -221,16 +231,48 @@ export default function PopUpBox({
         }, {})];
         args.push(buttonInfo.key);
 
+    interactHandle(  coordinates,
+      palyerAddress,
+      selectedColor,
+      action,args);
     } 
+    onHandleExe()
+
     // else {
     //     console.log('formDataCopy 中缺少 x 或 y 属性');
     // }
 }
+
   
-  const [inputs, setInputs] = useState(null);
-  const [content, setContent] = useState(null);
+  useEffect(() => {
+
+    entities_app.map((entitya) => {
+      const instruction = getComponentValue(Instruction, entitya) as any;
+      const num = BigInt(entityaData);
+      const result = "0x" + num?.toString(16);
+      console.log(instruction?.instruction);
+      if(instruction?.instruction){
+        const value = getComponentValueStrict(App, entitya) as any;
+        // const app_name =  convertToString(entitya);
+        const app_name = getComponentValue(AppName, addressToEntityID(value.system_addr))?.app_name;
+        setInstruC({app_name: instruction?.instruction});
+      }
+      
+      setEntityaData(result);
+    });
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [entities_app, Instruction, entityaData]);
+
+
+ 
+
+  
+
   const fon = async () => {
-    
     const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
     setInputs(inputs);
     // const result = await Promise.all(Object.values(convertedParamsData)); // 等待所有异步操作完成
