@@ -108,7 +108,7 @@ export default function PopUpBox({
       selectedColor,
       action,numData + 1
     )
-    if(renderedInputs==null||renderedInputs===0){
+    if(renderedInputs==null||renderedInputs.length===0){
       console.log('jinlail')
       interactHandle( coordinates,
         palyerAddress,
