@@ -226,8 +226,6 @@ export default function PopUpBox({
     //     console.log('formDataCopy 中缺少 x 或 y 属性');
     // }
 }
-
-
   
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
@@ -249,7 +247,7 @@ export default function PopUpBox({
     if(Object.keys(instruC).length !== 0){
       fon()
     }
-  }, [instruCg]);
+  }, [instruC]);
 
   return (
     <div className={style.content}>
