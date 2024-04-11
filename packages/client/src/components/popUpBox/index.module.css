@@ -58,6 +58,10 @@
    justify-content: space-between;
 display: flex;
 }
+.btn:focus{
+    background-color: #990a4d;
+    z-index: 9999999999999999999;
+}
 .btn{
     display: inline-flex; 
     margin-top: 15px;

@@ -128,7 +128,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       const app_name =  window.localStorage.getItem('app_name'); 
       const system_name =  window.localStorage.getItem('system_name') as string; 
       const namespace =  window.localStorage.getItem('namespace') as string; 
-
+console.log(other_params,'...................')
       const args = [{
         for_player: addressData,
         for_app: app_name,
@@ -140,10 +140,12 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
     }]
     // get_function_param(abi, action)
       if(other_params){
-        args.push(other_params);
+        console.log('进来了没有')
+        // args.push(other_params);
+      const allArgs = args.concat(other_params)
+      console.log(allArgs);
+
       }
-      console.log(args);
-      
       let tx, hashValpublic;
 
       // const x = `${namespace}_${system_name}_interact`;
@@ -153,7 +155,7 @@ const increment = async (incrementData: any, coordinates: any, entityaData: any,
       //     abi: abi_json,
       //     systemId: resourceToHex({"type": "system", "namespace": namespace, "name": system_name}),
       //     functionName: action,
-      //     args: args
+      //     args: allArgs
       //   }))
       //   const tx = await waitForTransaction(txData);
         

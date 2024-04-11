@@ -403,6 +403,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 
   const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,other_params:any)=>{
     setLoading(true);
+    console.log(coordinates,'-------------')
     const interact_data = interact(
       coordinates,
       palyerAddress,
