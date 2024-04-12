@@ -96,35 +96,8 @@ export default function PopUpBox({
     })
 
   };
-  const [buttonInfoArray, setButtonInfoArray] = React.useState<{ key: any; value: any; }[]>([]);// 使用 useState 定义按钮信息数组
-  // const onFunction = (numData: any,item:any,renderedInputs:any) => {
-  //   const buttonInfo  = { key: numData + 1, value: item }; // 保存用户选择的按钮信息
-  //   onHandleLoadingFun();
-  //   console.log(buttonInfo,6666666);
-    
-  //   // const buttonInfoData = [];
-  //   // buttonInfoRef.current.push(buttonInfo);
-  //   setKeyDown(buttonInfoRef.current.key)
-  //   // setButtonInfoArray(prevArray => [...prevArray, buttonInfo]);
-  //   setButtonInfoArray(prevArray => {
-  //     const newArray = [...prevArray, buttonInfo]; // 将新按钮信息对象添加到数组中
-  //     console.log(newArray, 'newArray'); // 打印新的数组
-  //     return newArray; // 返回新的数组作为更新后的状态
-  // });
-
-  //   const args = [coordinates, palyerAddress, selectedColor, action, [numData + 1]];
-
-  //   console.log(buttonInfoArray,'buttonInfoArray')
-  //   if(renderedInputs==null||renderedInputs.length===0){
-  //     console.log('jinlail')
-  //     interactHandle( coordinates,
-  //       palyerAddress,
-  //       selectedColor,
-  //       action,numData + 1);
-  //       onHandleExe()
-  //   }
-  // };
-
+  const [buttonInfoArray, setButtonInfoArray] = React.useState<{ key: any; value: any; }[]>([]);
+   
   const onFunction = (numData: any, item: any, renderedInputs: any) => {
     const buttonInfo = { key: numData + 1, value: item }; // 保存用户选择的按钮信息
     onHandleLoadingFun();
