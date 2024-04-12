@@ -45,7 +45,7 @@ export default function PopUpBox({
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
   const [resultContent, setResultContent] = useState([]);
-
+  const [keyDown, setKeyDown] = useState(null);
   const buttonInfoRef = React.useRef(null) as any;
 
   const appName = localStorage.getItem("manifest") as any;
@@ -99,14 +99,8 @@ export default function PopUpBox({
     onHandleLoadingFun();
     setKeyDown(buttonInfoRef.current.key)
     const args = [coordinates, palyerAddress, selectedColor, action, [numData + 1]];
-    console.log(args,inputs)
-    console.log(   coordinates,
-      palyerAddress,
-      selectedColor,
-      action,numData + 1
-    )
+
     if(renderedInputs==null||renderedInputs.length===0){
-      console.log('jinlail')
       interactHandle( coordinates,
         palyerAddress,
         selectedColor,
@@ -122,15 +116,12 @@ export default function PopUpBox({
     const renderedInputs: JSX.Element[] = [];
     let specialContent: JSX.Element | null = null;
     let hasRenderedSpecialContent = false; // 添加状态来跟踪是否已经渲染过 specialContent
-    console.log(data)
     
     Object.entries(data).forEach(([key, value]) => {
       
         if (Array.isArray(value) && value.length !== 0){
-          console.log(value);
           
           setResultContent(value as any)
-          console.log(resultContent);
           
         }
 
@@ -159,12 +150,14 @@ export default function PopUpBox({
       }
       // 设置特殊内容，但只有在没有渲染过且 resultContent 长度大于 0 时才渲染
     const app_name = localStorage.getItem("app_name");
-    // console.log(instruC.app_name);
+    console.log(app_name);
+    console.log(instruC[app_name]);
     
+
     if (!hasRenderedSpecialContent && value.length > 0) {
       specialContent = (
         <div>
-          <h2 className={style.title}>{instruC.app_name}</h2>
+          <h2 className={style.title}>{instruC[app_name]}</h2>
           <div className={style.bottomBox}>
             {paramInputs.map((item: any, key: any) => {
               if (item.internalType.includes("enum ")) {
@@ -180,7 +173,6 @@ export default function PopUpBox({
                 return (
                   <button className={style.btn} key={key} onClick={() => {
                     onFunction(key , item,renderedInputs) 
-                    console.log(8888888888,inputs,renderedInputs)
                     }}>
                     {item}
                   </button>
@@ -247,17 +239,19 @@ console.log(formDataCopy)
   useEffect(() => {
 
     entities_app.map((entitya) => {
+      
       const instruction = getComponentValue(Instruction, entitya) as any;
       const num = BigInt(entityaData);
       const result = "0x" + num?.toString(16);
-      console.log(instruction?.instruction);
       if(instruction?.instruction){
-        const value = getComponentValueStrict(App, entitya) as any;
-        // const app_name =  convertToString(entitya);
+        const value = getComponentValue(App, entitya) as any;
+        
         const app_name = getComponentValue(AppName, addressToEntityID(value.system_addr))?.app_name;
-        setInstruC({app_name: instruction?.instruction});
+        if(app_name){
+          instruC[app_name] = instruction?.instruction;
+          setInstruC(instruC);
+        }
       }
-      
       setEntityaData(result);
     });
     window.addEventListener("keydown", handleKeyDown);
@@ -267,10 +261,6 @@ console.log(formDataCopy)
     };
   }, [entities_app, Instruction, entityaData]);
 
-
- 
-
-  
 
   const fon = async () => {
     const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);

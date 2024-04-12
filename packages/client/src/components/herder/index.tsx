@@ -403,7 +403,6 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 
   const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,other_params:any)=>{
     setLoading(true);
-    console.log(coordinates,'-------------')
     const interact_data = interact(
       coordinates,
       palyerAddress,
@@ -528,7 +527,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         setParamInputs(param.inputs);
    
         (async () => {
-          console.log(param.inputs)
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
           // const filteredInputs = param.inputs;
           if(filteredInputs){
@@ -551,7 +549,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   const get_struct = (components: any) => {
     const res: any = {};
     components.forEach(component => {
-      console.log(component);
       
       if(component.internalType.startsWith("struct ")){
         res[component.name]= get_struct(component.components)
@@ -587,7 +584,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       })
     // }
     // })
-    console.log(res);
     
     setEnumValue(res)
     return res;
@@ -649,21 +645,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   const handleUpdateAbiCommonJson = (data:any) => {
     setUpdate_abi_Common_json(data)
   };
-
-  useEffect(() => {
-    entities_app.map((entitya) => {
-     
-      const instruction = getComponentValue(Instruction, entitya) as any;
-      if(instruction?.instruction){
-        // ！！！要用对象存值，有n个游戏存在instruction
-        setInstruC(instruction?.instruction);
-      }
-      const result = convertToString(entitya);
-      setEntityaData(result);
-
-    });
-  }, []);
-
+  
   useEffect(() => {
     const handleScroll = () => {
       setScrollOffset({ x: window.scrollX, y: window.scrollY });
