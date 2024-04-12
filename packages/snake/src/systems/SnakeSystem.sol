@@ -69,19 +69,6 @@ contract SnakeSystem is System {
       step: 0
     });
 
-    // string memory pixel_color;
-    // if(bytes(pixel.color).length == 0){
-    //   pixel_color = '0';
-    // }else{
-    //   pixel_color = pixel.color;
-    // }
-
-    // string memory pixel_text;
-    // if(bytes(pixel.text).length == 0){
-    //   pixel_text = '_none';
-    // }else{
-    //   pixel_text = pixel.text;
-    // }
     SnakeSegmentData memory segment = SnakeSegmentData({
       previous_id: id,
       next_id: id,
@@ -138,51 +125,55 @@ contract SnakeSystem is System {
         }));
         // Snake.deleteRecord(owner);
       }
-    }
-
-    // PixelData memory current_pixel = Pixel.get(first_segment.x, first_segment.y);
-    uint32 next_x;
-    uint32 next_y;
-    (next_x, next_y) = next_position(first_segment.x, first_segment.y, snake.direction);
-    if(next_x != 0 && next_y != 0 && !snake.is_dying && snake.step <= 50){
-      PixelData memory next_pixel = Pixel.get(next_x, next_y);
-      snake.step += 1;
-      bool has_write_access = ICoreSystem(_world()).has_write_access(next_pixel, PixelUpdateData({x: next_x, y:next_y, color: snake.color, timestamp: 0, text: snake.text, app: '_Null', owner: address(1), action: '_Null'}));
-      if(next_pixel.owner == address(0)){
-        snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
-        snake.last_segment_id = remove_last_segment(snake);
-      }else if(next_pixel.owner == owner){
-        snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
-        if (snake.length >= SNAKE_MAX_LENGTH){
-          snake.last_segment_id = remove_last_segment(snake);
-        }else{
-          snake.length += 1;
-        }
-      }else if(!has_write_access){
-        snake.is_dying = true;
-      }else{
-        if(snake.length == 1){
-          snake.is_dying = true;
-        }else{
+    }else{
+      // PixelData memory current_pixel = Pixel.get(first_segment.x, first_segment.y);
+      uint32 next_x;
+      uint32 next_y;
+      bool is_die;
+      (next_x, next_y, is_die) = next_position(first_segment.x, first_segment.y, snake.direction);
+      // if(next_x != 0 && next_y != 0 && !snake.is_dying && snake.step <= 50){
+      if(is_die && snake.step <= 50){
+        PixelData memory next_pixel = Pixel.get(next_x, next_y);
+        snake.step += 1;
+        bool has_write_access = ICoreSystem(_world()).has_write_access(next_pixel, PixelUpdateData({x: next_x, y:next_y, color: snake.color, timestamp: 0, text: snake.text, app: '_Null', owner: address(1), action: '_Null'}));
+        if(next_pixel.owner == address(0)){
           snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
           snake.last_segment_id = remove_last_segment(snake);
-          snake.last_segment_id = remove_last_segment(snake);
+        }else if(next_pixel.owner == owner){
+          snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
+          if (snake.length >= SNAKE_MAX_LENGTH){
+            snake.last_segment_id = remove_last_segment(snake);
+          }else{
+            snake.length += 1;
+          }
+        }else if(!has_write_access){
+          snake.is_dying = true;
+        }else{
+          if(snake.length == 1){
+            snake.is_dying = true;
+          }else{
+            snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
+            snake.last_segment_id = remove_last_segment(snake);
+            snake.last_segment_id = remove_last_segment(snake);
+          }
         }
+      }else{
+        snake.is_dying = true;
       }
-    }else{
-      snake.is_dying = true;
+      Snake.set(owner, snake);
+      uint256 queue_timestamp = block.timestamp;
+      bytes memory call_data = abi.encodeWithSignature("move(address)", owner);
+      ICoreSystem(_world()).schedule_queue(queue_timestamp, call_data);
     }
-    Snake.set(owner, snake);
-    uint256 queue_timestamp = block.timestamp;
-    bytes memory call_data = abi.encodeWithSignature("move(address)", owner);
-    ICoreSystem(_world()).schedule_queue(queue_timestamp, call_data);
   }
 
-  function next_position(uint32 x, uint32 y, Direction direction) public pure returns(uint32, uint32){
+  function next_position(uint32 x, uint32 y, Direction direction) public pure returns(uint32, uint32, bool){
+    bool is_die = false;
     if(direction == Direction.Left){
       if(x == 0){
         x = 0;
-        y = 0;
+        // y = 0;
+        is_die = true;
       }else{
         x -= 1;
       }
@@ -190,15 +181,15 @@ contract SnakeSystem is System {
       x += 1;
     }else if(direction == Direction.Up){
       if(y == 0){
-        x = 0;
         y = 0;
+        is_die = true;
       }else{
         y -= 1;
       }
     }else if(direction == Direction.Down){
       y += 1;
     }
-    return (x, y);
+    return (x, y, is_die);
   }
 
   function create_new_segment(uint32 x, uint32 y, PixelData memory pixel, SnakeData memory snake, SnakeSegmentData memory existing_segment) public returns(uint256){
@@ -206,20 +197,6 @@ contract SnakeSystem is System {
     uint256 id = generateUUID();
     existing_segment.previous_id = id;
     SnakeSegment.set(snake.first_segment_id, existing_segment);
-
-    // string memory pixel_color;
-    // if(bytes(pixel.color).length == 0){
-    //   pixel_color = '0';
-    // }else{
-    //   pixel_color = pixel.color;
-    // }
-
-    // string memory pixel_text;
-    // if(bytes(pixel.text).length == 0){
-    //   pixel_text = '_none';
-    // }else{
-    //   pixel_text = pixel.text;
-    // }
 
     SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel.color, pixel_original_text: pixel.text}));
     

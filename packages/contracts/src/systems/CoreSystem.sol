@@ -119,22 +119,6 @@ contract CoreSystem is System {
       pixel.updated_at = block.timestamp;
     }
 
-    // if(bytes(pixel_update.app).length != 0){
-    //   pixel.app = pixel_update.app;
-    // }
-
-    // if(bytes(pixel_update.color).length != 0){
-    //   pixel.color = pixel_update.color;
-    // }
-
-    // if(pixel_update.owner != address(0)){
-    //   pixel.owner = pixel_update.owner;
-    // }
-
-    // if(bytes(pixel_update.text).length != 0){
-    //   pixel.text = pixel_update.text;
-    // }
-
     if(keccak256(abi.encodePacked(pixel_update.app)) != string_null){
       pixel.app = pixel_update.app;
     }
