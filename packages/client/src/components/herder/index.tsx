@@ -403,6 +403,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 
   const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,other_params:any)=>{
     setLoading(true);
+   
     const interact_data = interact(
       coordinates,
       palyerAddress,
@@ -525,7 +526,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     let res = {};
     function_def.forEach(param => {
         setParamInputs(param.inputs);
-   
         (async () => {
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
           // const filteredInputs = param.inputs;
@@ -555,13 +555,16 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       }else if (component.internalType.includes("enum ")) {
         res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
         // res[component.name] = ['Left', 'Right', 'Up', 'Down']
+        enumValue[component.name]=res
+    
+        setEnumValue(enumValue)
       } else{
         res[component.name] = get_value_type(component.type);
       }
     });
     return res;
   }
-  const [enumValue,setEnumValue] =useState(null)
+  const [enumValue,setEnumValue] =useState({})
   const get_enum_value = (enumName: string) => {
     const res = [] as any;
     // ${parts[1].replace(/\.abi\.json/g, "")}
@@ -584,8 +587,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       })
     // }
     // })
-    
-    setEnumValue(res)
+   
     return res;
   }
 
@@ -645,7 +647,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   const handleUpdateAbiCommonJson = (data:any) => {
     setUpdate_abi_Common_json(data)
   };
-  
+
   useEffect(() => {
     const handleScroll = () => {
       setScrollOffset({ x: window.scrollX, y: window.scrollY });

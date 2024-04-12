@@ -45,8 +45,8 @@ export default function PopUpBox({
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
   const [resultContent, setResultContent] = useState([]);
-  const [keyDown, setKeyDown] = useState(null);
-  const buttonInfoRef = React.useRef(null) as any;
+
+  const buttonInfoRef = React.useRef([]) as any;
 
   const appName = localStorage.getItem("manifest") as any;
   const parts = appName?.split("/") as any;
@@ -93,28 +93,42 @@ export default function PopUpBox({
     })
 
   };
-
-  const onFunction = (numData: any,item:any,renderedInputs:any) => {
-    buttonInfoRef.current = { key: numData + 1, value: item }; // 保存用户选择的按钮信息
+  const [buttonInfoArray, setButtonInfoArray] = React.useState<{ key: any; value: any; }[]>([]);
+   
+  const onFunction = (numData: any, item: any, renderedInputs: any) => {
+    const buttonInfo = { key: numData + 1, value: item }; // 保存用户选择的按钮信息
     onHandleLoadingFun();
-    setKeyDown(buttonInfoRef.current.key)
-    const args = [coordinates, palyerAddress, selectedColor, action, [numData + 1]];
+    
+    // setKeyDown(buttonInfo.key); // 设置 keyDown 状态为按钮信息的 key 属性
 
-    if(renderedInputs==null||renderedInputs.length===0){
-      interactHandle( coordinates,
-        palyerAddress,
-        selectedColor,
-        action,numData + 1);
-        onHandleExe()
-    }
+    // 更新 buttonInfoArray，确保键与 numData + 1 对应
+    setButtonInfoArray(prevArray => {
+        const newArray = [...prevArray];
+        // 查找是否已经存在具有相同键的对象，如果是，则替换，否则添加到数组中
+        const index = newArray.findIndex(obj => obj.key === buttonInfo.key);
+        if (index !== -1) {
+            // 如果已经存在相同键的对象，则替换它
+            newArray[index] = buttonInfo;
+        } else {
+            // 如果不存在相同键的对象，则添加到数组末尾
+            newArray.push(buttonInfo);
+        }
+        return newArray; // 返回更新后的数组作为状态
+    });
 
-  };
+    const args = [coordinates, palyerAddress, selectedColor, action, numData + 1];
 
   
+    if (renderedInputs == null || renderedInputs.length === 0) {
+        interactHandle(coordinates, palyerAddress, selectedColor, action, numData + 1);
+        onHandleExe();
+    }
+};
 
-  const renderInputsAndSpecialContent = (data: any) => {
+  const renderInputsAndSpecialContent = (data: any,flag=false) => {
     const renderedInputs: JSX.Element[] = [];
-    let specialContent: JSX.Element | null = null;
+    // let specialContent: JSX.Element | null = null;
+    const specialContent:JSX.Element[] = [];
     let hasRenderedSpecialContent = false; // 添加状态来跟踪是否已经渲染过 specialContent
     
     Object.entries(data).forEach(([key, value]) => {
@@ -130,59 +144,71 @@ export default function PopUpBox({
         renderedInputs.push(
           <input
             key={key}
-            type="text"
+            type={value === 'number'?'number':'text'}
             className={style.inputData}
             placeholder={key.toUpperCase()}
+            // placeholder={value}
             value={formData[key] as any}
             onChange={(e) => {
-              const updatedValue = e.target.value;
-              // setFormData({ ...formData, [key]: updatedValue });
-              
-              setFormData((prevFormData) => ({ ...prevFormData, [key]: updatedValue }));
+              const inputValue = e.target.value;
+              // 如果输入框类型为 "number"，且输入值不是数字，则不更新 formData
+              if (value === 'number' && isNaN(Number(inputValue))) {
+                return;
+              }
+              // 否则更新 formData
+              setFormData((prevFormData) => ({ ...prevFormData, [key]: inputValue }));
             }}
           />
         );
       }
+      
        else if(!Array.isArray(value)) {
         // 如果值是对象，则递归渲染子内容
-        const { inputs } = renderInputsAndSpecialContent(value);
+        const { inputs } = renderInputsAndSpecialContent(value,flag=true);
+        
         renderedInputs.push(...inputs);
       }
       // 设置特殊内容，但只有在没有渲染过且 resultContent 长度大于 0 时才渲染
     const app_name = localStorage.getItem("app_name");
-    console.log(app_name);
-    console.log(instruC[app_name]);
-    
-
-    if (!hasRenderedSpecialContent && value.length > 0) {
-      specialContent = (
+    if (!hasRenderedSpecialContent && Object.keys(value).length > 0&&flag===false) {
+      specialContent.push(
         <div>
-          <h2 className={style.title}>{instruC[app_name]}</h2>
-          <div className={style.bottomBox}>
-            {paramInputs.map((item: any, key: any) => {
+          <h2 className={style.title}>{instruC.app_name}</h2>
+ 
+            {paramInputs.map((item: any, key: any,) => {
+         
               if (item.internalType.includes("enum ")) {
-                return (
-                  <label key={key} className={style.direction}>
-                    {item.name}
-                  </label>
-                );
-              }
-            })}
-            <div className={style.btnBox}>
-              {enumValue?.map((item: any, key: any) => {
-                return (
-                  <button className={style.btn} key={key} onClick={() => {
-                    onFunction(key , item,renderedInputs) 
-                    }}>
+            
+                  const enumItems = enumValue[item.name]?.[item.name]?.map((item: any, key: any) => (
+                  <button
+                  ref={buttonInfoRef} 
+                    className={style.btn}
+                    key={key}
+                    onClick={() => {
+                      onFunction(key , item,renderedInputs) 
+                    }}
+                  >
                     {item}
                   </button>
+                ));
+
+                return (
+                  <React.Fragment key={key}>
+                    <label className={style.direction}>
+                      {item.name}
+                    </label>
+                  
+                    <div className={style.bottomBox} > {enumItems}</div>
+                  </React.Fragment>
                 );
-              })}
-            </div>
-          </div>
+
+              }
+              return null; // 如果不是枚举类型，则返回 null
+            })}
+           
         </div>
       );
-      setHasRenderedSpecialContent(true);
+       setHasRenderedSpecialContent(true);
     }
     });
   
@@ -192,47 +218,27 @@ export default function PopUpBox({
 
 
 
- function handleConfirm() {
-    // 获取表单数据
-    const formDataCopy = { ...formData };
-console.log(formDataCopy)
-    // 获取按钮点击的信息
-    const buttonInfo = buttonInfoRef.current; 
 
-    if ('x' in formDataCopy && 'y' in formDataCopy) {
-        // 解构赋值获取 x 和 y 的值
-        const { x, y, ...rest } = formDataCopy;
+function handleConfirm() {
+  // 获取表单数据
+  const formDataCopy = { ...formData };
+  // 获取按钮点击的信息
+  const buttonInfo = buttonInfoRef.current; 
+  const buttonInfoArrayCopy = buttonInfoArray?.map(obj => obj.key); // 提取每个对象的 key 属性
+  if ('x' in formDataCopy && 'y' in formDataCopy) {
+      // 将 x 和 y 移到 position 对象中
+      formDataCopy.position = { x: formDataCopy.x, y: formDataCopy.y };
+      delete formDataCopy.x;
+      delete formDataCopy.y;
 
-        const newData = {
-            ...rest, 
-            position: { x, y } 
-        };
+      // 构建 args 数组
+      const args = [formDataCopy];
+      args.push(...buttonInfoArrayCopy);
 
-        const propertyOrder = ['for_player', 'for_app', 'position', 'color'];
+      interactHandle(coordinates, palyerAddress, selectedColor, action, args);
+  } 
 
-        const args = [propertyOrder.reduce((obj, key) => {
-            if (key === 'position') {
-                obj[key] = {
-                    x: newData.position.x,
-                    y: newData.position.y
-                };
-            } else {
-                obj[key] = newData[key];
-            }
-            return obj;
-        }, {})];
-        args.push(buttonInfo.key);
-
-    interactHandle(  coordinates,
-      palyerAddress,
-      selectedColor,
-      action,args);
-    } 
-    onHandleExe()
-
-    // else {
-    //     console.log('formDataCopy 中缺少 x 或 y 属性');
-    // }
+  onHandleExe();
 }
 
   
@@ -291,7 +297,7 @@ console.log(formDataCopy)
           {content}
           {
             inputs?.length!==0?
-            <button onClick={handleConfirm} ref={buttonInfoRef} className={style.confirmBtn}>Confirm</button>:
+            <button onClick={handleConfirm} className={style.confirmBtn}>Confirm</button>:
             null
           }
          
