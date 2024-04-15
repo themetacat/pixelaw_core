@@ -525,9 +525,12 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     }
     let res = {};
     function_def.forEach(param => {
+      console.log(function_def,'function_def');
+      
         setParamInputs(param.inputs);
         (async () => {
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+       
           // const filteredInputs = param.inputs;
           if(filteredInputs){
             res = get_struct(filteredInputs);
@@ -556,7 +559,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
         // res[component.name] = ['Left', 'Right', 'Up', 'Down']
         enumValue[component.name]=res
-    
+        
         setEnumValue(enumValue)
       } else{
         res[component.name] = get_value_type(component.type);
@@ -573,21 +576,19 @@ const get_function_param = async (function_name: string, common_json: any[] = []
 
     const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
     let key = 0;
+  
+    console.log(enumData, enumName);
+    
+    enumData.members.forEach(member => {
+      if(member.nodeType === "EnumValue"){
+        // const key = 'value'; 
+        // const value =member.name; 
+        res.push(member.name)
 
-    // paramInputs.map((item:any)=>{
-    // if(item.internalType.includes("enum ")){
-      enumData.members.forEach(member => {
-        if(member.name != "None" && member.nodeType === "EnumValue"){
-          // const key = 'value'; 
-          // const value =member.name; 
-          res.push(member.name)
+        // item[key] = res;
+      }
+    })
 
-          // item[key] = res;
-        }
-      })
-    // }
-    // })
-   
     return res;
   }
 

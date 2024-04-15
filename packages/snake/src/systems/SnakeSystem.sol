@@ -113,17 +113,17 @@ contract SnakeSystem is System {
         // Died memory died = Died(owner, first_segment.x, first_segment.y);
         // emit EventDied(died);
 
-        Snake.set(owner, SnakeData({
-          length: 0,
-          first_segment_id: 0,
-          last_segment_id: 0,
-          direction: Direction.None,
-          color: '',
-          text: '',
-          is_dying: false,
-          step: 0
-        }));
-        // Snake.deleteRecord(owner);
+        // Snake.set(owner, SnakeData({
+        //   length: 0,
+        //   first_segment_id: 0,
+        //   last_segment_id: 0,
+        //   direction: Direction.None,
+        //   color: '',
+        //   text: '',
+        //   is_dying: false,
+        //   step: 0
+        // }));
+        Snake.deleteRecord(owner);
       }
     }else{
       // PixelData memory current_pixel = Pixel.get(first_segment.x, first_segment.y);
@@ -132,7 +132,7 @@ contract SnakeSystem is System {
       bool is_die;
       (next_x, next_y, is_die) = next_position(first_segment.x, first_segment.y, snake.direction);
       // if(next_x != 0 && next_y != 0 && !snake.is_dying && snake.step <= 50){
-      if(is_die && snake.step <= 50){
+      if(!is_die && !snake.is_dying && snake.step <= 50){
         PixelData memory next_pixel = Pixel.get(next_x, next_y);
         snake.step += 1;
         bool has_write_access = ICoreSystem(_world()).has_write_access(next_pixel, PixelUpdateData({x: next_x, y:next_y, color: snake.color, timestamp: 0, text: snake.text, app: '_Null', owner: address(1), action: '_Null'}));
@@ -160,11 +160,11 @@ contract SnakeSystem is System {
       }else{
         snake.is_dying = true;
       }
-      Snake.set(owner, snake);
-      uint256 queue_timestamp = block.timestamp;
-      bytes memory call_data = abi.encodeWithSignature("move(address)", owner);
-      ICoreSystem(_world()).schedule_queue(queue_timestamp, call_data);
     }
+    Snake.set(owner, snake);
+    uint256 queue_timestamp = block.timestamp;
+    bytes memory call_data = abi.encodeWithSignature("move(address)", owner);
+    ICoreSystem(_world()).schedule_queue(queue_timestamp, call_data);
   }
 
   function next_position(uint32 x, uint32 y, Direction direction) public pure returns(uint32, uint32, bool){

@@ -3,7 +3,7 @@ import { mudConfig } from "@latticexyz/world/register";
 export default mudConfig({
   namespace: "snake",
   enums:{
-    Direction: ["None", "Left", "Right", "Up", "Down"]
+    Direction: ["Left", "Right", "Up", "Down"]
   },
   tables: {
     Snake: {

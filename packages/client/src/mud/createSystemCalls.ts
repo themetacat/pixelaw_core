@@ -137,14 +137,13 @@ export function createSystemCalls(
       },
       color: selectedColor
     }]
-    console.log(other_params);
     
     // get_function_param(abi, action)
     let allArgs = args;
-    if (other_params) {
+    if (other_params !== null) {
+      
       allArgs = args.concat(other_params)
     }
-    console.log(allArgs);
 
     let tx, hashValpublic;
 
