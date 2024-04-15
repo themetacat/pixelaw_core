@@ -1,7 +1,11 @@
 import React, { useEffect, useContext, useState, useCallback } from "react";
 import style from "./index.module.css";
-import { addressToEntityID } from "../rightPart"
-import { Has, getComponentValue, getComponentValueStrict } from "@latticexyz/recs";
+import { addressToEntityID } from "../rightPart";
+import {
+  Has,
+  getComponentValue,
+  getComponentValueStrict,
+} from "@latticexyz/recs";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import toast, { Toaster } from "react-hot-toast";
@@ -40,9 +44,10 @@ export default function PopUpBox({
   const [instruC, setInstruC] = useState({});
   const [entityaData, setEntityaData] = useState("");
   const [keyDown, setKeyDown] = useState(null);
-  const [formData, setFormData] = useState({});
-  const [hasRenderedSpecialContent, setHasRenderedSpecialContent] = useState(false);
-  const [activeItem, setActiveItem] = useState(false);
+  const [formData, setFormData] = useState([]);
+  const [hasRenderedSpecialContent, setHasRenderedSpecialContent] =
+    useState(false);
+  const [InputsData, setInputsData] = useState(null);
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
   const [resultContent, setResultContent] = useState([]);
@@ -64,211 +69,299 @@ export default function PopUpBox({
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
 
-
-
   const handleKeyDown = (e: any) => {
-  
-    enumValue.map((item:any,index:any)=>{
-      if(  e.key.includes(item)){
-        switch (e.key) {
-          case "ArrowLeft":
-            // onHandleLeft();
-            onFunction(index+1,'Left',inputs);
-            break;
-          case "ArrowRight":
-            onFunction(index+1,'Right',inputs);
-            // onHandleRight();
-            break;
-          case "ArrowUp":
-            onFunction(index+1,'Up',inputs);
-            // onHandleUp();
-            break;
-          case "ArrowDown":
-            onFunction(index+1,'Down',inputs);
-            // onHandleDown();
-            break;
-          default:
-            break;
-        }
-      }
-     
-    
-    })
-
+    // enumValue.map((item: any, index: any) => {
+    //   if (e.key.includes(item)) {
+    //     switch (e.key) {
+    //       case "ArrowLeft":
+    //         // onHandleLeft();
+    //         onFunction(index + 1, "Left", inputs);
+    //         break;
+    //       case "ArrowRight":
+    //         onFunction(index + 1, "Right", inputs);
+    //         // onHandleRight();
+    //         break;
+    //       case "ArrowUp":
+    //         onFunction(index + 1, "Up", inputs);
+    //         // onHandleUp();
+    //         break;
+    //       case "ArrowDown":
+    //         onFunction(index + 1, "Down", inputs);
+    //         // onHandleDown();
+    //         break;
+    //       default:
+    //         break;
+    //     }
+    //   }
+    // });
   };
-  const [buttonInfoArray, setButtonInfoArray] = React.useState<{ key: any; value: any; }[]>([]);
-   
-  const onFunction = (numData: any, item: any, renderedInputs: any) => {
+  const [buttonInfoArray, setButtonInfoArray] = React.useState<
+    { key: any; value: any }[]
+  >([]);
+
+  const onFunction = (
+    numData: any,
+    item: any,
+    renderedInputs: any,
+    InputsData: any
+  ) => {
     const buttonInfo = { key: numData + 1, value: item }; // 保存用户选择的按钮信息
     onHandleLoadingFun();
-    console.log(buttonInfo, 6666666);
-    
-    setKeyDown(buttonInfo.key); // 设置 keyDown 状态为按钮信息的 key 属性
+    //console.log(InputsData, "saaaaaaaaa");
 
+    setKeyDown(buttonInfo.key); // 设置 keyDown 状态为按钮信息的 key 属性
     // 更新 buttonInfoArray，确保键与 numData + 1 对应
-    setButtonInfoArray(prevArray => {
-        const newArray = [...prevArray];
-        // 查找是否已经存在具有相同键的对象，如果是，则替换，否则添加到数组中
-        const index = newArray.findIndex(obj => obj.key === buttonInfo.key);
-        if (index !== -1) {
-            // 如果已经存在相同键的对象，则替换它
-            newArray[index] = buttonInfo;
-        } else {
-            // 如果不存在相同键的对象，则添加到数组末尾
-            newArray.push(buttonInfo);
-        }
-        console.log(newArray, 'newArray'); // 打印更新后的数组
-        return newArray; // 返回更新后的数组作为状态
+    setButtonInfoArray((prevArray) => {
+      const newArray = [...prevArray];
+      // 查找是否已经存在具有相同键的对象，如果是，则替换，否则添加到数组中
+      const index = newArray.findIndex((obj) => obj.key === buttonInfo.key);
+      if (index !== -1) {
+        // 如果已经存在相同键的对象，则替换它
+        newArray[index] = buttonInfo;
+      } else {
+        // 如果不存在相同键的对象，则添加到数组末尾
+        newArray.push(buttonInfo);
+      }
+      //console.log(newArray, "newArray"); // 打印更新后的数组
+      return newArray; // 返回更新后的数组作为状态
     });
 
-    const args = [coordinates, palyerAddress, selectedColor, action, numData + 1];
+    const args = [
+      coordinates,
+      palyerAddress,
+      selectedColor,
+      action,
+      buttonInfo.key,
+    ]; // 使用buttonInfo.key作为参数之一
 
-  
-    if (renderedInputs == null || renderedInputs.length === 0) {
-        console.log('jinlail');
-        interactHandle(coordinates, palyerAddress, selectedColor, action, numData + 1);
-        onHandleExe();
+    if (
+      (renderedInputs == null && renderedInputs.length === 0) ||
+      InputsData === 1
+    ) {
+      interactHandle(
+        coordinates,
+        palyerAddress,
+        selectedColor,
+        action,
+        buttonInfo.key
+      );
+      onHandleExe();
     }
-};
-
-  const renderInputsAndSpecialContent = (data: any,flag=false) => {
+  };
+  // let enumItemsCount = 0; // 初始化为 0
+  const renderInputsAndSpecialContent = (data: any, flag = false) => {
     const renderedInputs: JSX.Element[] = [];
     // let specialContent: JSX.Element | null = null;
-    const specialContent:JSX.Element[] = [];
+    const specialContent: JSX.Element[] = [];
     let hasRenderedSpecialContent = false; // 添加状态来跟踪是否已经渲染过 specialContent
-    console.log(data)
-    
-    Object.entries(data).forEach(([key, value]) => {
-      
-        if (Array.isArray(value) && value.length !== 0){
-          console.log(value);
-          
-          setResultContent(value as any)
-          console.log(resultContent);
-          
-        }
-
+    const numGroups = Object.keys(data).length;
+    setInputsData(numGroups);
+  // 生成一个0到1之间的随机数
+  const randomNumber = Math.random();
+  let formDataContentArr= [];
+  let formDataContent;
+  console.log(data);
+  
+    Object.entries(data).forEach(([key, value], index) => {
+      formDataContent={};
+      if (Array.isArray(value) && value.length !== 0) {
+        setResultContent(value as any);
+      }
       // 如果值不是对象，则渲染输入框
-      if (typeof value !== 'object' || value === null) {
+      if (typeof value !== "object" || value === null) {
         renderedInputs.push(
           <input
-            key={key}
-            type={value === 'number'?'number':'text'}
+            key={`${key+randomNumber.toString()}`} // 使用key值和索引的组合作为唯一标识符
+            type={value === "number" ? "number" : "text"}
             className={style.inputData}
             placeholder={key.toUpperCase()}
             // placeholder={value}
             value={formData[key] as any}
             onChange={(e) => {
               const inputValue = e.target.value;
+              formDataContent[key] = inputValue;
               // 如果输入框类型为 "number"，且输入值不是数字，则不更新 formData
-              if (value === 'number' && isNaN(Number(inputValue))) {
-                console.log('能不能进来啊')
+              if (value === "number" && isNaN(Number(inputValue))) {
                 return;
               }
+            
               // 否则更新 formData
-              setFormData((prevFormData) => ({ ...prevFormData, [key]: inputValue }));
+              // setFormData((prevFormData) => ({
+              //   ...prevFormData,
+              //   [key]: inputValue,
+              // }));
+              
             }}
           />
         );
-      }
-      
-       else if(!Array.isArray(value)) {
+     
+      } else if (!Array.isArray(value)) {
         // 如果值是对象，则递归渲染子内容
-        const { inputs } = renderInputsAndSpecialContent(value,flag=true);
-        
+        const { inputs ,formContent} = renderInputsAndSpecialContent(value, (flag = true));
+        formDataContent[key] = formContent;
         renderedInputs.push(...inputs);
       }
-      // 设置特殊内容，但只有在没有渲染过且 resultContent 长度大于 0 时才渲染
-    const app_name = localStorage.getItem("app_name");
-    // console.log(instruC.app_name);
-    if (!hasRenderedSpecialContent && Object.keys(value).length > 0&&flag===false) {
-      specialContent.push(
-        <div>
-          <h2 className={style.title}>{instruC.app_name}</h2>
  
-            {paramInputs.map((item: any, key: any,) => {
-         
+      const app_name = localStorage.getItem("app_name");
+      // //console.log(instruC.app_name);
+      if (
+        !hasRenderedSpecialContent &&
+        Object.keys(value).length > 0 &&
+        flag === false
+      ) {
+        specialContent.push(
+          <div>
+            <h2 className={style.title}>{instruC.app_name}</h2>
+            {paramInputs.map((item: any, key: any) => {
               if (item.internalType.includes("enum ")) {
-            
-                  const enumItems = enumValue[item.name]?.[item.name]?.map((item: any, key: any) => (
-                  <button
-                  ref={buttonInfoRef} 
-                    className={style.btn}
-                    key={key}
-                    onClick={() => {
-                      onFunction(key , item,renderedInputs) 
-                    }}
-                  >
-                    {item}
-                  </button>
-                ));
-console.log(enumItems,65545)
+                const enumItemsCount = enumValue[item.name]?.[item.name]; // 获取枚举值的组数
+                //console.log(enumItemsCount);
+                const enumItems = enumValue[item.name]?.[item.name]?.map(
+                  (item: any, key: any) => (
+                    <button
+                      ref={buttonInfoRef}
+                      className={style.btn}
+                      key={key}
+                      onClick={() => {
+                        formDataContentArr.push(key+1)
+                        onFunction(key, item, renderedInputs, numGroups);
+                      }}
+                    >
+                      {item}
+                    </button>
+                  )
+                );
                 return (
-                  <React.Fragment key={key}>
-                    <label className={style.direction}>
-                      {item.name}
-                    </label>
-                  
-                    <div className={style.bottomBox} > {enumItems}</div>
+                  <React.Fragment  key={`${key+randomNumber.toString()}`} >
+                    <label className={style.direction}>{item.name}</label>
+
+                    <div className={style.bottomBox}> {enumItems}</div>
                   </React.Fragment>
                 );
-
               }
               return null; // 如果不是枚举类型，则返回 null
             })}
-           
-        </div>
-      );
-       setHasRenderedSpecialContent(true);
-    }
+          </div>
+        );
+        hasRenderedSpecialContent = true;
+        setHasRenderedSpecialContent(true);
+      }else{
+        if (Object.keys(formDataContent).length > 0) {
+          formDataContentArr.push(formDataContent);
+        }
+
+      }
     });
-  
-    
-    return { inputs: renderedInputs, content: specialContent };
+
+    return { inputs: renderedInputs, formContent:formDataContent,content: specialContent ,formContentArr:formDataContentArr};
   };
 
 
-
-
-function handleConfirm() {
-  console.log(buttonInfoArray, 'buttonInfoArray',formData);
-  // 获取表单数据
-  const formDataCopy = { ...formData };
-console.log( buttonInfoRef.current)
-  // 获取按钮点击的信息
-  const buttonInfo = buttonInfoRef.current; 
-  const buttonInfoArrayCopy = buttonInfoArray?.map(obj => obj.key); // 提取每个对象的 key 属性
-  if ('x' in formDataCopy && 'y' in formDataCopy) {
-      // 将 x 和 y 移到 position 对象中
-      formDataCopy.position = { x: formDataCopy.x, y: formDataCopy.y };
-      delete formDataCopy.x;
-      delete formDataCopy.y;
-
-      // 构建 args 数组
-      const args = [formDataCopy];
-      args.push(...buttonInfoArrayCopy);
-
-      interactHandle(coordinates, palyerAddress, selectedColor, action, args);
-  } 
-
-  onHandleExe();
-}
-
+ 
+  function deepCopy(obj) {
+    if (typeof obj !== 'object' || obj === null) {
+      return obj; // 如果不是对象或为null，则直接返回
+    }
   
-  useEffect(() => {
+    const copy = Array.isArray(obj) ? [] : {}; // 判断是数组还是对象
+  
+    for (const key in obj) {
+      if (Object.hasOwnProperty.call(obj, key)) {
+        copy[key] = deepCopy(obj[key]); // 递归拷贝属性值
+      }
+    }
+  
+    return copy;
+  }
+  
 
+  function handleConfirm() {
+    // 获取表单数据
+    // const formDataCopy = { ...formData };
+    const args =formData;
+// console.log(formDataCopy);
+    // 获取按钮点击的信息
+    // const { inputs,formContentArr, content } =
+    // renderInputsAndSpecialContent(convertedParamsData);
+    // console.log(formDataCopy);
+    console.log( 9999999,formData);
+console.log(formData);
+
+    const buttonInfo = buttonInfoRef.current;
+    // const args = formDataCopy;
+    // const buttonInfoArrayCopy = buttonInfoArray?.map((obj) => obj.key); // 提取每个对象的 key 属性
+    // console.log(args,buttonInfoArrayCopy);
+    // args.push(...buttonInfoArrayCopy);
+    const result = Object.values(convertedParamsData);
+    // 构建 args 数组
+  console.dir(args)
+console.log(result,'resultresult');
+
+
+let sortedArgs = [];
+result.forEach(item => {
+  console.log(item);
+  
+  if (Array.isArray(item)) {
+    const foundNum = args.find(arg => typeof arg === 'number');
+    if (foundNum !== undefined) {
+      sortedArgs.push(foundNum); // 将找到的数字推入sortedArgs中
+      args.splice(args.indexOf(foundNum), 1); // 从args中移除已匹配的元素
+    } else {
+      sortedArgs.push(undefined); // 如果未找到匹配项，则推入undefined
+    }
+  } else if (typeof item === 'object' && !Array.isArray(item)) {
+    // 找到对象类型的元素
+    const foundObj = args.find(arg => typeof arg === 'object' && !Array.isArray(arg) && Object.keys(arg).length);
+    if (foundObj !== undefined) {
+      sortedArgs.push(foundObj); // 将找到的对象推入sortedArgs中
+      args.splice(args.indexOf(foundObj), 1); // 从args中移除已匹配的元素
+    } else {
+      sortedArgs.push(undefined); // 如果未找到匹配项，则推入undefined
+    }
+  }
+});
+
+sortedArgs = sortedArgs.concat(args);
+
+// 使用 flatMap 将对象提取到一个新数组中
+const extractedObjects = sortedArgs.flatMap(item => {
+  if (typeof item === 'object' && item !== null) {
+    return Object.values(item); // 获取对象的值并返回
+  }
+  return item; // 如果不是对象，则返回空数组
+});
+
+console.log(extractedObjects);
+   
+
+interactHandle(
+  coordinates,
+  palyerAddress,
+  selectedColor,
+  action,
+  extractedObjects
+);
+  
+    onHandleExe();
+  }
+
+  useEffect(() => {
     entities_app.map((entitya) => {
       const instruction = getComponentValue(Instruction, entitya) as any;
       const num = BigInt(entityaData);
       const result = "0x" + num?.toString(16);
-      console.log(instruction?.instruction);
-      if(instruction?.instruction){
+      //console.log(instruction?.instruction);
+      if (instruction?.instruction) {
         const value = getComponentValueStrict(App, entitya) as any;
         // const app_name =  convertToString(entitya);
-        const app_name = getComponentValue(AppName, addressToEntityID(value.system_addr))?.app_name;
-        setInstruC({app_name: instruction?.instruction});
+        const app_name = getComponentValue(
+          AppName,
+          addressToEntityID(value.system_addr)
+        )?.app_name;
+        setInstruC({ app_name: instruction?.instruction });
       }
-      
+
       setEntityaData(result);
     });
     window.addEventListener("keydown", handleKeyDown);
@@ -278,24 +371,32 @@ console.log( buttonInfoRef.current)
     };
   }, [entities_app, Instruction, entityaData]);
 
-
- 
-
-  
-
   const fon = async () => {
-    console.log('1111111111111111')
-    const { inputs, content } = renderInputsAndSpecialContent(convertedParamsData);
+    //console.log("1111111111111111");
+    const { inputs,formContentArr, content } =
+      renderInputsAndSpecialContent(convertedParamsData);
+      console.log(formContentArr);
+      
+      // if(Object.keys(formContent).length > 0){
+      //   formData.push(formContent)
+      //   console.log(formContent);
+      //   const arr = Object.values(formContent);
+      //   console.log(arr);
+        
+        setFormData(formContentArr)
+      // }
     setInputs(inputs);
     // const result = await Promise.all(Object.values(convertedParamsData)); // 等待所有异步操作完成
+
     const result = Object.values(convertedParamsData);
-    
-    const hasResultContent = result.some(r => Array.isArray(r) && r.length > 0);
+    const hasResultContent = result.some(
+      (r) => Array.isArray(r) && r.length > 0
+    );
     if (hasResultContent) {
       setResultContent(result.flat()); // 更新 resultContent 状态
     }
     setContent(content);
-  }
+  };
 
   // useEffect(() => {
   //   if(Object.keys(instruC).length !== 0){
@@ -303,28 +404,26 @@ console.log( buttonInfoRef.current)
   //   }
   // }, [instruC]);
 
-
   useEffect(() => {
-      fon()
+    fon();
+    // handleConfirm()
   }, []);
 
   return (
     <div className={style.content}>
-     {convertedParamsData !== null ? (
-      <div className={style.contest}>
-        {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
+      {convertedParamsData !== null ? (
+        <div className={style.contest} >
+          {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
           {inputs}
           {/* {resultContent.length!==0?inputs:''} */}
           {content}
-          {
-            inputs?.length!==0?
-            <button onClick={handleConfirm} className={style.confirmBtn}>Confirm</button>:
-            null
-          }
-         
-      </div>
-    ) : null}
-    
+          {inputs?.length !== 0 || InputsData > 1 ? (
+            <button onClick={handleConfirm} className={style.confirmBtn}>
+              Confirm
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       <button
         type="button"

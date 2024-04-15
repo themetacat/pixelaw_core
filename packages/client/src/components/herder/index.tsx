@@ -403,6 +403,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 
   const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,other_params:any)=>{
     setLoading(true);
+   console.log(other_params,'other_params');
    
     const interact_data = interact(
       coordinates,
@@ -525,10 +526,13 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     }
     let res = {};
     function_def.forEach(param => {
+      console.log(function_def,'function_def');
+      
         setParamInputs(param.inputs);
         (async () => {
-          console.log(param.inputs)
+          //console.log(param.inputs)
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+          // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct "));
           // const filteredInputs = param.inputs;
           if(filteredInputs){
             res = get_struct(filteredInputs);
@@ -550,7 +554,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   const get_struct = (components: any) => {
     const res: any = {};
     components.forEach(component => {
-      console.log(component);
+      //console.log(component);
       
       if(component.internalType.startsWith("struct ")){
         res[component.name]= get_struct(component.components)
