@@ -239,7 +239,7 @@ export default function PopUpBox({
     
     // 将新的值push进formDataContentArr
     formDataContentArr.push(key);
-    // console.log(formDataContentArr);
+    console.log(formDataContentArr);
     
                         if(inputs?.length  === 0||inputs?.length === undefined ){
                           onFunction(key, item, renderedInputs, numGroups)
