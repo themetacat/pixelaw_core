@@ -403,7 +403,6 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
 
   const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,other_params:any)=>{
     setLoading(true);
-   console.log(other_params,'other_params');
    
     const interact_data = interact(
       coordinates,
@@ -530,9 +529,8 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       
         setParamInputs(param.inputs);
         (async () => {
-          //console.log(param.inputs)
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
-          // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct "));
+       
           // const filteredInputs = param.inputs;
           if(filteredInputs){
             res = get_struct(filteredInputs);
@@ -554,7 +552,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   const get_struct = (components: any) => {
     const res: any = {};
     components.forEach(component => {
-      //console.log(component);
       
       if(component.internalType.startsWith("struct ")){
         res[component.name]= get_struct(component.components)
@@ -562,7 +559,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
         // res[component.name] = ['Left', 'Right', 'Up', 'Down']
         enumValue[component.name]=res
-    
+        
         setEnumValue(enumValue)
       } else{
         res[component.name] = get_value_type(component.type);
@@ -579,21 +576,19 @@ const get_function_param = async (function_name: string, common_json: any[] = []
 
     const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
     let key = 0;
+  
+    console.log(enumData, enumName);
+    
+    enumData.members.forEach(member => {
+      if(member.nodeType === "EnumValue"){
+        // const key = 'value'; 
+        // const value =member.name; 
+        res.push(member.name)
 
-    // paramInputs.map((item:any)=>{
-    // if(item.internalType.includes("enum ")){
-      enumData.members.forEach(member => {
-        if(member.name != "None" && member.nodeType === "EnumValue"){
-          // const key = 'value'; 
-          // const value =member.name; 
-          res.push(member.name)
+        // item[key] = res;
+      }
+    })
 
-          // item[key] = res;
-        }
-      })
-    // }
-    // })
-   
     return res;
   }
 
@@ -653,20 +648,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   const handleUpdateAbiCommonJson = (data:any) => {
     setUpdate_abi_Common_json(data)
   };
-
-  useEffect(() => {
-    entities_app.map((entitya) => {
-     
-      const instruction = getComponentValue(Instruction, entitya) as any;
-      if(instruction?.instruction){
-        // ！！！要用对象存值，有n个游戏存在instruction
-        setInstruC(instruction?.instruction);
-      }
-      const result = convertToString(entitya);
-      setEntityaData(result);
-
-    });
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {

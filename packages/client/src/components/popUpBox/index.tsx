@@ -159,7 +159,6 @@ export default function PopUpBox({
     const randomNumber = Math.random();
     let formDataContentArr = [];
     let formDataContent;
-    console.log(data);
 
     Object.entries(data).forEach(([key, value], index) => {
       flag = false;
@@ -204,7 +203,7 @@ export default function PopUpBox({
       }
   
       const app_name = localStorage.getItem("app_name");
-      // //console.log(instruC.app_name);
+      
       if (
         !hasRenderedSpecialContent &&
         Object.keys(value).length > 0 
@@ -265,8 +264,6 @@ export default function PopUpBox({
         );
         hasRenderedSpecialContent = true;
         setHasRenderedSpecialContent(true);
-        // 在需要提交表单时，您可以直接使用 clickedButtons 状态对象
-
       } else {
         if (Object.keys(formDataContent).length > 0) {
           formDataContentArr.push(formDataContent);
@@ -298,10 +295,7 @@ export default function PopUpBox({
     console.log(formData);
 
     const buttonInfo = buttonInfoRef.current;
-    // const args = formDataCopy;
-    // const buttonInfoArrayCopy = buttonInfoArray?.map((obj) => obj.key); // 提取每个对象的 key 属性
-    // console.log(args,buttonInfoArrayCopy);
-    // args.push(...buttonInfoArrayCopy);
+
     const result = Object.values(convertedParamsData);
     // 构建 args 数组
     console.dir(args);
@@ -357,6 +351,7 @@ export default function PopUpBox({
 
   useEffect(() => {
     entities_app.map((entitya) => {
+
       const instruction = getComponentValue(Instruction, entitya) as any;
       const num = BigInt(entityaData);
       const result = "0x" + num?.toString(16);
@@ -368,7 +363,10 @@ export default function PopUpBox({
           AppName,
           addressToEntityID(value.system_addr)
         )?.app_name;
-        setInstruC({ app_name: instruction?.instruction });
+        if(app_name){
+          instruC[app_name] = instruction?.instruction;
+          setInstruC(instruC);
+        }
       }
 
       setEntityaData(result);
@@ -395,7 +393,6 @@ export default function PopUpBox({
     setFormData(formContentArr);
     // }
     setInputs(inputs);
-    // const result = await Promise.all(Object.values(convertedParamsData)); // 等待所有异步操作完成
 
     const result = Object.values(convertedParamsData);
     const hasResultContent = result.some(
@@ -407,16 +404,16 @@ export default function PopUpBox({
     setContent(content);
   };
 
-  // useEffect(() => {
-  //   if(Object.keys(instruC).length !== 0){
-  //     fon()
-  //   }
-  // }, [instruC]);
-
   useEffect(() => {
-    fon();
-    // handleConfirm()
-  }, []);
+    if (Object.keys(instruC).length !== 0) {
+      fon()
+    }
+  }, [instruC]);
+
+  // useEffect(() => {
+  //   fon();
+  //   // handleConfirm()
+  // }, []);
 
   return (
     <div className={style.content}>

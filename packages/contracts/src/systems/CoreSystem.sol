@@ -14,6 +14,8 @@ import { ResourceId, WorldResourceIdLib, WorldResourceIdInstance } from "@lattic
 import { RESOURCE_SYSTEM } from "@latticexyz/world/src/worldResourceTypes.sol";
 import {Position} from "../index.sol";
 import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
+
+
 contract CoreSystem is System {
   
   bytes32 constant string_null = keccak256(abi.encodePacked("_Null"));
@@ -23,7 +25,6 @@ contract CoreSystem is System {
   }
  
   function update_permission(string memory allowed_app_name, PermissionsData memory  permission_param) public {
- 
     string memory allowing_app_name = AppName.getApp_name(address(_msgSender()));
     require(bytes(allowing_app_name).length > 0, "Did not create this app");
     Permissions.set(convertToBytes32(allowing_app_name), convertToBytes32(allowed_app_name), permission_param);
@@ -118,22 +119,6 @@ contract CoreSystem is System {
       pixel.created_at = block.timestamp;
       pixel.updated_at = block.timestamp;
     }
-
-    // if(bytes(pixel_update.app).length != 0){
-    //   pixel.app = pixel_update.app;
-    // }
-
-    // if(bytes(pixel_update.color).length != 0){
-    //   pixel.color = pixel_update.color;
-    // }
-
-    // if(pixel_update.owner != address(0)){
-    //   pixel.owner = pixel_update.owner;
-    // }
-
-    // if(bytes(pixel_update.text).length != 0){
-    //   pixel.text = pixel_update.text;
-    // }
 
     if(keccak256(abi.encodePacked(pixel_update.app)) != string_null){
       pixel.app = pixel_update.app;

@@ -53,6 +53,7 @@ sleep 1
 echo -e "Register default app paint to World contract."
 cd ../paint
 forge script script/PaintExtension.s.sol --rpc-url $RPC_URL --broadcast
+sleep 1
 PRIVATE_KEY=$(grep -E "^PRIVATE_KEY=" .env | cut -d '=' -f2-)
 PRIVATE_KEY=${PRIVATE_KEY:-'0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6'}
 cast send $WORLD_ADDRESS --rpc-url $RPC_URL --private-key $PRIVATE_KEY "paint_PaintSystem_init()" ""
@@ -61,6 +62,7 @@ sleep 1
 echo -e "Register default app snake to World contract."
 cd ../snake
 forge script script/SnakeExtension.s.sol --rpc-url $RPC_URL --broadcast
+sleep 1
 PRIVATE_KEY=$(grep -E "^PRIVATE_KEY=" .env | cut -d '=' -f2-)
 PRIVATE_KEY=${PRIVATE_KEY:-'0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6'}
 cast send $WORLD_ADDRESS --rpc-url $RPC_URL --private-key $PRIVATE_KEY "snake_SnakeSystem_init()" ""
