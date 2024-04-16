@@ -202,7 +202,7 @@ export default function PopUpBox({
       }
 
       const app_name = localStorage.getItem("app_name");
-      // //console.log(instruC.app_name);
+      
       if (
         !hasRenderedSpecialContent &&
         Object.keys(value).length > 0 &&
@@ -210,7 +210,7 @@ export default function PopUpBox({
       ) {
         specialContent.push(
           <div>
-            <h2 className={style.title}>{instruC.app_name}</h2>
+            <h2 className={style.title}>{instruC[app_name]}</h2>
             {paramInputs.map((item: any, key: any) => {
               if (item.internalType.includes("enum ")) {
                 const enumItemsCount = enumValue[item.name]?.[item.name]; // 获取枚举值的组数
@@ -282,10 +282,6 @@ export default function PopUpBox({
     const buttonInfo = buttonInfoRef.current;
 
     const result = Object.values(convertedParamsData);
-    // 构建 args 数组
-    console.dir(args)
-    console.log(result, 'resultresult');
-
 
     let sortedArgs = [];
     result.forEach(item => {
@@ -345,7 +341,10 @@ export default function PopUpBox({
           AppName,
           addressToEntityID(value.system_addr)
         )?.app_name;
-        setInstruC({ app_name: instruction?.instruction });
+        if(app_name){
+          instruC[app_name] = instruction?.instruction;
+          setInstruC(instruC);
+        }
       }
 
       setEntityaData(result);
