@@ -89,7 +89,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [panningFromChild, setPanningFromChild] = useState(false);
-  const [GRID_SIZE, setGRID_SIZE] = useState(30);
+  const [GRID_SIZE, setGRID_SIZE] = useState(32);
   const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
   const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
@@ -123,14 +123,14 @@ export default function Header({ hoveredData, handleData }: Props) {
   const natIve = publicClient.chain.nativeCurrency.decimals;
   const btnLower = () => {
     setNumberData(numberData - 5);
-    setGRID_SIZE(GRID_SIZE - 5);
+    setGRID_SIZE(GRID_SIZE - 6);
     setScrollOffset({ x: 0, y: 0 });
     setTranslateX(0);
     setTranslateY(0);
   };
   const btnAdd = () => {
     setNumberData(numberData + 5);
-    setGRID_SIZE(GRID_SIZE + 5);
+    setGRID_SIZE(GRID_SIZE +6);
     setScrollOffset({ x: 0, y: 0 });
     setTranslateX(0);
     setTranslateY(0);
@@ -168,89 +168,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     //console.log(entityData); // 打印数组
   }
 
-  // const drawGrid = useCallback(
-  //   (
-  //     ctx: CanvasRenderingContext2D,
-  //     hoveredSquare: { x: number; y: number } | null,
-  //     mouseX: number,
-  //     mouseY: number
-  //   ) => {
-  //     // 清除之前绘制的格子
-  //     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_WIDTH);
-  //     ctx.lineWidth = 10;
-  //     ctx.strokeStyle = "#2e1140";
-  //     for (let x = 0.5; x < CANVAS_WIDTH; x += GRID_SIZE) {
-  //       ctx.beginPath();
-  //       ctx.moveTo(x, 0);
-  //       ctx.lineTo(x, CANVAS_WIDTH);
-  //       ctx.stroke();
-  //     }
-
-  //     for (let y = 0.5; y < CANVAS_WIDTH; y += GRID_SIZE) {
-  //       ctx.beginPath();
-  //       ctx.moveTo(0, y);
-  //       ctx.lineTo(CANVAS_WIDTH, y);
-  //       ctx.stroke();
-  //     }
-
-  //     ctx.font = "10px Arial";
-  //     ctx.fillStyle = "#2f1643";
-
-  //     for (let i = 0; i <= CANVAS_WIDTH / GRID_SIZE; i++) {
-  //       for (let j = 0; j <= CANVAS_WIDTH / GRID_SIZE; j++) {
-  //         ctx.fillStyle = "#2f1643"; // 设置背景色
-  //         ctx.fillRect(
-  //           i * GRID_SIZE - scrollOffset.x,
-  //           j * GRID_SIZE - scrollOffset.y,
-  //           GRID_SIZE - 1,
-  //           GRID_SIZE - 1
-  //         );
-  //         const currentCoordinates = { x: i, y: j };
-  //         const entity = entityData.find((entity) => {
-  //           return (
-  //             entity.coordinates.x === currentCoordinates.x &&
-  //             entity.coordinates.y === currentCoordinates.y
-  //           );
-  //         });
-  //         if (entity) {
-  //           ctx.fillStyle = entity.value.color;
-  //           ctx.fillRect(
-  //             i * GRID_SIZE - scrollOffset.x,
-  //             j * GRID_SIZE - scrollOffset.y,
-  //             GRID_SIZE - 1,
-  //             GRID_SIZE - 1
-  //           );
-  //         }
-  //         if (entity && entity.value.text) {
-  //           ctx.fillStyle = "#000"; // 设置文本颜色
-  //           ctx.fillText(
-  //             entity.value.text,
-  //             i * GRID_SIZE + 2 - scrollOffset.x,
-  //             j * GRID_SIZE + 20 - scrollOffset.y
-  //           );
-  //         }
-  //       }
-  //     }
-
-  //     if (selectedColor && hoveredSquare) {
-  //       ctx.fillStyle = selectedColor;
-  //       ctx.fillRect(
-  //         hoveredSquare.x * GRID_SIZE - scrollOffset.x,
-  //         hoveredSquare.y * GRID_SIZE - scrollOffset.y,
-  //         GRID_SIZE,
-  //         GRID_SIZE
-  //       );
-  //     }
-
-  //     if (hoveredSquare) {
-  //       ctx.canvas.style.cursor = "pointer";
-  //     } else {
-  //       ctx.canvas.style.cursor = "default";
-  //     }
-  //   },
-  //   [GRID_SIZE, CANVAS_WIDTH, selectedColor, entityData, scrollOffset]
-  // );
-  //console.log(entityData)
   const getEntityAtCoordinates = (x: number, y: number) => {
     return entityData.find(
       (entity) => entity.coordinates.x === x && entity.coordinates.y === y
@@ -304,7 +221,16 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.lineTo(CANVAS_WIDTH, y - scrollOffset.y);
         ctx.stroke();
       }
-      ctx.font = "10px Arial";
+
+
+      // console.log(numberData, 6969);
+const baseFontSize = 15;
+const fontSizeIncrement = 0.8;
+const fontWeight = 'normal'; // 设置字体粗细
+const fontSize = numberData === 25 ? baseFontSize : baseFontSize + (numberData - 25) * fontSizeIncrement;
+ctx.font = `${fontWeight} ${fontSize}px Arial`;
+
+
       const visibleArea = {
         x: Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE)),
         y: Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE)),
@@ -373,6 +299,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     [
       GRID_SIZE,
       coordinates,
+      numberData,
       CANVAS_WIDTH,
       getEntityAtCoordinates,
       CANVAS_HEIGHT,
@@ -762,8 +689,8 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
             ref={visibleAreaRef}
             className={style.canvasWrapper}
             style={{
-              width: `${CONTENT_WIDTH}px`,
-              height: `900px`,
+              // width: `${CONTENT_WIDTH}px`,
+              // height: `900px`,
               // overflow: "auto",
             }}
           >

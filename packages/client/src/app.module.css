@@ -19,3 +19,8 @@
    font-family: 'Silkscreen';
    src: url('./path/to/slkscr.ttf') format('truetype'); /* 根据您的字体文件类型调整格式 */
  }
+
+ @font-face {
+   font-family: 'NotoEmoji';
+ src: url('./path/to/Noto_Emoji/NotoEmoji-VariableFont_wght.ttf') format('truetype'); /* 根据您的字体文件类型调整格式 */
+}
