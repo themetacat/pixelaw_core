@@ -18,6 +18,7 @@ import {
   syncToRecs,
   decodeEntity,
 } from "@latticexyz/store-sync/recs";
+import { update_app_value } from "../../mud/createSystemCalls"
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
@@ -71,7 +72,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { increment, interact },
+    systemCalls: {  interact },
   } = useMUD();
 
   const [numberData, setNumberData] = useState(25);
@@ -524,13 +525,22 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         }
     }
     let res = {};
+    update_app_value(-1);
     function_def.forEach(param => {
       console.log(function_def,'function_def');
       
         setParamInputs(param.inputs);
         (async () => {
-          const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
-       
+          // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+          const filteredInputs = param.inputs.filter((component, index) => {
+            const hasStructDefaultParameters = component.internalType.includes("struct DefaultParameters");
+            if (hasStructDefaultParameters) {
+                update_app_value(index);
+            }
+            return !hasStructDefaultParameters;
+          });
+          console.log(filteredInputs);
+          
           // const filteredInputs = param.inputs;
           if(filteredInputs){
             res = get_struct(filteredInputs);

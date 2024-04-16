@@ -38,7 +38,7 @@ export default function PopUpBox({
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { increment, interact },
+    systemCalls: { interact },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
   const [instruC, setInstruC] = useState({});
