@@ -207,7 +207,7 @@ export default function PopUpBox({
           setResultContent(value as any);
 
           specialContent.push(
-            <h2>{value.name}</h2>
+            <label className={style.direction}>{value.name}</label>
           )
           value.enum_value.forEach((eunm_value, enum_index) => {
             specialContent.push(
@@ -333,13 +333,6 @@ export default function PopUpBox({
     }
   }, [instruC]);
 
-  // useEffect(() => {
-  //   fon();
-  //   // handleConfirm()
-  // }, []);
-  console.log(app_name);
-  console.log(instruC);
-  
   return (
     <div className={style.content}>
       {convertedParamsData !== null ? (
@@ -347,7 +340,7 @@ export default function PopUpBox({
           {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
           {inputs}
           {/* {resultContent.length!==0?inputs:''} */}
-          <h2>
+          <h2 className={style.title}>
             {instruC[app_name]}
           </h2>
           {content}
