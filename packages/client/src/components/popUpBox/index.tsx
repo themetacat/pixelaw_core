@@ -162,7 +162,6 @@ export default function PopUpBox({
     let formDataContentArr = [];
     let formDataContentObj = {};
     let formDataContent = {};
-    console.log(data, " ------------------------");
 
     Object.entries(data).forEach(([key, value], index) => {
       if (key === "type") {
