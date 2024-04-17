@@ -51,7 +51,7 @@ export default function PopUpBox({
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
   const [resultContent, setResultContent] = useState([]);
-  const [clickedButtons, setClickedButtons] = useState<{ [groupIndex: number]: number }>({});
+  const [clickedButtons, setClickedButtons] = useState([]);
   const buttonInfoRef = React.useRef([]) as any;
 
   const appName = localStorage.getItem("manifest") as any;
@@ -108,21 +108,22 @@ export default function PopUpBox({
     const buttonInfo = { key: numData, value: item }; // 保存用户选择的按钮信息
     onHandleLoadingFun();
 
-    setKeyDown(buttonInfo.key); // 设置 keyDown 状态为按钮信息的 key 属性
-    // 更新 buttonInfoArray，确保键与 numData + 1 对应
+const keyArray = [buttonInfo.key];
+
+
+    setKeyDown(buttonInfo.key); 
     setButtonInfoArray((prevArray) => {
       const newArray = [...prevArray];
-      // 查找是否已经存在具有相同键的对象，如果是，则替换，否则添加到数组中
+    
       const index = newArray.findIndex((obj) => obj.key === buttonInfo.key);
       if (index !== -1) {
-        // 如果已经存在相同键的对象，则替换它
+  
         newArray[index] = buttonInfo;
       } else {
-        // 如果不存在相同键的对象，则添加到数组末尾
+       
         newArray.push(buttonInfo);
       }
-      //console.log(newArray, "newArray"); // 打印更新后的数组
-      return newArray; // 返回更新后的数组作为状态
+      return newArray;
     });
 
     const args = [
@@ -142,7 +143,7 @@ export default function PopUpBox({
         palyerAddress,
         selectedColor,
         action,
-        buttonInfo.key
+        keyArray
       );
       onHandleExe();
     }
@@ -160,7 +161,7 @@ export default function PopUpBox({
     let formDataContentArr = [];
     let formDataContent;
     console.log(data);
-
+    let enumObj = {};
     Object.entries(data).forEach(([key, value], index) => {
       flag = false;
       formDataContent = {};
@@ -202,55 +203,91 @@ export default function PopUpBox({
         formDataContent[key] = formContent;
         renderedInputs.push(...inputs);
       }
-  
+      const arr = [];
+      const arrLength = formDataContentArr.length;
+
       const app_name = localStorage.getItem("app_name");
       // //console.log(instruC.app_name);
       if (
         !hasRenderedSpecialContent &&
-        Object.keys(value).length > 0 
-        &&flag === false
+        Object.keys(value).length > 0 &&
+        flag === false
       ) {
         specialContent.push(
           <div>
             <h2 className={style.title}>{instruC.app_name}</h2>
             {paramInputs.map((itemInputs: any, keyInputs: any) => {
-              if (itemInputs.internalType.includes("enum ")) {
-                const enumItems = enumValue[itemInputs.name]?.[itemInputs.name]?.map(
-                  (item: any, key: any) => (
-                    <button
-                      ref={buttonInfoRef}
-                      className={style.btn}
-                      key={key}
-                      onClick={() => {
-                     // 使用数组过滤方法来筛选出包含枚举类型的项
-// const enumInputs = paramInputs.filter(itemInputs => itemInputs.internalType.includes("enum ")).length;
-// console.log(enumCount);
+              console.log(paramInputs);
 
-    //        const buttonIndex = key;
-    //        console.log(`Clicked group ${keyInputs -1}, button ${buttonIndex}`);
-             
-    // // 判断formDataContentArr中是否包含数字
-    // const hasNumber = formDataContentArr.some(item => typeof item === 'number');
-    
-    // // 如果formDataContentArr中包含数字，则先移除数字
-    // if (hasNumber) {
-    //   formDataContentArr = formDataContentArr.filter(item => typeof item !== 'number');
-    // }
-    
-    // 将新的值push进formDataContentArr
-    formDataContentArr.push(key);
-    console.log(formDataContentArr);
-    
-                        if(inputs?.length  === 0||inputs?.length === undefined ){
-                          onFunction(key, item, renderedInputs, numGroups)
+              if (itemInputs.internalType.includes("enum ")) {
+                const enumItems = enumValue[itemInputs.name]?.[
+                  itemInputs.name
+                ]?.map((item: any, key: any) => (
+                  <button
+                    ref={buttonInfoRef}
+                    className={style.btn}
+                    key={key}
+                    onClick={() => {
+                      formDataContentArr.push(key);
+
+                      const numNumbers = formDataContentArr.filter(
+                        (item) => !isNaN(item)
+                      ).length;
+                      const hasNumber = formDataContentArr.some(
+                        (item) => !isNaN(item)
+                      );
+                      if (hasNumber) {
+                        const buttonIndex = key;
+                        const groupIndex = keyInputs - 1;
+                        const groupPosition = clickedButtons.findIndex(
+                          (item) =>
+                            Array.isArray(item) && item[0] === groupIndex
+                        );
+                        if (groupPosition !== -1) {
+                          clickedButtons[groupPosition] = [
+                            groupIndex,
+                            buttonIndex,
+                          ];
+                        } else {
+                          clickedButtons.push([groupIndex, buttonIndex]);
                         }
-                       
-                      }}
-                    >
-                      {item}
-                    </button>
-                  )
-                );
+                        const secondValues = clickedButtons.map((item) => {
+                          if (Array.isArray(item)) {
+                            return item[1];
+                          }
+                        });
+
+                        console.log(secondValues);
+                        // 清空 formDataContentArr 中的所有数字
+                        formDataContentArr = formDataContentArr.filter((item) =>
+                          isNaN(item)
+                        );
+                        console.log(formDataContentArr, 44444444);
+
+                        // 将 secondValues 中的数字添加到 formDataContentArr 中
+                        formDataContentArr.push(
+                          ...secondValues.filter((item) => !isNaN(item))
+                        );
+                        // const mergedArray = formDataContentArr.concat(secondValues);
+                        // const result = secondValues.filter((item) => typeof item === 'number');
+                        console.log(formDataContentArr, 6666666);
+                        // formDataContentArr.push(result);
+                      }
+
+                      setFormData(formDataContentArr);
+                      // formDataContentArr.push(key);
+
+                      if (
+                        inputs?.length === 0 ||
+                        inputs?.length === undefined
+                      ) {
+                        onFunction(key, item, renderedInputs, numGroups);
+                      }
+                    }}
+                  >
+                    {item}
+                  </button>
+                ));
                 return (
                   <React.Fragment key={`${key + randomNumber.toString()}`}>
                     <label className={style.direction}>{itemInputs.name}</label>
@@ -265,8 +302,6 @@ export default function PopUpBox({
         );
         hasRenderedSpecialContent = true;
         setHasRenderedSpecialContent(true);
-        // 在需要提交表单时，您可以直接使用 clickedButtons 状态对象
-
       } else {
         if (Object.keys(formDataContent).length > 0) {
           formDataContentArr.push(formDataContent);
@@ -274,7 +309,7 @@ export default function PopUpBox({
       }
     });
 
-
+    console.log(formDataContentArr, 2548855);
 
     return {
       inputs: renderedInputs,
@@ -283,8 +318,9 @@ export default function PopUpBox({
       formContentArr: formDataContentArr,
     };
   };
-
-
+  useEffect(() => {
+    console.log(clickedButtons, "clickedButtons");
+  }, [clickedButtons]);
   function handleConfirm() {
     // 获取表单数据
     // const formDataCopy = { ...formData };
@@ -328,7 +364,7 @@ export default function PopUpBox({
         if (foundObj !== undefined) {
           sortedArgs.push(foundObj); // 将找到的对象推入sortedArgs中
           args.splice(args.indexOf(foundObj), 1); // 从args中移除已匹配的元素
-        } 
+        }
       }
     });
 
@@ -384,15 +420,14 @@ export default function PopUpBox({
     //console.log("1111111111111111");
     const { inputs, formContentArr, content } =
       renderInputsAndSpecialContent(convertedParamsData);
-    console.log(convertedParamsData);
-
+    console.log(formContentArr, "------------------");
+    setFormData(formContentArr);
     // if(Object.keys(formContent).length > 0){
     //   formData.push(formContent)
     //   console.log(formContent);
     //   const arr = Object.values(formContent);
     //   console.log(arr);
 
-    setFormData(formContentArr);
     // }
     setInputs(inputs);
     // const result = await Promise.all(Object.values(convertedParamsData)); // 等待所有异步操作完成

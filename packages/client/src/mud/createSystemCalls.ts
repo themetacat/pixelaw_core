@@ -125,6 +125,8 @@ export function createSystemCalls(
     selectedColor: any,
     action: string,
     other_params: any) => {
+      console.log(other_params,5555555);
+      
     const app_name = window.localStorage.getItem('app_name');
     const system_name = window.localStorage.getItem('system_name') as string;
     const namespace = window.localStorage.getItem('namespace') as string;

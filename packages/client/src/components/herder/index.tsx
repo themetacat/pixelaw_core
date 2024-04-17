@@ -342,6 +342,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
     }
+console.log(isLongPress);
 
     if (isLongPress) {
       // 长按事件的逻辑
@@ -527,9 +528,10 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     function_def.forEach(param => {
       console.log(function_def,'function_def');
       
-        setParamInputs(param.inputs);
         (async () => {
           const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+          const filteredEnum = param.inputs.filter(component => component.internalType.includes("enum "));
+          setParamInputs(filteredEnum);
        
           // const filteredInputs = param.inputs;
           if(filteredInputs){
