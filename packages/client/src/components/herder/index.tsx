@@ -320,7 +320,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
 const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
 const pixel_value = getComponentValue(Pixel, coor_entity) as any;
 const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
-  const ClickThreshold = 300; // 定义点击的时间阈值，单位为毫秒
+  const ClickThreshold = 100; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
 
   setIsDragging(true);
@@ -330,6 +330,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
     get_function_param(action)
     downTimerRef.current = setTimeout(() => {
       setIsLongPress(true);
+      setPopExhibit(false)
       // 这里执行长按事件逻辑
     }, ClickThreshold);
   };
@@ -348,9 +349,10 @@ console.log(isLongPress);
       // 长按事件的逻辑
       setIsLongPress(false);
       setIsDragging(false);
-      
+  
     } else {
       // 点击事件的逻辑
+      // setPopExhibit(true)
       const canvas = canvasRef.current as any;
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -543,11 +545,11 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         })();
     });
 
-    if(Object.keys(res).length !== 0){
-      setPopExhibit(true);
-    }else{
-      setPopExhibit(false);
-    }
+    // if(Object.keys(res).length !== 0){
+    //   setPopExhibit(true);
+    // }else{
+    //   setPopExhibit(false);
+    // }
     return res;
 };
 
