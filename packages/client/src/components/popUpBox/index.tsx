@@ -49,7 +49,7 @@ export default function PopUpBox({
     useState(false);
   const [InputsData, setInputsData] = useState(null);
   const [inputs, setInputs] = useState(null);
-  const [content, setContent] = useState(null);
+  const [contentContainer, setContentContainer] = useState(null);
   const [resultContent, setResultContent] = useState([]);
   const [clickedButtons, setClickedButtons] = useState([]);
   const buttonInfoRef = React.useRef([]) as any;
@@ -165,6 +165,8 @@ const keyArray = [buttonInfo.key];
     Object.entries(data).forEach(([key, value], index) => {
       flag = false;
       formDataContent = {};
+      console.log(value,'!!!!!!!!!!!');
+      
       if (Array.isArray(value) && value.length !== 0) {
         setResultContent(value as any);
       }
@@ -203,6 +205,7 @@ const keyArray = [buttonInfo.key];
         formDataContent[key] = formContent;
         renderedInputs.push(...inputs);
       }
+   
       const arr = [];
       const arrLength = formDataContentArr.length;
 
@@ -216,9 +219,10 @@ const keyArray = [buttonInfo.key];
         specialContent.push(
           <div>
             <h2 className={style.title}>{instruC.app_name}</h2>
+       
             {paramInputs.map((itemInputs: any, keyInputs: any) => {
               console.log(paramInputs);
-
+              <div>{itemInputs.name}</div>
               if (itemInputs.internalType.includes("enum ")) {
                 const enumItems = enumValue[itemInputs.name]?.[
                   itemInputs.name
@@ -309,7 +313,8 @@ const keyArray = [buttonInfo.key];
       }
     });
 
-    console.log(formDataContentArr, 2548855);
+console.log(specialContent,333333);
+
 
     return {
       inputs: renderedInputs,
@@ -331,7 +336,6 @@ const keyArray = [buttonInfo.key];
     // renderInputsAndSpecialContent(convertedParamsData);
     // console.log(formDataCopy);
     console.log(9999999, formData);
-    console.log(formData);
 
     const buttonInfo = buttonInfoRef.current;
     // const args = formDataCopy;
@@ -346,15 +350,14 @@ const keyArray = [buttonInfo.key];
     let sortedArgs = [];
     result.forEach((item) => {
       console.log(item);
-
       if (Array.isArray(item)) {
         const foundNum = args.find((arg) => typeof arg === "number");
         if (foundNum !== undefined) {
           sortedArgs.push(foundNum); // 将找到的数字推入sortedArgs中
           args.splice(args.indexOf(foundNum), 1); // 从args中移除已匹配的元素
         }
-      } else if (typeof item === "object" && !Array.isArray(item)) {
-        // 找到对象类型的元素
+      } 
+      else if (typeof item === "object" && !Array.isArray(item)) {
         const foundObj = args.find(
           (arg) =>
             typeof arg === "object" &&
@@ -369,17 +372,18 @@ const keyArray = [buttonInfo.key];
     });
 
     sortedArgs = sortedArgs.concat(args);
-
-    // 使用 flatMap 将对象提取到一个新数组中
+    console.log(sortedArgs,'sortedArgssortedArgssortedArgs');
+    
     const extractedObjects = sortedArgs.flatMap((item) => {
       if (typeof item === "object" && item !== null) {
         return Object.values(item); // 获取对象的值并返回
       }
-      return item; // 如果不是对象，则返回空数组
+      return item; 
     });
+console.log(extractedObjects,'....................');
 
     console.log(extractedObjects);
-
+return
     interactHandle(
       coordinates,
       palyerAddress,
@@ -439,7 +443,7 @@ const keyArray = [buttonInfo.key];
     if (hasResultContent) {
       setResultContent(result.flat()); // 更新 resultContent 状态
     }
-    setContent(content);
+    setContentContainer(content);
   };
 
   // useEffect(() => {
@@ -460,7 +464,7 @@ const keyArray = [buttonInfo.key];
           {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
           {inputs}
           {/* {resultContent.length!==0?inputs:''} */}
-          {content}
+          {contentContainer}
           {inputs?.length !== 0 || InputsData > 1 ? (
             <button onClick={handleConfirm} className={style.confirmBtn}>
               Confirm
