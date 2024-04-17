@@ -18,6 +18,7 @@ import {
   syncToRecs,
   decodeEntity,
 } from "@latticexyz/store-sync/recs";
+import { update_app_value } from "../../mud/createSystemCalls"
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
@@ -71,7 +72,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { increment, interact },
+    systemCalls: {  interact },
   } = useMUD();
 
   const [numberData, setNumberData] = useState(25);
@@ -320,7 +321,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
 const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
 const pixel_value = getComponentValue(Pixel, coor_entity) as any;
 const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
-  const ClickThreshold = 300; // 定义点击的时间阈值，单位为毫秒
+  const ClickThreshold = 200; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
 
   setIsDragging(true);
@@ -343,20 +344,10 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
     }
-console.log(isLongPress);
 const a = get_function_param(action)
-console.log(a,552255);
 a.then((x)=>{
-console.log(x);
  // 检查对象是否为空
  const isEmpty = Object.keys(x).length === 0;
-
-//  if (isEmpty) {
-//      console.log("对象为空");
-//  } else {
-//      console.log("对象不为空");
-//      setPopExhibit(true)
-//  }
 
     if (isLongPress) {
       // setPopExhibit(true)
@@ -377,7 +368,6 @@ console.log(x);
       const newHoveredSquare = { x: gridX, y: gridY };
       setHoveredSquare(newHoveredSquare);
       if (isEmpty) {
-        console.log("对象为空");
         if (selectedColor && coordinates) {
           hoveredSquareRef.current = coordinates;
           // if (parts[1] !== "Snake") {
@@ -408,14 +398,12 @@ console.log(x);
           }
         } 
     } else {
-        console.log("对象不为空");
         setPopExhibit(true)
     }
     
       setIsDragging(false);
       setShowOverlay(true);
 
-      // e.stopPropagation();
       setTranslateX(0);
       setTranslateY(0);
     }
@@ -530,6 +518,7 @@ console.log(x);
 const get_function_param = async (function_name: string, common_json: any[] = []) => {
 
     const abi_json = updateAbiJson;
+
     
     if (abi_json === '') {
         return []
@@ -546,17 +535,25 @@ const get_function_param = async (function_name: string, common_json: any[] = []
         }
     }
     let res = {};
+    update_app_value(-1);
     function_def.forEach(param => {
-      console.log(function_def,'function_def');
-      
         (async () => {
-          const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
-          const filteredEnum = param.inputs.filter(component => component.internalType.includes("enum "));
-          setParamInputs(filteredEnum);
-       
+          // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+          const filteredInputs = param.inputs.filter((component, index) => {
+            const hasStructDefaultParameters = component.internalType.includes("struct DefaultParameters");
+            const filteredEnum = param.inputs.filter(component => component.internalType.includes("enum "));
+            setParamInputs(filteredEnum);
+            if (hasStructDefaultParameters) {
+                update_app_value(index);
+            }
+            
+            return !hasStructDefaultParameters;
+          });
           // const filteredInputs = param.inputs;
           if(filteredInputs){
-            res = get_struct(filteredInputs);
+            const copy_filteredInputs = deepCopy(filteredInputs)
+
+            res = get_struct(copy_filteredInputs);
             
             setConvertedParamsData(res);
           }
@@ -572,23 +569,34 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     return res;
 };
 
+const deepCopy = (obj) => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
   const get_struct = (components: any) => {
     const res: any = {};
     components.forEach(component => {
-      
-      if(component.internalType.startsWith("struct ")){
-        res[component.name]= get_struct(component.components)
-      }else if (component.internalType.includes("enum ")) {
-        res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
-        // res[component.name] = ['Left', 'Right', 'Up', 'Down']
-        enumValue[component.name]=res
+      // if(component.internalType.startsWith("struct ")){
+      //   res[component.name]= get_struct(component.components)
+      // }else if (component.internalType.includes("enum ")) {
+      //   res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
+      //   // res[component.name] = ['Left', 'Right', 'Up', 'Down']
+      //   enumValue[component.name]=res
         
-        setEnumValue(enumValue)
-      } else{
-        res[component.name] = get_value_type(component.type);
-      }
+      //   setEnumValue(enumValue)
+      // } else{
+      //   res[component.name] = get_value_type(component.type);
+      // }
+      if(component.internalType.startsWith("struct ")){
+          component = get_struct(component.components)
+      }else if (component.internalType.includes("enum ")) {
+        component["enum_value"] =  get_enum_value(component.internalType.replace("enum ", ""));
+      } 
+      component["type"] = get_value_type(component.type);
     });
-    return res;
+    // console.log(components);
+    
+    return components;
   }
   const [enumValue,setEnumValue] =useState({})
   const get_enum_value = (enumName: string) => {
@@ -600,8 +608,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
     let key = 0;
   
-    console.log(enumData, enumName);
-    
     enumData.members.forEach(member => {
       if(member.nodeType === "EnumValue"){
         // const key = 'value'; 
@@ -616,6 +622,9 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   }
 
   const get_value_type = (type: string) => {
+    if(type === undefined){
+      return type;
+    }
     if(type.includes('int')){
       return 'number';
     }else if(type === 'address'){

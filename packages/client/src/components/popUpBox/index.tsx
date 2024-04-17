@@ -38,7 +38,7 @@ export default function PopUpBox({
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { increment, interact },
+    systemCalls: { interact },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
   const [instruC, setInstruC] = useState({});
@@ -49,10 +49,11 @@ export default function PopUpBox({
     useState(false);
   const [InputsData, setInputsData] = useState(null);
   const [inputs, setInputs] = useState(null);
-  const [contentContainer, setContentContainer] = useState(null);
+  const [content, setContent] = useState(null);
   const [resultContent, setResultContent] = useState([]);
   const [clickedButtons, setClickedButtons] = useState([]);
   const buttonInfoRef = React.useRef([]) as any;
+  const app_name = localStorage.getItem("app_name");
 
   const appName = localStorage.getItem("manifest") as any;
   const parts = appName?.split("/") as any;
@@ -108,19 +109,19 @@ export default function PopUpBox({
     const buttonInfo = { key: numData, value: item }; // 保存用户选择的按钮信息
     onHandleLoadingFun();
 
-const keyArray = [buttonInfo.key];
+    const keyArray = [buttonInfo.key];
 
 
-    setKeyDown(buttonInfo.key); 
+    setKeyDown(buttonInfo.key);
     setButtonInfoArray((prevArray) => {
       const newArray = [...prevArray];
-    
+
       const index = newArray.findIndex((obj) => obj.key === buttonInfo.key);
       if (index !== -1) {
-  
+
         newArray[index] = buttonInfo;
       } else {
-       
+
         newArray.push(buttonInfo);
       }
       return newArray;
@@ -149,7 +150,7 @@ const keyArray = [buttonInfo.key];
     }
   };
   // let enumItemsCount = 0; // 初始化为 0
-  const renderInputsAndSpecialContent = (data: any, flag = false) => {
+  const renderInputsAndSpecialContent = (data: any) => {
     const renderedInputs: JSX.Element[] = [];
     // let specialContent: JSX.Element | null = null;
     const specialContent: JSX.Element[] = [];
@@ -159,161 +160,93 @@ const keyArray = [buttonInfo.key];
     // 生成一个0到1之间的随机数
     const randomNumber = Math.random();
     let formDataContentArr = [];
-    let formDataContent;
-    console.log(data);
-    let enumObj = {};
+    let formDataContentObj = {};
+    let formDataContent = {};
+    console.log(data, " ------------------------");
+
     Object.entries(data).forEach(([key, value], index) => {
-      flag = false;
-      formDataContent = {};
-      console.log(value,'!!!!!!!!!!!');
-      
-      if (Array.isArray(value) && value.length !== 0) {
-        setResultContent(value as any);
+      if (key === "type") {
+        return;
       }
+      // formDataContent = {};
+
       // 如果值不是对象，则渲染输入框
-      if (typeof value !== "object" || value === null) {
+      if (!value.internalType.includes("struct ") && !value.internalType.includes("enum ")) {
+
         renderedInputs.push(
           <input
             key={`${key + randomNumber.toString()}`} // 使用key值和索引的组合作为唯一标识符
-            type={value === "number" ? "number" : "text"}
+            type={value.type === "number" ? "number" : "text"}
             className={style.inputData}
-            placeholder={key.toUpperCase()}
+            placeholder={value.name.toUpperCase()}
             // placeholder={value}
-            value={formData[key] as any}
+            value={formData[value.name] as any}
             onChange={(e) => {
               const inputValue = e.target.value;
-              formDataContent[key] = inputValue;
-              // 如果输入框类型为 "number"，且输入值不是数字，则不更新 formData
-              if (value === "number" && isNaN(Number(inputValue))) {
-                return;
-              }
+              if (value.type === "number") {
+                if(isNaN(Number(inputValue))){
+                  return;
+                }else{
+                  formDataContent[value.name] = Number(inputValue);
+                }
+              }else{
+                formDataContent[value.name] = inputValue;
 
-              // 否则更新 formData
-              // setFormData((prevFormData) => ({
-              //   ...prevFormData,
-              //   [key]: inputValue,
-              // }));
+              }
+              // // 如果输入框类型为 "number"，且输入值不是数字，则不更新 formData
+              // if (value.type === "number" && )) {
+              //   return;
+              // }
+
             }}
           />
         );
-      } else if (!Array.isArray(value)) {
-        // 如果值是对象，则递归渲染子内容
+      } else if (value.internalType.includes("enum ")) {
+
+        if (Array.isArray(value.enum_value) && value.enum_value.length !== 0) {
+          setResultContent(value as any);
+
+          specialContent.push(
+             <label className={style.direction}>{value.name}</label>
+          )
+          value.enum_value.forEach((eunm_value, enum_index) => {
+            specialContent.push(
+              <button
+                ref={buttonInfoRef}
+                className={style.btn}
+                key={eunm_value}
+                onClick={() => {
+                  formDataContent[value.name] = enum_index
+                  
+                  formDataContentArr.push(key);
+                  if (
+                    inputs?.length === 0 ||
+                    inputs?.length === undefined
+                  ) {
+                    onFunction(enum_index, eunm_value, renderedInputs, numGroups);
+                  }
+                }}
+              >
+                {eunm_value}
+              </button>
+            );
+          })
+        }
+
+      } else {
+
         const { inputs, formContent } = renderInputsAndSpecialContent(
-          value,
-          (flag = true)
+          value.components
         );
-        formDataContent[key] = formContent;
+        formDataContent[value.name] = formContent;
+
         renderedInputs.push(...inputs);
       }
-   
-      const arr = [];
-      const arrLength = formDataContentArr.length;
-
-      const app_name = localStorage.getItem("app_name");
-      // //console.log(instruC.app_name);
-      if (
-        !hasRenderedSpecialContent &&
-        Object.keys(value).length > 0 &&
-        flag === false
-      ) {
-        specialContent.push(
-          <div>
-            <h2 className={style.title}>{instruC.app_name}</h2>
-       
-            {paramInputs.map((itemInputs: any, keyInputs: any) => {
-              console.log(paramInputs);
-              <div>{itemInputs.name}</div>
-              if (itemInputs.internalType.includes("enum ")) {
-                const enumItems = enumValue[itemInputs.name]?.[
-                  itemInputs.name
-                ]?.map((item: any, key: any) => (
-                  <button
-                    ref={buttonInfoRef}
-                    className={style.btn}
-                    key={key}
-                    onClick={() => {
-                      formDataContentArr.push(key);
-
-                      const numNumbers = formDataContentArr.filter(
-                        (item) => !isNaN(item)
-                      ).length;
-                      const hasNumber = formDataContentArr.some(
-                        (item) => !isNaN(item)
-                      );
-                      if (hasNumber) {
-                        const buttonIndex = key;
-                        const groupIndex = keyInputs - 1;
-                        const groupPosition = clickedButtons.findIndex(
-                          (item) =>
-                            Array.isArray(item) && item[0] === groupIndex
-                        );
-                        if (groupPosition !== -1) {
-                          clickedButtons[groupPosition] = [
-                            groupIndex,
-                            buttonIndex,
-                          ];
-                        } else {
-                          clickedButtons.push([groupIndex, buttonIndex]);
-                        }
-                        const secondValues = clickedButtons.map((item) => {
-                          if (Array.isArray(item)) {
-                            return item[1];
-                          }
-                        });
-
-                        console.log(secondValues);
-                        // 清空 formDataContentArr 中的所有数字
-                        formDataContentArr = formDataContentArr.filter((item) =>
-                          isNaN(item)
-                        );
-                        console.log(formDataContentArr, 44444444);
-
-                        // 将 secondValues 中的数字添加到 formDataContentArr 中
-                        formDataContentArr.push(
-                          ...secondValues.filter((item) => !isNaN(item))
-                        );
-                        // const mergedArray = formDataContentArr.concat(secondValues);
-                        // const result = secondValues.filter((item) => typeof item === 'number');
-                        console.log(formDataContentArr, 6666666);
-                        // formDataContentArr.push(result);
-                      }
-
-                      setFormData(formDataContentArr);
-                      // formDataContentArr.push(key);
-
-                      if (
-                        inputs?.length === 0 ||
-                        inputs?.length === undefined
-                      ) {
-                        onFunction(key, item, renderedInputs, numGroups);
-                      }
-                    }}
-                  >
-                    {item}
-                  </button>
-                ));
-                return (
-                  <React.Fragment key={`${key + randomNumber.toString()}`}>
-                    <label className={style.direction}>{itemInputs.name}</label>
-
-                    <div className={style.bottomBox}> {enumItems}</div>
-                  </React.Fragment>
-                );
-              }
-              return null; // 如果不是枚举类型，则返回 null
-            })}
-          </div>
-        );
-        hasRenderedSpecialContent = true;
-        setHasRenderedSpecialContent(true);
-      } else {
-        if (Object.keys(formDataContent).length > 0) {
-          formDataContentArr.push(formDataContent);
-        }
+      if (Object.keys(formDataContent).length > 0) {
+        formDataContentArr.push(formDataContent);
+        // formDataContentObj[key] =formDataContent;
       }
     });
-
-console.log(specialContent,333333);
 
 
     return {
@@ -324,72 +257,26 @@ console.log(specialContent,333333);
     };
   };
   useEffect(() => {
-    console.log(clickedButtons, "clickedButtons");
   }, [clickedButtons]);
   function handleConfirm() {
-    // 获取表单数据
-    // const formDataCopy = { ...formData };
+
     const args = formData;
-    // console.log(formDataCopy);
-    // 获取按钮点击的信息
-    // const { inputs,formContentArr, content } =
-    // renderInputsAndSpecialContent(convertedParamsData);
-    // console.log(formDataCopy);
-    console.log(9999999, formData);
-
+  
+    let otherParams = [];
     const buttonInfo = buttonInfoRef.current;
-    // const args = formDataCopy;
-    // const buttonInfoArrayCopy = buttonInfoArray?.map((obj) => obj.key); // 提取每个对象的 key 属性
-    // console.log(args,buttonInfoArrayCopy);
-    // args.push(...buttonInfoArrayCopy);
-    const result = Object.values(convertedParamsData);
-    // 构建 args 数组
-    console.dir(args);
-    console.log(result, "resultresult");
 
-    let sortedArgs = [];
-    result.forEach((item) => {
-      console.log(item);
-      if (Array.isArray(item)) {
-        const foundNum = args.find((arg) => typeof arg === "number");
-        if (foundNum !== undefined) {
-          sortedArgs.push(foundNum); // 将找到的数字推入sortedArgs中
-          args.splice(args.indexOf(foundNum), 1); // 从args中移除已匹配的元素
-        }
-      } 
-      else if (typeof item === "object" && !Array.isArray(item)) {
-        const foundObj = args.find(
-          (arg) =>
-            typeof arg === "object" &&
-            !Array.isArray(arg) &&
-            Object.keys(arg).length
-        );
-        if (foundObj !== undefined) {
-          sortedArgs.push(foundObj); // 将找到的对象推入sortedArgs中
-          args.splice(args.indexOf(foundObj), 1); // 从args中移除已匹配的元素
-        }
-      }
-    });
+    Object.entries(convertedParamsData).forEach(([key, value], index) => {
+      console.log(key, value);
+      otherParams.push(args[value.name])
+    })
+  
 
-    sortedArgs = sortedArgs.concat(args);
-    console.log(sortedArgs,'sortedArgssortedArgssortedArgs');
-    
-    const extractedObjects = sortedArgs.flatMap((item) => {
-      if (typeof item === "object" && item !== null) {
-        return Object.values(item); // 获取对象的值并返回
-      }
-      return item; 
-    });
-console.log(extractedObjects,'....................');
-
-    console.log(extractedObjects);
-return
     interactHandle(
       coordinates,
       palyerAddress,
       selectedColor,
       action,
-      extractedObjects
+      otherParams
     );
 
     onHandleExe();
@@ -400,15 +287,15 @@ return
       const instruction = getComponentValue(Instruction, entitya) as any;
       const num = BigInt(entityaData);
       const result = "0x" + num?.toString(16);
-      //console.log(instruction?.instruction);
       if (instruction?.instruction) {
         const value = getComponentValueStrict(App, entitya) as any;
-        // const app_name =  convertToString(entitya);
+
         const app_name = getComponentValue(
           AppName,
           addressToEntityID(value.system_addr)
         )?.app_name;
-        setInstruC({ app_name: instruction?.instruction });
+        instruC[app_name] = instruction?.instruction;
+        setInstruC(instruC);
       }
 
       setEntityaData(result);
@@ -421,20 +308,13 @@ return
   }, [entities_app, Instruction, entityaData]);
 
   const fon = async () => {
-    //console.log("1111111111111111");
-    const { inputs, formContentArr, content } =
+    let formContentArr = [];
+    const { inputs, content, formContent } =
       renderInputsAndSpecialContent(convertedParamsData);
-    console.log(formContentArr, "------------------");
-    setFormData(formContentArr);
-    // if(Object.keys(formContent).length > 0){
-    //   formData.push(formContent)
-    //   console.log(formContent);
-    //   const arr = Object.values(formContent);
-    //   console.log(arr);
 
-    // }
+    setFormData(formContent);
+
     setInputs(inputs);
-    // const result = await Promise.all(Object.values(convertedParamsData)); // 等待所有异步操作完成
 
     const result = Object.values(convertedParamsData);
     const hasResultContent = result.some(
@@ -443,20 +323,23 @@ return
     if (hasResultContent) {
       setResultContent(result.flat()); // 更新 resultContent 状态
     }
-    setContentContainer(content);
+
+    setContent(content);
   };
 
-  // useEffect(() => {
-  //   if(Object.keys(instruC).length !== 0){
-  //     fon()
-  //   }
-  // }, [instruC]);
-
   useEffect(() => {
-    fon();
-    // handleConfirm()
-  }, []);
+    if(Object.keys(instruC).length !== 0){
+      fon()
+    }
+  }, [instruC]);
 
+  // useEffect(() => {
+  //   fon();
+  //   // handleConfirm()
+  // }, []);
+  console.log(app_name);
+  console.log(instruC);
+  
   return (
     <div className={style.content}>
       {convertedParamsData !== null ? (
@@ -464,7 +347,10 @@ return
           {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
           {inputs}
           {/* {resultContent.length!==0?inputs:''} */}
-          {contentContainer}
+          <h2 className={style.title}>
+            {instruC[app_name]}
+          </h2>
+          {content}
           {inputs?.length !== 0 || InputsData > 1 ? (
             <button onClick={handleConfirm} className={style.confirmBtn}>
               Confirm

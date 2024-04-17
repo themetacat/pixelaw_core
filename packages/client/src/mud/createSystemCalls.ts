@@ -13,6 +13,13 @@ import { encodeSystemCall, SystemCall } from '@latticexyz/world';
 // import interact_abi from "../../../paint/out/IPaintSystem.sol/IPaintSystem.abi.json";
 // import interact_abi from "../../../paint/out/PaintSystem.sol/PaintSystem.abi.json";
 import { Abi, encodeFunctionData } from "viem";
+
+let args_index: number = -1;
+
+export const update_app_value = (index: number) => {
+  args_index = index;
+}
+
 export function createSystemCalls(
   /*
    * The parameter list informs TypeScript that:
@@ -41,11 +48,7 @@ export function createSystemCalls(
     abi_json = value;
   }
 
-  let app_value: any;
 
-  const update_app_value = (value: any) => {
-    abi_json = value;
-  }
 
   // //console.log(systemContract,'55555555555')
   const entityVal = localStorage.getItem("entityVal") as any;
@@ -55,70 +58,6 @@ export function createSystemCalls(
       '0xc96BedB3C0f9aB47E50b53bcC03E5D7294C97cf2'
     );
   }
-  function convertHexToCase(hexValue: any, uppercase: any) {
-    let hexString = hexValue.slice(2); // 去掉 "0x" 前缀
-    if (uppercase) {
-      hexString = hexString.toUpperCase(); // 转换为大写形式
-    } else {
-      hexString = hexString.toLowerCase(); // 转换为小写形式
-    }
-    // 去掉多余的零
-    while (hexString.startsWith("0")) {
-      hexString = hexString.slice(1);
-    }
-
-    return '0x' + hexString;
-  }
-
-
-  const increment = async (incrementData: any, coordinates: any, entityaData: any, addressData: any, selectedColor: any) => {
-    // console.log(coordinates,'=================',selectedColor)
-
-    const systemContract = getContract({
-      address: "0xC44504Ab6a2C4dF9a9ce82aecFc453FeC3C8771C",
-      abi: abi_json,
-      publicClient,
-      walletClient: walletClient,
-      onWrite: (write) => write_sub.next(write),
-    });
-    let tx;
-    let hashValpublic = null;
-    try {
-      const appName = localStorage.getItem('manifest') as any;
-      const entityaData = localStorage.getItem('entityVal') as any;
-
-      if (appName.includes('Paint')) {
-        tx = await systemContract.write.paint_PaintSystem_interact([{ for_player: addressData, for_app: app_name, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
-
-      } else if (appName && appName.includes('Snake')) {
-        // console.log(224444)
-        if (incrementData) {
-          // console.log('snake', systemContract);
-          tx = await systemContract.write.snake_SnakeSystem_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }, incrementData]);
-        }
-
-      } else if (appName && appName.includes('Pix2048')) {
-        tx = await systemContract.write.pix2048_Pix2048System_interact([{ for_player: addressData, for_system: entityaData, position: { x: coordinates.x, y: coordinates.y }, color: selectedColor }]);
-
-      }
-      hashValpublic = publicClient.waitForTransactionReceipt({ hash: tx });
-
-    } catch (error) {
-      console.error('Failed to setup network:', error);
-      return [null, null]
-    }
-
-    return [tx, hashValpublic]
-
-  };
-  interface AppData {
-    id: any,
-    name: any;
-    namespace: any;
-    timestamp: any;
-    call_data: any
-  }
-
   const interact = async (
     coordinates: any,
     addressData: any,
@@ -130,27 +69,35 @@ export function createSystemCalls(
     const app_name = window.localStorage.getItem('app_name');
     const system_name = window.localStorage.getItem('system_name') as string;
     const namespace = window.localStorage.getItem('namespace') as string;
-    const args = [{
-      for_player: addressData,
-      for_app: app_name,
-      position: {
-        x: coordinates.x,
-        y: coordinates.y
-      },
-      color: selectedColor
-    }]
+    let args;
+    let allArgs = [];
+    // other_params = [0]
+    if(args_index !== -1){
+      args = {
+        for_player: addressData,
+        for_app: app_name,
+        position: {
+          x: coordinates.x,
+          y: coordinates.y
+        },
+        color: selectedColor
+      }
+      allArgs = [args];
+    }
     
     // get_function_param(abi, action)
-    let allArgs = args;
     if (other_params !== null) {
-      
-      allArgs = args.concat(other_params)
-    }
+      if(args_index !== -1){
+        other_params.splice(args_index, 0, args);
 
+      }
+      allArgs = other_params;
+    }
+    
     let tx, hashValpublic;
 
     const x = `${namespace}_${system_name}_interact`;
-
+    
     try {
       const txData = await worldContract.write.call(encodeSystemCall({
         abi: abi_json,
@@ -171,7 +118,6 @@ export function createSystemCalls(
 
 
   return {
-    increment,
     update_abi,
     interact,
   };
