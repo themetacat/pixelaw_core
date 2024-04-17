@@ -43,6 +43,7 @@
     font-size: 0.875rem; 
     font-weight: 500;
     line-height: 1;
+    display: block;
  
 }
 .bottomBox{
@@ -66,8 +67,10 @@ display: flex;
 .btn{
     display: inline-flex; 
     margin-top: 15px;
+    justify-content: space-between;
     align-items: center; 
     margin-left: 10px;
+    margin-bottom: 15px;
     justify-content: center;
     flex-direction: column; 
     --tw-ring-offset-color: var(--tw-background-color);
@@ -142,7 +145,7 @@ display: flex;
   margin-bottom: 0.75rem;
 }
 .contest{
-    padding: 35px;
+    padding: 25px;
     position: relative;
 }
 

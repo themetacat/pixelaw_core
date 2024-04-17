@@ -327,16 +327,16 @@ export default function PopUpBox({
     setContent(content);
   };
 
-  useEffect(() => {
-    if(Object.keys(instruC).length !== 0){
-      fon()
-    }
-  }, [instruC]);
-
   // useEffect(() => {
-  //   fon();
-  //   // handleConfirm()
-  // }, []);
+  //   if(Object.keys(instruC).length !== 0){
+  //     fon()
+  //   }
+  // }, [instruC]);
+
+  useEffect(() => {
+    fon();
+    // handleConfirm()
+  }, []);
   console.log(app_name);
   console.log(instruC);
   
