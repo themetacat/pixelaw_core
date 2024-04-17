@@ -518,6 +518,7 @@ a.then((x)=>{
 const get_function_param = async (function_name: string, common_json: any[] = []) => {
 
     const abi_json = updateAbiJson;
+
     
     if (abi_json === '') {
         return []
@@ -545,12 +546,14 @@ const get_function_param = async (function_name: string, common_json: any[] = []
             if (hasStructDefaultParameters) {
                 update_app_value(index);
             }
+            
             return !hasStructDefaultParameters;
           });
-       
           // const filteredInputs = param.inputs;
           if(filteredInputs){
-            res = get_struct(filteredInputs);
+            const copy_filteredInputs = deepCopy(filteredInputs)
+
+            res = get_struct(copy_filteredInputs);
             
             setConvertedParamsData(res);
           }
@@ -566,23 +569,34 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     return res;
 };
 
+const deepCopy = (obj) => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
   const get_struct = (components: any) => {
     const res: any = {};
     components.forEach(component => {
-      
-      if(component.internalType.startsWith("struct ")){
-        res[component.name]= get_struct(component.components)
-      }else if (component.internalType.includes("enum ")) {
-        res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
-        // res[component.name] = ['Left', 'Right', 'Up', 'Down']
-        enumValue[component.name]=res
+      // if(component.internalType.startsWith("struct ")){
+      //   res[component.name]= get_struct(component.components)
+      // }else if (component.internalType.includes("enum ")) {
+      //   res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
+      //   // res[component.name] = ['Left', 'Right', 'Up', 'Down']
+      //   enumValue[component.name]=res
         
-        setEnumValue(enumValue)
-      } else{
-        res[component.name] = get_value_type(component.type);
-      }
+      //   setEnumValue(enumValue)
+      // } else{
+      //   res[component.name] = get_value_type(component.type);
+      // }
+      if(component.internalType.startsWith("struct ")){
+          component = get_struct(component.components)
+      }else if (component.internalType.includes("enum ")) {
+        component["enum_value"] =  get_enum_value(component.internalType.replace("enum ", ""));
+      } 
+      component["type"] = get_value_type(component.type);
     });
-    return res;
+    // console.log(components);
+    
+    return components;
   }
   const [enumValue,setEnumValue] =useState({})
   const get_enum_value = (enumName: string) => {
@@ -608,6 +622,9 @@ const get_function_param = async (function_name: string, common_json: any[] = []
   }
 
   const get_value_type = (type: string) => {
+    if(type === undefined){
+      return type;
+    }
     if(type.includes('int')){
       return 'number';
     }else if(type === 'address'){

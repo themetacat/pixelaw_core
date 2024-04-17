@@ -71,7 +71,7 @@ export function createSystemCalls(
     const namespace = window.localStorage.getItem('namespace') as string;
     let args;
     let allArgs = [];
-
+    // other_params = [0]
     if(args_index !== -1){
       args = {
         for_player: addressData,
@@ -97,7 +97,7 @@ export function createSystemCalls(
     let tx, hashValpublic;
 
     const x = `${namespace}_${system_name}_interact`;
-
+    
     try {
       const txData = await worldContract.write.call(encodeSystemCall({
         abi: abi_json,
