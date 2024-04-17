@@ -331,7 +331,7 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
     get_function_param(action)
     downTimerRef.current = setTimeout(() => {
       setIsLongPress(true);
-      setPopExhibit(false)
+    
       // 这里执行长按事件逻辑
     }, ClickThreshold);
   };
@@ -518,6 +518,7 @@ a.then((x)=>{
 const get_function_param = async (function_name: string, common_json: any[] = []) => {
 
     const abi_json = updateAbiJson;
+console.log(abi_json,66666);
 
     
     if (abi_json === '') {
@@ -557,6 +558,8 @@ const get_function_param = async (function_name: string, common_json: any[] = []
             
             setConvertedParamsData(res);
           }
+          console.log(res,'res');
+          
    
         })();
     });
