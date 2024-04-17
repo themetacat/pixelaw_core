@@ -321,7 +321,7 @@ const [lastDragEndY, setLastDragEndY] = useState(0);
 const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
 const pixel_value = getComponentValue(Pixel, coor_entity) as any;
 const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
-  const ClickThreshold = 100; // 定义点击的时间阈值，单位为毫秒
+  const ClickThreshold = 200; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
 
   setIsDragging(true);
@@ -339,14 +339,18 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsLongPress(false);
     setIsDragging(false);
-  
+    setPopExhibit(false)
     if (downTimerRef.current) {
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
     }
-console.log(isLongPress);
+const a = get_function_param(action)
+a.then((x)=>{
+ // 检查对象是否为空
+ const isEmpty = Object.keys(x).length === 0;
 
     if (isLongPress) {
+      // setPopExhibit(true)
       // 长按事件的逻辑
       setIsLongPress(false);
       setIsDragging(false);
@@ -363,45 +367,47 @@ console.log(isLongPress);
       setCoordinatesData({ x: gridX, y: gridY });
       const newHoveredSquare = { x: gridX, y: gridY };
       setHoveredSquare(newHoveredSquare);
-
-      if (selectedColor && coordinates) {
-        hoveredSquareRef.current = coordinates;
-        // if (parts[1] !== "Snake") {
-          // setLoading(true);
-          setIsDragging(false);
-        if(popExhibit===false){
-          // setLoading(true);
-          interactHandle( coordinates,
-            palyerAddress,
-            selectedColor,
-            action,
-            null)
-        // }
-        }
-      
-        mouseXRef.current = mouseX;
-        mouseYRef.current = mouseY;
-        handleData(hoveredSquare as any);
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          const { x, y } = coordinates;
-          ctx.fillStyle = selectedColor;
-          ctx.fillRect(
-            x * GRID_SIZE - scrollOffset.x,
-            y * GRID_SIZE - scrollOffset.y,
-            GRID_SIZE,
-            GRID_SIZE
-          );
-          drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
-        }
-      } 
+      if (isEmpty) {
+        if (selectedColor && coordinates) {
+          hoveredSquareRef.current = coordinates;
+          // if (parts[1] !== "Snake") {
+            // setLoading(true);
+            setIsDragging(false);
+            // setLoading(true);
+            interactHandle( coordinates,
+              palyerAddress,
+              selectedColor,
+              action,
+              null)
+          // }
+        
+          mouseXRef.current = mouseX;
+          mouseYRef.current = mouseY;
+          handleData(hoveredSquare as any);
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            const { x, y } = coordinates;
+            ctx.fillStyle = selectedColor;
+            ctx.fillRect(
+              x * GRID_SIZE - scrollOffset.x,
+              y * GRID_SIZE - scrollOffset.y,
+              GRID_SIZE,
+              GRID_SIZE
+            );
+            drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
+          }
+        } 
+    } else {
+        setPopExhibit(true)
+    }
+    
       setIsDragging(false);
       setShowOverlay(true);
 
-      // e.stopPropagation();
       setTranslateX(0);
       setTranslateY(0);
     }
+  })
   };
 
 
@@ -530,8 +536,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     let res = {};
     update_app_value(-1);
     function_def.forEach(param => {
-      console.log(function_def,'function_def');
-      
         (async () => {
           // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
           const filteredInputs = param.inputs.filter((component, index) => {
@@ -590,8 +594,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
     let key = 0;
   
-    console.log(enumData, enumName);
-    
     enumData.members.forEach(member => {
       if(member.nodeType === "EnumValue"){
         // const key = 'value'; 

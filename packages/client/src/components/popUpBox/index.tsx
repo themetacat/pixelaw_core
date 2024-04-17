@@ -186,11 +186,6 @@ const keyArray = [buttonInfo.key];
                 return;
               }
 
-              // 否则更新 formData
-              // setFormData((prevFormData) => ({
-              //   ...prevFormData,
-              //   [key]: inputValue,
-              // }));
             }}
           />
         );
@@ -207,7 +202,6 @@ const keyArray = [buttonInfo.key];
       const arrLength = formDataContentArr.length;
 
       const app_name = localStorage.getItem("app_name");
-      // //console.log(instruC.app_name);
       if (
         !hasRenderedSpecialContent &&
         Object.keys(value).length > 0 &&
@@ -217,7 +211,6 @@ const keyArray = [buttonInfo.key];
           <div>
             <h2 className={style.title}>{instruC.app_name}</h2>
             {paramInputs.map((itemInputs: any, keyInputs: any) => {
-              console.log(paramInputs);
 
               if (itemInputs.internalType.includes("enum ")) {
                 const enumItems = enumValue[itemInputs.name]?.[
@@ -257,12 +250,10 @@ const keyArray = [buttonInfo.key];
                           }
                         });
 
-                        console.log(secondValues);
                         // 清空 formDataContentArr 中的所有数字
                         formDataContentArr = formDataContentArr.filter((item) =>
                           isNaN(item)
                         );
-                        console.log(formDataContentArr, 44444444);
 
                         // 将 secondValues 中的数字添加到 formDataContentArr 中
                         formDataContentArr.push(
@@ -270,7 +261,6 @@ const keyArray = [buttonInfo.key];
                         );
                         // const mergedArray = formDataContentArr.concat(secondValues);
                         // const result = secondValues.filter((item) => typeof item === 'number');
-                        console.log(formDataContentArr, 6666666);
                         // formDataContentArr.push(result);
                       }
 
@@ -309,8 +299,6 @@ const keyArray = [buttonInfo.key];
       }
     });
 
-    console.log(formDataContentArr, 2548855);
-
     return {
       inputs: renderedInputs,
       formContent: formDataContent,
@@ -319,34 +307,24 @@ const keyArray = [buttonInfo.key];
     };
   };
   useEffect(() => {
-    console.log(clickedButtons, "clickedButtons");
   }, [clickedButtons]);
   function handleConfirm() {
     // 获取表单数据
     // const formDataCopy = { ...formData };
     const args = formData;
-    // console.log(formDataCopy);
     // 获取按钮点击的信息
     // const { inputs,formContentArr, content } =
     // renderInputsAndSpecialContent(convertedParamsData);
-    // console.log(formDataCopy);
-    console.log(9999999, formData);
-    console.log(formData);
 
     const buttonInfo = buttonInfoRef.current;
     // const args = formDataCopy;
     // const buttonInfoArrayCopy = buttonInfoArray?.map((obj) => obj.key); // 提取每个对象的 key 属性
-    // console.log(args,buttonInfoArrayCopy);
     // args.push(...buttonInfoArrayCopy);
     const result = Object.values(convertedParamsData);
     // 构建 args 数组
-    console.dir(args);
-    console.log(result, "resultresult");
 
     let sortedArgs = [];
     result.forEach((item) => {
-      console.log(item);
-
       if (Array.isArray(item)) {
         const foundNum = args.find((arg) => typeof arg === "number");
         if (foundNum !== undefined) {
@@ -378,8 +356,6 @@ const keyArray = [buttonInfo.key];
       return item; // 如果不是对象，则返回空数组
     });
 
-    console.log(extractedObjects);
-
     interactHandle(
       coordinates,
       palyerAddress,
@@ -396,7 +372,6 @@ const keyArray = [buttonInfo.key];
       const instruction = getComponentValue(Instruction, entitya) as any;
       const num = BigInt(entityaData);
       const result = "0x" + num?.toString(16);
-      //console.log(instruction?.instruction);
       if (instruction?.instruction) {
         const value = getComponentValueStrict(App, entitya) as any;
         // const app_name =  convertToString(entitya);
@@ -417,16 +392,12 @@ const keyArray = [buttonInfo.key];
   }, [entities_app, Instruction, entityaData]);
 
   const fon = async () => {
-    //console.log("1111111111111111");
     const { inputs, formContentArr, content } =
       renderInputsAndSpecialContent(convertedParamsData);
-    console.log(formContentArr, "------------------");
     setFormData(formContentArr);
     // if(Object.keys(formContent).length > 0){
     //   formData.push(formContent)
-    //   console.log(formContent);
     //   const arr = Object.values(formContent);
-    //   console.log(arr);
 
     // }
     setInputs(inputs);
