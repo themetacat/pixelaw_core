@@ -60,10 +60,7 @@
    justify-content: space-between;
 display: flex;
 }
-.btn:focus{
-    background-color: #990a4d;
-    z-index: 9999999999999999999;
-}
+
 .btn{
     display: inline-flex; 
     margin-top: 15px;
@@ -105,6 +102,10 @@ display: flex;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(.4,0,.2,1);
     transition-duration: .15s;
+}
+.btn:active{
+    background-color: #990a4d;
+    z-index: 9999999999999999999;
 }
 .closeBtn{
     position: absolute; 

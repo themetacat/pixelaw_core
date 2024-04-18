@@ -47,6 +47,7 @@ export default function PopUpBox({
   const [formData, setFormData] = useState([]);
   const [hasRenderedSpecialContent, setHasRenderedSpecialContent] =
     useState(false);
+    const [selectedButton, setSelectedButton]  = useState<number | null>(null);
   const [InputsData, setInputsData] = useState(null);
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
@@ -111,17 +112,14 @@ export default function PopUpBox({
 
     const keyArray = [buttonInfo.key];
 
-
     setKeyDown(buttonInfo.key);
     setButtonInfoArray((prevArray) => {
       const newArray = [...prevArray];
 
       const index = newArray.findIndex((obj) => obj.key === buttonInfo.key);
       if (index !== -1) {
-
         newArray[index] = buttonInfo;
       } else {
-
         newArray.push(buttonInfo);
       }
       return newArray;
@@ -149,6 +147,7 @@ export default function PopUpBox({
       onHandleExe();
     }
   };
+
   // let enumItemsCount = 0; // 初始化为 0
   const renderInputsAndSpecialContent = (data: any) => {
     const renderedInputs: JSX.Element[] = [];
@@ -162,7 +161,6 @@ export default function PopUpBox({
     let formDataContentArr = [];
     let formDataContentObj = {};
     let formDataContent = {};
-    console.log(data, " ------------------------");
 
     Object.entries(data).forEach(([key, value], index) => {
       if (key === "type") {
@@ -171,8 +169,10 @@ export default function PopUpBox({
       // formDataContent = {};
 
       // 如果值不是对象，则渲染输入框
-      if (!value.internalType.includes("struct ") && !value.internalType.includes("enum ")) {
-
+      if (
+        !value.internalType.includes("struct ") &&
+        !value.internalType.includes("enum ")
+      ) {
         renderedInputs.push(
           <input
             key={`${key + randomNumber.toString()}`} // 使用key值和索引的组合作为唯一标识符
@@ -184,57 +184,53 @@ export default function PopUpBox({
             onChange={(e) => {
               const inputValue = e.target.value;
               if (value.type === "number") {
-                if(isNaN(Number(inputValue))){
+                if (isNaN(Number(inputValue))) {
                   return;
-                }else{
+                } else {
                   formDataContent[value.name] = Number(inputValue);
                 }
-              }else{
+              } else {
                 formDataContent[value.name] = inputValue;
-
               }
               // // 如果输入框类型为 "number"，且输入值不是数字，则不更新 formData
               // if (value.type === "number" && )) {
               //   return;
               // }
-
             }}
           />
         );
       } else if (value.internalType.includes("enum ")) {
-
         if (Array.isArray(value.enum_value) && value.enum_value.length !== 0) {
           setResultContent(value as any);
-
           specialContent.push(
-             <label className={style.direction}>{value.name}</label>
-          )
+            <label className={style.direction}>{value.name}</label>
+          );
           value.enum_value.forEach((eunm_value, enum_index) => {
             specialContent.push(
               <button
                 ref={buttonInfoRef}
                 className={style.btn}
                 key={eunm_value}
+                // style={{backgroundColor:  selectedButton===enum_index?'#353' :'#000'}}
                 onClick={() => {
-                  formDataContent[value.name] = enum_index
-                  
+                  formDataContent[value.name] = enum_index;
                   formDataContentArr.push(key);
-                  if (
-                    inputs?.length === 0 ||
-                    inputs?.length === undefined
-                  ) {
-                    onFunction(enum_index, eunm_value, renderedInputs, numGroups);
+                  if (inputs?.length === 0 || inputs?.length === undefined) {
+                    onFunction(
+                      enum_index,
+                      eunm_value,
+                      renderedInputs,
+                      numGroups
+                    );
                   }
                 }}
               >
                 {eunm_value}
               </button>
             );
-          })
+          });
         }
-
       } else {
-
         const { inputs, formContent } = renderInputsAndSpecialContent(
           value.components
         );
@@ -248,7 +244,6 @@ export default function PopUpBox({
       }
     });
 
-
     return {
       inputs: renderedInputs,
       formContent: formDataContent,
@@ -256,20 +251,20 @@ export default function PopUpBox({
       formContentArr: formDataContentArr,
     };
   };
-  useEffect(() => {
-  }, [clickedButtons]);
-  function handleConfirm() {
 
+
+
+
+  useEffect(() => {}, [clickedButtons]);
+  function handleConfirm() {
     const args = formData;
-  
+
     let otherParams = [];
     const buttonInfo = buttonInfoRef.current;
 
     Object.entries(convertedParamsData).forEach(([key, value], index) => {
-      console.log(key, value);
-      otherParams.push(args[value.name])
-    })
-  
+      otherParams.push(args[value.name]);
+    });
 
     interactHandle(
       coordinates,
@@ -337,9 +332,7 @@ export default function PopUpBox({
     fon();
     // handleConfirm()
   }, []);
-  console.log(app_name);
-  console.log(instruC);
-  
+
   return (
     <div className={style.content}>
       {convertedParamsData !== null ? (
@@ -347,9 +340,7 @@ export default function PopUpBox({
           {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
           {inputs}
           {/* {resultContent.length!==0?inputs:''} */}
-          <h2 className={style.title}>
-            {instruC[app_name]}
-          </h2>
+          <h2 className={style.title}>{instruC[app_name]}</h2>
           {content}
           {inputs?.length !== 0 || InputsData > 1 ? (
             <button onClick={handleConfirm} className={style.confirmBtn}>

@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import style from "./index.module.css";
-import { Has, getComponentValueStrict ,  getComponentValue} from "@latticexyz/recs";
+import {
+  Has,
+  getComponentValueStrict,
+  getComponentValue,
+} from "@latticexyz/recs";
 import {
   encodeEntity,
   syncToRecs,
@@ -13,7 +17,7 @@ import rightIcon from "../../images/youjiantou.png";
 import { Hex, fromBytes, hexToString, isHex } from "viem";
 import { SetupNetworkResult } from "../../mud/setupNetwork";
 import loadingImg from "../../images/loading.png";
-import { hexToUtf8 } from 'web3-utils';
+import { hexToUtf8 } from "web3-utils";
 // import {setEntityaData } from "../herder/index"
 export const ManifestContext = createContext<string>("");
 
@@ -27,16 +31,18 @@ interface Props {
   onUpdateAbiCommonJson: any;
 }
 export function convertToString(bytes32Value: string) {
-
-    const byteArray = new Uint8Array(bytes32Value.match(/[\da-f]{2}/gi).map(h => parseInt(h, 16)));
-    const filteredByteArray = byteArray.filter(byte => byte !== 0);
-          const result = fromBytes(filteredByteArray, 'string');
-    return result;
-  }
-export function coorToEntityID(x: number, y: number){
+  const byteArray = new Uint8Array(
+    bytes32Value.match(/[\da-f]{2}/gi).map((h) => parseInt(h, 16))
+  );
+  const filteredByteArray = byteArray.filter((byte) => byte !== 0);
+  const result = fromBytes(filteredByteArray, "string");
+  return result;
+}
+export function coorToEntityID(x: number, y: number) {
   return encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
 }
-export const addressToEntityID = (address: Hex) => encodeEntity({ address: "address" }, { address });
+export const addressToEntityID = (address: Hex) =>
+  encodeEntity({ address: "address" }, { address });
 export default function RightPart({
   coordinates,
   loading,
@@ -54,7 +60,6 @@ export default function RightPart({
   const [panning, setPanning] = useState(false);
   const manifestVal = window.localStorage.getItem("manifest");
 
-
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
@@ -66,16 +71,16 @@ export default function RightPart({
     localStorage.setItem("manifest", value.manifest);
   };
   const updateAbiUrl = async (manifest: string) => {
-    
     const parts = manifest?.split("/") as any;
     let worldAbiUrl = "https://pixelaw-game.vercel.app/PaintSystem.abi.json";
-    let worldCommonAbiUrl = "https://pixelaw-game.vercel.app/PaintSystemCommon.abi.json";
+    let worldCommonAbiUrl =
+      "https://pixelaw-game.vercel.app/PaintSystemCommon.abi.json";
     if (manifest) {
       if (parts[0] === "BASE") {
         worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
           `${parts[1].replace(/\.abi\.json/g, "")}` +
           ".abi.json") as any;
-          worldCommonAbiUrl = ("https://pixelaw-game.vercel.app/" +
+        worldCommonAbiUrl = ("https://pixelaw-game.vercel.app/" +
           `${parts[1].replace(/\.json/g, "")}` +
           "Common.json") as any;
       } else {
@@ -83,33 +88,34 @@ export default function RightPart({
         worldAbiUrl = manifest;
       }
     }
-    let systemData=[];
-    let common_abi=[];
-    try{
-      
+    let systemData = [];
+    let common_abi = [];
+    try {
       const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
-      
+
       systemData = await response.json();
-    }catch(error){
-      console.log('error:', error);
+    } catch (error) {
+      console.log("error:", error);
     }
-    
-    try{
+
+    try {
       const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
-      
+
       common_abi = await response.json();
-    }catch(error){
-      console.log('error:', error);
+    } catch (error) {
+      console.log("error:", error);
     }
-    
+
     update_abi(systemData);
     onUpdateAbiJson(systemData);
     onUpdateAbiCommonJson(common_abi);
   };
-  useEffect(()=>{
+  useEffect(() => {
     updateAbiUrl(localStorage.getItem("manifest"));
-  },[])
- 
+  }, []);
+
+
+
   function capitalizeFirstLetter(str: any) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
@@ -117,18 +123,16 @@ export default function RightPart({
   const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   let app_name, truncatedOwner;
-  
-  if(pixel_value){
 
-  //   const address_entity = addressToEntityID(pixel_value.app);
-  //   app_value = getComponentValue(App, address_entity) as any;
-  //   console.log(app_value);
+  if (pixel_value) {
+    //   const address_entity = addressToEntityID(pixel_value.app);
+    //   app_value = getComponentValue(App, address_entity) as any;
+    //   console.log(app_value);
     app_name = pixel_value.app;
     const owner = pixel_value.owner;
-    truncatedOwner = `${owner?.substring(
-      0,
-      6
-    )}...${owner.substring(owner.length - 4)}`;
+    truncatedOwner = `${owner?.substring(0, 6)}...${owner.substring(
+      owner.length - 4
+    )}`;
   }
 
   return (
@@ -142,7 +146,7 @@ export default function RightPart({
         setPanningState(!panning);
       }}
     >
-      <div style={{ display: "flex", position: "relative",}}>
+      <div style={{ display: "flex", position: "relative" }}>
         <img
           src={
             panning === false
@@ -151,7 +155,6 @@ export default function RightPart({
           }
           alt=""
           className={panning === false ? style.pointer : style.pointer1}
-        
         />
         <div
           style={{
@@ -165,9 +168,12 @@ export default function RightPart({
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
             // const app_name =  convertToString(entitya);
-            const app_name = getComponentValue(AppName, addressToEntityID(value.system_addr))?.app_name;
+            const app_name = getComponentValue(
+              AppName,
+              addressToEntityID(value.system_addr)
+            )?.app_name;
             value.app_name = app_name;
-            
+
             return (
               <div
                 key={`${index}`}
@@ -181,16 +187,19 @@ export default function RightPart({
                     "entityVal",
                     decodeEntity({ app_addr: "address" }, entitya).app_addr
                   );
-                  onHandleExe()
-                    e.stopPropagation(); // 防止事件继续传播到外层容器
+                  onHandleExe();
+                  e.stopPropagation(); // 防止事件继续传播到外层容器
                 }}
                 className={style.btnGame}
-                style={{marginRight:panning === false ?"0px":"35px",paddingRight: panning === false ?"0px":"15px"}}
+                style={{
+                  marginRight: panning === false ? "0px" : "35px",
+                  paddingRight: panning === false ? "0px" : "15px",
+                }}
               >
                 <div
                   className={
                     selectedIcon === index ||
-                    manifestVal?.includes(capitalizeFirstLetter(value.app_name))
+                    manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase())
                       ? style.imgCon1
                       : style.imgCon
                   }
@@ -211,7 +220,7 @@ export default function RightPart({
                         display: "inline-block",
                         marginRight: "15px",
                         color: "white", // 将图标颜色设置为白色
-                        fontFamily: "NotoEmoji, sans-serif"
+                        fontFamily: "NotoEmoji, sans-serif",
                       }}
                     >
                       {value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon)
@@ -258,15 +267,18 @@ export default function RightPart({
                 </span>
               </p>
               <p key={`Type-${coordinates.x}-${coordinates.y}`}>
-            <span className={style.a}>Type: </span>
-            <span className={style.fontCon}>{app_name?app_name:'null'}</span>
-
-          </p>
-          <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
-            <span className={style.a}>Owner: </span>
-            <span className={style.fontCon}> {truncatedOwner?truncatedOwner:'N/A'}</span>
-          </p>
-              
+                <span className={style.a}>Type: </span>
+                <span className={style.fontCon}>
+                  {app_name ? app_name : "null"}
+                </span>
+              </p>
+              <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
+                <span className={style.a}>Owner: </span>
+                <span className={style.fontCon}>
+                  {" "}
+                  {truncatedOwner ? truncatedOwner : "N/A"}
+                </span>
+              </p>
             </div>
           )}
         </div>

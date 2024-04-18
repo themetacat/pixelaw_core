@@ -11,14 +11,14 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart from "../rightPart";
 import { useMUD } from "../../MUDContext";
-import {convertToString, coorToEntityID} from "../rightPart/index"
+import { convertToString, coorToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
 import {
   encodeEntity,
   syncToRecs,
   decodeEntity,
 } from "@latticexyz/store-sync/recs";
-import { update_app_value } from "../../mud/createSystemCalls"
+import { update_app_value } from "../../mud/createSystemCalls";
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
@@ -72,7 +72,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const {
     components: { App, Pixel, AppName, Instruction },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: {  interact },
+    systemCalls: { interact },
   } = useMUD();
 
   const [numberData, setNumberData] = useState(25);
@@ -87,7 +87,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [entityaData, setEntityaData] = useState("");
   const [paramInputs, setParamInputs] = useState([]);
   const [convertedParamsData, setConvertedParamsData] = useState(null);
-  const [updateAbiJson, setUpdate_abi_json] = useState('');
+  const [updateAbiJson, setUpdate_abi_json] = useState("");
   const [updateAbiCommonJson, setUpdate_abi_Common_json] = useState([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const visibleAreaRef = useRef<HTMLDivElement>(null);
@@ -139,7 +139,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
   const btnAdd = () => {
     setNumberData(numberData + 5);
-    setGRID_SIZE(GRID_SIZE +6);
+    setGRID_SIZE(GRID_SIZE + 6);
     setScrollOffset({ x: 0, y: 0 });
     setTranslateX(0);
     setTranslateY(0);
@@ -172,7 +172,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
-
   }
 
   const getEntityAtCoordinates = (x: number, y: number) => {
@@ -204,13 +203,13 @@ export default function Header({ hoveredData, handleData }: Props) {
       mouseX: number,
       mouseY: number
     ) => {
-      let pix_text ;
- 
+      let pix_text;
+
       // 填充整个画布背景色
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       ctx.lineWidth = 10;
-      ctx.strokeStyle  = "#000000";
-      
+      ctx.strokeStyle = "#000000";
+
       // 绘制竖条纹
       for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
         ctx.beginPath();
@@ -226,12 +225,14 @@ export default function Header({ hoveredData, handleData }: Props) {
         ctx.stroke();
       }
 
-const baseFontSize = 15;
-const fontSizeIncrement = 0.8;
-const fontWeight = 'normal'; // 设置字体粗细
-const fontSize = numberData === 25 ? baseFontSize : baseFontSize + (numberData - 25) * fontSizeIncrement;
-ctx.font = `${fontWeight} ${fontSize}px Arial`;
-
+      const baseFontSize = 15;
+      const fontSizeIncrement = 0.8;
+      const fontWeight = "normal"; // 设置字体粗细
+      const fontSize =
+        numberData === 25
+          ? baseFontSize
+          : baseFontSize + (numberData - 25) * fontSizeIncrement;
+      ctx.font = `${fontWeight} ${fontSize}px Arial`;
 
       const visibleArea = {
         x: Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE)),
@@ -250,7 +251,7 @@ ctx.font = `${fontWeight} ${fontSize}px Arial`;
           ctx.lineWidth = 3;
           ctx.strokeStyle = "#2e1043";
           ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-  
+
           // 绘制背景色
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
@@ -264,11 +265,16 @@ ctx.font = `${fontWeight} ${fontSize}px Arial`;
               ctx.fillStyle = "#000"; // 设置文本颜色
               ctx.textAlign = "center"; // 设置文本水平居中
               ctx.textBaseline = "middle"; // 设置文本垂直居中
-   
-              if(entity.value.text && /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)){
-                pix_text = String.fromCodePoint(parseInt(entity.value.text.substring(2), 16));
-              }else{
-                pix_text = entity.value.text
+
+              if (
+                entity.value.text &&
+                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)
+              ) {
+                pix_text = String.fromCodePoint(
+                  parseInt(entity.value.text.substring(2), 16)
+                );
+              } else {
+                pix_text = entity.value.text;
               }
               const textX = currentX + GRID_SIZE / 2;
               const textY = currentY + GRID_SIZE / 2;
@@ -280,7 +286,6 @@ ctx.font = `${fontWeight} ${fontSize}px Arial`;
       }
 
       if (selectedColor && hoveredSquare) {
-      
         ctx.fillStyle = selectedColor;
         ctx.fillRect(
           coordinates.x * GRID_SIZE - scrollOffset.x,
@@ -317,21 +322,21 @@ ctx.font = `${fontWeight} ${fontSize}px Arial`;
   const [isLongPress, setIsLongPress] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [lastDragEndX, setLastDragEndX] = useState(0);
-const [lastDragEndY, setLastDragEndY] = useState(0);
-const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
-const pixel_value = getComponentValue(Pixel, coor_entity) as any;
-const action = pixel_value && pixel_value.action ? pixel_value.action : 'interact';
+  const [lastDragEndY, setLastDragEndY] = useState(0);
+  const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
+  const pixel_value = getComponentValue(Pixel, coor_entity) as any;
+  const action =
+    pixel_value && pixel_value.action ? pixel_value.action : "interact";
   const ClickThreshold = 200; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-
-  setIsDragging(true);
+    setIsDragging(true);
 
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
-    get_function_param(action)
+    get_function_param(action);
     downTimerRef.current = setTimeout(() => {
       setIsLongPress(true);
-    
+
       // 这里执行长按事件逻辑
     }, ClickThreshold);
   };
@@ -339,81 +344,87 @@ const action = pixel_value && pixel_value.action ? pixel_value.action : 'interac
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
     setIsLongPress(false);
     setIsDragging(false);
-    setPopExhibit(false)
+    setPopExhibit(false);
     if (downTimerRef.current) {
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
     }
-const a = get_function_param(action)
-a.then((x)=>{
- // 检查对象是否为空
- const isEmpty = Object.keys(x).length === 0;
+    const a = get_function_param(action);
+    a.then((x) => {
+      // 检查对象是否为空
+      const isEmpty = Object.keys(x).length === 0;
 
-    if (isLongPress) {
-      // setPopExhibit(true)
-      // 长按事件的逻辑
-      setIsLongPress(false);
-      setIsDragging(false);
-  
-    } else {
-      // 点击事件的逻辑
-      // setPopExhibit(true)
-      const canvas = canvasRef.current as any;
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = event.clientX - rect.left;
-      const mouseY = event.clientY - rect.top;
-      const gridX = Math.floor(mouseX / GRID_SIZE);
-      const gridY = Math.floor(mouseY / GRID_SIZE);
-      setCoordinatesData({ x: gridX, y: gridY });
-      const newHoveredSquare = { x: gridX, y: gridY };
-      setHoveredSquare(newHoveredSquare);
-      if (isEmpty) {
-        if (selectedColor && coordinates) {
-          hoveredSquareRef.current = coordinates;
-          // if (parts[1] !== "Snake") {
+      if (isLongPress) {
+        // setPopExhibit(true)
+        // 长按事件的逻辑
+        setIsLongPress(false);
+        setIsDragging(false);
+      } else {
+        // 点击事件的逻辑
+        // setPopExhibit(true)
+        const canvas = canvasRef.current as any;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        const gridX = Math.floor(mouseX / GRID_SIZE);
+        const gridY = Math.floor(mouseY / GRID_SIZE);
+        setCoordinatesData({ x: gridX, y: gridY });
+        const newHoveredSquare = { x: gridX, y: gridY };
+        setHoveredSquare(newHoveredSquare);
+        if (isEmpty) {
+          if (selectedColor && coordinates) {
+            hoveredSquareRef.current = coordinates;
+            // if (parts[1] !== "Snake") {
             // setLoading(true);
             setIsDragging(false);
             // setLoading(true);
-            interactHandle( coordinates,
+            interactHandle(
+              coordinates,
               palyerAddress,
               selectedColor,
               action,
-              null)
-          // }
-        
-          mouseXRef.current = mouseX;
-          mouseYRef.current = mouseY;
-          handleData(hoveredSquare as any);
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            const { x, y } = coordinates;
-            ctx.fillStyle = selectedColor;
-            ctx.fillRect(
-              x * GRID_SIZE - scrollOffset.x,
-              y * GRID_SIZE - scrollOffset.y,
-              GRID_SIZE,
-              GRID_SIZE
+              null
             );
-            drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
-          }
-        } 
-    } else {
-        setPopExhibit(true)
-    }
-    
-      setIsDragging(false);
-      setShowOverlay(true);
+            // }
 
-      setTranslateX(0);
-      setTranslateY(0);
-    }
-  })
+            mouseXRef.current = mouseX;
+            mouseYRef.current = mouseY;
+            handleData(hoveredSquare as any);
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              const { x, y } = coordinates;
+              ctx.fillStyle = selectedColor;
+              ctx.fillRect(
+                x * GRID_SIZE - scrollOffset.x,
+                y * GRID_SIZE - scrollOffset.y,
+                GRID_SIZE,
+                GRID_SIZE
+              );
+              drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
+            }
+          }
+        } else {
+          setPopExhibit(true);
+        }
+
+        setIsDragging(false);
+        setShowOverlay(true);
+
+        setTranslateX(0);
+        setTranslateY(0);
+      }
+    });
   };
 
-
-  const interactHandle = (coordinates:any,palyerAddress:any,selectedColor:any,actionData:any,other_params:any)=>{
+  const interactHandle = (
+    coordinates: any,
+    palyerAddress: any,
+    selectedColor: any,
+    actionData: any,
+    other_params: any
+  ) => {
     setLoading(true);
-   
+
     const interact_data = interact(
       coordinates,
       palyerAddress,
@@ -423,22 +434,21 @@ a.then((x)=>{
     );
 
     interact_data.then((increDataVal: any) => {
-      
       if (increDataVal[1]) {
-        increDataVal[1].then((a: any) => {     
+        increDataVal[1].then((a: any) => {
           if (a.status === "success") {
             setLoading(false);
-            onHandleLoading()
+            onHandleLoading();
           } else {
             handleError();
             onHandleLoading();
           }
         });
       } else {
-          handleError();
+        handleError();
       }
     });
-  }
+  };
 
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -454,7 +464,7 @@ a.then((x)=>{
 
       // 更新hoveredSquare状态
       setHoveredSquare({ x: gridX, y: gridY });
- 
+
       // 绘制蓝色背景
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
@@ -468,8 +478,8 @@ a.then((x)=>{
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!visibleAreaRef.current || !isDragging) return;
 
-      const dx =  translateX-event.clientX ;
-      const dy =  translateY-event.clientY ;
+      const dx = translateX - event.clientX;
+      const dy = translateY - event.clientY;
 
       setTranslateX(event.clientX);
       setTranslateY(event.clientY);
@@ -492,7 +502,7 @@ a.then((x)=>{
         const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
 
         setHoveredSquare({ x: gridX, y: gridY });
-     
+
         const ctx = canvas.getContext("2d");
         if (ctx) {
           drawGrid(ctx, hoveredSquare, mouseX, mouseY); // 重新绘制画布并传入更新后的参数
@@ -511,57 +521,62 @@ a.then((x)=>{
     ]
   );
 
+  const DEFAULT_PARAMETERS_TYPE = "struct DefaultParameters";
 
-  
-  const DEFAULT_PARAMETERS_TYPE = 'struct DefaultParameters'
-
-const get_function_param = async (function_name: string, common_json: any[] = []) => {
-
+  const get_function_param = async (
+    function_name: string,
+    common_json: any[] = []
+  ) => {
     const abi_json = updateAbiJson;
-console.log(abi_json,66666);
+    console.log(abi_json, 66666);
 
-    
-    if (abi_json === '') {
-        return []
+    if (abi_json === "") {
+      return [];
     }
     if (!function_name) {
-        return []
+      return [];
     }
-    let function_def = abi_json.filter(entry => entry.name === function_name && entry.type === 'function');
+    let function_def = abi_json.filter(
+      (entry) => entry.name === function_name && entry.type === "function"
+    );
     if (!function_def) {
-        function_def = abi_json.filter(entry => entry.name === 'interact' && entry.type === 'function');
+      function_def = abi_json.filter(
+        (entry) => entry.name === "interact" && entry.type === "function"
+      );
 
-        if (!function_def) {
-            return []
-        }
+      if (!function_def) {
+        return [];
+      }
     }
     let res = {};
     update_app_value(-1);
-    function_def.forEach(param => {
-        (async () => {
-          // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
-          const filteredInputs = param.inputs.filter((component, index) => {
-            const hasStructDefaultParameters = component.internalType.includes("struct DefaultParameters");
-            const filteredEnum = param.inputs.filter(component => component.internalType.includes("enum "));
-            setParamInputs(filteredEnum);
-            if (hasStructDefaultParameters) {
-                update_app_value(index);
-            }
-            
-            return !hasStructDefaultParameters;
-          });
-          // const filteredInputs = param.inputs;
-          if(filteredInputs){
-            const copy_filteredInputs = deepCopy(filteredInputs)
-
-            res = get_struct(copy_filteredInputs);
-            
-            setConvertedParamsData(res);
+    function_def.forEach((param) => {
+      (async () => {
+        // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+        const filteredInputs = param.inputs.filter((component, index) => {
+          const hasStructDefaultParameters = component.internalType.includes(
+            "struct DefaultParameters"
+          );
+          const filteredEnum = param.inputs.filter((component) =>
+            component.internalType.includes("enum ")
+          );
+          setParamInputs(filteredEnum);
+          if (hasStructDefaultParameters) {
+            update_app_value(index);
           }
-          console.log(res,'res');
-          
-   
-        })();
+
+          return !hasStructDefaultParameters;
+        });
+        // const filteredInputs = param.inputs;
+        if (filteredInputs) {
+          const copy_filteredInputs = deepCopy(filteredInputs);
+
+          res = get_struct(copy_filteredInputs);
+
+          setConvertedParamsData(res);
+        }
+        console.log(res, "res");
+      })();
     });
 
     // if(Object.keys(res).length !== 0){
@@ -570,74 +585,76 @@ console.log(abi_json,66666);
     //   setPopExhibit(false);
     // }
     return res;
-};
+  };
 
-const deepCopy = (obj) => {
-  return JSON.parse(JSON.stringify(obj));
-};
+  const deepCopy = (obj) => {
+    return JSON.parse(JSON.stringify(obj));
+  };
 
   const get_struct = (components: any) => {
     const res: any = {};
-    components.forEach(component => {
+    components.forEach((component) => {
       // if(component.internalType.startsWith("struct ")){
       //   res[component.name]= get_struct(component.components)
       // }else if (component.internalType.includes("enum ")) {
       //   res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
       //   // res[component.name] = ['Left', 'Right', 'Up', 'Down']
       //   enumValue[component.name]=res
-        
+
       //   setEnumValue(enumValue)
       // } else{
       //   res[component.name] = get_value_type(component.type);
       // }
-      if(component.internalType.startsWith("struct ")){
-          component = get_struct(component.components)
-      }else if (component.internalType.includes("enum ")) {
-        component["enum_value"] =  get_enum_value(component.internalType.replace("enum ", ""));
-      } 
+      if (component.internalType.startsWith("struct ")) {
+        component = get_struct(component.components);
+      } else if (component.internalType.includes("enum ")) {
+        component["enum_value"] = get_enum_value(
+          component.internalType.replace("enum ", "")
+        );
+      }
       component["type"] = get_value_type(component.type);
     });
     // console.log(components);
-    
+
     return components;
-  }
-  const [enumValue,setEnumValue] =useState({})
+  };
+  const [enumValue, setEnumValue] = useState({});
   const get_enum_value = (enumName: string) => {
     const res = [] as any;
     // ${parts[1].replace(/\.abi\.json/g, "")}
 
     let systemCommonData = updateAbiCommonJson;
 
-    const enumData = systemCommonData.ast.nodes.find(node => node.name === enumName);
+    const enumData = systemCommonData.ast.nodes.find(
+      (node) => node.name === enumName
+    );
     let key = 0;
-  
-    enumData.members.forEach(member => {
-      if(member.nodeType === "EnumValue"){
-        // const key = 'value'; 
-        // const value =member.name; 
-        res.push(member.name)
+
+    enumData.members.forEach((member) => {
+      if (member.nodeType === "EnumValue") {
+        // const key = 'value';
+        // const value =member.name;
+        res.push(member.name);
 
         // item[key] = res;
       }
-    })
+    });
 
     return res;
-  }
+  };
 
   const get_value_type = (type: string) => {
-    if(type === undefined){
+    if (type === undefined) {
       return type;
     }
-    if(type.includes('int')){
-      return 'number';
-    }else if(type === 'address'){
-      return 'string';
-    }else{
+    if (type.includes("int")) {
+      return "number";
+    } else if (type === "address") {
+      return "string";
+    } else {
       return type;
     }
-  }
-
-
+  };
 
   const addressDataCopy = (text: any) => {
     navigator.clipboard.writeText(text).then(
@@ -660,7 +677,6 @@ const deepCopy = (obj) => {
     onHandleLoading();
     toast.error("An error was reported");
   };
-  
 
   const onHandleExe = () => {
     setPopExhibit(false);
@@ -676,12 +692,12 @@ const deepCopy = (obj) => {
     setLoading(true);
   };
 
-  const handleUpdateAbiJson = (data:any) => {
-    setUpdate_abi_json(data)
+  const handleUpdateAbiJson = (data: any) => {
+    setUpdate_abi_json(data);
   };
-  
-  const handleUpdateAbiCommonJson = (data:any) => {
-    setUpdate_abi_Common_json(data)
+
+  const handleUpdateAbiCommonJson = (data: any) => {
+    setUpdate_abi_Common_json(data);
   };
 
   useEffect(() => {
@@ -777,7 +793,7 @@ const deepCopy = (obj) => {
             +
           </button>
         </div>
-  
+
         <div
           className={style.addr}
           style={{
@@ -805,7 +821,7 @@ const deepCopy = (obj) => {
           </span>
         </div>
       </div>
-      
+
       <div style={{ display: "flex" }}>
         <div
           style={{
@@ -824,11 +840,13 @@ const deepCopy = (obj) => {
           <div
             ref={visibleAreaRef}
             className={style.canvasWrapper}
-            style={{
-              // width: `${CONTENT_WIDTH}px`,
-              // height: `900px`,
-              // overflow: "auto",
-            }}
+            style={
+              {
+                // width: `${CONTENT_WIDTH}px`,
+                // height: `900px`,
+                // overflow: "auto",
+              }
+            }
           >
             <canvas
               ref={canvasRef}
@@ -883,18 +901,16 @@ const deepCopy = (obj) => {
           ))}
         </div>
         <RightPart
-        // update_abi_json={setUpdate_abi_json}
+          // update_abi_json={setUpdate_abi_json}
           coordinates={coordinates}
           entityData={entityData}
           setPanningState={handlePanningChange}
           loading={loading}
           onHandleExe={onHandleExe}
-          onUpdateAbiJson={handleUpdateAbiJson} 
+          onUpdateAbiJson={handleUpdateAbiJson}
           onUpdateAbiCommonJson={handleUpdateAbiCommonJson}
         />
       </div>
-
-
 
       {popExhibit === true ? (
         <>
@@ -916,17 +932,6 @@ const deepCopy = (obj) => {
       ) : (
         ""
       )}
-
-            {/* <div className={style.loadingContainer}>
-        {" "}
-        {loading === true ? (
-          <img
-            src={loadingImg}
-            alt=""
-            className={`${style.commonCls1} ${style.spinAnimation}`}
-          />
-        ) : null}
-      </div> */}
     </>
   );
 }
