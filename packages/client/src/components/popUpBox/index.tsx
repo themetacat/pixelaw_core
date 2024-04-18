@@ -265,7 +265,6 @@ export default function PopUpBox({
     const buttonInfo = buttonInfoRef.current;
 
     Object.entries(convertedParamsData).forEach(([key, value], index) => {
-      console.log(key, value);
       otherParams.push(args[value.name])
     })
   

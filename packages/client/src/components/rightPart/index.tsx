@@ -190,7 +190,7 @@ export default function RightPart({
                 <div
                   className={
                     selectedIcon === index ||
-                    manifestVal?.includes(capitalizeFirstLetter(value.app_name))
+                    manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase())
                       ? style.imgCon1
                       : style.imgCon
                   }
