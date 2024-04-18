@@ -13,20 +13,6 @@ import { Direction } from "../codegen/common.sol";
 
 contract SnakeSystem is System {
 
-  // event EventMoved(Moved moved);
-  // event EventDied(Died died);
-
-  // struct Died{
-  //   address owner;
-  //   uint32 x;
-  //   uint32 y;
-  // }
-  
-  // struct Moved{
-  //   address owner;
-  //   Direction direction;
-  // }
-
   uint256 SNAKE_MAX_LENGTH = 255;
   string constant APP_ICON = 'U+1F40D';
   string constant NAMESPACE = 'snake';
@@ -45,7 +31,8 @@ contract SnakeSystem is System {
 
   function interact(DefaultParameters memory default_parameters, Direction direction) public returns(uint256){
     Position memory position = default_parameters.position;
-    address player = default_parameters.for_player;
+    // address player = default_parameters.for_player;
+    address player = address(_msgSender());
 
     PixelData memory pixel = Pixel.get(position.x, position.y);
     SnakeData memory player_snake = Snake.get(player);
@@ -75,7 +62,9 @@ contract SnakeSystem is System {
       x: position.x,
       y: position.y,
       pixel_original_color: pixel.color,
-      pixel_original_text: pixel.text
+      pixel_original_text: pixel.text,
+      pixel_original_owner: pixel.owner,
+      pixel_original_app: pixel.app
     });
     Snake.set(player, snake);
     SnakeSegment.set(id, segment);
@@ -86,8 +75,8 @@ contract SnakeSystem is System {
       color: default_parameters.color,
       timestamp: 0,
       text: '',
-      app: '',
-      owner: address(0),
+      app: 'snake',
+      owner: player,
       action: ""
     }));
 
@@ -113,17 +102,17 @@ contract SnakeSystem is System {
         // Died memory died = Died(owner, first_segment.x, first_segment.y);
         // emit EventDied(died);
 
-        // Snake.set(owner, SnakeData({
-        //   length: 0,
-        //   first_segment_id: 0,
-        //   last_segment_id: 0,
-        //   direction: Direction.None,
-        //   color: '',
-        //   text: '',
-        //   is_dying: false,
-        //   step: 0
-        // }));
-        Snake.deleteRecord(owner);
+        Snake.set(owner, SnakeData({
+          length: 0,
+          first_segment_id: 0,
+          last_segment_id: 0,
+          direction: snake.direction,
+          color: '',
+          text: '',
+          is_dying: false,
+          step: 0
+        }));
+        // Snake.deleteRecord(owner);
       }
     }else{
       // PixelData memory current_pixel = Pixel.get(first_segment.x, first_segment.y);
@@ -137,10 +126,10 @@ contract SnakeSystem is System {
         snake.step += 1;
         bool has_write_access = ICoreSystem(_world()).has_write_access(next_pixel, PixelUpdateData({x: next_x, y:next_y, color: snake.color, timestamp: 0, text: snake.text, app: '_Null', owner: address(1), action: '_Null'}));
         if(next_pixel.owner == address(0)){
-          snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
+          snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, owner, snake, first_segment);
           snake.last_segment_id = remove_last_segment(snake);
         }else if(next_pixel.owner == owner){
-          snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
+          snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, owner, snake, first_segment);
           if (snake.length >= SNAKE_MAX_LENGTH){
             snake.last_segment_id = remove_last_segment(snake);
           }else{
@@ -152,7 +141,7 @@ contract SnakeSystem is System {
           if(snake.length == 1){
             snake.is_dying = true;
           }else{
-            snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, snake, first_segment);
+            snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, owner, snake, first_segment);
             snake.last_segment_id = remove_last_segment(snake);
             snake.last_segment_id = remove_last_segment(snake);
           }
@@ -192,13 +181,13 @@ contract SnakeSystem is System {
     return (x, y, is_die);
   }
 
-  function create_new_segment(uint32 x, uint32 y, PixelData memory pixel, SnakeData memory snake, SnakeSegmentData memory existing_segment) public returns(uint256){
+  function create_new_segment(uint32 x, uint32 y, PixelData memory pixel, address owner, SnakeData memory snake, SnakeSegmentData memory existing_segment) internal returns(uint256){
     // uuid
     uint256 id = generateUUID();
     existing_segment.previous_id = id;
     SnakeSegment.set(snake.first_segment_id, existing_segment);
 
-    SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel.color, pixel_original_text: pixel.text}));
+    SnakeSegment.set(id, SnakeSegmentData({previous_id: id, next_id: snake.first_segment_id, x: x, y: y, pixel_original_color: pixel.color, pixel_original_text: pixel.text, pixel_original_owner: pixel.owner, pixel_original_app: pixel.app}));
     
     ICoreSystem(_world()).update_pixel(PixelUpdateData({
       x: x,
@@ -206,14 +195,14 @@ contract SnakeSystem is System {
       color: snake.color,
       timestamp: 0,
       text: snake.text,
-      app: '_Null',
-      owner: address(1),
+      app: 'snake',
+      owner: owner,
       action: '_Null'
     }));
     return id;
   }
 
-  function remove_last_segment(SnakeData memory snake) public returns(uint256){
+  function remove_last_segment(SnakeData memory snake) internal returns(uint256){
  
     SnakeSegmentData memory last_segment = SnakeSegment.get(snake.last_segment_id);
 
@@ -223,8 +212,8 @@ contract SnakeSystem is System {
       color: last_segment.pixel_original_color,
       timestamp: 0,
       text: last_segment.pixel_original_text,
-      app: '_Null',
-      owner: address(1),
+      app: last_segment.pixel_original_app,
+      owner: last_segment.pixel_original_owner,
       action: '_Null'
     }));
     uint256 result = last_segment.previous_id;

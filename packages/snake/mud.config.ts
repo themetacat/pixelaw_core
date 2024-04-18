@@ -30,8 +30,10 @@ export default mudConfig({
         next_id: "uint256",
         x: "uint32",
         y: "uint32",
+        pixel_original_owner: "address",
         pixel_original_color: "string",
-        pixel_original_text: "string"
+        pixel_original_text: "string",
+        pixel_original_app: "string",
       }
     }
   },

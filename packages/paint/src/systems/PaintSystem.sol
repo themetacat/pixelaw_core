@@ -24,7 +24,7 @@ contract PaintSystem is System {
 
     ICoreSystem(_world()).update_permission("snake", 
     PermissionsData({
-      app: false, color: true, owner: false, text: true, timestamp: false, action: false
+      app: true, color: true, owner: true, text: true, timestamp: false, action: false
       })); 
   }
 
