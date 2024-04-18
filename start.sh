@@ -2,6 +2,7 @@
 
 # echo -e "Run 'pnpm install' to install the dependencies."
 #pnpm install
+set -e
 
 echo -e "Check if anvil is running('pnpm mud deploy' need this)."
 anvil_p_total=`ps -ef | grep anvil | grep -v grep | wc -l`
