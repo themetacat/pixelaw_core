@@ -47,7 +47,7 @@ export default function PopUpBox({
   const [formData, setFormData] = useState([]);
   const [hasRenderedSpecialContent, setHasRenderedSpecialContent] =
     useState(false);
-    const [selectedButton, setSelectedButton]  = useState<number | null>(null);
+  const [selectedButton, setSelectedButton] = useState<number | null>(null);
   const [InputsData, setInputsData] = useState(null);
   const [inputs, setInputs] = useState(null);
   const [content, setContent] = useState(null);
@@ -251,9 +251,6 @@ export default function PopUpBox({
       formContentArr: formDataContentArr,
     };
   };
-
-
-
 
   useEffect(() => {}, [clickedButtons]);
   function handleConfirm() {
