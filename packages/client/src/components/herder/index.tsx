@@ -330,7 +330,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     pixel_value && pixel_value.action ? pixel_value.action : "interact";
   const ClickThreshold = 200; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    console.log(pageClick,123);
+
     
   if(pageClick === true){
     return
@@ -349,7 +349,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
 
   const handlePageClick =()=>{
-    console.log('zhixinglema');
+
     
     setPageClick(true)
   }

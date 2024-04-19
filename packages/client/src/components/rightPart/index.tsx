@@ -117,7 +117,7 @@ export default function RightPart({
       }
     }
 
-    console.log(systemData);
+
     
     onUpdateAbiJson(systemData);
 
@@ -148,9 +148,7 @@ export default function RightPart({
   let app_name, truncatedOwner;
 
   if (pixel_value) {
-    //   const address_entity = addressToEntityID(pixel_value.app);
-    //   app_value = getComponentValue(App, address_entity) as any;
-    //   console.log(app_value);
+   
     app_name = pixel_value.app;
     const owner = pixel_value.owner;
     truncatedOwner = `${owner?.substring(0, 6)}...${owner.substring(

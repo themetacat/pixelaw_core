@@ -179,6 +179,7 @@ export default function PopUpBox({
             type={value.type === "number" ? "number" : "text"}
             className={style.inputData}
             placeholder={value.name.toUpperCase()}
+            // style={{borderRadius:"35px"}}
             // placeholder={value}
             value={formData[value.name] as any}
             onChange={(e) => {
@@ -332,12 +333,12 @@ export default function PopUpBox({
   return (
     <div className={style.content}>
       {convertedParamsData !== null ? (
-        <div className={style.contest}>
+        <div className={style.btnBoxYo6jt}>
           {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
-          {inputs}
+       <div style={{marginBottom:"20px"}}>{inputs}</div>
           {/* {resultContent.length!==0?inputs:''} */}
           <h2 className={style.title}>{instruC[app_name]}</h2>
-          {content}
+          <div className={style.buttonContainer}>{content}</div>
           {inputs?.length !== 0 || InputsData > 1 ? (
             <button onClick={handleConfirm} className={style.confirmBtn}>
               Confirm
