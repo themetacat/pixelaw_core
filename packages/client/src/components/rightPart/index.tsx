@@ -25,9 +25,11 @@ interface Props {
   loading: any;
   onUpdateAbiJson: any;
   onHandleExe: any;
+  handlePageClickIs: any;
   onUpdateAbiCommonJson: any;
   onHandleLoading: any;
   onHandleLoadingFun: any;
+  setPageClick: any;
 }
 export function convertToString(bytes32Value: string) {
 
@@ -48,8 +50,10 @@ export default function RightPart({
   entityData,
   onUpdateAbiJson,
   setPanningState,
+  handlePageClickIs,
   onHandleLoading,
   onHandleLoadingFun,
+  setPageClick,
   onUpdateAbiCommonJson,
 }: Props) {
   const {
@@ -62,6 +66,7 @@ export default function RightPart({
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
+  // const [pageClick, setPageClick] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
@@ -96,17 +101,24 @@ export default function RightPart({
     } else {
       try {
         onHandleLoadingFun()
+        setPageClick()
         const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
         systemData = await response.json();
-        onHandleLoading()
+        if(systemData){
+          onHandleLoading()
+          handlePageClickIs()
+        }
        
         update_abi(systemData);
-
+      
       } catch (error) {
         onHandleLoading()
         console.log('error:', error);
       }
     }
+
+    console.log(systemData);
+    
     onUpdateAbiJson(systemData);
 
     if (app_name + "Common" in abi_json) {
@@ -147,21 +159,21 @@ export default function RightPart({
   }
 
 
-  // const btn1 =()=>{
-  //   localStorage.setItem("app_name",'paint')
-  //   localStorage.setItem("manifest", 'BASE/PaintSystem');
-  //   updateAbiUrl('BASE/PaintSystem')
-  // }
-  // const btn2 =()=>{
-  //   localStorage.setItem("app_name",'snake')
-  //   localStorage.setItem("manifest", 'BASE/SnakeSystem');
-  //   updateAbiUrl('BASE/SnakeSystem')
-  // }
-  // const btn3 =()=>{
-  //   localStorage.setItem("app_name",'myapp')
-  //   localStorage.setItem("manifest", 'BASE/MyAppSystem');
-  //   updateAbiUrl('BASE/MyAppSystem')
-  // }
+  const btn1 =()=>{
+    localStorage.setItem("app_name",'paint')
+    localStorage.setItem("manifest", 'BASE/PaintSystem');
+    updateAbiUrl('BASE/PaintSystem')
+  }
+  const btn2 =()=>{
+    localStorage.setItem("app_name",'snake')
+    localStorage.setItem("manifest", 'BASE/SnakeSystem');
+    updateAbiUrl('BASE/SnakeSystem')
+  }
+  const btn3 =()=>{
+    localStorage.setItem("app_name",'myapp')
+    localStorage.setItem("manifest", 'BASE/MyAppSystem');
+    updateAbiUrl('BASE/MyAppSystem')
+  }
 
   return (
     <div
@@ -184,9 +196,9 @@ export default function RightPart({
           alt=""
           className={panning === false ? style.pointer : style.pointer1}
         />
-          {/* <button style={{width:"30px",height:"30px"}} onClick={btn1}>{loading === true ? 'loading' :1}</button>
+          <button style={{width:"30px",height:"30px"}} onClick={btn1}>{loading === true ? 'loading' :1}</button>
           <button style={{width:"30px",height:"30px"}} onClick={btn2}>{loading === true ? 'loading' :2}</button>
-          <button style={{width:"30px",height:"30px"}} onClick={btn3}>{loading === true ? 'loading' :3}</button> */}
+          <button style={{width:"30px",height:"30px"}} onClick={btn3}>{loading === true ? 'loading' :3}</button>
         <div
           style={{
             backgroundColor: "#2a0d39",

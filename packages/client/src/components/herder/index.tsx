@@ -330,9 +330,11 @@ export default function Header({ hoveredData, handleData }: Props) {
     pixel_value && pixel_value.action ? pixel_value.action : "interact";
   const ClickThreshold = 200; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-    if( !updateAbiJson) {
-      return
-    }
+    console.log(pageClick,123);
+    
+  if(pageClick === true){
+    return
+  }
     setIsDragging(true);
 
     setTranslateX(event.clientX);
@@ -345,10 +347,21 @@ export default function Header({ hoveredData, handleData }: Props) {
     }, ClickThreshold);
   };
 
+
+  const handlePageClick =()=>{
+    console.log('zhixinglema');
+    
+    setPageClick(true)
+  }
+  const handlePageClickIs =()=>{
+    setPageClick(false)
+  }
+
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
-    if( !updateAbiJson) {
-      return
-    }
+      
+  if(pageClick === true){
+    return
+  }
     setIsLongPress(false);
     setIsDragging(false);
     setPopExhibit(false);
@@ -888,6 +901,8 @@ const get_function_param = async (function_name: string, common_json: any[] = []
           setPanningState={handlePanningChange}
           loading={loading}
           onHandleExe={onHandleExe}
+          setPageClick={handlePageClick}
+          handlePageClickIs={handlePageClickIs}
           onUpdateAbiJson={handleUpdateAbiJson}
           onUpdateAbiCommonJson={handleUpdateAbiCommonJson}
           onHandleLoading={onHandleLoading}
