@@ -521,14 +521,12 @@ export default function Header({ hoveredData, handleData }: Props) {
     ]
   );
 
-  const DEFAULT_PARAMETERS_TYPE = "struct DefaultParameters";
+  
+  const DEFAULT_PARAMETERS_TYPE = 'struct DefaultParameters'
 
-  const get_function_param = async (
-    function_name: string,
-    common_json: any[] = []
-  ) => {
+const get_function_param = async (function_name: string, common_json: any[] = []) => {
+
     const abi_json = updateAbiJson;
-    console.log(abi_json, 66666);
 
     if (abi_json === "") {
       return [];
@@ -550,40 +548,31 @@ export default function Header({ hoveredData, handleData }: Props) {
     }
     let res = {};
     update_app_value(-1);
-    function_def.forEach((param) => {
-      (async () => {
-        // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
-        const filteredInputs = param.inputs.filter((component, index) => {
-          const hasStructDefaultParameters = component.internalType.includes(
-            "struct DefaultParameters"
-          );
-          const filteredEnum = param.inputs.filter((component) =>
-            component.internalType.includes("enum ")
-          );
-          setParamInputs(filteredEnum);
-          if (hasStructDefaultParameters) {
-            update_app_value(index);
+    function_def.forEach(param => {
+        (async () => {
+          // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+          const filteredInputs = param.inputs.filter((component, index) => {
+            const hasStructDefaultParameters = component.internalType.includes(DEFAULT_PARAMETERS_TYPE);
+            const filteredEnum = param.inputs.filter(component => component.internalType.includes("enum "));
+            setParamInputs(filteredEnum);
+            if (hasStructDefaultParameters) {
+                update_app_value(index);
+            }
+            
+            return !hasStructDefaultParameters;
+          });
+          // const filteredInputs = param.inputs;
+          if(filteredInputs){
+            const copy_filteredInputs = deepCopy(filteredInputs)
+
+            res = get_struct(copy_filteredInputs);
+            
+            setConvertedParamsData(res);
           }
-
-          return !hasStructDefaultParameters;
-        });
-        // const filteredInputs = param.inputs;
-        if (filteredInputs) {
-          const copy_filteredInputs = deepCopy(filteredInputs);
-
-          res = get_struct(copy_filteredInputs);
-
-          setConvertedParamsData(res);
-        }
-        console.log(res, "res");
-      })();
+   
+        })();
     });
 
-    // if(Object.keys(res).length !== 0){
-    //   setPopExhibit(true);
-    // }else{
-    //   setPopExhibit(false);
-    // }
     return res;
   };
 
@@ -593,25 +582,13 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const get_struct = (components: any) => {
     const res: any = {};
-    components.forEach((component) => {
-      // if(component.internalType.startsWith("struct ")){
-      //   res[component.name]= get_struct(component.components)
-      // }else if (component.internalType.includes("enum ")) {
-      //   res[component.name]=  get_enum_value(component.internalType.replace("enum ", ""));
-      //   // res[component.name] = ['Left', 'Right', 'Up', 'Down']
-      //   enumValue[component.name]=res
+    components.forEach(component => {
 
-      //   setEnumValue(enumValue)
-      // } else{
-      //   res[component.name] = get_value_type(component.type);
-      // }
-      if (component.internalType.startsWith("struct ")) {
-        component = get_struct(component.components);
-      } else if (component.internalType.includes("enum ")) {
-        component["enum_value"] = get_enum_value(
-          component.internalType.replace("enum ", "")
-        );
-      }
+      if(component.internalType.startsWith("struct ")){
+          component = get_struct(component.components)
+      }else if (component.internalType.includes("enum ")) {
+        component["enum_value"] =  get_enum_value(component.internalType.replace("enum ", ""));
+      } 
       component["type"] = get_value_type(component.type);
     });
     // console.log(components);
@@ -629,14 +606,11 @@ export default function Header({ hoveredData, handleData }: Props) {
       (node) => node.name === enumName
     );
     let key = 0;
+  
+    enumData.members.forEach(member => {
+      if(member.nodeType === "EnumValue"){
+        res.push(member.name)
 
-    enumData.members.forEach((member) => {
-      if (member.nodeType === "EnumValue") {
-        // const key = 'value';
-        // const value =member.name;
-        res.push(member.name);
-
-        // item[key] = res;
       }
     });
 

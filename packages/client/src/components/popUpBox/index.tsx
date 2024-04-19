@@ -204,7 +204,7 @@ export default function PopUpBox({
           setResultContent(value as any);
           specialContent.push(
             <label className={style.direction}>{value.name}</label>
-          );
+          )
           value.enum_value.forEach((eunm_value, enum_index) => {
             specialContent.push(
               <button
@@ -260,8 +260,9 @@ export default function PopUpBox({
     const buttonInfo = buttonInfoRef.current;
 
     Object.entries(convertedParamsData).forEach(([key, value], index) => {
-      otherParams.push(args[value.name]);
-    });
+      otherParams.push(args[value.name])
+    })
+  
 
     interactHandle(
       coordinates,
@@ -324,10 +325,8 @@ export default function PopUpBox({
   //     fon()
   //   }
   // }, [instruC]);
-
   useEffect(() => {
-    fon();
-    // handleConfirm()
+      fon()
   }, []);
 
   return (

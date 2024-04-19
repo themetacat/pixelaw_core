@@ -1,10 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import style from "./index.module.css";
-import {
-  Has,
-  getComponentValueStrict,
-  getComponentValue,
-} from "@latticexyz/recs";
+import { Has, getComponentValueStrict, getComponentValue } from "@latticexyz/recs";
 import {
   encodeEntity,
   syncToRecs,
@@ -19,6 +15,7 @@ import { SetupNetworkResult } from "../../mud/setupNetwork";
 import loadingImg from "../../images/loading.png";
 import { hexToUtf8 } from "web3-utils";
 // import {setEntityaData } from "../herder/index"
+import { abi_json } from "../../mud/createSystemCalls";
 export const ManifestContext = createContext<string>("");
 
 interface Props {
@@ -31,11 +28,10 @@ interface Props {
   onUpdateAbiCommonJson: any;
 }
 export function convertToString(bytes32Value: string) {
-  const byteArray = new Uint8Array(
-    bytes32Value.match(/[\da-f]{2}/gi).map((h) => parseInt(h, 16))
-  );
-  const filteredByteArray = byteArray.filter((byte) => byte !== 0);
-  const result = fromBytes(filteredByteArray, "string");
+
+  const byteArray = new Uint8Array(bytes32Value.match(/[\da-f]{2}/gi).map(h => parseInt(h, 16)));
+  const filteredByteArray = byteArray.filter(byte => byte !== 0);
+  const result = fromBytes(filteredByteArray, 'string');
   return result;
 }
 export function coorToEntityID(x: number, y: number) {
@@ -71,6 +67,7 @@ export default function RightPart({
     localStorage.setItem("manifest", value.manifest);
   };
   const updateAbiUrl = async (manifest: string) => {
+    const app_name = localStorage.getItem("app_name");
     const parts = manifest?.split("/") as any;
     let worldAbiUrl = "https://pixelaw-game.vercel.app/PaintSystem.abi.json";
     let worldCommonAbiUrl =
@@ -90,31 +87,37 @@ export default function RightPart({
     }
     let systemData = [];
     let common_abi = [];
-    try {
-      const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
+    if (app_name in abi_json) {
+      systemData = abi_json[app_name];
+    } else {
+      try {
+        const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
+        systemData = await response.json();
+        update_abi(systemData);
 
-      systemData = await response.json();
-    } catch (error) {
-      console.log("error:", error);
+      } catch (error) {
+        console.log('error:', error);
+      }
     }
-
-    try {
-      const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
-
-      common_abi = await response.json();
-    } catch (error) {
-      console.log("error:", error);
-    }
-
-    update_abi(systemData);
     onUpdateAbiJson(systemData);
+
+    if (app_name + "Common" in abi_json) {
+      common_abi = abi_json[app_name+"Common"];
+    } else {
+      try {
+        const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
+        common_abi = await response.json();
+        update_abi(common_abi, true);
+      } catch (error) {
+        console.log('error:', error);
+      }
+    }
+ 
     onUpdateAbiCommonJson(common_abi);
   };
   useEffect(() => {
     updateAbiUrl(localStorage.getItem("manifest"));
-  }, []);
-
-
+  }, [])
 
   function capitalizeFirstLetter(str: any) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -146,7 +149,7 @@ export default function RightPart({
         setPanningState(!panning);
       }}
     >
-      <div style={{ display: "flex", position: "relative" }}>
+      <div style={{ display: "flex", position: "relative", }}>
         <img
           src={
             panning === false
@@ -187,27 +190,22 @@ export default function RightPart({
                     "entityVal",
                     decodeEntity({ app_addr: "address" }, entitya).app_addr
                   );
-                  onHandleExe();
+                  onHandleExe()
                   e.stopPropagation(); // 防止事件继续传播到外层容器
                 }}
                 className={style.btnGame}
-                style={{
-                  marginRight: panning === false ? "0px" : "35px",
-                  paddingRight: panning === false ? "0px" : "15px",
-                }}
+                style={{ marginRight: panning === false ? "0px" : "35px", paddingRight: panning === false ? "0px" : "15px" }}
               >
                 <div
                   className={
                     selectedIcon === index ||
-                    manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase())
+                      manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase())
                       ? style.imgCon1
                       : style.imgCon
                   }
                 >
                   {loading === true &&
-                  manifestVal?.includes(
-                    capitalizeFirstLetter(value.app_name)
-                  ) ? (
+                    manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase()) ? (
                     <img
                       src={loadingImg}
                       alt=""
@@ -225,8 +223,8 @@ export default function RightPart({
                     >
                       {value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon)
                         ? String.fromCodePoint(
-                            parseInt(value.icon.substring(2), 16)
-                          )
+                          parseInt(value.icon.substring(2), 16)
+                        )
                         : null}
                     </div>
                   )}
@@ -268,17 +266,14 @@ export default function RightPart({
               </p>
               <p key={`Type-${coordinates.x}-${coordinates.y}`}>
                 <span className={style.a}>Type: </span>
-                <span className={style.fontCon}>
-                  {app_name ? app_name : "null"}
-                </span>
+                <span className={style.fontCon}>{app_name ? app_name : 'null'}</span>
+
               </p>
               <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
                 <span className={style.a}>Owner: </span>
-                <span className={style.fontCon}>
-                  {" "}
-                  {truncatedOwner ? truncatedOwner : "N/A"}
-                </span>
+                <span className={style.fontCon}> {truncatedOwner ? truncatedOwner : 'N/A'}</span>
               </p>
+
             </div>
           )}
         </div>

@@ -1,25 +1,23 @@
 #!/bin/bash
 
-# echo -e "Run 'pnpm install' to install the dependencies."
-#pnpm install
+set -e
 
-echo -e "Check if anvil is running('pnpm mud deploy' need this)."
-anvil_p_total=`ps -ef | grep anvil | grep -v grep | wc -l`
-if [ $anvil_p_total -eq 0 ]
+echo -e "Check if anvil is running, if not will try to start, since all subsequent processes rely on it."
+if [ $(lsof -i:8545 | grep anvil -c) -eq 0 ]
 then
-    echo -e "Start anvil first!"
-    exit 0
+    nohup anvil > ./anvil.log 2>&1 &
+    echo -e "anvil started successfully!"
 fi
 
 RPC_URL="http://127.0.0.1:8545"
 CHAIN_ID="31337"
 
 for arg in "$@"; do
-    # 使用等号分割键值对
+    # Use '=' to separate key-value pairs
     key=$(echo "$arg" | cut -d '=' -f1)
     value=$(echo "$arg" | cut -d '=' -f2-)
     
-    # 根据键进行处理
+    # Process based on keys
     case $key in
         RPC_URL)
             RPC_URL=$value

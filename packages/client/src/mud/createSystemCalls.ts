@@ -20,6 +20,8 @@ export const update_app_value = (index: number) => {
   args_index = index;
 }
 
+export let abi_json = {};
+
 export function createSystemCalls(
   /*
    * The parameter list informs TypeScript that:
@@ -43,14 +45,20 @@ export function createSystemCalls(
   { worldContract, waitForTransaction, publicClient, walletClient, write_sub, abi }: SetupNetworkResult,
   { }: ClientComponents,
 ) {
-  let abi_json: any = abi;
-  const update_abi = (value: any) => {
-    abi_json = value;
+  const app_name: string = window.localStorage.getItem('app_name') || 'paint';
+
+  abi_json[app_name] = abi
+  const update_abi = (value: any, common = false) => {
+    const app_name: string = window.localStorage.getItem('app_name') || 'paint';
+    if(common){
+      abi_json[app_name+'Common'] = value;
+    }else{
+      abi_json[app_name] = value;
+    }
   }
+  console.log(abi_json);
+  
 
-
-
-  // //console.log(systemContract,'55555555555')
   const entityVal = localStorage.getItem("entityVal") as any;
   if (entityVal === null) {
     localStorage.setItem(
@@ -64,9 +72,8 @@ export function createSystemCalls(
     selectedColor: any,
     action: string,
     other_params: any) => {
-      console.log(other_params,5555555);
       
-    const app_name = window.localStorage.getItem('app_name');
+    const app_name = window.localStorage.getItem('app_name') || 'paint';
     const system_name = window.localStorage.getItem('system_name') as string;
     const namespace = window.localStorage.getItem('namespace') as string;
     let args;
@@ -100,7 +107,7 @@ export function createSystemCalls(
     
     try {
       const txData = await worldContract.write.call(encodeSystemCall({
-        abi: abi_json,
+        abi: abi_json[app_name],
         systemId: resourceToHex({ "type": "system", "namespace": namespace, "name": system_name }),
         functionName: action,
         args: allArgs
