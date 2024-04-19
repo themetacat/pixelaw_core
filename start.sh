@@ -16,11 +16,11 @@ RPC_URL="http://127.0.0.1:8545"
 CHAIN_ID="31337"
 
 for arg in "$@"; do
-    # 使用等号分割键值对
+    # Use '=' to separate key-value pairs
     key=$(echo "$arg" | cut -d '=' -f1)
     value=$(echo "$arg" | cut -d '=' -f2-)
     
-    # 根据键进行处理
+    # Process based on keys
     case $key in
         RPC_URL)
             RPC_URL=$value
