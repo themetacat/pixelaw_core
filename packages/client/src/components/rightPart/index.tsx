@@ -26,6 +26,8 @@ interface Props {
   onUpdateAbiJson: any;
   onHandleExe: any;
   onUpdateAbiCommonJson: any;
+  onHandleLoading: any;
+  onHandleLoadingFun: any;
 }
 export function convertToString(bytes32Value: string) {
 
@@ -46,6 +48,8 @@ export default function RightPart({
   entityData,
   onUpdateAbiJson,
   setPanningState,
+  onHandleLoading,
+  onHandleLoadingFun,
   onUpdateAbiCommonJson,
 }: Props) {
   const {
@@ -91,11 +95,15 @@ export default function RightPart({
       systemData = abi_json[app_name];
     } else {
       try {
+        onHandleLoadingFun()
         const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
         systemData = await response.json();
+        onHandleLoading()
+       
         update_abi(systemData);
 
       } catch (error) {
+        onHandleLoading()
         console.log('error:', error);
       }
     }
@@ -138,6 +146,23 @@ export default function RightPart({
     )}`;
   }
 
+
+  // const btn1 =()=>{
+  //   localStorage.setItem("app_name",'paint')
+  //   localStorage.setItem("manifest", 'BASE/PaintSystem');
+  //   updateAbiUrl('BASE/PaintSystem')
+  // }
+  // const btn2 =()=>{
+  //   localStorage.setItem("app_name",'snake')
+  //   localStorage.setItem("manifest", 'BASE/SnakeSystem');
+  //   updateAbiUrl('BASE/SnakeSystem')
+  // }
+  // const btn3 =()=>{
+  //   localStorage.setItem("app_name",'myapp')
+  //   localStorage.setItem("manifest", 'BASE/MyAppSystem');
+  //   updateAbiUrl('BASE/MyAppSystem')
+  // }
+
   return (
     <div
       className={panning === false ? style.container : style.container1}
@@ -159,6 +184,9 @@ export default function RightPart({
           alt=""
           className={panning === false ? style.pointer : style.pointer1}
         />
+          {/* <button style={{width:"30px",height:"30px"}} onClick={btn1}>{loading === true ? 'loading' :1}</button>
+          <button style={{width:"30px",height:"30px"}} onClick={btn2}>{loading === true ? 'loading' :2}</button>
+          <button style={{width:"30px",height:"30px"}} onClick={btn3}>{loading === true ? 'loading' :3}</button> */}
         <div
           style={{
             backgroundColor: "#2a0d39",
@@ -167,6 +195,7 @@ export default function RightPart({
           }}
           className={style.contBox}
         >
+         
           {/* ~~~~ 移动游戏图片才调用 */}
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
@@ -176,6 +205,8 @@ export default function RightPart({
               addressToEntityID(value.system_addr)
             )?.app_name;
             value.app_name = app_name;
+
+          
 
             return (
               <div

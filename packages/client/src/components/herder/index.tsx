@@ -97,6 +97,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [panningFromChild, setPanningFromChild] = useState(false);
+  const [pageClick, setPageClick] = useState(false);
   const [GRID_SIZE, setGRID_SIZE] = useState(32);
   const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
@@ -329,6 +330,9 @@ export default function Header({ hoveredData, handleData }: Props) {
     pixel_value && pixel_value.action ? pixel_value.action : "interact";
   const ClickThreshold = 200; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    if( !updateAbiJson) {
+      return
+    }
     setIsDragging(true);
 
     setTranslateX(event.clientX);
@@ -342,6 +346,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+    if( !updateAbiJson) {
+      return
+    }
     setIsLongPress(false);
     setIsDragging(false);
     setPopExhibit(false);
@@ -883,6 +890,8 @@ const get_function_param = async (function_name: string, common_json: any[] = []
           onHandleExe={onHandleExe}
           onUpdateAbiJson={handleUpdateAbiJson}
           onUpdateAbiCommonJson={handleUpdateAbiCommonJson}
+          onHandleLoading={onHandleLoading}
+          onHandleLoadingFun={onHandleLoadingFun}
         />
       </div>
 
