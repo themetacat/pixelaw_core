@@ -7,9 +7,6 @@ if [ $(lsof -i:8545 | grep anvil -c) -eq 0 ]
 then
     nohup anvil > ./anvil.log 2>&1 &
     echo -e "anvil started successfully!"
-else
-    echo -e "Failed to start anvil, please start anvil manually first!"
-    exit 0
 fi
 
 RPC_URL="http://127.0.0.1:8545"
