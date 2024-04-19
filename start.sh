@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# echo -e "Run 'pnpm install' to install the dependencies."
-#pnpm install
 set -e
 
-echo -e "Check if anvil is running('pnpm mud deploy' need this)."
-anvil_p_total=`ps -ef | grep anvil | grep -v grep | wc -l`
-if [ $anvil_p_total -eq 0 ]
+echo -e "Check if anvil is running, if not will try to start, since all subsequent processes rely on it."
+if [ $(lsof -i:8545 | grep anvil -c) -eq 0 ]
 then
-    echo -e "Start anvil first!"
+    nohup anvil > ./anvil.log 2>&1 &
+    echo -e "anvil started successfully!"
+else
+    echo -e "Failed to start anvil, please start anvil manually first!"
     exit 0
 fi
 
