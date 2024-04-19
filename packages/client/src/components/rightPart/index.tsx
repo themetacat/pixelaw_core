@@ -196,9 +196,7 @@ export default function RightPart({
                   }
                 >
                   {loading === true &&
-                  manifestVal?.includes(
-                    capitalizeFirstLetter(value.app_name)
-                  ) ? (
+                  manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase())? (
                     <img
                       src={loadingImg}
                       alt=""
