@@ -39,7 +39,7 @@
     .element {
       animation: slide-left 0.3s linear forwards;
     }
-    /* position: relative; */
+ 
 }
 .btnGame{
     width: 100%;

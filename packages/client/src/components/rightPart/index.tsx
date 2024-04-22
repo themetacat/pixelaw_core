@@ -216,8 +216,6 @@ export default function RightPart({
             )?.app_name;
             value.app_name = app_name;
 
-          
-
             return (
               <div
                 key={`${index}`}
