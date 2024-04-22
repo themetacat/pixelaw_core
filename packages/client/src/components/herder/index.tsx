@@ -328,7 +328,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   const action =
     pixel_value && pixel_value.action ? pixel_value.action : "interact";
-  const ClickThreshold = 200; // 定义点击的时间阈值，单位为毫秒
+  const ClickThreshold = 150; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
 
     
