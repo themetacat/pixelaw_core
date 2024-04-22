@@ -173,6 +173,9 @@ export default function RightPart({
     updateAbiUrl('BASE/MyAppSystem')
   }
 
+ 
+  
+
   return (
     <div
       className={panning === false ? style.container : style.container1}
@@ -208,6 +211,7 @@ export default function RightPart({
          
           {/* ~~~~ 移动游戏图片才调用 */}
           {entities_app.map((entitya, index) => {
+            
             const value = getComponentValueStrict(App, entitya) as any;
             // const app_name =  convertToString(entitya);
             const app_name = getComponentValue(
@@ -215,6 +219,14 @@ export default function RightPart({
               addressToEntityID(value.system_addr)
             )?.app_name;
             value.app_name = app_name;
+
+
+             const manifestValString = manifestVal ? manifestVal : '' as string ;
+            const appName = value?.app_name !== undefined ? value.app_name : value?.namespace || '' as string ;
+            const manifestValLow = manifestValString.toLowerCase()
+            const appNameLow = appName.toLowerCase()
+                    
+             console.log(manifestValLow,appNameLow,33333,manifestValLow.includes(appNameLow));
 
             return (
               <div
@@ -238,13 +250,15 @@ export default function RightPart({
                 <div
                   className={
                     selectedIcon === index ||
-                      manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase())
+                    manifestValLow.includes(appNameLow)
+
                       ? style.imgCon1
                       : style.imgCon
                   }
                 >
                   {loading === true &&
-                    manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name).toLowerCase()) ? (
+                                manifestValLow.includes(appNameLow)
+                                ? (
                     <img
                       src={loadingImg}
                       alt=""
@@ -271,9 +285,8 @@ export default function RightPart({
                 {panning === false ? null : (
                   <div
                     className={
-                      manifestVal?.includes(
-                        capitalizeFirstLetter(value.app_name)
-                      )
+                      manifestValLow.includes(appNameLow)
+
                         ? style.appName1
                         : style.appName
                     }
