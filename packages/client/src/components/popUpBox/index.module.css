@@ -139,7 +139,7 @@ width: 98px;
 }
 
 .inputData{
-    min-width: 450px;
+    min-width: 440px;
     border-radius: 0.475rem;
     border: 1px solid;
     border-color: #DDDDDD;
@@ -163,7 +163,7 @@ margin-bottom: 10px;
 
 .confirmBtn {
     position: absolute;
-    right: 0.8rem;
+    right: 1.5rem;
     bottom: 5px;
    /* margin-top: 15px; */
 

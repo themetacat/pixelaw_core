@@ -335,7 +335,7 @@ export default function PopUpBox({
       {convertedParamsData !== null ? (
         <div className={style.btnBoxYo6jt}>
           {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
-       <div style={{marginBottom:"20px"}}>{inputs}</div>
+       <div style={{marginBottom:"20px",maxWidth:"460px"}}>{inputs}</div>
           {/* {resultContent.length!==0?inputs:''} */}
           <h2 className={style.title}>{instruC[app_name]}</h2>
           <div className={style.buttonContainer}>{content}</div>
