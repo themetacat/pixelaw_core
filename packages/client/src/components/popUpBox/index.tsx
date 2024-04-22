@@ -338,7 +338,7 @@ export default function PopUpBox({
        <div style={{marginBottom:"20px",maxWidth:"460px"}}>{inputs}</div>
           {/* {resultContent.length!==0?inputs:''} */}
           <h2 className={style.title}>{instruC[app_name]}</h2>
-          <div className={style.buttonContainer}>{content}</div>
+          <div className={style.buttonContainer} style={{maxWidth:"480px"}}>{content}</div>
           {inputs?.length !== 0 || InputsData > 1 ? (
             <button onClick={handleConfirm} className={style.confirmBtn}>
               Confirm
