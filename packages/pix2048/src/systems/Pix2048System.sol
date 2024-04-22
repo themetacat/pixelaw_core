@@ -17,23 +17,20 @@ contract Pix2048System is System {
 
   function init() public {
 
-    ICoreSystem(_world()).update_app(APP_NAME, APP_ICON, APP_MANIFEST);
+    ICoreSystem(_world()).update_app(APP_NAME, APP_ICON, APP_MANIFEST, NAMESPACE, SYSTEM_NAME);
 
   }
 
   function interact(DefaultParameters memory default_parameters) public {
     Position memory position = default_parameters.position;
     address player = default_parameters.for_player;
-    address system = default_parameters.for_system;
+    string memory app = default_parameters.for_app;
 
     PixelData memory pixel = Pixel.get(position.x, position.y);
     if(keccak256(abi.encodePacked(pixel.action)) == keccak256(abi.encodePacked("move"))){
       move(default_parameters);
     }else{
     require(ownerless_space(position), "pixel not enough");
-
-      // uint256 game_id = generateRandomNumber(1);
-      // Game2048Data memory game = Game2048.get(position.x, position.y);
 
       uint256[] memory matrixArray = new uint256[](16);
           
@@ -53,7 +50,7 @@ contract Pix2048System is System {
         color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E7',
-        app: system,
+        app: '2048',
         owner: player,
         action: 'move'
       }));
@@ -64,7 +61,7 @@ contract Pix2048System is System {
         color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E9',
-        app: system,
+        app: '2048',
         owner: player,
         action: 'move'
       }));
@@ -75,7 +72,7 @@ contract Pix2048System is System {
         color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E6',
-        app: system,
+        app: '2048',
         owner: player,
         action: 'move'
       }));
@@ -86,7 +83,7 @@ contract Pix2048System is System {
         color: '#d2d97a',
         timestamp: 0,
         text: 'U+21E8',
-        app: system,
+        app: '2048',
         owner: player,
         action: 'move'
       }));
@@ -127,11 +124,11 @@ contract Pix2048System is System {
       for(uint32 j; j < 4; j++){
 
         matrix_value = matrixArray[4*i+j];
-        if(matrix_value == 0){
-          string_matrix_value = '_none';
-        }else{
-          string_matrix_value = Strings.toString(matrix_value);
-        }
+        // if(matrix_value == 0){
+        //   string_matrix_value = '_Null';
+        // }else{
+        string_matrix_value = Strings.toString(matrix_value);
+        // }
         pixel = Pixel.get(default_parameters.position.x + j, default_parameters.position.y + i);
         if(pixel.app != default_parameters.for_system){
             ICoreSystem(_world()).update_pixel(PixelUpdateData({
@@ -140,7 +137,7 @@ contract Pix2048System is System {
             color: get_color(matrix_value),
             timestamp: 0,
             text: string_matrix_value,
-            app: default_parameters.for_system,
+            app: '2048',
             owner: default_parameters.for_player,
             action: ''
           }));
@@ -152,7 +149,7 @@ contract Pix2048System is System {
               color: get_color(matrix_value),
               timestamp: 0,
               text: string_matrix_value,
-              app: default_parameters.for_system,
+              app: '2048',
               owner: default_parameters.for_player,
               action: ''
             }));
@@ -166,7 +163,12 @@ contract Pix2048System is System {
     game.matrixArray = matrixArray;
     if(game.owner == address(0)){
       game.owner = default_parameters.for_player;
-      game.gameState = true;
+    }
+    bool gameState = isGameOver(matrixArray);
+    if(!gameState){
+      Game2048Data memory game = Game2048.get(origin_position.x, origin_position.y);
+      game.gameState = gameState;
+      Game2048.set(origin_position.x, origin_position.y, game);
     }
 
     Game2048.set(default_parameters.position.x, default_parameters.position.y, game);
@@ -189,49 +191,54 @@ contract Pix2048System is System {
     origin_position.x -= 4;
 
     if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E7"))){
-      matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
-      (isChange, matrixArray) = moveUp(matrixArray);
+      bool game = Game2048.get(origin_position.x, origin_position.y);
+      require(game.gameState, "Game is Over");
+      // matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
+      (isChange, matrixArray) = moveUp(game.matrixArray);
     }else if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E9"))){
       origin_position.y -= 1;
+      bool game = Game2048.get(origin_position.x, origin_position.y);
+      require(game.gameState, "Game is Over");
+
       matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
-      (isChange, matrixArray) = moveDown(matrixArray);
+      (isChange, matrixArray) = moveDown(game.matrixArray);
     }else if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E6"))){
       origin_position.y -= 2;
       matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
-      (isChange, matrixArray) = moveLeft(matrixArray);
+      (isChange, matrixArray) = moveLeft(game.matrixArray);
     }else if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E8"))){
       origin_position.y -= 3;
       matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
-      (isChange, matrixArray) = moveRight(matrixArray);
+      (isChange, matrixArray) = moveRight(game.matrixArray);
     }
 
     if(isChange){
       default_parameters.position = origin_position;
       genNumber(matrixArray, default_parameters);
-      // isGameOver(matrixArray);
+  
     }
   }
 
-  // function isGameOver(uint256[] memory matrixArray) internal returns(bool){
-  //   for(uint8 i; i < 4; i++){
-  //     uint8 rowPIndex = i * 4 + 1;
-  //     for(uint8 j; j<3; j++){
-  //       uint8 rowIndex = i * 4 + j;
-  //       uint8 colPIndex = (j+1) * 4 + i;
-  //       uint8 colIndex = j * 4 + i;
-  //       if(matrixArray[rowIndex] == 0 || matrixArray[colIndex] == 0){
-  //         return;
-  //       }
-  //       if(matrixArray[rowIndex] == matrixArray[rowPIndex+j] || matrixArray[colIndex] == matrixArray[colPIndex]){
-  //         return;
-  //       }
-  //     }
-  //   }
-  //   if(matrixArray[15] == 0){
-  //     return true;
-  //   }
-  //   return false;
-  // }
+  function isGameOver(uint256[] memory matrixArray) internal returns(bool){
+    for(uint8 i; i < 4; i++){
+      uint8 rowPIndex = i * 4 + 1;
+      for(uint8 j; j<3; j++){
+        uint8 rowIndex = i * 4 + j;
+        uint8 colPIndex = (j+1) * 4 + i;
+        uint8 colIndex = j * 4 + i;
+        if(matrixArray[rowIndex] == 0 || matrixArray[colIndex] == 0){
+          return;
+        }
+        if(matrixArray[rowIndex] == matrixArray[rowPIndex+j] || matrixArray[colIndex] == matrixArray[colPIndex]){
+          return;
+        }
+      }
+    }
+    if(matrixArray[15] == 0){
+      return true;
+    }
+    return false;
+  }
 
   function moveRight(uint256[] memory matrixArray) internal pure returns (bool, uint256[] memory) {
     bool isChange = false;
@@ -401,9 +408,9 @@ contract Pix2048System is System {
     for(uint8 i; i<4; i++){
       for(uint8 j; j<5; j++){
         PixelData memory pixel = Pixel.get(position.x+j, position.y+i);
-        if(keccak256(abi.encodePacked(pixel.color)) != keccak256(abi.encodePacked('0')) && bytes(pixel.color).length != 0){
+        if(bytes(pixel.color).length != 0){
           return false;
-        }else if(keccak256(abi.encodePacked(pixel.text)) != keccak256(abi.encodePacked('_none')) && bytes(pixel.text).length != 0){
+        }else if(bytes(pixel.text).length != 0){
           return false;
         }else if(pixel.app != address(0) || pixel.owner != address(0)){
           return false;

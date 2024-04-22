@@ -33,17 +33,13 @@ contract CallSystemExtension is Script {
 
     vm.startBroadcast(deployerPrivateKey);
     world.registerNamespace(namespaceResource);
-
-    // forge script script/CallSystemExtension.s.sol --rpc-url https://rpc.holesky.redstone.xyz --broadcast
-    // StoreSwitch.setStoreAddress(worldAddress);
-    // Messages.register();
  
     CallOtherSystem callOtherSystem = new CallOtherSystem();
     console.log("QueueSystem address: ", address(callOtherSystem));
  
     world.registerSystem(systemResource, callOtherSystem, true);
     world.registerFunctionSelector(systemResource, "call_world_process_queue(bytes32,uint256,string,string,bytes)");
-    world.registerFunctionSelector(systemResource, "call_other_system_fn(string,string,bytes)");
+
     vm.stopBroadcast();
   }
 }
