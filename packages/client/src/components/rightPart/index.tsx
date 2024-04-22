@@ -215,7 +215,6 @@ export default function RightPart({
               addressToEntityID(value.system_addr)
             )?.app_name;
             value.app_name = app_name;
-            console.log(value);
             
             return (
               <div
