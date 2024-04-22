@@ -27,12 +27,15 @@
     background-color: #220630; 
     z-index: 999999999999999;
 }
+.inputData:nth-last-child(1){
+    margin-bottom: 20px;
+}
 .title{
     color: #ffc400;
     text-align: center;
     font-size: 32px;
     margin-bottom: 0px;
-    margin-top: 0.5rem;
+    /* margin-top: 0.5rem; */
     word-wrap: break-word;
     max-width: 500px;
     line-height: 1.5;
