@@ -194,9 +194,9 @@ export default function RightPart({
           alt=""
           className={panning === false ? style.pointer : style.pointer1}
         />
-          <button style={{width:"30px",height:"30px"}} onClick={btn1}>{loading === true ? 'loading' :1}</button>
+          {/* <button style={{width:"30px",height:"30px"}} onClick={btn1}>{loading === true ? 'loading' :1}</button>
           <button style={{width:"30px",height:"30px"}} onClick={btn2}>{loading === true ? 'loading' :2}</button>
-          <button style={{width:"30px",height:"30px"}} onClick={btn3}>{loading === true ? 'loading' :3}</button>
+          <button style={{width:"30px",height:"30px"}} onClick={btn3}>{loading === true ? 'loading' :3}</button> */}
         <div
           style={{
             backgroundColor: "#2a0d39",
