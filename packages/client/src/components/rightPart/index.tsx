@@ -226,7 +226,6 @@ export default function RightPart({
             const manifestValLow = manifestValString.toLowerCase()
             const appNameLow = appName.toLowerCase()
                     
-             console.log(manifestValLow,appNameLow,33333,manifestValLow.includes(appNameLow));
 
             return (
               <div
