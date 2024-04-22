@@ -180,34 +180,11 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 console.info(`[Dev Faucet]: Player balance -> ${balance}`);
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
-                  // console.info("[Dev Faucet]: Balance is low, dripping funds to player");
+                  console.info("[Dev Faucet]: Balance is low, dripping funds to player");
                   await testClient.setBalance({ address: account_addr, value: parseEther('4') });
                 };
               };
               requestDrip();
-              // setInterval(requestDrip, 20000);
-            // if (networkConfig.faucetServiceUrl) {
-            //   const address = burnerAccount.address;
-            //   console.info("[Dev Faucet]: Player address -> ", address);
-
-            //   const faucet = createFaucetService(networkConfig.faucetServiceUrl);
-
-            //   const requestDrip = async () => {
-            //     const balance = await publicClient.getBalance({ address });
-            //     console.info(`[Dev Faucet]: Player balance -> ${balance}`);
-            //     const lowBalance = balance < parseEther("1");
-            //     if (lowBalance) {
-            //       console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-            //       // Double drip
-            //       await faucet.dripDev({ address });
-            //       await faucet.dripDev({ address });
-            //     }
-            //   };
-
-            //   requestDrip();
-            //   // Request a drip every 20 seconds
-            //   setInterval(requestDrip, 20000);
-            // }
 
             resolve({
               world,

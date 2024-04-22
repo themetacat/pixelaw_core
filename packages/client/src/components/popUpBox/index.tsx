@@ -321,14 +321,11 @@ export default function PopUpBox({
     setContent(content);
   };
 
-  // useEffect(() => {
-  //   if(Object.keys(instruC).length !== 0){
-  //     fon()
-  //   }
-  // }, [instruC]);
   useEffect(() => {
+    if(Object.keys(instruC).length !== 0){
       fon()
-  }, []);
+    }
+  }, [instruC]);
 
   return (
     <div className={style.content}>

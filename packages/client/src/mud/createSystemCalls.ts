@@ -56,8 +56,6 @@ export function createSystemCalls(
       abi_json[app_name] = value;
     }
   }
-  console.log(abi_json);
-  
 
   const entityVal = localStorage.getItem("entityVal") as any;
   if (entityVal === null) {
@@ -102,8 +100,6 @@ export function createSystemCalls(
     }
     
     let tx, hashValpublic;
-
-    const x = `${namespace}_${system_name}_interact`;
     
     try {
       const txData = await worldContract.write.call(encodeSystemCall({

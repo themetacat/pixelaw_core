@@ -611,7 +611,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       } 
       component["type"] = get_value_type(component.type);
     });
-    // console.log(components);
 
     return components;
   };
