@@ -215,9 +215,8 @@ export default function RightPart({
               addressToEntityID(value.system_addr)
             )?.app_name;
             value.app_name = app_name;
-
-          
-
+            console.log(value);
+            
             return (
               <div
                 key={`${index}`}
@@ -273,9 +272,7 @@ export default function RightPart({
                 {panning === false ? null : (
                   <div
                     className={
-                      manifestVal?.includes(
-                        capitalizeFirstLetter(value.app_name)
-                      )
+                      typeof(manifestVal)?.toLowerCase().includes((typeof(value?.app_name) !==undefined?value?.app_name as string:value.namespace as string).toLowerCase())
                         ? style.appName1
                         : style.appName
                     }
