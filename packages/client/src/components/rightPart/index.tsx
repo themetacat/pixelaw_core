@@ -273,9 +273,7 @@ export default function RightPart({
                 {panning === false ? null : (
                   <div
                     className={
-                      manifestVal?.includes(
-                        capitalizeFirstLetter(value.app_name)
-                      )
+                      manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase())
                         ? style.appName1
                         : style.appName
                     }
