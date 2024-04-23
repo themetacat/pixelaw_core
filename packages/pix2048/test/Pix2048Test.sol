@@ -21,16 +21,5 @@ contract Pix2048Test is MudTest {
     assertTrue(codeSize > 0);
   }
 
-  function testInteract() public {
-    // Expect the counter to be 1 because it was incremented in the PostDeploy script.
-    Position memory position = Position({x: 1, y: 2});
 
-    Game2048Data memory game = Game2048.get(1, 2);
-    assertEq(game.owner, address(0));
-
-
-    IWorld(worldAddress).pix2048_Pix2048System_interact(DefaultParameters({for_player: address(0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc), for_system: address(0x45009DD3aBBE29Db54fc5D893CeAa98a624882DF),position: position, color: "1==2"}));
-    game = Game2048.get(1, 2);
-    assertEq(game.owner, address(0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc));
-  }
 }

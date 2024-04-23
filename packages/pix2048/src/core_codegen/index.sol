@@ -16,17 +16,15 @@ import { QueueScheduled, QueueScheduledData, QueueScheduledTableId } from "./tab
 import { QueueProcessed, QueueProcessedTableId } from "./tables/QueueProcessed.sol";
 import { Alert, AlertData, AlertTableId } from "./tables/Alert.sol";
 
-
 struct DefaultParameters{
     address for_player;
     string for_app;
     Position position;
     string color;
-  }
+}
 
 
 struct Position{
     uint32 x;
     uint32 y; 
   }
-

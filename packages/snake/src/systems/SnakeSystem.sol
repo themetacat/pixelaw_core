@@ -26,7 +26,6 @@ contract SnakeSystem is System {
     bytes4 INTERACT_SELECTOR =  bytes4(keccak256("interact(DefaultParameters, Direction)"));
     string memory INTERACT_INSTRUCTION = 'select direction for snake';
     ICoreSystem(_world()).set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
-   
   }
 
   function interact(DefaultParameters memory default_parameters, Direction direction) public returns(uint256){
@@ -128,6 +127,8 @@ contract SnakeSystem is System {
         if(next_pixel.owner == address(0)){
           snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, owner, snake, first_segment);
           snake.last_segment_id = remove_last_segment(snake);
+        }else if(!has_write_access){
+          snake.is_dying = true;
         }else if(next_pixel.owner == owner){
           snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, owner, snake, first_segment);
           if (snake.length >= SNAKE_MAX_LENGTH){
@@ -135,8 +136,6 @@ contract SnakeSystem is System {
           }else{
             snake.length += 1;
           }
-        }else if(!has_write_access){
-          snake.is_dying = true;
         }else{
           if(snake.length == 1){
             snake.is_dying = true;
