@@ -278,7 +278,7 @@ export default function RightPart({
                         : style.appName
                     }
                   >
-                    {value.app_name}
+                    {value.app_name }
                   </div>
                 )}
               </div>
