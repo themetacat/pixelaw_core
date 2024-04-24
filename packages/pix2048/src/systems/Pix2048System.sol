@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 contract Pix2048System is System {
   string constant APP_ICON = 'U+1F4A0';
   string constant NAMESPACE = 'pix2048';
-  string constant SYSTEM_NAME = 'pix2048System';
+  string constant SYSTEM_NAME = 'Pix2048System';
   string constant APP_NAME = '2048';
   //abi json
   string constant APP_MANIFEST = 'BASE/Pix2048';
@@ -24,7 +24,7 @@ contract Pix2048System is System {
   function interact(DefaultParameters memory default_parameters) public {
     Position memory position = default_parameters.position;
     address player = default_parameters.for_player;
-    string memory app = default_parameters.for_app;
+    // string memory app = default_parameters.for_app;
 
     PixelData memory pixel = Pixel.get(position.x, position.y);
     if(keccak256(abi.encodePacked(pixel.action)) == keccak256(abi.encodePacked("move"))){
@@ -124,13 +124,14 @@ contract Pix2048System is System {
       for(uint32 j; j < 4; j++){
 
         matrix_value = matrixArray[4*i+j];
-        // if(matrix_value == 0){
-        //   string_matrix_value = '_Null';
-        // }else{
+        if(matrix_value == 0){
+          string_matrix_value = '';
+        }else{
         string_matrix_value = Strings.toString(matrix_value);
-        // }
+        }
         pixel = Pixel.get(default_parameters.position.x + j, default_parameters.position.y + i);
-        if(pixel.app != default_parameters.for_system){
+        // if(pixel.app != default_parameters.for_system){
+        if(keccak256(abi.encodePacked(pixel.app)) != keccak256(abi.encodePacked('2048'))){
             ICoreSystem(_world()).update_pixel(PixelUpdateData({
             x: default_parameters.position.x + j,
             y: default_parameters.position.y + i,
@@ -156,20 +157,16 @@ contract Pix2048System is System {
           }
         }
         
-        
       }
     }
     Game2048Data memory game = Game2048.get(default_parameters.position.x, default_parameters.position.y);
     game.matrixArray = matrixArray;
     if(game.owner == address(0)){
       game.owner = default_parameters.for_player;
+      
     }
     bool gameState = isGameOver(matrixArray);
-    if(!gameState){
-      Game2048Data memory game = Game2048.get(origin_position.x, origin_position.y);
-      game.gameState = gameState;
-      Game2048.set(origin_position.x, origin_position.y, game);
-    }
+    game.gameState = gameState;
 
     Game2048.set(default_parameters.position.x, default_parameters.position.y, game);
 
@@ -191,24 +188,28 @@ contract Pix2048System is System {
     origin_position.x -= 4;
 
     if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E7"))){
-      bool game = Game2048.get(origin_position.x, origin_position.y);
+      Game2048Data memory game = Game2048.get(origin_position.x, origin_position.y);
       require(game.gameState, "Game is Over");
       // matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
       (isChange, matrixArray) = moveUp(game.matrixArray);
     }else if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E9"))){
       origin_position.y -= 1;
-      bool game = Game2048.get(origin_position.x, origin_position.y);
+      Game2048Data memory game = Game2048.get(origin_position.x, origin_position.y);
       require(game.gameState, "Game is Over");
 
-      matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
+      // matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
       (isChange, matrixArray) = moveDown(game.matrixArray);
     }else if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E6"))){
       origin_position.y -= 2;
-      matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
+      Game2048Data memory game = Game2048.get(origin_position.x, origin_position.y);
+      require(game.gameState, "Game is Over");
+      // matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
       (isChange, matrixArray) = moveLeft(game.matrixArray);
     }else if(keccak256(abi.encodePacked(pixel.text)) == keccak256(abi.encodePacked("U+21E8"))){
       origin_position.y -= 3;
-      matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
+      Game2048Data memory game = Game2048.get(origin_position.x, origin_position.y);
+      require(game.gameState, "Game is Over");
+      // matrixArray = Game2048.getMatrixArray(origin_position.x, origin_position.y);
       (isChange, matrixArray) = moveRight(game.matrixArray);
     }
 
@@ -219,7 +220,7 @@ contract Pix2048System is System {
     }
   }
 
-  function isGameOver(uint256[] memory matrixArray) internal returns(bool){
+  function isGameOver(uint256[] memory matrixArray) internal pure returns(bool){
     for(uint8 i; i < 4; i++){
       uint8 rowPIndex = i * 4 + 1;
       for(uint8 j; j<3; j++){
@@ -227,10 +228,10 @@ contract Pix2048System is System {
         uint8 colPIndex = (j+1) * 4 + i;
         uint8 colIndex = j * 4 + i;
         if(matrixArray[rowIndex] == 0 || matrixArray[colIndex] == 0){
-          return;
+          return true;
         }
         if(matrixArray[rowIndex] == matrixArray[rowPIndex+j] || matrixArray[colIndex] == matrixArray[colPIndex]){
-          return;
+          return true;
         }
       }
     }
@@ -412,7 +413,7 @@ contract Pix2048System is System {
           return false;
         }else if(bytes(pixel.text).length != 0){
           return false;
-        }else if(pixel.app != address(0) || pixel.owner != address(0)){
+        }else if(bytes(pixel.app).length != 0 || pixel.owner != address(0)){
           return false;
         }
       }

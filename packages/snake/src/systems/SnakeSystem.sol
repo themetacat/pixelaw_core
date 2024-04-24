@@ -26,7 +26,6 @@ contract SnakeSystem is System {
     bytes4 INTERACT_SELECTOR =  bytes4(keccak256("interact(DefaultParameters, Direction)"));
     string memory INTERACT_INSTRUCTION = 'select direction for snake';
     ICoreSystem(_world()).set_instruction(INTERACT_SELECTOR, INTERACT_INSTRUCTION);
-   
   }
 
   function interact(DefaultParameters memory default_parameters, Direction direction) public returns(uint256){
@@ -38,6 +37,7 @@ contract SnakeSystem is System {
     SnakeData memory player_snake = Snake.get(player);
 
     if(player_snake.length > 0){
+      require(reverseDir(player_snake.direction, direction), "Turning 180 degrees is not allowed");
       player_snake.direction = direction;
       player_snake.step = 0;
       Snake.set(player, player_snake);
@@ -128,6 +128,8 @@ contract SnakeSystem is System {
         if(next_pixel.owner == address(0)){
           snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, owner, snake, first_segment);
           snake.last_segment_id = remove_last_segment(snake);
+        }else if(!has_write_access){
+          snake.is_dying = true;
         }else if(next_pixel.owner == owner){
           snake.first_segment_id = create_new_segment(next_x, next_y, next_pixel, owner, snake, first_segment);
           if (snake.length >= SNAKE_MAX_LENGTH){
@@ -135,8 +137,6 @@ contract SnakeSystem is System {
           }else{
             snake.length += 1;
           }
-        }else if(!has_write_access){
-          snake.is_dying = true;
         }else{
           if(snake.length == 1){
             snake.is_dying = true;
@@ -230,6 +230,20 @@ contract SnakeSystem is System {
 
     uint256 uuid = uint256(keccak256(abi.encodePacked(senderAddress, timestamp, randomNumber)));
     return uuid;
+  }
+
+  function reverseDir(Direction dir_now, Direction dir_change) internal pure returns (bool) {
+    if(dir_now == Direction.Right && dir_change == Direction.Left){
+      return false;
+    }else if(dir_now == Direction.Left && dir_change == Direction.Right){
+      return false;
+    }else if(dir_now == Direction.Up && dir_change == Direction.Down){
+      return false;
+    }else if(dir_now == Direction.Down && dir_change == Direction.Up){
+      return false;
+    }else{
+      return true;
+    }
   }
 
 }

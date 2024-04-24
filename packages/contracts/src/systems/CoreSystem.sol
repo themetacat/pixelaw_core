@@ -60,11 +60,12 @@ contract CoreSystem is System {
     address developer = app.developer;
     require(developer == address(_msgSender()), 'not game owner');
     address old_system = app.system_addr;
+    AppName.deleteRecord(old_system);
+
     AppName.set(new_system_addr, app_name);
 
     app.system_addr = new_system_addr;
     App.set(convertToBytes32(app_name), app);
-    AppName.deleteRecord(old_system);
   }
 
   function has_write_access(PixelData memory pixel, PixelUpdateData memory pixel_update) public view returns (bool) {
