@@ -61,7 +61,7 @@ export default function RightPart({
     systemCalls: { update_abi },
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
-  const [panning, setPanning] = useState(false);
+  const [panning, setPanning] = useState(true);
   const manifestVal = window.localStorage.getItem("manifest");
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
@@ -278,7 +278,7 @@ export default function RightPart({
                         : style.appName
                     }
                   >
-                    {value.app_name}
+                    {value.app_name }
                   </div>
                 )}
               </div>

@@ -146,6 +146,8 @@ export default function Header({ hoveredData, handleData }: Props) {
     setTranslateY(0);
   };
 
+ 
+
   function handleColorOptionClick(color: any) {
     setSelectedColor(color);
   }
@@ -496,6 +498,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
+      
       if (!visibleAreaRef.current || !isDragging) return;
 
       const dx = translateX - event.clientX;
@@ -732,12 +735,10 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
-
       const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
       const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
       setCoordinates({ x: gridX, y: gridY });
       setHoveredSquare({ x: gridX, y: gridY });
-
       // setHoveredSquare({ x: gridX, y: gridY });
       hoveredSquareRef.current = { x: gridX, y: gridY };
     };
@@ -748,8 +749,10 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       setScrollOffset({ x: scrollX, y: scrollY });
     };
 
+
     if (canvas) {
       canvas.addEventListener("mousemove", handleMouseMove);
+   
     }
     window.addEventListener("scroll", handleScroll);
 
@@ -760,6 +763,9 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       window.removeEventListener("scroll", handleScroll);
     };
   }, [canvasRef, scrollOffset]);
+
+
+ 
 
   return (
     <>
@@ -833,19 +839,11 @@ const get_function_param = async (function_name: string, common_json: any[] = []
           <div
             ref={visibleAreaRef}
             className={style.canvasWrapper}
-            style={
-              {
-                // width: `${CONTENT_WIDTH}px`,
-                // height: `900px`,
-                // overflow: "auto",
-              }
-            }
           >
             <canvas
               ref={canvasRef}
               width={CANVAS_WIDTH}
               height={CANVAS_WIDTH}
-              // style={{ border: "1px solid black" }}
             />
           </div>
         </div>
