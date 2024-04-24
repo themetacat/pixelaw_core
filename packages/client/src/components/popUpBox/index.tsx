@@ -1,6 +1,7 @@
 import React, { useEffect, useContext, useState, useCallback } from "react";
 import style from "./index.module.css";
 import { addressToEntityID } from "../rightPart";
+import { convertToString } from "../rightPart/index";
 import {
   Has,
   getComponentValue,
@@ -283,11 +284,11 @@ export default function PopUpBox({
       const result = "0x" + num?.toString(16);
       if (instruction?.instruction) {
         const value = getComponentValueStrict(App, entitya) as any;
-
-        const app_name = getComponentValue(
-          AppName,
-          addressToEntityID(value.system_addr)
-        )?.app_name;
+        const app_name =  convertToString(entitya);
+        // const app_name = getComponentValue(
+        //   AppName,
+        //   addressToEntityID(value.system_addr)
+        // )?.app_name;
         instruC[app_name] = instruction?.instruction;
         setInstruC(instruC);
       }

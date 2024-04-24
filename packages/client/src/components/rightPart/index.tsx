@@ -211,11 +211,11 @@ export default function RightPart({
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
             
-            // const app_name =  convertToString(entitya);
-            const app_name = getComponentValue(
-              AppName,
-              addressToEntityID(value.system_addr)
-            )?.app_name;
+            const app_name =  convertToString(entitya);
+            // const app_name = getComponentValue(
+            //   AppName,
+            //   addressToEntityID(value.system_addr)
+            // )?.app_name;
             value.app_name = app_name as string;
             
             return (
