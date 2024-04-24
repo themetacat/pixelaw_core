@@ -10,7 +10,8 @@
     "mud:up": "pnpm mud set-version --tag main && pnpm install",
     "prepare": "(forge --version || pnpm foundry:up)",
     "test": "pnpm recursive run test",
-    "start": "./start.sh"
+    "start": "./start.sh",
+    "stop": "./stop.sh"
   },
   "devDependencies": {
     "@latticexyz/cli": "2.0.0-next.15",

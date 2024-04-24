@@ -63,5 +63,9 @@ sudo npm install -g pnpm
 ### Step 3: Deploy and Start
 `pnpm run start`
 
+### Step 4: Stop
+##### <span style="background-color:yellow">\!\!\! Warning: Please be aware that this command will terminate all processes containing the keywords 'anvil' and 'vite'. Please use it with caution.</span>
+`pnpm run stop`
+
 ## License
 PixeLAW Core(MUD Based) is open-source software [under the MIT license](https://github.com/themetacat/pixelaw_core/blob/main/LICENSE).
