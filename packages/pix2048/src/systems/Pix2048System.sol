@@ -174,7 +174,7 @@ contract Pix2048System is System {
   }
 
   function generateRandomNumber(uint256 maxNum) internal view returns (uint256) {
-      uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.basefee, block.number, address(_msgSender())))) % maxNum;
+      uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.prevrandao, block.number, address(_msgSender())))) % maxNum;
       return randomNumber;
   }
 
