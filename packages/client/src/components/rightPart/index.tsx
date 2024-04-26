@@ -62,7 +62,7 @@ export default function RightPart({
   } = useMUD();
   const entities_app = useEntityQuery([Has(App)]);
   const [panning, setPanning] = useState(false);
-  const manifestVal = window.localStorage.getItem("manifest");
+  const loacl_app_name = window.localStorage.getItem("app_name");
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
@@ -216,7 +216,7 @@ export default function RightPart({
             //   AppName,
             //   addressToEntityID(value.system_addr)
             // )?.app_name;
-            value.app_name = app_name as string;
+            value.app_name = app_name as string;     
             
             return (
               <div
@@ -240,13 +240,13 @@ export default function RightPart({
                 <div
                   className={
                     selectedIcon === index ||
-                    manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase())
+                    loacl_app_name?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase())
                       ? style.imgCon1
                       : style.imgCon
                   }
                 >
                   {loading === true &&
-                    manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase()) ? (
+                    loacl_app_name?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase()) ? (
                     <img
                       src={loadingImg}
                       alt=""
@@ -273,7 +273,7 @@ export default function RightPart({
                 {panning === false ? null : (
                   <div
                     className={
-                      manifestVal?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase())
+                      loacl_app_name?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase())
                         ? style.appName1
                         : style.appName
                     }
