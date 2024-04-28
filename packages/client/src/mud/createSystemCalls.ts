@@ -90,7 +90,6 @@ export function createSystemCalls(
       allArgs = [args];
     }
     
-    // get_function_param(abi, action)
     if (other_params !== null) {
       if(args_index !== -1){
         other_params.splice(args_index, 0, args);
