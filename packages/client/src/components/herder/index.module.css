@@ -207,10 +207,12 @@ canvas{
     width: 8px;
   }
   .canvasWrapper::-webkit-scrollbar-track {
-    background-color: #2f1643;
+    background-color: red;
+    /* background-color: #2f1643; */
   }
   .canvasWrapper::-webkit-scrollbar-thumb {
-    background-color: #2f1643;
+    /* background-color: #2f1643; */
+    background-color: red;
     border-radius: 4px;
   }
   .canvasWrapper::-webkit-scrollbar-thumb:hover {

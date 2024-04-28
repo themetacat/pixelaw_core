@@ -138,6 +138,14 @@ export default function RightPart({
   };
   useEffect(() => {
     updateAbiUrl(localStorage.getItem("manifest"));
+  
+    if(!loacl_app_name){
+      console.log(222222);
+      window.localStorage.setItem("app_name",'paint');
+      window.localStorage.setItem("system_name",'PaintSystem');
+      window.localStorage.setItem("namespace",'paint');
+      window.localStorage.setItem("manifest",'BASE/PaintSystem');
+    }
   }, [])
 
   function capitalizeFirstLetter(str: any) {

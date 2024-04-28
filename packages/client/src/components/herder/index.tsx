@@ -103,8 +103,8 @@ export default function Header({ hoveredData, handleData }: Props) {
   const entities_app = useEntityQuery([Has(App)]);
   const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
   const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
-  const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
-  const CONTENT_WIDTH = gridCount * GRID_SIZE;
+  // const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
+  // const CONTENT_WIDTH = gridCount * GRID_SIZE;
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
     y: number;
@@ -145,8 +145,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     setTranslateX(0);
     setTranslateY(0);
   };
-
- 
 
   function handleColorOptionClick(color: any) {
     setSelectedColor(color);
@@ -213,14 +211,14 @@ export default function Header({ hoveredData, handleData }: Props) {
       ctx.lineWidth = 10;
       ctx.strokeStyle = "#000000";
 
-      // 绘制竖条纹
+      // 绘制条纹x
       for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(x - scrollOffset.x, 0);
         ctx.lineTo(x - scrollOffset.x, CANVAS_HEIGHT);
         ctx.stroke();
       }
-      // 绘制横条纹
+      // 绘制条纹y
       for (let y = 0; y < CANVAS_HEIGHT; y += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(0, y - scrollOffset.y);
@@ -254,13 +252,10 @@ export default function Header({ hoveredData, handleData }: Props) {
           ctx.lineWidth = 3;
           ctx.strokeStyle = "#2e1043";
           ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-
           // 绘制背景色
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-
           const entity = getEntityAtCoordinates(i, j);
-
           if (entity) {
             ctx.fillStyle = entity.value.color;
             ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
@@ -268,7 +263,6 @@ export default function Header({ hoveredData, handleData }: Props) {
               ctx.fillStyle = "#000"; // 设置文本颜色
               ctx.textAlign = "center"; // 设置文本水平居中
               ctx.textBaseline = "middle"; // 设置文本垂直居中
-
               if (
                 entity.value.text &&
                 /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)
@@ -316,27 +310,23 @@ export default function Header({ hoveredData, handleData }: Props) {
     ]
   );
 
-  // let timer: NodeJS.Timeout | null = null;
-  // let isLongPress = false;
-  const LongPressThreshold = 500; // 定义长按的时间阈值，单位为毫秒
   let timeout: NodeJS.Timeout;
   const [isDragging, setIsDragging] = useState(false);
   const downTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isLongPress, setIsLongPress] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [lastDragEndX, setLastDragEndX] = useState(0);
-  const [lastDragEndY, setLastDragEndY] = useState(0);
+  const [fingerNum, setFingerNum] = useState(0);
   const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   const action =
     pixel_value && pixel_value.action ? pixel_value.action : "interact";
   const ClickThreshold = 150; // 定义点击的时间阈值，单位为毫秒
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-
-    
-  if(pageClick === true){
-    return
-  }
+    setFingerNum(event.buttons);
+    if (pageClick === true) {
+      return;
+    }
     setIsDragging(true);
 
     setTranslateX(event.clientX);
@@ -349,21 +339,17 @@ export default function Header({ hoveredData, handleData }: Props) {
     }, ClickThreshold);
   };
 
-
-  const handlePageClick =()=>{
-
-    
-    setPageClick(true)
-  }
-  const handlePageClickIs =()=>{
-    setPageClick(false)
-  }
+  const handlePageClick = () => {
+    setPageClick(true);
+  };
+  const handlePageClickIs = () => {
+    setPageClick(false);
+  };
 
   const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
-      
-  if(pageClick === true){
-    return
-  }
+    if (pageClick === true) {
+      return;
+    }
     setIsLongPress(false);
     setIsDragging(false);
     setPopExhibit(false);
@@ -498,7 +484,6 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      
       if (!visibleAreaRef.current || !isDragging) return;
 
       const dx = translateX - event.clientX;
@@ -544,11 +529,12 @@ export default function Header({ hoveredData, handleData }: Props) {
     ]
   );
 
-  
-  const DEFAULT_PARAMETERS_TYPE = 'struct DefaultParameters'
+  const DEFAULT_PARAMETERS_TYPE = "struct DefaultParameters";
 
-const get_function_param = async (function_name: string, common_json: any[] = []) => {
-
+  const get_function_param = async (
+    function_name: string,
+    common_json: any[] = []
+  ) => {
     const abi_json = updateAbiJson;
 
     if (abi_json === "") {
@@ -571,29 +557,32 @@ const get_function_param = async (function_name: string, common_json: any[] = []
     }
     let res = {};
     update_app_value(-1);
-    function_def.forEach(param => {
-        (async () => {
-          // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
-          const filteredInputs = param.inputs.filter((component, index) => {
-            const hasStructDefaultParameters = component.internalType.includes(DEFAULT_PARAMETERS_TYPE);
-            const filteredEnum = param.inputs.filter(component => component.internalType.includes("enum "));
-            setParamInputs(filteredEnum);
-            if (hasStructDefaultParameters) {
-                update_app_value(index);
-            }
-            
-            return !hasStructDefaultParameters;
-          });
-          // const filteredInputs = param.inputs;
-          if(filteredInputs){
-            const copy_filteredInputs = deepCopy(filteredInputs)
-
-            res = get_struct(copy_filteredInputs);
-            
-            setConvertedParamsData(res);
+    function_def.forEach((param) => {
+      (async () => {
+        // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
+        const filteredInputs = param.inputs.filter((component, index) => {
+          const hasStructDefaultParameters = component.internalType.includes(
+            DEFAULT_PARAMETERS_TYPE
+          );
+          const filteredEnum = param.inputs.filter((component) =>
+            component.internalType.includes("enum ")
+          );
+          setParamInputs(filteredEnum);
+          if (hasStructDefaultParameters) {
+            update_app_value(index);
           }
-   
-        })();
+
+          return !hasStructDefaultParameters;
+        });
+        // const filteredInputs = param.inputs;
+        if (filteredInputs) {
+          const copy_filteredInputs = deepCopy(filteredInputs);
+
+          res = get_struct(copy_filteredInputs);
+
+          setConvertedParamsData(res);
+        }
+      })();
     });
 
     return res;
@@ -605,13 +594,14 @@ const get_function_param = async (function_name: string, common_json: any[] = []
 
   const get_struct = (components: any) => {
     const res: any = {};
-    components.forEach(component => {
-
-      if(component.internalType.startsWith("struct ")){
-          component = get_struct(component.components)
-      }else if (component.internalType.includes("enum ")) {
-        component["enum_value"] =  get_enum_value(component.internalType.replace("enum ", ""));
-      } 
+    components.forEach((component) => {
+      if (component.internalType.startsWith("struct ")) {
+        component = get_struct(component.components);
+      } else if (component.internalType.includes("enum ")) {
+        component["enum_value"] = get_enum_value(
+          component.internalType.replace("enum ", "")
+        );
+      }
       component["type"] = get_value_type(component.type);
     });
 
@@ -628,11 +618,10 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       (node) => node.name === enumName
     );
     let key = 0;
-  
-    enumData.members.forEach(member => {
-      if(member.nodeType === "EnumValue"){
-        res.push(member.name)
 
+    enumData.members.forEach((member) => {
+      if (member.nodeType === "EnumValue") {
+        res.push(member.name);
       }
     });
 
@@ -749,10 +738,17 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       setScrollOffset({ x: scrollX, y: scrollY });
     };
 
+    // document.addEventListener("wheel", function (event) {
+    //   downTimerRef.current = setTimeout(() => {
+    //     setIsLongPress(true);
+    //     setIsDragging(true);
+    //     setTranslateX(event.clientX);
+    //     setTranslateY(event.clientY);
+    //   }, ClickThreshold);
+    // });
 
     if (canvas) {
       canvas.addEventListener("mousemove", handleMouseMove);
-   
     }
     window.addEventListener("scroll", handleScroll);
 
@@ -763,9 +759,6 @@ const get_function_param = async (function_name: string, common_json: any[] = []
       window.removeEventListener("scroll", handleScroll);
     };
   }, [canvasRef, scrollOffset]);
-
-
- 
 
   return (
     <>
@@ -836,10 +829,7 @@ const get_function_param = async (function_name: string, common_json: any[] = []
           onMouseLeave={handleLeave}
           onMouseEnter={handleMouseEnter}
         >
-          <div
-            ref={visibleAreaRef}
-            className={style.canvasWrapper}
-          >
+          <div ref={visibleAreaRef} className={style.canvasWrapper}>
             <canvas
               ref={canvasRef}
               width={CANVAS_WIDTH}

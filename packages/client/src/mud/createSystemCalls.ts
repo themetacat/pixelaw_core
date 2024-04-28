@@ -99,6 +99,7 @@ export function createSystemCalls(
     }
     
     let tx, hashValpublic;
+    console.log(allArgs,'allArgs');
     
     try {
       const txData = await worldContract.write.call(encodeSystemCall({
