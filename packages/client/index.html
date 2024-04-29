@@ -14,15 +14,15 @@
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
 
-  // 检测当前的域名
   var currentDomain = window.location.hostname;
-
-  // 如果当前域名是 mud.pixelaw.xyz，则设置路径并发送配置信息给 Google Analytics
+console.log(currentDomain,currentDomain === 'mud.pixelaw.xyz');
   if (currentDomain === 'mud.pixelaw.xyz') {
     var pagePath = '/mud';
     gtag('config', 'G-QCJG3VP56C', {
       'page_path': pagePath
     });
+  }if(currentDomain === 'localhost'){
+    console.log(55555555555);
   }
 </script>
 </head>
