@@ -101,8 +101,10 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [GRID_SIZE, setGRID_SIZE] = useState(32);
   const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
-  const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
-  const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
+  // const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
+  // const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
+  const CANVAS_WIDTH =  12000 ;// 获取整个页面的宽度
+  const CANVAS_HEIGHT = 12000; // 获取整个页面的高度
   // const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
   // const CONTENT_WIDTH = gridCount * GRID_SIZE;
   const [hoveredSquare, setHoveredSquare] = useState<{
@@ -175,11 +177,11 @@ export default function Header({ hoveredData, handleData }: Props) {
     });
   }
 
-  const getEntityAtCoordinates = (x: number, y: number) => {
+  const getEntityAtCoordinates = (x : number, y: number) => {
     return entityData.find(
       (entity) => entity.coordinates.x === x && entity.coordinates.y === y
     );
-  };
+  }; 
   const appName = localStorage.getItem("manifest") as any;
   // const appName = "BASE/Paint"
 
