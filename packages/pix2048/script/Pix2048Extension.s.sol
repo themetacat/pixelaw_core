@@ -40,7 +40,7 @@ contract PaintExtension is Script {
     Game2048.register();
  
     Pix2048System pix2048System = new Pix2048System();
-    console.log("SnakeSystem address: ", address(pix2048System));
+    console.log("2048System address: ", address(pix2048System));
  
     world.registerSystem(systemResource, pix2048System, true);
     world.registerFunctionSelector(systemResource, "init()");

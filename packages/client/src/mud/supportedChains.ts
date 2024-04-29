@@ -61,8 +61,30 @@ const core_foundry = defineChain({
     },
   },
 })
+
+const garnet = defineChain({
+  id: 17069,
+  name: 'Garnet',
+  network: 'garnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Ether',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.garnet.qry.live'],
+      webSocket: ['wss://rpc.garnet.qry.live'],
+    },
+    public: {
+      http: ['https://rpc.garnet.qry.live'],
+      webSocket: ['wss://rpc.garnet.qry.live'],
+    },
+  },
+})
+
 /*
  * See https://mud.dev/tutorials/minimal/deploy#run-the-user-interface
  * for instructions on how to add networks.
  */
-export const supportedChains: MUDChain[] = [mudFoundry, latticeTestnet, redstone, core_foundry];
+export const supportedChains: MUDChain[] = [mudFoundry, latticeTestnet, redstone, core_foundry, garnet];
