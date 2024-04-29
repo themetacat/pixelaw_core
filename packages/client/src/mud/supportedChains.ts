@@ -39,7 +39,7 @@ const redstone = defineChain({
       },
     },
     testnet: true,
-  })
+})
 
 const core_foundry = defineChain({
   id: 31_338,
