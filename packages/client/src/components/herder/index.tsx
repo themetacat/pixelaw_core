@@ -111,7 +111,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   } | null>(null);
 
   const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
-  const [selectedColor, setSelectedColor] = useState("#ffffff");
+  const colorSession = window.sessionStorage.getItem('selectedColorSign');
+  
+  const [selectedColor, setSelectedColor] = useState(colorSession!==null?colorSession:"#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
 
@@ -148,7 +150,10 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   function handleColorOptionClick(color: any) {
     setSelectedColor(color);
+    window.sessionStorage.setItem('selectedColorSign',color)
+    
   }
+ 
 
   const handleLeave = () => {
     setHoveredSquare(null);
@@ -265,7 +270,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               ctx.textBaseline = "middle"; // 设置文本垂直居中
               if (
                 entity.value.text &&
-                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)
+                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)//Unicode码转换
               ) {
                 pix_text = String.fromCodePoint(
                   parseInt(entity.value.text.substring(2), 16)

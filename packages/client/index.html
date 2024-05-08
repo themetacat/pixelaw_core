@@ -1,35 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/themetacat/pixelaw_core/main/packages/client/favicon.ico">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/x-icon"
-    href="https://raw.githubusercontent.com/themetacat/pixelaw_core/main/packages/client/favicon.ico">
-
-  <title>PixeLAW</title>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QCJG3VP56C"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() { dataLayer.push(arguments); }
-  gtag('js', new Date());
-
-  var currentDomain = window.location.hostname;
-console.log(currentDomain,currentDomain === 'mud.pixelaw.xyz');
-  if (currentDomain === 'mud.pixelaw.xyz') {
-    var pagePath = '/mud';
-    gtag('config', 'G-QCJG3VP56C', {
-      'page_path': pagePath
-    });
-  }if(currentDomain === 'localhost'){
-    console.log(55555555555);
-  }
-</script>
-</head>
-
-<body>
-  <div id="react-root"></div>
-  <script type="module" src="/src/index.tsx"></script>
-</body>
-
+    <title>PixeLAW</title>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QCJG3VP56C"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-QCJG3VP56C');
+    </script>
+  </head>
+  <body>
+    <div id="react-root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
 </html>
