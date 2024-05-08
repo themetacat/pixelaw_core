@@ -14,7 +14,6 @@
     border-radius:25px;
     transform: translate(-50%, -50%);
     display: grid; 
-    /* max-width: 29rem;  */
     gap: 1rem; 
     border-width: 1px;
     border-style: solid; 
