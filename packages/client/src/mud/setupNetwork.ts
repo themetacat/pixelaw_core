@@ -119,6 +119,16 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       }else{
         worldAbiUrl="https://pixelaw-game.vercel.app/Snake.abi.json"
       }
+
+      let indexerUrl = ""
+      
+      if (networkConfig.chain.id === 690) {
+        indexerUrl = "https://indexer.pixelaw.world/";
+      }else if(networkConfig.chain.id === 31338){
+        indexerUrl = "https://indexerdev.pixelaw.world/";
+      }else if(networkConfig.chain.id === 17069){
+        indexerUrl = "https://indexertest.pixelaw.world/";
+      }
   
       fetch(worldAbiUrl)
     
@@ -147,7 +157,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             address: networkConfig.worldAddress as Hex,
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
-            indexerUrl: "https://api.metacat.world/",
+            indexerUrl: indexerUrl,
             filters: [
               {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Pixel" }),
