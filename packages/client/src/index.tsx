@@ -13,7 +13,6 @@ const root = ReactDOM.createRoot(rootElement);
 // 初始化 manifest
 
 setup().then(async (result) => {
-  // console.log(result)
   root.render(
     <MUDProvider value={result}>
       <App />
