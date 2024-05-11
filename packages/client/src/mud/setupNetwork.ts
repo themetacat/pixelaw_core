@@ -185,17 +185,16 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
              */
             const account_addr = burnerWalletClient.account.address
             
-              // const requestDrip = async () => {
-              //   const balance = await publicClient.getBalance({ address: account_addr });
-              //   console.info(`[Dev Faucet]: Player balance -> ${balance}`);
-              //   const lowBalance = balance < parseEther("1");
-              //   if (lowBalance) {
-              //     console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-              //     await testClient.setBalance({ address: account_addr, value: parseEther('4') });
-              //   };
-              // };
-              // requestDrip();
-              // setInterval(requestDrip, 2000)
+              const requestDrip = async () => {
+                const balance = await publicClient.getBalance({ address: account_addr });
+                console.info(`[Dev Faucet]: Player balance -> ${balance}`);
+                const lowBalance = balance < parseEther("1");
+                if (lowBalance) {
+                  console.info("[Dev Faucet]: Balance is low, dripping funds to player");
+                  await testClient.setBalance({ address: account_addr, value: parseEther('4') });
+                };
+              };
+     
               async function sendPostRequest() {
                 const balance = await publicClient.getBalance({ address: account_addr });
                 console.info(`[Dev Faucet]: Player balance -> ${balance}`);
@@ -221,8 +220,13 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 }
                
             }
-            sendPostRequest();
-            setInterval(sendPostRequest, 40000)
+            if(networkConfig.chain.id === 31338){
+              requestDrip();
+              setInterval(requestDrip, 2000)
+            }else if(networkConfig.chain.id === 17069){
+              sendPostRequest();
+              setInterval(sendPostRequest, 40000)
+            }
 
             resolve({
               world,
