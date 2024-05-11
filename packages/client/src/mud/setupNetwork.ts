@@ -185,17 +185,44 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
              */
             const account_addr = burnerWalletClient.account.address
             
-              const requestDrip = async () => {
+              // const requestDrip = async () => {
+              //   const balance = await publicClient.getBalance({ address: account_addr });
+              //   console.info(`[Dev Faucet]: Player balance -> ${balance}`);
+              //   const lowBalance = balance < parseEther("1");
+              //   if (lowBalance) {
+              //     console.info("[Dev Faucet]: Balance is low, dripping funds to player");
+              //     await testClient.setBalance({ address: account_addr, value: parseEther('4') });
+              //   };
+              // };
+              // requestDrip();
+              // setInterval(requestDrip, 2000)
+              async function sendPostRequest() {
                 const balance = await publicClient.getBalance({ address: account_addr });
                 console.info(`[Dev Faucet]: Player balance -> ${balance}`);
-                const lowBalance = balance < parseEther("1");
-                if (lowBalance) {
+                const lowBalance = balance < parseEther("0.001");
+                if(lowBalance){
                   console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-                  await testClient.setBalance({ address: account_addr, value: parseEther('4') });
-                };
-              };
-              requestDrip();
-              // setInterval(requestDrip, 2000)
+                  const url = 'https://17001-faucet.quarry.linfra.xyz/trpc/drip';
+                
+                  const data = {
+                      address: account_addr
+                  };
+              
+                  const response = await fetch(url, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(data)
+                  });
+              
+                  const responseData = await response.json();
+                  console.log(responseData);
+                }
+               
+            }
+            sendPostRequest();
+            setInterval(sendPostRequest, 40000)
 
             resolve({
               world,
