@@ -242,3 +242,6 @@ canvas{
     width: 100px;
     height: 100px;
   }
+  body{
+      scroll-behavior: smooth;
+  }

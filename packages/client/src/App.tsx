@@ -5,6 +5,7 @@ import Header from "./components/herder";
 import toast, { Toaster } from "react-hot-toast";
 import { SyncStep } from "@latticexyz/store-sync";
 import style from "./app.module.css";
+import { BrowserRouter as Router } from 'react-router-dom';
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 
 export const App = () => {
@@ -25,6 +26,7 @@ export const App = () => {
   };
 
   return (
+    <Router>
     <div className={style.page}>
       {syncProgress ? (
         syncProgress.step !== SyncStep.LIVE ? (
@@ -51,5 +53,6 @@ export const App = () => {
       />
      
     </div>
+    </Router>
   );
 };
