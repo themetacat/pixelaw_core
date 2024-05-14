@@ -23,6 +23,10 @@ import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
+import { SendTransaction } from '../SendTransaction';
+import { Account } from '../Account';
+import { Connect } from '../Connect';
 
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
@@ -114,8 +118,8 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
   const colorSession = window.sessionStorage.getItem('selectedColorSign');
-  
-  const [selectedColor, setSelectedColor] = useState(colorSession!==null?colorSession:"#ffffff");
+
+  const [selectedColor, setSelectedColor] = useState(colorSession !== null ? colorSession : "#ffffff");
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
 
@@ -152,10 +156,10 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   function handleColorOptionClick(color: any) {
     setSelectedColor(color);
-    window.sessionStorage.setItem('selectedColorSign',color)
-    
+    window.sessionStorage.setItem('selectedColorSign', color)
+
   }
- 
+
 
   const handleLeave = () => {
     setHoveredSquare(null);
@@ -745,6 +749,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       setScrollOffset({ x: scrollX, y: scrollY });
     };
 
+
     // document.addEventListener("wheel", function (event) {
     //   downTimerRef.current = setTimeout(() => {
     //     setIsLongPress(true);
@@ -766,6 +771,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [canvasRef, scrollOffset]);
+  const { isConnected } = useAccount();
 
   return (
     <>
@@ -801,98 +807,99 @@ export default function Header({ hoveredData, handleData }: Props) {
           }}
         >
           {/* <span>{capitalizedString}</span> */}
-         {/* <ConnectButton /> */}
-         <ConnectButton.Custom>
-      {({
-        account,
-        chain,
-        openAccountModal,
-        openChainModal,
-        openConnectModal,
-        authenticationStatus,
-        mounted,
-      }) => {
-        // Note: If your app doesn't use authentication, you
-        // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== 'loading';
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus ||
-            authenticationStatus === 'authenticated');
-
-        return (
-          <div
-            {...(!ready && {
-              'aria-hidden': true,
-              'style': {
-                opacity: 0,
-                pointerEvents: 'none',
-                userSelect: 'none',
-              },
-            })}
-          >
-            {(() => {
-              if (!connected) {
-                return (
-                  <button onClick={openConnectModal} type="button">
-                    Connect Wallet
-                  </button>
-                );
-              }
-
-              if (chain.unsupported) {
-                return (
-                  <button onClick={openChainModal} type="button">
-                    Wrong network
-                  </button>
-                );
-              }
+          {/* <ConnectButton /> */}
+          <ConnectButton.Custom>
+            {({
+              account,
+              chain,
+              openAccountModal,
+              openChainModal,
+              openConnectModal,
+              authenticationStatus,
+              mounted,
+            }) => {
+              // Note: If your app doesn't use authentication, you
+              // can remove all 'authenticationStatus' checks
+              const ready = mounted && authenticationStatus !== 'loading';
+              const connected =
+                ready &&
+                account &&
+                chain &&
+                (!authenticationStatus ||
+                  authenticationStatus === 'authenticated');
 
               return (
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button
-                    onClick={openChainModal}
-                    style={{ display: 'flex', alignItems: 'center' }}
-                    type="button"
-                  >
-                    {chain.hasIcon && (
-                      <div
-                        style={{
-                          background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
-                          borderRadius: 999,
-                          overflow: 'hidden',
-                          marginRight: 4,
-                        }}
-                      >
-                        {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? 'Chain icon'}
-                            src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
-                          />
-                        )}
-                      </div>
-                    )}
-                    {chain.name}
-                  </button>
+                <div
+                  {...(!ready && {
+                    'aria-hidden': true,
+                    'style': {
+                      opacity: 0,
+                      pointerEvents: 'none',
+                      userSelect: 'none',
+                    },
+                  })}
+                >
+                  {(() => {
+                    if (!connected) {
+                      return (
+                        <button onClick={openConnectModal} type="button">
+                          Connect Wallet
+                        </button>
+                      );
+                    }
 
-                  <button onClick={openAccountModal} type="button">
-                    {account.displayName}
-                    {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ''}
-                  </button>
+                    if (chain.unsupported) {
+                      return (
+                        <button onClick={openChainModal} type="button">
+                          Wrong network
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <div style={{ display: 'flex', gap: 12 }}>
+                        <button
+                          onClick={openChainModal}
+                          style={{ display: 'flex', alignItems: 'center' }}
+                          type="button"
+                        >
+                          {chain.hasIcon && (
+                            <div
+                              style={{
+                                background: chain.iconBackground,
+                                width: 12,
+                                height: 12,
+                                borderRadius: 999,
+                                overflow: 'hidden',
+                                marginRight: 4,
+                              }}
+                            >
+                              {chain.iconUrl && (
+                                <img
+                                  alt={chain.name ?? 'Chain icon'}
+                                  src={chain.iconUrl}
+                                  style={{ width: 12, height: 12 }}
+                                />
+                              )}
+                            </div>
+                          )}
+                          {chain.name}
+                        </button>
+
+                        <button onClick={openAccountModal} type="button">
+                          {account.displayName}
+                          {account.displayBalance
+                            ? ` (${account.displayBalance})`
+                            : ''}
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </div>
               );
-            })()}
-          </div>
-        );
-      }}
-    </ConnectButton.Custom>
+            }}
+          </ConnectButton.Custom>
+          {isConnected && <SendTransaction />}
 
           <span
             onClick={() => {
@@ -954,9 +961,8 @@ export default function Header({ hoveredData, handleData }: Props) {
           {Array.from(colorOptionsData).map((option, index) => (
             <span
               key={index}
-              className={`color-option${
-                selectedColor === option.color ? " selected" : ""
-              }`}
+              className={`color-option${selectedColor === option.color ? " selected" : ""
+                }`}
               data-color={option.color}
               style={{
                 backgroundColor: option.color,
