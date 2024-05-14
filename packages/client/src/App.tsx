@@ -65,17 +65,17 @@ export const App = () => {
     // <RainbowKitSiweNextAuthProvider>
     //   <RainbowKitProvider theme={myTheme}>
       <div className={style.page}>
-      {syncProgress ? (
+      {/* {syncProgress ? (
         syncProgress.step !== SyncStep.LIVE ? (
           <div style={{ color: "#fff" }} className={style.GameBoard}>
             {syncProgress.message} ({Math.floor(syncProgress.percentage)}%)
           </div>
-        ) : (
+        ) : ( */}
           <Header hoveredData={hoveredData} handleData={handleMouseDown} />
-        )
-      ) : (
+        {/* ) */}
+      {/* ) : (
         <div style={{ color: "#000" }}>Hydrating from RPC(0)</div>
-      )}
+      )} */}
       <Toaster
         toastOptions={{
           duration: 2000,

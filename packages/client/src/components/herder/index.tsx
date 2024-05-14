@@ -767,6 +767,16 @@ export default function Header({ hoveredData, handleData }: Props) {
     };
   }, [canvasRef, scrollOffset]);
 
+
+   const [mainContent, setMainContent] = useState("MAINNET");
+ const [showList, setShowList] = useState(false);
+
+ const handleItemClick = (content) => {
+  setMainContent(content);
+ };
+
+ const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
+
   return (
     <>
       <div className={style.container}>
@@ -792,7 +802,18 @@ export default function Header({ hoveredData, handleData }: Props) {
             +
           </button>
         </div>
-
+        <div style={{position:"absolute",right:"400px"}}>
+      <div onClick={() => setShowList(!showList)} style={{color:"#fff"}}>{mainContent}</div>
+      {showList && (
+       <div>
+        {netContent.length > 0 &&
+         netContent.map((item, index) => (
+          <div style={{color:"#fff"}} key={index} onClick={() => handleItemClick(item.name)}>{item.name}</div>
+         ))}
+       </div>
+      )}
+     
+     </div>
         <div
           className={style.addr}
           style={{
@@ -800,6 +821,8 @@ export default function Header({ hoveredData, handleData }: Props) {
             marginLeft: "32px",
           }}
         >
+
+
           {/* <span>{capitalizedString}</span> */}
          {/* <ConnectButton /> */}
          <ConnectButton.Custom>
