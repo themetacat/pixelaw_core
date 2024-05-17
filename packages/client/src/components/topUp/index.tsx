@@ -434,7 +434,7 @@ export default function TopUp({
           );
         }}
       </ConnectButton.Custom>
-      <Toaster
+      {/* <Toaster
         toastOptions={{
           duration: 2000,
           style: {
@@ -445,7 +445,7 @@ export default function TopUp({
             marginTop: "50px",
           },
         }}
-      />
+      /> */}
     </div>
   );
 }
