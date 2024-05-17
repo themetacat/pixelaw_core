@@ -13,6 +13,7 @@ import RightPart from "../rightPart";
 import { useMUD } from "../../MUDContext";
 import { convertToString, coorToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
+import TopUpContent from "../topUp";
 import {
   encodeEntity,
   syncToRecs,
@@ -22,12 +23,12 @@ import { update_app_value } from "../../mud/createSystemCalls";
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
-import { SendTransaction } from '../SendTransaction';
-import { Account } from '../Account';
-import { Connect } from '../Connect';
-
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
+import { SendTransaction } from "../SendTransaction";
+import { Account } from "../Account";
+import { Connect } from "../Connect";
+import { useDisconnect } from 'wagmi';
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -80,10 +81,11 @@ export default function Header({ hoveredData, handleData }: Props) {
     network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { interact },
   } = useMUD();
-
+  const { disconnect } = useDisconnect()
   const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
+  const [topUpType, setTopUpType] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
@@ -117,16 +119,18 @@ export default function Header({ hoveredData, handleData }: Props) {
   } | null>(null);
 
   const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
-  const colorSession = window.sessionStorage.getItem('selectedColorSign');
+  const colorSession = window.sessionStorage.getItem("selectedColorSign");
 
-  const [selectedColor, setSelectedColor] = useState(colorSession !== null ? colorSession : "#ffffff");
+  const [selectedColor, setSelectedColor] = useState(
+    colorSession !== null ? colorSession : "#ffffff"
+  );
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
 
   const addressData =
-    palyerAddress.substring(0, 6) +
+    palyerAddress.substring(0, 4) +
     "..." +
     palyerAddress.substring(palyerAddress.length - 4);
   //获取网络名称
@@ -156,10 +160,8 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   function handleColorOptionClick(color: any) {
     setSelectedColor(color);
-    window.sessionStorage.setItem('selectedColorSign', color)
-
+    window.sessionStorage.setItem("selectedColorSign", color);
   }
-
 
   const handleLeave = () => {
     setHoveredSquare(null);
@@ -276,7 +278,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               ctx.textBaseline = "middle"; // 设置文本垂直居中
               if (
                 entity.value.text &&
-                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)//Unicode码转换
+                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text) //Unicode码转换
               ) {
                 pix_text = String.fromCodePoint(
                   parseInt(entity.value.text.substring(2), 16)
@@ -749,7 +751,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       setScrollOffset({ x: scrollX, y: scrollY });
     };
 
-
     // document.addEventListener("wheel", function (event) {
     //   downTimerRef.current = setTimeout(() => {
     //     setIsLongPress(true);
@@ -773,15 +774,29 @@ export default function Header({ hoveredData, handleData }: Props) {
   }, [canvasRef, scrollOffset]);
   const { isConnected } = useAccount();
 
+  const [mainContent, setMainContent] = useState("MAINNET");
+  const [showList, setShowList] = useState(false);
+  const [addressModel, setAddressModel] = useState(false);
 
-   const [mainContent, setMainContent] = useState("MAINNET");
- const [showList, setShowList] = useState(false);
+  const handleItemClick = (content) => {
+    setMainContent(content);
+  };
+  const handleAddClick = (content) => {
+    console.log(content);
+    if (content === "topUp") {
+      console.log(111);
+      setTopUpType(true);
+    } else {
+      console.log("退出");
+      disconnect()
+    }
+  };
 
- const handleItemClick = (content) => {
-  setMainContent(content);
- };
-
- const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
+  const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
+  const addressContent = [
+    { name: "Top up", value: "topUp" },
+    { name: "Disconnect", value: "disconnect" },
+  ];
 
   return (
     <>
@@ -808,18 +823,25 @@ export default function Header({ hoveredData, handleData }: Props) {
             +
           </button>
         </div>
-        <div style={{position:"absolute",right:"400px"}}>
-      <div onClick={() => setShowList(!showList)} style={{color:"#fff"}}>{mainContent}</div>
-      {showList && (
-       <div>
-        {netContent.length > 0 &&
-         netContent.map((item, index) => (
-          <div style={{color:"#fff"}} key={index} onClick={() => handleItemClick(item.name)}>{item.name}</div>
-         ))}
-       </div>
-      )}
-     
-     </div>
+        {/* <div style={{ position: "absolute", left: "400px" }}>
+          <div onClick={() => setShowList(!showList)} style={{ color: "#fff" }}>
+            {mainContent}
+          </div>
+          {showList && (
+            <div>
+              {netContent.length > 0 &&
+                netContent.map((item, index) => (
+                  <div
+                    style={{ color: "#fff" }}
+                    key={index}
+                    onClick={() => handleItemClick(item.name)}
+                  >
+                    {item.name}
+                  </div>
+                ))}
+            </div>
+          )}
+        </div> */}
         <div
           className={style.addr}
           style={{
@@ -827,8 +849,6 @@ export default function Header({ hoveredData, handleData }: Props) {
             marginLeft: "32px",
           }}
         >
-
-
           {/* <span>{capitalizedString}</span> */}
           {/* <ConnectButton /> */}
           <ConnectButton.Custom>
@@ -843,22 +863,22 @@ export default function Header({ hoveredData, handleData }: Props) {
             }) => {
               // Note: If your app doesn't use authentication, you
               // can remove all 'authenticationStatus' checks
-              const ready = mounted && authenticationStatus !== 'loading';
+              const ready = mounted && authenticationStatus !== "loading";
               const connected =
                 ready &&
                 account &&
                 chain &&
                 (!authenticationStatus ||
-                  authenticationStatus === 'authenticated');
+                  authenticationStatus === "authenticated");
 
               return (
                 <div
                   {...(!ready && {
-                    'aria-hidden': true,
-                    'style': {
+                    "aria-hidden": true,
+                    style: {
                       opacity: 0,
-                      pointerEvents: 'none',
-                      userSelect: 'none',
+                      pointerEvents: "none",
+                      userSelect: "none",
                     },
                   })}
                 >
@@ -866,7 +886,7 @@ export default function Header({ hoveredData, handleData }: Props) {
                     if (!connected) {
                       return (
                         <button onClick={openConnectModal} type="button">
-                          Connect Wallet
+                         CONNECT
                         </button>
                       );
                     }
@@ -880,41 +900,47 @@ export default function Header({ hoveredData, handleData }: Props) {
                     }
 
                     return (
-                      <div style={{ display: 'flex', gap: 12 }}>
+                      <div style={{display:"flex"}}>  
+                      {chain.name}&nbsp;&nbsp;
+                      <div
+                        style={{
+                          // display: 'flex',
+                          gap: 12,
+                        }}
+                        onMouseEnter={() => {
+                          setAddressModel(true);
+                        }}
+                        onMouseLeave={() => {
+                          setAddressModel(false);
+                        }}
+                      >
                         <button
-                          onClick={openChainModal}
-                          style={{ display: 'flex', alignItems: 'center' }}
+                        style={{border:"none",background:"none",color:"#fff",fontFamily: 'Silkscreen,cursive',height:"50px"}}
+                        
+                          // onClick={openAccountModal}
                           type="button"
                         >
-                          {chain.hasIcon && (
-                            <div
-                              style={{
-                                background: chain.iconBackground,
-                                width: 12,
-                                height: 12,
-                                borderRadius: 999,
-                                overflow: 'hidden',
-                                marginRight: 4,
-                              }}
-                            >
-                              {chain.iconUrl && (
-                                <img
-                                  alt={chain.name ?? 'Chain icon'}
-                                  src={chain.iconUrl}
-                                  style={{ width: 12, height: 12 }}
-                                />
-                              )}
-                            </div>
-                          )}
-                          {chain.name}
-                        </button>
-
-                        <button onClick={openAccountModal} type="button">
+                       
                           {account.displayName}
                           {account.displayBalance
                             ? ` (${account.displayBalance})`
-                            : ''}
+                            : ""}
                         </button>
+                        {addressModel && (
+                          <div>
+                            {addressContent.length > 0 &&
+                              addressContent.map((item, index) => (
+                                <div
+                                  style={{ color: "#fff" }}
+                                  key={index}
+                                  onClick={() => handleAddClick(item.value)}
+                                >
+                                  {item.name}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
                       </div>
                     );
                   })()}
@@ -922,9 +948,9 @@ export default function Header({ hoveredData, handleData }: Props) {
               );
             }}
           </ConnectButton.Custom>
-          {isConnected && <SendTransaction />}
+          {/* {isConnected && <SendTransaction />} */}
 
-          <span
+          {/* <span
             onClick={() => {
               addressDataCopy(palyerAddress);
             }}
@@ -940,11 +966,11 @@ export default function Header({ hoveredData, handleData }: Props) {
                 {publicClient.chain.nativeCurrency.symbol}
               </>
             ) : null}
-          </span>
+          </span> */}
         </div>
       </div>
 
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex",height:"100vh" ,overflowY:"hidden"}}>
         <div
           style={{
             width: `calc(100vw)`,
@@ -984,8 +1010,9 @@ export default function Header({ hoveredData, handleData }: Props) {
           {Array.from(colorOptionsData).map((option, index) => (
             <span
               key={index}
-              className={`color-option${selectedColor === option.color ? " selected" : ""
-                }`}
+              className={`color-option${
+                selectedColor === option.color ? " selected" : ""
+              }`}
               data-color={option.color}
               style={{
                 backgroundColor: option.color,
@@ -1046,6 +1073,18 @@ export default function Header({ hoveredData, handleData }: Props) {
       ) : (
         ""
       )}
+      {topUpType === true ? (
+        <div className={style.overlay} onClick={(event)=>{
+          if (!event.target.classList.contains('topBox') && event.target.classList.contains(style.overlay)) {
+          setTopUpType(false)
+          }
+        }}>
+          <TopUpContent 
+          setTopUpType={setTopUpType} 
+          mainContent={mainContent}
+          palyerAddress={palyerAddress}/>
+        </div>
+      ) : null}
     </>
   );
 }

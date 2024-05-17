@@ -37,24 +37,27 @@ export function SendTransaction() {
     useWaitForTransactionReceipt({
       hash,
     })
-
+    const formattedAddress = address && `${address.slice(0, 4)}...${address.slice(-4)}`;
   return (
     <div className="container">
       <div className="stack">
         <form className="set" onSubmit={submit}>
-          <input name="address" placeholder="Address" value={address} required />
+          <input name="address"  style={{border:"none",width:"75px"}} placeholder="Address" value={formattedAddress} required />
+          (
           <input
             name="value"
             placeholder="Amount (ETH)"
             type="number"
             step="0.0001"
-            value={inputValue}
+            value={Number(result?.data?.value)/1e18}
             onChange={handleChange}
             required
-          />
-          <button disabled={isPending} type="submit">
+            style={{border:"none",width:"55px"}}
+          />)
+          <span style={{color:"#000"}}>ETH</span>
+          {/* <button disabled={isPending} type="submit">
             {isPending ? 'Confirming...' : 'Send'}
-          </button>
+          </button> */}
         </form>
         {hash && <div>Transaction Hash: {hash}</div>}
         {isConfirming && <div>Waiting for confirmation...</div>}

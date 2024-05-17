@@ -19,14 +19,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 let chainIndex = supportedChains.findIndex((c) => c.id === 690);
 const redstone = supportedChains[chainIndex];
-chainIndex = supportedChains.findIndex((c) => c.id === 17069);
-const garnet = supportedChains[chainIndex];
+
 const config = getDefaultConfig({
   appName: 'PixeLAW',
   projectId: 'YOUR_PROJECT_ID',
   chains: [
     redstone,
-    garnet
+   
   ],
   ssr: true,
 });

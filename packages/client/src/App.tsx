@@ -45,7 +45,7 @@ export const App = () => {
             background: "linear-gradient(90deg, #dedfff,#8083cb)",
             color: "black",
             borderRadius: "8px",
-            zIndex: "9999999999999",
+            zIndex: "999999999999",
             marginTop:"50px"
           },
         }}
