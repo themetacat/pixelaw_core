@@ -34,6 +34,7 @@ export default function TopUp({
   const [transferPayType, setTransferPayType] = useState(false);
   const [heightNum, setHeightNum] = useState('555');
   const [privateKey, setprivateKey] = useState("");
+  const [hashVal, setHashVal] = useState(null);
   const {
     network: { walletClient },
   } = useMUD();
@@ -54,7 +55,6 @@ export default function TopUp({
     address: address,
   })     
 
-  
   async function withDraw() {
     if (balanceSW > MIN_SESSION_WALLET_BALANCE) {
       const value = balanceSW - MIN_SESSION_WALLET_BALANCE;
@@ -62,7 +62,9 @@ export default function TopUp({
         to: address,
         value: value,
       });
-      console.log(hash);
+      setHashVal(hash)
+   
+      
     } else {
       console.log("BALANCE not enough");
     }
@@ -122,12 +124,12 @@ export default function TopUp({
   };
 
   const transferPay = () => {
-    console.log(111);
+    //console.log(111);
     submit()
-    // console.log(Number(balanceSW) / 1e18, inputValue);
+    // //console.log(Number(balanceSW) / 1e18, inputValue);
 
     if (inputValue < 0 || inputValue > Number(balanceSW) / 1e18) {
-      // console.log("不能转");
+      // //console.log("不能转");
       setTransferPayType(true);
     } else {
       setTransferPayType(false);
@@ -136,16 +138,16 @@ export default function TopUp({
   };
 
   async function submit() {
-    console.log(2222);
+    //console.log(2222);
     
     // const to = formData.get('address') as Hex
     // session wallet 
     const to = palyerAddress
     const value = inputValue 
-    console.log(inputValue,666,to);
+    //console.log(inputValue,666,to);
     
    const a = sendTransaction({ to, value: parseEther(inputValue) })
-   console.log(a);
+   //console.log(a);
    
   }
   return (
@@ -324,9 +326,8 @@ export default function TopUp({
                   ) : (
                     <>{(Number(balanceSW) / 1e18)===0?(Number(balanceSW) / 1e18):(Number(balanceSW) / 1e18).toFixed(8)}</>
                   )}
-                   {hash && <div>Transaction Hash: {hash}</div>}
+                   {hash && <div>Transaction Hash: {hashVal}</div>}
         {isConfirming && <div>Waiting for confirmation...</div>}
-        {isConfirmed && <div>Transaction confirmed.</div>}
         {error && (
           <div>Error: {(error as BaseError).shortMessage || error.message}</div>
         )}
@@ -468,9 +469,8 @@ export default function TopUp({
                 {transferPayType === true
                   ? "Not enough funds"
                   : "Deposit via transfer"}
-                 {hash && <div>Transaction Hash: {hash}</div>}
-        {isConfirming && <div>Waiting for confirmation...</div>}
-        {isConfirmed && <div>Transaction confirmed.</div>}
+                 {transferPayType === true&&hash && <div>Transaction Hash: {hash}</div>}
+        {transferPayType === true&&isConfirming && <div>Waiting for confirmation...</div>}
         {error && (
           <div>Error: {(error as BaseError).shortMessage || error.message}</div>
         )}
