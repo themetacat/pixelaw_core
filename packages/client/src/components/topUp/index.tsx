@@ -49,6 +49,10 @@ export default function TopUp({
   async function withDraw() {
     if (balanceSW > MIN_SESSION_WALLET_BALANCE) {
       const value = balanceSW - MIN_SESSION_WALLET_BALANCE;
+      console.log(address);
+      console.log(value);
+      
+      
       const hash = await walletClient.sendTransaction({
         to: address,
         value: value,
