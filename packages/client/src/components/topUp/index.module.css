@@ -182,3 +182,22 @@ margin-left: 12px;
   .canvasWrapper::-webkit-scrollbar-thumb:hover {
     background-color: rgba(244, 243, 241, 0.5);
   }
+
+
+  .commonCls1{
+    animation: spin 5s linear infinite;
+    -webkit-transform: rotate(3600deg);
+    transform: rotate(3600deg);
+    -webkit-transition: -webkit-transform 5s linear;
+    transition: transform 5s linear;
+    width: 30px;
+    height: 30px;
+  }
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
