@@ -7,6 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Connect } from "../Connect";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import warningImg from "../../images/warning.png";
+import loadingStatus from "../../images/loading.png";
 import { useMUD } from "../../MUDContext";
 import { getNetworkConfig } from "../../mud/getNetworkConfig";
 import { type Hex, parseEther } from "viem";
@@ -31,6 +32,7 @@ export default function TopUp({
   const [warningModel, setWarningModel] = useState(false);
   const [withDrawType, setWithDrawType] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [transferPayType, setTransferPayType] = useState(false);
   const [heightNum, setHeightNum] = useState('555');
   const [privateKey, setprivateKey] = useState("");
@@ -124,17 +126,15 @@ export default function TopUp({
   };
 
   const transferPay = () => {
-    // console.log(inputValue,typeof(inputValue));
-    submit()
-    // //console.log(Number(balanceSW) / 1e18, inputValue);
-
-    if (inputValue < 0 || inputValue > Number(balanceSW) / 1e18) {
+    if (parseFloat(inputValue) < 0 &&balanceResultEOA.data?.value!==0n&& parseFloat(inputValue) < Number(balanceResultEOA.data?.value)/1e18) {
       // //console.log("不能转");
-      setTransferPayType(true);
+    submit()
+    setLoading(true)
+    setTransferPayType(false);
     } else {
-      setTransferPayType(false);
+      setLoading(false)
+      setTransferPayType(true);
     }
-
   };
 
   async function submit() {
@@ -470,10 +470,14 @@ export default function TopUp({
                   ? "Not enough funds"
                   : "Deposit via transfer"}
                  {transferPayType === true&&hash && <div>Transaction Hash: {hash}</div>}
-        {transferPayType === true&&isConfirming && <div>Waiting for confirmation...</div>}
+        {loading === true&&transferPayType === true&&isConfirming && <div>Waiting for confirmation...</div>}
         {error && (
-          <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+          <div>Deposit via transfer</div>
         )}
+        {loading === true&&<div><img src={loadingStatus}    className={`${style.commonCls1} `}  alt="" /></div>}
+        {/* {error && (
+          <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+        )} */}
               </button>
                  {/* {transferPayType===true&&isConnected && <SendTransaction palyerAddress={palyerAddress}/>} */}
             </div>
