@@ -12,7 +12,7 @@
     background-color: #2f1643;
     /* background-color: red !important; */
     height: calc(100vh - 60px);
-    z-index: 9999999922222229;
+    /* z-index: 9999999922222229; */
     padding-bottom: 15px;
     position: absolute;
     right: 0px;
@@ -25,7 +25,7 @@
     padding-bottom: 15px;
     /* background-color: red !important; */
     height: calc(100vh - 60px);
-    z-index: 999999222222222222299;
+    /* z-index: 999999222222222222299; */
     @keyframes slide-left {
       from {
         transform: translateX(0);
@@ -158,7 +158,7 @@ margin-left: 0.25rem;
     background-color: #2a0d39;
     /* position: absolute; */
     /* left:-10px; */
-    z-index: 999999999999999;
+    /* z-index: 999999999999999; */
     /* top: 60px; */
     width:  6.29px;
     height: 7.48px;
@@ -169,7 +169,7 @@ margin-left: 0.25rem;
     background-color: #2a0d39;
     /* position: absolute; */
     /* left:-10px; */
-    z-index: 999999999999999;
+    /* z-index: 999999999999999; */
     /* top: 60px; */
     width:  6.29px;
     height: 7.48px;

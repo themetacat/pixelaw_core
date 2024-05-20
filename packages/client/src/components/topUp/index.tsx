@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "./index.module.css";
-import trunOff from "../../images/turnOff.png";
+import trunOff from "../../images/turnOffBtn.png";
 import { SendTransaction } from "../SendTransaction";
 import { Account } from "../Account";
 import toast, { Toaster } from "react-hot-toast";
@@ -112,17 +112,22 @@ export default function TopUp({
   };
 
   const transferPay = () => {
-    console.log(111);
+    // console.log(111);
     
-    console.log(Number(balanceSW) / 1e18, inputValue);
+    // console.log(Number(balanceSW) / 1e18, inputValue);
 
     if (inputValue < 0 || inputValue > Number(balanceSW) / 1e18) {
-      console.log("不能转");
+      // console.log("不能转");
       setTransferPayType(true);
     } else {
       setTransferPayType(false);
     }
   };
+
+  const submit = (data:any) => {
+console.log(data);
+
+  }
   return (
     <div className={style.topBox}>
       <div className={style.cant}>
@@ -201,7 +206,7 @@ export default function TopUp({
                       )}
                       {chain.name}
                     </button>
-                    {isConnected && <SendTransaction />}
+                    {isConnected && <SendTransaction palyerAddress={palyerAddress} onSubmit={submit}/>}
                   </div>
 
                   <span className={style.bridgeBTN} onClick={bridgeHandle}>
@@ -290,7 +295,7 @@ export default function TopUp({
                   {withDrawType === true ? (
                     " Withdraw all"
                   ) : (
-                    <>{Number(balanceSW) / 1e18}</>
+                    <>{(Number(balanceSW) / 1e18)===0?(Number(balanceSW) / 1e18):(Number(balanceSW) / 1e18).toFixed(7)}</>
                   )}
                 </button>
               </div>

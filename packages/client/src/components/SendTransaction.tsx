@@ -5,8 +5,12 @@ import React, { useState } from 'react';
 import {supportedChains} from  "../mud/supportedChains"
 
 
+interface Props {
+  palyerAddress: any;
+  onSubmit: any;
+}
 
-export function SendTransaction() {
+export function SendTransaction({palyerAddress,onSubmit}:Props) {
 
   const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
   const { address } = useAccount();
@@ -22,16 +26,20 @@ export function SendTransaction() {
   const handleChange = (event) => {
     setInputValue(event.target.value);
   };
+
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     
     const formData = new FormData(e.target as HTMLFormElement)
     // const to = formData.get('address') as Hex
     // session wallet 
-    const to = "0x450AF1Ea236932c0e18B53BC1FeB15E47AA292df"
+    const to = palyerAddress
     const value = formData.get('value') as string
     sendTransaction({ to, value: parseEther(value) })
+    onSubmit({ to, value: parseEther(value) })
   }
+
+  
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({

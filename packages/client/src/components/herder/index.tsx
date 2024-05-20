@@ -885,7 +885,7 @@ export default function Header({ hoveredData, handleData }: Props) {
                   {(() => {
                     if (!connected) {
                       return (
-                        <button onClick={openConnectModal} type="button">
+                        <button onClick={openConnectModal} type="button" className={style.btnConnect}>
                          CONNECT
                         </button>
                       );
