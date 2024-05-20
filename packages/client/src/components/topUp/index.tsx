@@ -42,6 +42,10 @@ export default function TopUp({
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
+  const balanceResultEOA = useBalance({
+    address: address,
+  })
+  
   const [inputValue, setInputValue] = useState(0.0003);
  
   const balanceSW = balanceResultSW.data?.value ?? 0n;
@@ -226,10 +230,7 @@ export default function TopUp({
                     </button>
                    <div style={{color:"#000",fontSize:"14px"}}>
                    {account.displayName}
-                          {account.displayBalance
-                            ? ` (${account.displayBalance})`
-                            : ""}
-                   </div>
+                   { balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value)/1e18).toFixed(6)})` : " (0)" }      </div>
                  
                   </div>
 
