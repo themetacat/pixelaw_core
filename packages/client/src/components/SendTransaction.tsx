@@ -7,10 +7,10 @@ import {supportedChains} from  "../mud/supportedChains"
 
 interface Props {
   palyerAddress: any;
-  onSubmit: any;
+  onSubmitHandle:any;
 }
 
-export function SendTransaction({palyerAddress,onSubmit}:Props) {
+export function SendTransaction({palyerAddress,onSubmitHandle}:Props) {
 
   const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
   const { address } = useAccount();
@@ -34,9 +34,8 @@ export function SendTransaction({palyerAddress,onSubmit}:Props) {
     // const to = formData.get('address') as Hex
     // session wallet 
     const to = palyerAddress
-    const value = formData.get('value') as string
+    const value = formData.get('value') as string 
     sendTransaction({ to, value: parseEther(value) })
-    onSubmit({ to, value: parseEther(value) })
   }
 
   

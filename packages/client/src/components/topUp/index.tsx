@@ -67,6 +67,7 @@ export default function TopUp({
   }, []);
   const [balanceSWNum, setBalanceSWNum] = useState(Number(balanceSW) / 1e18);
 
+
   const handleChange = (event) => {
     setInputValue(event.target.value);
     setTransferPayType(false)
@@ -111,9 +112,9 @@ export default function TopUp({
     }
   };
 
-  const transferPay = (data) => {
-    console.log(111,data);
-    
+  const transferPay = () => {
+    console.log(111);
+    submit()
     // console.log(Number(balanceSW) / 1e18, inputValue);
 
     if (inputValue < 0 || inputValue > Number(balanceSW) / 1e18) {
@@ -122,11 +123,21 @@ export default function TopUp({
     } else {
       setTransferPayType(false);
     }
+
   };
-
-  const submit = (data:any) => {
-console.log(data);
-
+  const {  sendTransaction } = useSendTransaction()
+  async function submit() {
+    console.log(2222);
+    
+    // const to = formData.get('address') as Hex
+    // session wallet 
+    const to = palyerAddress
+    const value = inputValue 
+    console.log(inputValue,666,to);
+    
+   const a = sendTransaction({ to, value: parseEther(inputValue) })
+   console.log(a);
+   
   }
   return (
     <div className={style.topBox}>
@@ -192,7 +203,9 @@ console.log(data);
                             height: 12,
                             borderRadius: 999,
                             // overflow: 'hidden',
+                            color:"#000",
                             marginRight: 4,
+                           
                           }}
                         >
                           {chain.iconUrl && (
@@ -205,8 +218,15 @@ console.log(data);
                         </div>
                       )}
                       {chain.name}
+                   
                     </button>
-                    {isConnected && <SendTransaction palyerAddress={palyerAddress} onSubmit={transferPay}/>}
+                   <div style={{color:"#000",fontSize:"14px"}}>
+                   {account.displayName}
+                          {account.displayBalance
+                            ? ` (${account.displayBalance})`
+                            : ""}
+                   </div>
+                 
                   </div>
 
                   <span className={style.bridgeBTN} onClick={bridgeHandle}>
@@ -436,6 +456,7 @@ console.log(data);
                   : "Deposit via transfer"} */}
                   {"Deposit via transfer"}
               </button>
+                 {/* {transferPayType===true&&isConnected && <SendTransaction palyerAddress={palyerAddress}/>} */}
             </div>
           );
         }}
