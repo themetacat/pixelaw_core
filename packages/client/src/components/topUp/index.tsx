@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
 import style from "./index.module.css";
 import trunOff from "../../images/turnOffBtn.png";
-import { SendTransaction } from "../SendTransaction";
-import { Account } from "../Account";
 import toast, { Toaster } from "react-hot-toast";
-import { Connect } from "../Connect";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import warningImg from "../../images/warning.png";
 import { useMUD } from "../../MUDContext";
@@ -42,9 +39,6 @@ export default function TopUp({
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
-  const balanceResultEOA = useBalance({
-    address: address,
-  })
   
   const [inputValue, setInputValue] = useState(0.0003);
   const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
@@ -53,6 +47,13 @@ export default function TopUp({
   useWaitForTransactionReceipt({
     hash,
   })
+  console.log(hash);
+  
+  const res = useWaitForTransactionReceipt({
+    hash,
+  })
+  console.log(res);
+  
   const balanceSW = balanceResultSW.data?.value ?? 0n;
   const balanceResultEOA = useBalance({
     address: address,
@@ -61,10 +62,7 @@ export default function TopUp({
   
   async function withDraw() {
     if (balanceSW > MIN_SESSION_WALLET_BALANCE) {
-      const value = balanceSW - MIN_SESSION_WALLET_BALANCE;
-      console.log(address);
-      console.log(value);
-      
+      const value = balanceSW - MIN_SESSION_WALLET_BALANCE;    
       
       const hash = await walletClient.sendTransaction({
         to: address,
@@ -144,7 +142,6 @@ export default function TopUp({
   };
 
   async function submit() {
-    console.log(2222);
     
     // const to = formData.get('address') as Hex
     // session wallet 
@@ -153,7 +150,6 @@ export default function TopUp({
     console.log(inputValue,666,to);
     
    const a = sendTransaction({ to, value: parseEther(inputValue) })
-   console.log(a);
    
   }
   return (
@@ -476,7 +472,7 @@ export default function TopUp({
                 {transferPayType === true
                   ? "Not enough funds"
                   : "Deposit via transfer"}
-                 {hash && <div>Transaction Hash: {hash}</div>}
+                 {/* {hash && <div>Transaction Hash: {hash}</div>} */}
         {isConfirming && <div>Waiting for confirmation...</div>}
         {isConfirmed && <div>Transaction confirmed.</div>}
         {error && (

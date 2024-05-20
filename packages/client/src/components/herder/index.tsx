@@ -25,9 +25,6 @@ import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-import { SendTransaction } from "../SendTransaction";
-import { Account } from "../Account";
-import { Connect } from "../Connect";
 import { useDisconnect } from 'wagmi';
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
