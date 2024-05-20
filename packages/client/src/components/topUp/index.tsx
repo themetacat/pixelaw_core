@@ -111,8 +111,8 @@ export default function TopUp({
     }
   };
 
-  const transferPay = () => {
-    // console.log(111);
+  const transferPay = (data) => {
+    console.log(111,data);
     
     // console.log(Number(balanceSW) / 1e18, inputValue);
 
@@ -206,7 +206,7 @@ console.log(data);
                       )}
                       {chain.name}
                     </button>
-                    {isConnected && <SendTransaction palyerAddress={palyerAddress} onSubmit={submit}/>}
+                    {isConnected && <SendTransaction palyerAddress={palyerAddress} onSubmit={transferPay}/>}
                   </div>
 
                   <span className={style.bridgeBTN} onClick={bridgeHandle}>
@@ -429,11 +429,12 @@ console.log(data);
                 //     setTransferPayType(false);
                 //   }
                 // }}
-                disabled={transferPayType===true}
+                // disabled={transferPayType===true}
               >
-                {transferPayType === true
+                {/* {transferPayType === true
                   ? "Not enough funds"
-                  : "Deposit via transfer"}
+                  : "Deposit via transfer"} */}
+                  {"Deposit via transfer"}
               </button>
             </div>
           );
