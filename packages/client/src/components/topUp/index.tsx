@@ -131,7 +131,8 @@ export default function TopUp({
   };
 
   const transferPay = () => {
-    if (parseFloat(inputValue) < 0 &&balanceResultEOA.data?.value!==0n&& parseFloat(inputValue) < Number(balanceResultEOA.data?.value)/1e18) {
+ 
+    if (parseFloat(inputValue) > 0 &&balanceResultEOA.data?.value!==0n&& parseFloat(inputValue) < Number(balanceResultEOA.data?.value)/1e18) {
       // //console.log("不能转");
     submit()
     setLoading(true)
