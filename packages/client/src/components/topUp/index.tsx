@@ -43,9 +43,18 @@ export default function TopUp({
     address: palyerAddress,
   });
   const [inputValue, setInputValue] = useState(0.0003);
- 
-  const balanceSW = balanceResultSW.data?.value ?? 0n;
+  const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
 
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+  useWaitForTransactionReceipt({
+    hash,
+  })
+  const balanceSW = balanceResultSW.data?.value ?? 0n;
+  const balanceResultEOA = useBalance({
+    address: address,
+  })     
+
+  
   async function withDraw() {
     if (balanceSW > MIN_SESSION_WALLET_BALANCE) {
       const value = balanceSW - MIN_SESSION_WALLET_BALANCE;
@@ -125,7 +134,7 @@ export default function TopUp({
     }
 
   };
-  const {  sendTransaction } = useSendTransaction()
+
   async function submit() {
     console.log(2222);
     
@@ -222,9 +231,7 @@ export default function TopUp({
                     </button>
                    <div style={{color:"#000",fontSize:"14px"}}>
                    {account.displayName}
-                          {account.displayBalance
-                            ? ` (${account.displayBalance})`
-                            : ""}
+                   { balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value)/1e18).toFixed(6)})` : " 0ETH" } 
                    </div>
                  
                   </div>
@@ -315,8 +322,14 @@ export default function TopUp({
                   {withDrawType === true ? (
                     " Withdraw all"
                   ) : (
-                    <>{(Number(balanceSW) / 1e18)===0?(Number(balanceSW) / 1e18):(Number(balanceSW) / 1e18).toFixed(7)}</>
+                    <>{(Number(balanceSW) / 1e18)===0?(Number(balanceSW) / 1e18):(Number(balanceSW) / 1e18).toFixed(8)}</>
                   )}
+                   {hash && <div>Transaction Hash: {hash}</div>}
+        {isConfirming && <div>Waiting for confirmation...</div>}
+        {isConfirmed && <div>Transaction confirmed.</div>}
+        {error && (
+          <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+        )}
                 </button>
               </div>
               <div className={style.partFour}>
@@ -421,15 +434,16 @@ export default function TopUp({
 
               <div className={style.partFive}>
                 <span>Available to deposit</span>
-                <input
+                {/* <input
                   name="value"
                   placeholder="Amount (ETH)"
                   type="number"
-                  step="0.0001"
+                  // step="0.0001"
                   value={balanceSWNum}
-                  onChange={handleChangeBalanceSWNum}
-                  required
-                />
+                  // onChange={handleChangeBalanceSWNum}
+                  // required
+                /> */}
+                { balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value)/1e18).toFixed(6)})` : " 0ETH" } 
               </div>
               <div className={style.partFive}>
                 <span>Time to deposit</span>
@@ -449,12 +463,17 @@ export default function TopUp({
                 //     setTransferPayType(false);
                 //   }
                 // }}
-                // disabled={transferPayType===true}
+                disabled={transferPayType===true}
               >
-                {/* {transferPayType === true
+                {transferPayType === true
                   ? "Not enough funds"
-                  : "Deposit via transfer"} */}
-                  {"Deposit via transfer"}
+                  : "Deposit via transfer"}
+                 {hash && <div>Transaction Hash: {hash}</div>}
+        {isConfirming && <div>Waiting for confirmation...</div>}
+        {isConfirmed && <div>Transaction confirmed.</div>}
+        {error && (
+          <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+        )}
               </button>
                  {/* {transferPayType===true&&isConnected && <SendTransaction palyerAddress={palyerAddress}/>} */}
             </div>
