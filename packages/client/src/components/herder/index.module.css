@@ -248,3 +248,11 @@ canvas{
     width: 100px;
     height: 100px;
   }
+  .btnConnect{
+    border: none;
+    height: 50px;
+    background: none;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+  }
