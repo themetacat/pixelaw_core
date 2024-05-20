@@ -43,7 +43,7 @@ export default function TopUp({
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
-  const [inputValue, setInputValue] = useState(0.0003);
+  const [inputValue, setInputValue] = useState('0.0003');
   const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
@@ -124,7 +124,7 @@ export default function TopUp({
   };
 
   const transferPay = () => {
-    //console.log(111);
+    // console.log(inputValue,typeof(inputValue));
     submit()
     // //console.log(Number(balanceSW) / 1e18, inputValue);
 
