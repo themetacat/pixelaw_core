@@ -33,12 +33,12 @@ export default function TopUp({
   const [transferPayType, setTransferPayType] = useState(false);
   const [heightNum, setHeightNum] = useState('555');
   const [privateKey, setprivateKey] = useState("");
-  const [hashVal, setHashVal] = useState(null);
+  const [hashVal, setHashVal] = useState(undefined);
   const {
     network: { walletClient },
   } = useMUD();
   const { address, isConnected } = useAccount();
-  const MIN_SESSION_WALLET_BALANCE = parseEther("0.0000002");
+  const MIN_SESSION_WALLET_BALANCE = parseEther("0.0000003");
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
@@ -46,34 +46,34 @@ export default function TopUp({
   const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
-  useWaitForTransactionReceipt({
-    hash,
-  })
-  console.log(hash);
-  
-  const res = useWaitForTransactionReceipt({
-    hash,
-  })
-  console.log(res);
-  
+    useWaitForTransactionReceipt({
+      hash,
+    })
+
+  const { isLoading: isConfirmingWith, isSuccess: isConfirmedWith } =
+    useWaitForTransactionReceipt({
+      hash: hashVal,
+    })
+
   const balanceSW = balanceResultSW.data?.value ?? 0n;
   const balanceResultEOA = useBalance({
     address: address,
-  })     
+  })
 
   async function withDraw() {
+    
     if (balanceSW > MIN_SESSION_WALLET_BALANCE) {
-      const value = balanceSW - MIN_SESSION_WALLET_BALANCE;    
-      
+      const value = balanceSW - MIN_SESSION_WALLET_BALANCE;
+
       const hash = await walletClient.sendTransaction({
         to: address,
         value: value,
       });
       setHashVal(hash)
-   
-      
+
     } else {
-      console.log("BALANCE not enough");
+      // console.log("BALANCE not enough");
+      toast.error("BALANCE not enough");
     }
   }
 
@@ -91,11 +91,11 @@ export default function TopUp({
     setTransferPayType(false)
   };
   const handleChangePrivate = (event) => {
-    setprivateKey(event.target.value);(event.target.value);
+    setprivateKey(event.target.value); (event.target.value);
     setTransferPayType(false)
   };
-  const handleChangeBalanceSWNum= (event) => {
-    setBalanceSWNum(event.target.value);(event.target.value);
+  const handleChangeBalanceSWNum = (event) => {
+    setBalanceSWNum(event.target.value); (event.target.value);
     setTransferPayType(false)
   };
 
@@ -131,12 +131,11 @@ export default function TopUp({
   };
 
   const transferPay = () => {
- 
-    if (parseFloat(inputValue) > 0 &&balanceResultEOA.data?.value!==0n&& parseFloat(inputValue) < Number(balanceResultEOA.data?.value)/1e18) {
-      // //console.log("不能转");
-    submit()
-    setLoading(true)
-    setTransferPayType(false);
+
+    if (parseFloat(inputValue) > 0 && balanceResultEOA.data?.value !== 0n && parseFloat(inputValue) < Number(balanceResultEOA.data?.value) / 1e18) {
+      setTransferPayType(false);
+
+      submit()
     } else {
       setLoading(false)
       setTransferPayType(true);
@@ -144,15 +143,12 @@ export default function TopUp({
   };
 
   async function submit() {
-    
-    // const to = formData.get('address') as Hex
-    // session wallet 
+
     const to = palyerAddress
-    const value = inputValue 
-    //console.log(inputValue,666,to);
-    
-   const a = sendTransaction({ to, value: parseEther(inputValue) })
-   
+    const value = inputValue
+
+    const a = sendTransaction({ to, value: parseEther(inputValue) })
+
   }
   return (
     <div className={style.topBox}>
@@ -191,10 +187,10 @@ export default function TopUp({
               style={{
                 // backgroundColor: "#f4f3f1",
                 padding: "0px 16px 16px 16px",
-                height:warningModel === true?"535px":"auto",
-                overflowY:warningModel === true?"scroll":"auto"
+                height: warningModel === true ? "535px" : "auto",
+                overflowY: warningModel === true ? "scroll" : "auto"
               }}
-              className={warningModel === true ?style.canvasWrapper:null as any}
+              className={warningModel === true ? style.canvasWrapper : null as any}
             >
               <div className={style.onePart}>
                 <p className={style.titleOne1}>MAIN WALLET</p>
@@ -218,9 +214,9 @@ export default function TopUp({
                             height: 12,
                             borderRadius: 999,
                             // overflow: 'hidden',
-                            color:"#000",
+                            color: "#000",
                             marginRight: 4,
-                           
+
                           }}
                         >
                           {chain.iconUrl && (
@@ -233,13 +229,13 @@ export default function TopUp({
                         </div>
                       )}
                       {chain.name}
-                   
+
                     </button>
-                   <div style={{color:"#000",fontSize:"14px"}}>
-                   {account.displayName}
-                   { balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value)/1e18).toFixed(6)})` : " 0ETH" } 
-                   </div>
-                 
+                    <div style={{ color: "#000", fontSize: "14px" }}>
+                      {account.displayName}
+                      {balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value) / 1e18).toFixed(6)})` : " 0ETH"}
+                    </div>
+
                   </div>
 
                   <span className={style.bridgeBTN} onClick={bridgeHandle}>
@@ -324,17 +320,25 @@ export default function TopUp({
                   onMouseLeave={() => {
                     setWithDrawType(false);
                   }}
+                  disabled={
+                    isConfirmingWith
+                  }
                 >
-                  {withDrawType === true ? (
-                    " Withdraw all"
-                  ) : (
-                    <>{(Number(balanceSW) / 1e18)===0?(Number(balanceSW) / 1e18):(Number(balanceSW) / 1e18).toFixed(8)}</>
+               
+                  {!isConfirmingWith && (
+                    <>
+                      {withDrawType ? (
+                        " Withdraw all"
+                      ) : (
+                        (Number(balanceSW) / 1e18).toFixed(8)
+                      )}
+                    </>
                   )}
-                   {hash && <div>Transaction Hash: {hashVal}</div>}
-        {isConfirming && <div>Waiting for confirmation...</div>}
-        {error && (
-          <div>Error: {(error as BaseError).shortMessage || error.message}</div>
-        )}
+
+                  {isConfirmingWith && <div style={{fontSize:"11px"}}>Waiting for confirmation...</div>}
+                  {/* {error && (
+          toast.error((error as BaseError).shortMessage || error.message)
+        )} */}
                 </button>
               </div>
               <div className={style.partFour}>
@@ -439,16 +443,8 @@ export default function TopUp({
 
               <div className={style.partFive}>
                 <span>Available to deposit</span>
-                {/* <input
-                  name="value"
-                  placeholder="Amount (ETH)"
-                  type="number"
-                  // step="0.0001"
-                  value={balanceSWNum}
-                  // onChange={handleChangeBalanceSWNum}
-                  // required
-                /> */}
-                { balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value)/1e18).toFixed(6)})` : " 0ETH" } 
+              
+                {balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value) / 1e18).toFixed(6)})` : " 0ETH"}
               </div>
               <div className={style.partFive}>
                 <span>Time to deposit</span>
@@ -461,45 +457,26 @@ export default function TopUp({
                     ? style.footerBtn
                     : style.footerBtnElse
                 }
-                // onMouseEnter={() => {
-                //   if (inputValue < 0 || inputValue > Number(balanceSW) / 1e18) {
-                //     setTransferPayType(true);
-                //   } else {
-                //     setTransferPayType(false);
-                //   }
-                // }}
-                disabled={transferPayType===true}
+             
+                disabled={transferPayType === true || isConfirming || isPending}
               >
-                {transferPayType === true
-                  ? "Not enough funds"
-                  : "Deposit via transfer"}
-                 {transferPayType === true&&hash && <div>Transaction Hash: {hash}</div>}
-        {loading === true&&transferPayType === true&&isConfirming && <div>Waiting for confirmation...</div>}
-        {error && (
-          <div>Deposit via transfer</div>
+            
+                {transferPayType === true && "Not enough funds"}
+                {transferPayType === false && (!isConfirming && !isPending) && "Deposit via transfer"}
+
+                {/* {transferPayType === true&&hash && <div>Transaction Hash: {hash}</div>} */}
+                {transferPayType === false && (isConfirming || isPending) && <div>Waiting for confirmation...</div>}
+                {error && (
+          toast.error((error as BaseError).shortMessage || error.message)
         )}
-        {loading === true&&<div><img src={loadingStatus}    className={`${style.commonCls1} `}  alt="" /></div>}
-        {/* {error && (
-          <div>Error: {(error as BaseError).shortMessage || error.message}</div>
-        )} */}
+
               </button>
-                 {/* {transferPayType===true&&isConnected && <SendTransaction palyerAddress={palyerAddress}/>} */}
+              {/* {transferPayType===true&&isConnected && <SendTransaction palyerAddress={palyerAddress}/>} */}
             </div>
           );
         }}
       </ConnectButton.Custom>
-      {/* <Toaster
-        toastOptions={{
-          duration: 2000,
-          style: {
-            background: "linear-gradient(90deg, #dedfff,#8083cb)",
-            color: "black",
-            borderRadius: "8px",
-            zIndex: "999999999999",
-            marginTop: "50px",
-          },
-        }}
-      /> */}
+
     </div>
   );
 }
