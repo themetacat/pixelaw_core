@@ -3,20 +3,70 @@ import ReactDOM from "react-dom/client";
 import { App } from "./App";
 import { setup } from "./mud/setup";
 import { MUDProvider } from "./MUDContext";
-import mudConfig from "contracts/mud.config";
+
+import '@rainbow-me/rainbowkit/styles.css';
+import './polyfills';
+import {
+  rainbowWallet,
+  metaMaskWallet,
+} from '@rainbow-me/rainbowkit/wallets';
+import { getDefaultConfig, RainbowKitProvider, darkTheme, Theme } from '@rainbow-me/rainbowkit';
+import { WagmiProvider } from 'wagmi';
+
+import merge from 'lodash.merge';
+
+import {supportedChains} from "./mud/supportedChains";
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+let chainIndex = supportedChains.findIndex((c) => c.id === 690);
+const redstone = supportedChains[chainIndex];
+
+
+const config = getDefaultConfig({
+  appName: 'PixeLAW',
+  projectId: 'YOUR_PROJECT_ID',
+  wallets: [{
+    groupName: 'Recommended',
+    wallets: [rainbowWallet, metaMaskWallet],
+  }],
+  chains: [
+    redstone,
+  ],
+  ssr: true,
+});
 
 const rootElement = document.getElementById("react-root");
 if (!rootElement) throw new Error("React root not found");
 const root = ReactDOM.createRoot(rootElement);
+
+
+const myTheme = merge(darkTheme(), {
+  colors: {
+    accentColor: '#07296d',
+  },
+} as Theme);
+const queryClient = new QueryClient();
 
 // TODO: figure out if we actually want this to be async or if we should render something else in the meantime
 // 初始化 manifest
 
 setup().then(async (result) => {
   root.render(
-    <MUDProvider value={result}>
-      <App />
-    </MUDProvider>
+    // <MUDProvider value={result}>
+    //   <App />
+    // </MUDProvider>
+      <React.StrictMode>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider theme={myTheme}>
+          <MUDProvider value={result}>
+          <App />
+        </MUDProvider>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </React.StrictMode>
   );
 
   // https://vitejs.dev/guide/env-and-mode.html

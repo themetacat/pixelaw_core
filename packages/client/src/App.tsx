@@ -25,7 +25,8 @@ export const App = () => {
   };
 
   return (
-    <div className={style.page}>
+
+      <div className={style.page}>
       {syncProgress ? (
         syncProgress.step !== SyncStep.LIVE ? (
           <div style={{ color: "#fff" }} className={style.GameBoard}>
@@ -44,12 +45,13 @@ export const App = () => {
             background: "linear-gradient(90deg, #dedfff,#8083cb)",
             color: "black",
             borderRadius: "8px",
-            zIndex: "9999999999999",
+            zIndex: "999999999999",
             marginTop:"50px"
           },
         }}
       />
      
     </div>
+    
   );
 };
