@@ -103,6 +103,7 @@ canvas{
     cursor: default;
   }
   .btnBox{
+    border-radius: 50px;
     width: 80px;
     color: #a073e2;
     border: none;
@@ -124,6 +125,7 @@ canvas{
     opacity: 1;
   }
   .btnBoxY{
+    border-radius: 50px;
     width: 80px;
     border: none;
     outline: none;
