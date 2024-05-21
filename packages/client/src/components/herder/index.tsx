@@ -135,6 +135,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   const capitalizedString =
     chainName.charAt(0).toUpperCase() + chainName?.slice(1).toLowerCase();
   //获取余额
+  // const balanceResultSW = useBalance({
+  //   address: palyerAddress,
+  // });
   const balanceFN = publicClient.getBalance({ address: palyerAddress });
   balanceFN.then((a: any) => {
     setBalance(a);
@@ -794,6 +797,19 @@ export default function Header({ hoveredData, handleData }: Props) {
     { name: "Top up", value: "topUp" },
     { name: "Disconnect", value: "disconnect" },
   ];
+  const balanceSW = balanceFN.data?.value ?? 0n;
+  
+  useEffect(()=>{
+  console.log(balance);
+
+    if(isConnected){
+  if(balance && (Number(balance) / 1e18).toFixed(8)<'0.000001'){
+    
+    setTopUpType(true)
+  }
+    }
+
+      },[(Number(balance) / 1e18).toFixed(8),isConnected])
 
   const balanceSW = balanceFN.data?.value ?? 0n;
   useEffect(()=>{

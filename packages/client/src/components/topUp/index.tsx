@@ -35,7 +35,7 @@ export default function TopUp({
   const [transferPayType, setTransferPayType] = useState(false);
   const [heightNum, setHeightNum] = useState('555');
   const [privateKey, setprivateKey] = useState("");
-  const [withDrawHashVal, setwithDrawHashVal] = useState("0xf344e5a371381dfeaa9a1dd4d338abb32e4af0c78f52e33b4a509629ecccaf09");
+  const [withDrawHashVal, setwithDrawHashVal] = useState(undefined);
   const {
     network: { walletClient },
   } = useMUD();
@@ -327,11 +327,11 @@ export default function TopUp({
                     setWithDrawType(false);
                   }}
                   disabled={
-                    isConfirmingWith||isPendingWith
+                    isConfirmingWith
                   }
                 >
                
-                  {(!isConfirmingWith||!isPendingWith) && (
+                  {(!isConfirmingWith) && (
                     <>
                       {withDrawType ? (
                         " Withdraw all"
@@ -341,7 +341,7 @@ export default function TopUp({
                     </>
                   )}
 
-                  {(isConfirmingWith||isPendingWith) && <div style={{fontSize:"11px"}}>Waiting for confirmation...</div>}
+                  {isConfirmingWith && <div style={{fontSize:"11px"}}>Waiting for confirmation...</div>}
                   {/* {error && (
           toast.error((error as BaseError).shortMessage || error.message)
         )} */}
