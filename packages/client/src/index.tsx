@@ -6,26 +6,32 @@ import { MUDProvider } from "./MUDContext";
 
 import '@rainbow-me/rainbowkit/styles.css';
 import './polyfills';
-import { getDefaultConfig, RainbowKitProvider, darkTheme, Theme, Chain } from '@rainbow-me/rainbowkit';
+import {
+  rainbowWallet,
+  metaMaskWallet,
+} from '@rainbow-me/rainbowkit/wallets';
+import { getDefaultConfig, RainbowKitProvider, darkTheme, Theme } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
 
 import merge from 'lodash.merge';
-import { SessionProvider } from 'next-auth/react';
-import type { Session } from 'next-auth';
+
 import {supportedChains} from "./mud/supportedChains";
-import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next-auth';
-import { AppProps } from 'next/app';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 let chainIndex = supportedChains.findIndex((c) => c.id === 690);
 const redstone = supportedChains[chainIndex];
 
+
 const config = getDefaultConfig({
   appName: 'PixeLAW',
   projectId: 'YOUR_PROJECT_ID',
+  wallets: [{
+    groupName: 'Recommended',
+    wallets: [rainbowWallet, metaMaskWallet],
+  }],
   chains: [
     redstone,
-   
   ],
   ssr: true,
 });
