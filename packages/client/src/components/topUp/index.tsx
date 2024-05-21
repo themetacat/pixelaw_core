@@ -15,6 +15,8 @@ import {
   useAccount,
   useBalance,
 } from "wagmi";
+import { getTransactionReceipt } from '@wagmi/core';
+
 interface Props {
   setTopUpType: any;
   palyerAddress: any;
@@ -33,7 +35,7 @@ export default function TopUp({
   const [transferPayType, setTransferPayType] = useState(false);
   const [heightNum, setHeightNum] = useState('555');
   const [privateKey, setprivateKey] = useState("");
-  const [hashVal, setHashVal] = useState(undefined);
+  const [withDrawHashVal, setwithDrawHashVal] = useState("0xf344e5a371381dfeaa9a1dd4d338abb32e4af0c78f52e33b4a509629ecccaf09");
   const {
     network: { walletClient },
   } = useMUD();
@@ -45,16 +47,16 @@ export default function TopUp({
   const [inputValue, setInputValue] = useState('0.0003');
   const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+  const { isLoading: isConfirming, isSuccess: isConfirmed} =
     useWaitForTransactionReceipt({
       hash,
     })
-
-  const { isLoading: isConfirmingWith, isSuccess: isConfirmedWith } =
+  
+  const { isLoading: isConfirmingWith, isSuccess: isConfirmedWith, isPending: isPendingWith } =
     useWaitForTransactionReceipt({
-      hash: hashVal,
-    })
-
+      hash: withDrawHashVal,
+    })    
+  
   const balanceSW = balanceResultSW.data?.value ?? 0n;
   const balanceResultEOA = useBalance({
     address: address,
@@ -69,7 +71,7 @@ export default function TopUp({
         to: address,
         value: value,
       });
-      setHashVal(hash)
+      setwithDrawHashVal(hash)
 
     } else {
       // console.log("BALANCE not enough");
@@ -321,11 +323,11 @@ export default function TopUp({
                     setWithDrawType(false);
                   }}
                   disabled={
-                    isConfirmingWith
+                    isConfirmingWith||isPendingWith
                   }
                 >
                
-                  {!isConfirmingWith && (
+                  {(!isConfirmingWith||!isPendingWith) && (
                     <>
                       {withDrawType ? (
                         " Withdraw all"
@@ -335,7 +337,7 @@ export default function TopUp({
                     </>
                   )}
 
-                  {isConfirmingWith && <div style={{fontSize:"11px"}}>Waiting for confirmation...</div>}
+                  {(isConfirmingWith||isPendingWith) && <div style={{fontSize:"11px"}}>Waiting for confirmation...</div>}
                   {/* {error && (
           toast.error((error as BaseError).shortMessage || error.message)
         )} */}
@@ -466,11 +468,12 @@ export default function TopUp({
 
                 {/* {transferPayType === true&&hash && <div>Transaction Hash: {hash}</div>} */}
                 {transferPayType === false && (isConfirming || isPending) && <div>Waiting for confirmation...</div>}
-                {error && (
+                {/* {error && (
           toast.error((error as BaseError).shortMessage || error.message)
-        )}
-
+        ) && ""} */}
               </button>
+              
+
               {/* {transferPayType===true&&isConnected && <SendTransaction palyerAddress={palyerAddress}/>} */}
             </div>
           );

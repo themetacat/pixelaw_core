@@ -3,9 +3,10 @@
     background-color: hsl(280, 77%, 14%,0.9);
     position: absolute;
     padding: 0px ;
-    right: 35%;
-    top: 10%;
+    left: 50%;
+    top: 50%;
    border-radius: 15px;
+   transform: translate(-50%, -50%);
    color: #fff;
    /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
 }

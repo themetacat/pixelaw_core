@@ -928,7 +928,7 @@ export default function Header({ hoveredData, handleData }: Props) {
                             {addressContent.length > 0 &&
                               addressContent.map((item, index) => (
                                 <div
-                                  style={{ color: "#fff" }}
+                                  style={{ color: "#fff" ,backgroundColor:"hsl(290, 77%, 14%,1)"}}
                                   key={index}
                                   onClick={() => handleAddClick(item.value)}
                                 >
