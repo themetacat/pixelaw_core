@@ -108,8 +108,9 @@ export function createSystemCalls(
         functionName: action,
         args: allArgs
       }))
-      const tx = await waitForTransaction(txData);
-
+      
+      // const tx = await waitForTransaction(txData);
+      
       hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData })
 
     } catch (error) {
