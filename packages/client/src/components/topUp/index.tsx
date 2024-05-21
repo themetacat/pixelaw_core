@@ -74,7 +74,6 @@ export default function TopUp({
       setwithDrawHashVal(hash)
 
     } else {
-      // console.log("BALANCE not enough");
       toast.error("BALANCE not enough");
     }
   }
