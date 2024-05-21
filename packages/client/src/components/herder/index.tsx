@@ -782,9 +782,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     setMainContent(content);
   };
   const handleAddClick = (content) => {
-    console.log(content);
     if (content === "topUp") {
-      console.log(111);
       setTopUpType(true);
     } else {
       console.log("退出");
@@ -800,7 +798,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   const balanceSW = balanceFN.data?.value ?? 0n;
   
   useEffect(()=>{
-  console.log(balance);
 
     if(isConnected){
   if(balance && (Number(balance) / 1e18).toFixed(8)<'0.000001'){
