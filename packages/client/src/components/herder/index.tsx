@@ -795,6 +795,16 @@ export default function Header({ hoveredData, handleData }: Props) {
     { name: "Disconnect", value: "disconnect" },
   ];
 
+  const balanceSW = balanceFN.data?.value ?? 0n;
+  useEffect(()=>{
+    if(isConnected){
+  if((Number(balanceSW) / 1e18).toFixed(8)<'0.000001'){
+    setTopUpType(true)
+  }
+    }
+
+      },[(Number(balanceSW) / 1e18).toFixed(8),isConnected])
+
   return (
     <>
       <div className={style.container}>
@@ -888,6 +898,8 @@ export default function Header({ hoveredData, handleData }: Props) {
                       );
                     }
 
+                    
+
                     if (chain.unsupported) {
                       return (
                         <button onClick={openChainModal} type="button">
@@ -895,7 +907,7 @@ export default function Header({ hoveredData, handleData }: Props) {
                         </button>
                       );
                     }
-
+                   
                     return (
                       <div style={{display:"flex"}}>  
                       {chain.name}&nbsp;&nbsp;
