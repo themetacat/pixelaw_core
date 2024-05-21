@@ -77,6 +77,8 @@ export default function TopUp({
     }
   }
 
+  
+
   useEffect(() => {
     const networkConfigPromise = getNetworkConfig();
     networkConfigPromise.then((networkConfigPromiseVal) => {
