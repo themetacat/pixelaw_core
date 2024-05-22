@@ -389,7 +389,7 @@ scrollOffset.y = Math.max(0, targetY);
           j < visibleArea.y + visibleArea.height;
           j++
         ) {
-           // 检查当前网格坐标是否为 (246, 81)
+          
     if (i === xValue && j === yValue) {
       // 填充红色背景色
       ctx.fillStyle = "red";
@@ -881,13 +881,14 @@ console.log(mouseX,mouseY,'鼠标啊');
       const ctx = canvas.getContext("2d");
       const regex = /x(\d+)y(\d+)/;
       const match = window.location.href.match(regex);
+    console.log('走了？？');
     
     
-      //  if (match&&ctx) {
-      //    const xValue = parseInt(match[1], 10);
-      //    const yValue = parseInt(match[2], 10);
-      //    drawGridRegex(ctx, hoveredSquare, mouseX, mouseY);
-      //  }else 
+       if (match&&ctx) {
+         const xValue = parseInt(match[1], 10);
+         const yValue = parseInt(match[2], 10);
+         drawGridRegex(ctx, hoveredSquare, mouseX, mouseY);
+       }else 
       if(ctx){
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         drawGrid(ctx, hoveredSquare, mouseX, mouseY);
