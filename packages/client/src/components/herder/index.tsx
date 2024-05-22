@@ -25,7 +25,7 @@ import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-import { useDisconnect } from 'wagmi';
+import { useDisconnect } from "wagmi";
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -78,7 +78,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { interact },
   } = useMUD();
-  const { disconnect } = useDisconnect()
+  const { disconnect } = useDisconnect();
   const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
@@ -786,7 +786,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       setTopUpType(true);
     } else {
       console.log("退出");
-      disconnect()
+      disconnect();
     }
   };
 
@@ -795,27 +795,23 @@ export default function Header({ hoveredData, handleData }: Props) {
     { name: "Top up", value: "topUp" },
     { name: "Disconnect", value: "disconnect" },
   ];
-  
-  useEffect(()=>{
 
-    if(isConnected){
-  if(balance && (Number(balance) / 1e18).toFixed(8)<'0.000001'){
-    
-    setTopUpType(true)
-  }
+  useEffect(() => {
+    if (isConnected) {
+      if (balance && (Number(balance) / 1e18).toFixed(8) < "0.000001") {
+        setTopUpType(true);
+      }
     }
-
-      },[(Number(balance) / 1e18).toFixed(8),isConnected])
+  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
 
   const balanceSW = balanceFN.data?.value ?? 0n;
-  useEffect(()=>{
-    if(isConnected){
-  if((Number(balance) / 1e18).toFixed(8)<'0.000001'){
-    setTopUpType(true)
-  }
+  useEffect(() => {
+    if (isConnected) {
+      if ((Number(balance) / 1e18).toFixed(8) < "0.000001") {
+        setTopUpType(true);
+      }
     }
-
-      },[(Number(balance) / 1e18).toFixed(8),isConnected])
+  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
 
   return (
     <>
@@ -904,13 +900,15 @@ export default function Header({ hoveredData, handleData }: Props) {
                   {(() => {
                     if (!connected) {
                       return (
-                        <button onClick={openConnectModal} type="button" className={style.btnConnect}>
-                         CONNECT
+                        <button
+                          onClick={openConnectModal}
+                          type="button"
+                          className={style.btnConnect}
+                        >
+                          CONNECT
                         </button>
                       );
                     }
-
-                    
 
                     if (chain.unsupported) {
                       return (
@@ -919,49 +917,56 @@ export default function Header({ hoveredData, handleData }: Props) {
                         </button>
                       );
                     }
-                   
+
                     return (
-                      <div style={{display:"flex"}}>  
-                      {chain.name}&nbsp;&nbsp;
-                      <div
-                        style={{
-                          // display: 'flex',
-                          gap: 12,
-                        }}
-                        onMouseEnter={() => {
-                          setAddressModel(true);
-                        }}
-                        onMouseLeave={() => {
-                          setAddressModel(false);
-                        }}
-                      >
-                        <button
-                        style={{border:"none",background:"none",color:"#fff",fontFamily: 'Silkscreen,cursive',height:"50px"}}
-                        
-                          // onClick={openAccountModal}
-                          type="button"
+                      <div style={{ display: "flex" }}>
+                        {chain.name}&nbsp;&nbsp;
+                        <div
+                          style={{
+                            // display: 'flex',
+                            gap: 12,
+                          }}
+                          onMouseEnter={() => {
+                            setAddressModel(true);
+                          }}
+                          onMouseLeave={() => {
+                            setAddressModel(false);
+                          }}
                         >
-                       
-                          {account.displayName}
-                          {account.displayBalance
-                            ? ` (${account.displayBalance})`
-                            : ""}
-                        </button>
-                        {addressModel && (
-                          <div>
-                            {addressContent.length > 0 &&
-                              addressContent.map((item, index) => (
-                                <div
-                                  style={{ color: "#fff" ,backgroundColor:"hsl(290, 77%, 14%,1)"}}
-                                  key={index}
-                                  onClick={() => handleAddClick(item.value)}
-                                >
-                                  {item.name}
-                                </div>
-                              ))}
-                          </div>
-                        )}
-                      </div>
+                          <button
+                            style={{
+                              border: "none",
+                              background: "none",
+                              color: "#fff",
+                              fontFamily: "Silkscreen,cursive",
+                              height: "50px",
+                            }}
+                            // onClick={openAccountModal}
+                            type="button"
+                          >
+                            {account.displayName}
+                            {account.displayBalance
+                              ? ` (${account.displayBalance})`
+                              : ""}
+                          </button>
+                          {addressModel && (
+                            <div>
+                              {addressContent.length > 0 &&
+                                addressContent.map((item, index) => (
+                                  <div
+                                    style={{
+                                      color: "#fff",
+                                      backgroundColor: "hsl(290, 77%, 14%,1)",
+                                    }}
+                                    key={index}
+                                    onClick={() => handleAddClick(item.value)}
+                                  >
+                                    {item.name}
+                                  </div>
+                                ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })()}
@@ -991,7 +996,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         </div>
       </div>
 
-      <div style={{ display: "flex",height:"100vh" ,overflowY:"hidden"}}>
+      <div style={{ display: "flex", height: "100vh", overflowY: "hidden" }}>
         <div
           style={{
             width: `calc(100vw)`,
@@ -1095,15 +1100,22 @@ export default function Header({ hoveredData, handleData }: Props) {
         ""
       )}
       {topUpType === true ? (
-        <div className={style.overlay} onClick={(event)=>{
-          if (!event.target.classList.contains('topBox') && event.target.classList.contains(style.overlay)) {
-          setTopUpType(false)
-          }
-        }}>
-          <TopUpContent 
-          setTopUpType={setTopUpType} 
-          mainContent={mainContent}
-          palyerAddress={palyerAddress}/>
+        <div
+          className={style.overlay}
+          onClick={(event) => {
+            if (
+              !event.target.classList.contains("topBox") &&
+              event.target.classList.contains(style.overlay)
+            ) {
+              setTopUpType(false);
+            }
+          }}
+        >
+          <TopUpContent
+            setTopUpType={setTopUpType}
+            mainContent={mainContent}
+            palyerAddress={palyerAddress}
+          />
         </div>
       ) : null}
     </>

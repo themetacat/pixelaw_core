@@ -108,6 +108,7 @@ canvas{
     border: none;
     outline: none;
     background-color: #000;
+    border-radius: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -127,6 +128,7 @@ canvas{
     width: 80px;
     border: none;
     outline: none;
+    border-radius: 50px;
     background-color: #000;
     cursor: not-allowed !important;
     display: flex;
