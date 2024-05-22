@@ -269,9 +269,9 @@ export default function Header({ hoveredData, handleData }: Props) {
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
           const entity = getEntityAtCoordinates(i, j);
-          // if (i === 0 && j === 0) {
+          // if (i === 5 && j === 5) {
           //   const img = new Image();
-          //   img.src = AddIcon; 
+          //   img.src = 'https://poster-phi.vercel.app/metaverse_learn/283.png'; 
           //     ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
           // }
           if (entity) {
