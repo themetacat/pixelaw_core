@@ -269,6 +269,11 @@ export default function Header({ hoveredData, handleData }: Props) {
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
           const entity = getEntityAtCoordinates(i, j);
+          // if (i === 0 && j === 0) {
+          //   const img = new Image();
+          //   img.src = AddIcon; 
+          //     ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
+          // }
           if (entity) {
             ctx.fillStyle = entity.value.color;
             ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
@@ -286,6 +291,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               } else {
                 pix_text = entity.value.text;
               }
+            
               const textX = currentX + GRID_SIZE / 2;
               const textY = currentY + GRID_SIZE / 2;
               // ctx.fillText(pix_text, currentX + 2, currentY + 20);
