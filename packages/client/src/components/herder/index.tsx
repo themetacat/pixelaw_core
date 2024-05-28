@@ -257,7 +257,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           j < visibleArea.y + visibleArea.height;
           j++
         ) {
-   
+
           const currentX = i * GRID_SIZE - scrollOffset.x;
           const currentY = j * GRID_SIZE - scrollOffset.y;
           ctx.lineWidth = 3;
@@ -301,7 +301,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           GRID_SIZE
         );
       }
-
+   
       if (hoveredSquare) {
         ctx.canvas.style.cursor = "pointer";
       } else {
@@ -365,7 +365,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       if (match) {
         const xValue = parseInt(match[1], 10);
         const yValue = parseInt(match[2], 10);
-      console.log(xValue,yValue);
+      // console.log(xValue,yValue);
       
      
 
@@ -482,7 +482,7 @@ scrollOffset.y = Math.max(0, targetY);
 
     const newUrl = `x${coordinates.x}y${coordinates.y}`;
     window.history.replaceState({}, '', newUrl);
- 
+    
     setTranslateX(event.clientX);
     setTranslateY(event.clientY);
     get_function_param(action);
@@ -881,14 +881,14 @@ console.log(mouseX,mouseY,'鼠标啊');
       const ctx = canvas.getContext("2d");
       const regex = /x(\d+)y(\d+)/;
       const match = window.location.href.match(regex);
-    console.log('走了？？');
+    // console.log('走了？？');
     
     
-       if (match&&ctx) {
-         const xValue = parseInt(match[1], 10);
-         const yValue = parseInt(match[2], 10);
-         drawGridRegex(ctx, hoveredSquare, mouseX, mouseY);
-       }else 
+      //  if (match&&ctx) {
+      //    const xValue = parseInt(match[1], 10);
+      //    const yValue = parseInt(match[2], 10);
+      //    drawGridRegex(ctx, hoveredSquare, mouseX, mouseY);
+      //  }else 
       if(ctx){
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         drawGrid(ctx, hoveredSquare, mouseX, mouseY);

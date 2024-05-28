@@ -141,10 +141,10 @@ export default function RightPart({
   
     if(!loacl_app_name){
      
-      window.localStorage.setItem("app_name",'paint');
-      window.localStorage.setItem("system_name",'PaintSystem');
-      window.localStorage.setItem("namespace",'paint');
-      window.localStorage.setItem("manifest",'BASE/PaintSystem');
+      window.localStorage.setItem("app_name",'popStar');
+      window.localStorage.setItem("system_name",'PopStarSystem');
+      window.localStorage.setItem("namespace",'popStar');
+      window.localStorage.setItem("manifest",'BASE/PopStarSystem');
     }
   }, [])
 
