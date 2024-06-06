@@ -1,6 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import style from "./index.module.css";
-import { Has, getComponentValueStrict, getComponentValue } from "@latticexyz/recs";
+import {
+  Has,
+  getComponentValueStrict,
+  getComponentValue,
+} from "@latticexyz/recs";
 import {
   encodeEntity,
   syncToRecs,
@@ -13,6 +17,7 @@ import rightIcon from "../../images/youjiantou.png";
 import { Hex, fromBytes, hexToString, isHex } from "viem";
 import { SetupNetworkResult } from "../../mud/setupNetwork";
 import loadingImg from "../../images/loading.png";
+
 import { hexToUtf8 } from "web3-utils";
 // import {setEntityaData } from "../herder/index"
 import { abi_json, update_app_value } from "../../mud/createSystemCalls";
@@ -32,10 +37,11 @@ interface Props {
   setPageClick: any;
 }
 export function convertToString(bytes32Value: string) {
-
-  const byteArray = new Uint8Array(bytes32Value.match(/[\da-f]{2}/gi).map(h => parseInt(h, 16)));
-  const filteredByteArray = byteArray.filter(byte => byte !== 0);
-  const result = fromBytes(filteredByteArray, 'string');
+  const byteArray = new Uint8Array(
+    bytes32Value.match(/[\da-f]{2}/gi).map((h) => parseInt(h, 16))
+  );
+  const filteredByteArray = byteArray.filter((byte) => byte !== 0);
+  const result = fromBytes(filteredByteArray, "string");
   return result;
 }
 export function coorToEntityID(x: number, y: number) {
@@ -66,6 +72,7 @@ export default function RightPart({
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
+
   // const [pageClick, setPageClick] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   const handleIconClick = (index: number, value: any) => {
@@ -74,7 +81,7 @@ export default function RightPart({
     localStorage.setItem("system_name", value.system_name);
     localStorage.setItem("namespace", value.namespace);
     localStorage.setItem("manifest", value.manifest);
-    update_app_value(-1)
+    update_app_value(-1);
   };
   const updateAbiUrl = async (manifest: string) => {
     const app_name = localStorage.getItem("app_name");
@@ -101,52 +108,48 @@ export default function RightPart({
       systemData = abi_json[app_name];
     } else {
       try {
-        onHandleLoadingFun()
-        setPageClick()
+        onHandleLoadingFun();
+        setPageClick();
         const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
         systemData = await response.json();
-        if(systemData){
-          onHandleLoading()
-          handlePageClickIs()
+        if (systemData) {
+          onHandleLoading();
+          handlePageClickIs();
         }
-       
+
         update_abi(systemData);
-      
       } catch (error) {
-        onHandleLoading()
-        console.log('error:', error);
+        onHandleLoading();
+        console.log("error:", error);
       }
     }
 
-
-    
     onUpdateAbiJson(systemData);
 
     if (app_name + "Common" in abi_json) {
-      common_abi = abi_json[app_name+"Common"];
+      common_abi = abi_json[app_name + "Common"];
     } else {
       try {
         const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
         common_abi = await response.json();
         update_abi(common_abi, true);
       } catch (error) {
-        console.log('error:', error);
+        console.log("error:", error);
       }
     }
- 
+
     onUpdateAbiCommonJson(common_abi);
   };
   useEffect(() => {
     updateAbiUrl(localStorage.getItem("manifest"));
-  
-    if(!loacl_app_name){
-     
-      window.localStorage.setItem("app_name",'paint');
-      window.localStorage.setItem("system_name",'PaintSystem');
-      window.localStorage.setItem("namespace",'paint');
-      window.localStorage.setItem("manifest",'BASE/PaintSystem');
+    window.localStorage.setItem("panning", true);
+    if (!loacl_app_name) {
+      window.localStorage.setItem("app_name", "popStar");
+      window.localStorage.setItem("system_name", "PopStarSystem");
+      window.localStorage.setItem("namespace", "popStar");
+      window.localStorage.setItem("manifest", "BASE/PopStarSystem");
     }
-  }, [])
+  }, []);
 
   function capitalizeFirstLetter(str: any) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -157,7 +160,6 @@ export default function RightPart({
   let app_name, truncatedOwner;
 
   if (pixel_value) {
-   
     app_name = pixel_value.app;
     const owner = pixel_value.owner;
     truncatedOwner = `${owner?.substring(0, 6)}...${owner.substring(
@@ -165,22 +167,21 @@ export default function RightPart({
     )}`;
   }
 
-
-  const btn1 =()=>{
-    localStorage.setItem("app_name",'paint')
-    localStorage.setItem("manifest", 'BASE/PaintSystem');
-    updateAbiUrl('BASE/PaintSystem')
-  }
-  const btn2 =()=>{
-    localStorage.setItem("app_name",'snake')
-    localStorage.setItem("manifest", 'BASE/SnakeSystem');
-    updateAbiUrl('BASE/SnakeSystem')
-  }
-  const btn3 =()=>{
-    localStorage.setItem("app_name",'myapp')
-    localStorage.setItem("manifest", 'BASE/MyAppSystem');
-    updateAbiUrl('BASE/MyAppSystem')
-  }
+  const btn1 = () => {
+    localStorage.setItem("app_name", "paint");
+    localStorage.setItem("manifest", "BASE/PaintSystem");
+    updateAbiUrl("BASE/PaintSystem");
+  };
+  const btn2 = () => {
+    localStorage.setItem("app_name", "snake");
+    localStorage.setItem("manifest", "BASE/SnakeSystem");
+    updateAbiUrl("BASE/SnakeSystem");
+  };
+  const btn3 = () => {
+    localStorage.setItem("app_name", "myapp");
+    localStorage.setItem("manifest", "BASE/MyAppSystem");
+    updateAbiUrl("BASE/MyAppSystem");
+  };
 
   return (
     <div
@@ -189,11 +190,12 @@ export default function RightPart({
         if ((e.target as HTMLElement).classList.contains("btnGame")) {
           return;
         }
+        window.localStorage.setItem("panning", !panning);
         setPanning(!panning);
         setPanningState(!panning);
       }}
     >
-      <div style={{ display: "flex", position: "relative", }}>
+      <div style={{ display: "flex", position: "relative" }}>
         <img
           src={
             panning === false
@@ -203,35 +205,24 @@ export default function RightPart({
           alt=""
           className={panning === false ? style.pointer : style.pointer1}
         />
-          {/* <button style={{width:"30px",height:"30px"}} onClick={btn1}>{loading === true ? 'loading' :1}</button>
-          <button style={{width:"30px",height:"30px"}} onClick={btn2}>{loading === true ? 'loading' :2}</button>
-          <button style={{width:"30px",height:"30px"}} onClick={btn3}>{loading === true ? 'loading' :3}</button> */}
         <div
           style={{
             backgroundColor: "#2a0d39",
-            height: "100vh",
-            // width: panning === true ? "180px" : "auto",
           }}
-          className={style.contBox}
+          className={panning === true ? style.contBox1 : style.contBox}
         >
-         
-          {/* ~~~~ 移动游戏图片才调用 */}
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
-            
-            const app_name =  convertToString(entitya);
-            // const app_name = getComponentValue(
-            //   AppName,
-            //   addressToEntityID(value.system_addr)
-            // )?.app_name;
-            value.app_name = app_name as string;     
-            
+
+            const app_name = convertToString(entitya);
+            value.app_name = app_name as string;
+
             return (
               <div
                 key={`${index}`}
                 onClick={(e) => {
                   if (loading === true) {
-                    return; // 禁止点击
+                    return;
                   }
                   handleIconClick(index, value);
                   updateAbiUrl(value.manifest);
@@ -239,22 +230,41 @@ export default function RightPart({
                     "entityVal",
                     decodeEntity({ app_addr: "address" }, entitya).app_addr
                   );
-                  onHandleExe()
-                  e.stopPropagation(); // 防止事件继续传播到外层容器
+                  onHandleExe();
+                  e.stopPropagation();
                 }}
                 className={style.btnGame}
-                style={{ marginRight: panning === false ? "0px" : "35px", paddingRight: panning === false ? "0px" : "15px" }}
+                style={{
+                  marginRight: panning === false ? "0px" : "35px",
+                  paddingRight: panning === false ? "0px" : "15px",
+                }}
               >
                 <div
                   className={
                     selectedIcon === index ||
-                    loacl_app_name?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase())
+                    loacl_app_name
+                      ?.toLowerCase()
+                      .includes(
+                        capitalizeFirstLetter(
+                          (value.app_name as string) !== undefined
+                            ? (value.app_name as string)
+                            : (value.namespace as string)
+                        ).toLowerCase()
+                      )
                       ? style.imgCon1
                       : style.imgCon
                   }
                 >
                   {loading === true &&
-                    loacl_app_name?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase()) ? (
+                  loacl_app_name
+                    ?.toLowerCase()
+                    .includes(
+                      capitalizeFirstLetter(
+                        (value.app_name as string) !== undefined
+                          ? (value.app_name as string)
+                          : (value.namespace as string)
+                      ).toLowerCase()
+                    ) ? (
                     <img
                       src={loadingImg}
                       alt=""
@@ -272,8 +282,8 @@ export default function RightPart({
                     >
                       {value.icon && /^U\+[0-9A-Fa-f]{4,}$/.test(value.icon)
                         ? String.fromCodePoint(
-                          parseInt(value.icon.substring(2), 16)
-                        )
+                            parseInt(value.icon.substring(2), 16)
+                          )
                         : null}
                     </div>
                   )}
@@ -281,12 +291,20 @@ export default function RightPart({
                 {panning === false ? null : (
                   <div
                     className={
-                      loacl_app_name?.toLowerCase().includes(capitalizeFirstLetter(value.app_name as string!==undefined?value.app_name as string:value.namespace as string).toLowerCase())
+                      loacl_app_name
+                        ?.toLowerCase()
+                        .includes(
+                          capitalizeFirstLetter(
+                            (value.app_name as string) !== undefined
+                              ? (value.app_name as string)
+                              : (value.namespace as string)
+                          ).toLowerCase()
+                        )
                         ? style.appName1
                         : style.appName
                     }
                   >
-                    {value.app_name }
+                    {value.app_name}
                   </div>
                 )}
               </div>
@@ -313,14 +331,17 @@ export default function RightPart({
               </p>
               <p key={`Type-${coordinates.x}-${coordinates.y}`}>
                 <span className={style.a}>Type: </span>
-                <span className={style.fontCon}>{app_name ? app_name : 'null'}</span>
-
+                <span className={style.fontCon}>
+                  {app_name ? app_name : "null"}
+                </span>
               </p>
               <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
                 <span className={style.a}>Owner: </span>
-                <span className={style.fontCon}> {truncatedOwner ? truncatedOwner : 'N/A'}</span>
+                <span className={style.fontCon}>
+                  {" "}
+                  {truncatedOwner ? truncatedOwner : "N/A"}
+                </span>
               </p>
-
             </div>
           )}
         </div>

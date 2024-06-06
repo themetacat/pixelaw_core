@@ -4,7 +4,10 @@ import trunOff from "../../images/turnOffBtn.png";
 import toast, { Toaster } from "react-hot-toast";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import warningImg from "../../images/warning.png";
-import loadingStatus from "../../images/loading.png";
+import FrameIcon from "../../images/Frame 29Icon.png";
+import UnioncopyBtn from "../../images/UnioncopyBtn.png";
+import openEye from '../../images/openEye.png'
+import turnOffEye from '../../images/turnOffEye.png'
 import { useMUD } from "../../MUDContext";
 import { getNetworkConfig } from "../../mud/getNetworkConfig";
 import { type Hex, parseEther } from "viem";
@@ -15,7 +18,6 @@ import {
   useAccount,
   useBalance,
 } from "wagmi";
-import { getTransactionReceipt } from '@wagmi/core';
 
 interface Props {
   setTopUpType: any;
@@ -95,10 +97,10 @@ export default function TopUp({
     setInputValue(event.target.value);
     setTransferPayType(false)
   };
-  const handleChangePrivate = (event) => {
-    setprivateKey(event.target.value); (event.target.value);
-    setTransferPayType(false)
-  };
+  // const handleChangePrivate = (event) => {
+  //   setprivateKey(event.target.value); (event.target.value);
+  //   setTransferPayType(false)
+  // };
   const handleChangeBalanceSWNum = (event) => {
     setBalanceSWNum(event.target.value); (event.target.value);
     setTransferPayType(false)
@@ -128,6 +130,7 @@ export default function TopUp({
   };
 
   const bridgeHandle = () => {
+
     if (mainContent === "MAINNET") {
       window.open("https://redstone.xyz/deposit");
     } else {
@@ -188,27 +191,29 @@ export default function TopUp({
             (!authenticationStatus || authenticationStatus === "authenticated");
 
           return (
-            <div
-              style={{
-                // backgroundColor: "#f4f3f1",
-                padding: "0px 16px 16px 16px",
-                height: warningModel === true ? "535px" : "auto",
-                overflowY: warningModel === true ? "scroll" : "auto"
-              }}
-              className={warningModel === true ? style.canvasWrapper : null as any}
-            >
+            // <div
+            //   style={{
+            //     // backgroundColor: "#f4f3f1",
+            
+            //     // height: warningModel === true ? "535px" : "auto",
+            //     // overflowY: warningModel === true ? "scroll" : "auto"
+            //   }}
+            //   className={warningModel === true ? style.canvasWrapper : null as any}
+            // >
+            <>
               <div className={style.onePart}>
                 <p className={style.titleOne1}>MAIN WALLET</p>
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex" ,justifyContent:"space-between"}}>
                   <div
-                    style={{ display: "flex", alignItems: "center" }}
+                    style={{ display: "flex", }}
                     className={style.btnPart}
                   >
+                     <img src={FrameIcon} alt=""  className={style.imgICon}/>
                     <button
                       onClick={(event) => {
                         openChainModal();
                       }}
-                      style={{ border: "none", background: "none" }}
+                      style={{ border: "none", background: "none" ,padding:"0px"}}
                       type="button"
                     >
                       {chain.hasIcon && (
@@ -233,14 +238,19 @@ export default function TopUp({
                           )}
                         </div>
                       )}
-                      {chain.name}
+                  
+                      {/* {chain.name} */}
 
-                    </button>
-                    <div style={{ color: "#000", fontSize: "14px" }}>
-                      {account.displayName}
-                      {balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value) / 1e18).toFixed(6)})` : " 0ETH"}
+                  
+                    <div className={style.mainFont}>
+                      <span>{account.displayName}</span>
+                      <img src={UnioncopyBtn}  onClick={(e)=>{
+                            e.stopPropagation()
+                        handleCopy()
+                      }} alt="" className={style.imgUnionCopyBtn}/>
+                      <p>{balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value) / 1e18).toFixed(6)})` : " 0ETH"}</p>
                     </div>
-
+                    </button>
                   </div>
 
                   <span className={style.bridgeBTN} onClick={bridgeHandle}>
@@ -248,26 +258,25 @@ export default function TopUp({
                   </span>
                 </div>
               </div>
-              <p className={style.titleOne}>
-                SESSION WALLET{" "}
+              <div className={style.partContent}>
+              <p >
+               <span className={style.titleOne}> SESSION WALLET{" "}</span>
                 <img
                   src={warningImg}
                   alt=""
                   style={{
-                    width: "12px",
-                    height: "12px",
-                    marginLeft: "10px",
-                    lineHeight: "20px",
+                    width: "16px",
+                    height: "16px",
+                    verticalAlign:"middle",
+                    marginLeft:"8px"
                   }}
-                  onMouseEnter={() => {
-                    setWarningModel(true);
-                  }}
-                  onMouseLeave={() => {
-                    setWarningModel(false);
+                  onClick={()=>{
+                    setWarningModel(!warningModel)
                   }}
                 />
                 {warningModel === true ? (
                   <div className={style.warningCon}>
+                      <div className={style.triangle}></div>
                     The session wallet is a private key stored in your browser's
                     local storage. It allows you to play games without having to
                     confirm transactions, but is less secure.
@@ -278,46 +287,41 @@ export default function TopUp({
                   </div>
                 ) : null}
               </p>
-              <div className={style.partTwo}>
+              
+              {/* <div> */}
+                <div className={style.partTwo}>
+                  <div style={{display:"flex",gap:"4px"}}>
+                  <img src={FrameIcon} alt=""  className={style.imgICon}/>
                 <div className={style.addcon}>
-                  <p>ADDRESS</p>
+               
                   <input
                     type="text"
-                    value={palyerAddress}
+                    value={    palyerAddress.substring(0, 4) +
+                      "..." +
+                      palyerAddress.substring(palyerAddress.length - 4)}
                     className={style.inputCon}
                   />
-                  <span className={style.copyBtn} onClick={handleCopy}>
-                    COPY
+                  <img src={UnioncopyBtn}  onClick={handleCopy} alt="" className={style.imgUnioncopyBtn}/>
+                  <span className={style.ConfirmingFont}>
+                  {(!isConfirmingWith) && (
+                    <>
+                  {(Number(balanceSW) / 1e18).toFixed(8)}
+                      {/* {withDrawType ? (
+                        (Number(balanceSW) / 1e18).toFixed(8)
+                      ) : (
+                        (Number(balanceSW) / 1e18).toFixed(8)
+                      )} */}
+                    </>
+                  )}
                   </span>
-                </div>
-                <div className={style.prvkey}>
-                  <p>PRIVATE KEY</p>
-                  <input
-                    type={showPassword === true ? "text" : "password"}
-                    value={privateKey}
-                    onChange={handleChangePrivate}
-                    className={style.inputCon}
-                    onMouseEnter={() => {
-                      setShowPassword(true);
-                    }}
-                    onMouseLeave={() => {
-                      setShowPassword(false);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  />
-                  <span
-                    className={style.copyBtn}
-                    onClick={() => {
-                      handleTogglePassword(privateKey);
-                    }}
-                  >
+                  {/* <span className={style.copyBtn} onClick={handleCopy}>
                     COPY
-                  </span>
+                  </span> */}
                 </div>
-              </div>
-              <div className={style.partThree}>
-                <span>Session Wallet Balance</span>
-                <button
+                  </div>
+              
+                <div
+                className={withDrawType ===true? style.btnMeB :style.btnMe}
                   onClick={withDraw}
                   onMouseMove={() => {
                     setWithDrawType(true);
@@ -329,8 +333,12 @@ export default function TopUp({
                     isConfirmingWith
                   }
                 >
-               
-                  {(!isConfirmingWith) && (
+               {/* WITHDRAW ALL */}
+               {
+                withDrawType ===true?'   waiting for confirmation...':'WITHDRAW ALL'
+               }
+            
+                  {/* {(!isConfirmingWith) && (
                     <>
                       {withDrawType ? (
                         " Withdraw all"
@@ -338,102 +346,68 @@ export default function TopUp({
                         (Number(balanceSW) / 1e18).toFixed(8)
                       )}
                     </>
-                  )}
+                  )} */}
 
-                  {isConfirmingWith && <div style={{fontSize:"11px"}}>Waiting for confirmation...</div>}
+                  {isConfirmingWith &&
+                   <div style={{fontSize:"11px"}}>Waiting for confirmation...</div>
+                   }
                   {/* {error && (
           toast.error((error as BaseError).shortMessage || error.message)
         )} */}
-                </button>
+                </div>
+                </div>
+                <div className={style.prvkey}>
+                  <p className={style.pqad}>PRIVATE KEY</p>
+                  <div style={{display:"flex",gap:"4px"}}>
+                  <input
+                    type={showPassword === true ? "text" : "password"}
+                    value={privateKey}
+                    // onChange={handleChangePrivate}
+                    style={{width:showPassword === false?'140px':'auto'}}
+                    className={style.inputConPassWord}
+                    // onMouseEnter={() => {
+                    //   setShowPassword(true);
+                    // }}
+                    // onMouseLeave={() => {
+                    //   setShowPassword(false);
+                    // }}
+                  /> 
+                  <img src={showPassword === true?openEye:turnOffEye} alt="" onClick={()=>{setShowPassword(!showPassword)}}/>
+                  <img src={UnioncopyBtn} alt="" className={style.imginputConPassWord}  onClick={() => {
+                    handleTogglePassword(privateKey);
+                  }}/>
+                  
+                  </div>
+                  <p className={style.prilf}>Save the private key as soon as possible</p>
+                  {/* <span
+                    className={style.copyBtn}
+                    onClick={() => {
+                      handleTogglePassword(privateKey);
+                    }}
+                  >
+                    COPY
+                  </span> */}
+                </div>
+               
+              {/* </div> */}
+         
+              {/* <div className={style.partThree}>
+                <span>Session Wallet Balance</span>
+              </div> */}
               </div>
+             
+            
+           
               <div className={style.partFour}>
                 <p>
                   Every onchain interaction uses gas. Top up your gasbalance
                   with funds from any chain.
                 </p>
-                <div style={{ display: "flex" }}>
-                  <span className={style.svgIcon}>
-                    <svg
-                      style={{
-                        backgroundColor: "#f34242",
-                        borderRadius: "50%",
-                      }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="40"
-                      height="40"
-                      viewBox="0 0 52 52"
-                      shape-rendering="crispEdges"
-                      fill="white"
-                    >
-                      <path
-                        opacity="0.75"
-                        d="M13 19.5L13 13L19.5 13L19.5 19.5L13 19.5Z"
-                      ></path>
-                      <path d="M13 26L13 19.5L19.5 19.5L19.5 26L13 26Z"></path>
-                      <path d="M13 32.5L13 26L19.5 26L19.5 32.5L13 32.5Z"></path>
-                      <path
-                        opacity="0.75"
-                        d="M13 39L13 32.5L19.5 32.5L19.5 39L13 39Z"
-                      ></path>
-                      <path
-                        opacity="0.75"
-                        d="M32.5 19.5L32.5 13L39 13L39 19.5L32.5 19.5Z"
-                      ></path>
-                      <path d="M32.5 26L32.5 19.5L39 19.5L39 26L32.5 26Z"></path>
-                      <path d="M32.5 32.5L32.5 26L39 26L39 32.5L32.5 32.5Z"></path>
-                      <path
-                        opacity="0.75"
-                        d="M32.5 39L32.5 32.5L39 32.5L39 39L32.5 39Z"
-                      ></path>
-                      <path d="M26 39H19.5V32.5H26V39Z"></path>
-                      <path d="M32.5 39H26V32.5H32.5V39Z"></path>
-                      <path d="M26 19.5H19.5V13H26V19.5Z"></path>
-                      <path d="M32.5 19.5H26V13H32.5V19.5Z"></path>
-                      <path opacity="0.25" d="M19.5 0V6.5H26V0H19.5Z"></path>
-                      <path opacity="0.75" d="M26 45.5V39H32.5V45.5H26Z"></path>
-                      <path
-                        opacity="0.75"
-                        d="M45.5 26L39 26L39 32.5L45.5 32.5L45.5 26Z"
-                      ></path>
-                      <path
-                        opacity="0.75"
-                        d="M6.5 26L13 26L13 32.5L6.5 32.5L6.5 26Z"
-                      ></path>
-                      <path opacity="0.75" d="M26 6.5V13H32.5V6.5H26Z"></path>
-                      <path opacity="0.25" d="M26 0V6.5H32.5V0H26Z"></path>
-                      <path opacity="0.25" d="M19.5 52V45.5H26V52H19.5Z"></path>
-                      <path opacity="0.25" d="M26 52V45.5H32.5V52H26Z"></path>
-                      <path
-                        opacity="0.25"
-                        d="M52 19.5L45.5 19.5L45.5 26L52 26L52 19.5Z"
-                      ></path>
-                      <path
-                        opacity="0.25"
-                        d="M52 26L45.5 26L45.5 32.5L52 32.5L52 26Z"
-                      ></path>
-                      <path
-                        opacity="0.25"
-                        d="M0 26L6.5 26L6.5 32.5L2.84124e-07 32.5L0 26Z"
-                      ></path>
-                      <path
-                        opacity="0.25"
-                        d="M0 19.5L6.5 19.5L6.5 26L2.84124e-07 26L0 19.5Z"
-                      ></path>
-                      <path opacity="0.75" d="M19.5 6.5V13H26V6.5H19.5Z"></path>
-                      <path
-                        opacity="0.75"
-                        d="M19.5 45.5V39H26V45.5H19.5Z"
-                      ></path>
-                      <path
-                        opacity="0.75"
-                        d="M45.5 19.5L39 19.5L39 26L45.5 26L45.5 19.5Z"
-                      ></path>
-                      <path
-                        opacity="0.75"
-                        d="M6.5 19.5L13 19.5L13 26L6.5 26L6.5 19.5Z"
-                      ></path>
-                    </svg>
-                  </span>
+                <div className={style.partImo}>
+                <div style={{ display: "flex" ,gap:"8px",verticalAlign:"middle",height:"34px",width:"400px"}}>
+                  {/* <span className={style.svgIcon}> */}
+                  <img src={FrameIcon} alt=""  className={style.svgIcon}/>
+                  
                   <input
                     name="value"
                     placeholder="Amount (ETH)"
@@ -444,9 +418,7 @@ export default function TopUp({
                     required
                   />
                 </div>
-              </div>
-
-              <div className={style.partFive}>
+                <div className={style.partFive}>
                 <span>Available to deposit</span>
               
                 {balanceResultEOA.data?.value ? ` (${(Number(balanceResultEOA.data?.value) / 1e18).toFixed(6)})` : " 0ETH"}
@@ -455,6 +427,11 @@ export default function TopUp({
                 <span>Time to deposit</span>
                 <span>A few seconds</span>
               </div>
+                </div>
+            
+              </div>
+
+            
               <button
                 onClick={transferPay}
                 className={
@@ -478,7 +455,8 @@ export default function TopUp({
               
 
               {/* {transferPayType===true&&isConnected && <SendTransaction palyerAddress={palyerAddress}/>} */}
-            </div>
+            {/* </div> */}
+            </>
           );
         }}
       </ConnectButton.Custom>

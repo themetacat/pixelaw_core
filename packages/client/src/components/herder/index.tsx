@@ -11,6 +11,8 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart from "../rightPart";
 import { useMUD } from "../../MUDContext";
+import BoxPrompt from "../BoxPrompt";
+import PopStar from "../popStar";
 import { convertToString, coorToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
 import TopUpContent from "../topUp";
@@ -82,6 +84,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
+  const [boxPrompt, setBoxPrompt] = useState(false);
   const [topUpType, setTopUpType] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
   const [translateX, setTranslateX] = useState(0);
@@ -102,6 +105,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [panningFromChild, setPanningFromChild] = useState(false);
+  const [popStar, setPopStar] = useState(false);
   const [pageClick, setPageClick] = useState(false);
   const [GRID_SIZE, setGRID_SIZE] = useState(32);
   const entities = useEntityQuery([Has(Pixel)]);
@@ -123,7 +127,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   );
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
-
+  const panningType = window.localStorage.getItem("panning");
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
 
   const addressData =
@@ -271,7 +275,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           const entity = getEntityAtCoordinates(i, j);
           // if (i === 5 && j === 5) {
           //   const img = new Image();
-          //   img.src = 'https://poster-phi.vercel.app/metaverse_learn/283.png'; 
+          //   img.src = 'https://poster-phi.vercel.app/metaverse_learn/283.png';
           //     ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
           // }
           if (entity) {
@@ -291,7 +295,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               } else {
                 pix_text = entity.value.text;
               }
-            
+
               const textX = currentX + GRID_SIZE / 2;
               const textY = currentY + GRID_SIZE / 2;
               // ctx.fillText(pix_text, currentX + 2, currentY + 20);
@@ -795,6 +799,11 @@ export default function Header({ hoveredData, handleData }: Props) {
       disconnect();
     }
   };
+  useEffect(() => {
+    if (appName === "BASE/PopStarSystem") {
+      setPopStar(true);
+    }
+  }, [appName]);
 
   const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
   const addressContent = [
@@ -925,54 +934,50 @@ export default function Header({ hoveredData, handleData }: Props) {
                     }
 
                     return (
-                      <div style={{ display: "flex" }}>
+                      <div
+                        style={{
+                          // display: 'flex',
+                          gap: 12,
+                        }}
+                        onMouseEnter={() => {
+                          setAddressModel(true);
+                        }}
+                        onMouseLeave={() => {
+                          setAddressModel(false);
+                        }}
+                      >
+                        {" "}
                         {chain.name}&nbsp;&nbsp;
-                        <div
+                        <button
                           style={{
-                            // display: 'flex',
-                            gap: 12,
+                            border: "none",
+                            background: "none",
+                            color: "#fff",
+                            fontFamily: "Silkscreen,cursive",
+                            height: "55px",
                           }}
-                          onMouseEnter={() => {
-                            setAddressModel(true);
-                          }}
-                          onMouseLeave={() => {
-                            setAddressModel(false);
-                          }}
+                          // onClick={openAccountModal}
+                          type="button"
                         >
-                          <button
-                            style={{
-                              border: "none",
-                              background: "none",
-                              color: "#fff",
-                              fontFamily: "Silkscreen,cursive",
-                              height: "50px",
-                            }}
-                            // onClick={openAccountModal}
-                            type="button"
-                          >
-                            {account.displayName}
-                            {account.displayBalance
-                              ? ` (${account.displayBalance})`
-                              : ""}
-                          </button>
-                          {addressModel && (
-                            <div>
-                              {addressContent.length > 0 &&
-                                addressContent.map((item, index) => (
-                                  <div
-                                    style={{
-                                      color: "#fff",
-                                      backgroundColor: "hsl(290, 77%, 14%,1)",
-                                    }}
-                                    key={index}
-                                    onClick={() => handleAddClick(item.value)}
-                                  >
-                                    {item.name}
-                                  </div>
-                                ))}
-                            </div>
-                          )}
-                        </div>
+                          {account.displayName}
+                          {account.displayBalance
+                            ? ` (${account.displayBalance})`
+                            : ""}
+                        </button>
+                        {addressModel && (
+                          <div className={style.downBox}>
+                            {addressContent.length > 0 &&
+                              addressContent.map((item, index) => (
+                                <div
+                                  className={style.downBoxItem}
+                                  key={index}
+                                  onClick={() => handleAddClick(item.value)}
+                                >
+                                  {item.name}
+                                </div>
+                              ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })()}
@@ -1105,7 +1110,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       ) : (
         ""
       )}
-      {topUpType === true ? (
+      {topUpType ? (
         <div
           className={style.overlay}
           onClick={(event) => {
@@ -1123,6 +1128,24 @@ export default function Header({ hoveredData, handleData }: Props) {
             palyerAddress={palyerAddress}
           />
         </div>
+      ) : null}
+      {popStar === true ? (
+        <div
+          className={
+            panningType !== "false"
+              ? style.overlayPopStar
+              : style.overlayPopStarFl
+          }
+          onClick={() => {
+            setPopStar(false);
+            setBoxPrompt(true);
+          }}
+        >
+          <PopStar setPopStar={setPopStar} />
+        </div>
+      ) : null}
+      {boxPrompt === true && appName === "BASE/PopStarSystem" ? (
+        <BoxPrompt />
       ) : null}
     </>
   );
