@@ -11,7 +11,7 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart, { addressToEntityID } from "../rightPart";
 import { useMUD } from "../../MUDContext";
-import BoxPrompt from "../boxPrompt";
+import BoxPrompt from "../boxPrompt/index";
 import PopStar from "../popStar";
 import { convertToString, coorToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
@@ -216,6 +216,106 @@ export default function Header({ hoveredData, handleData }: Props) {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
 
+  const grq = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (plokkk === true) {
+      return;
+    }
+    seta(false);
+    setbgra(false);
+    setqw(false);
+    if (bdadgx.current) {
+      clearTimeout(bdadgx.current);
+      bdadgx.current = null;
+    }
+    const a = get_function_param(action);
+
+    a.then((x) => {
+      const ffty = Object.keys(x).length === 0;
+
+      if (aaas) {
+        seta(false);
+        setbgra(false);
+      } else {
+        const canvas = cnb.current as any;
+        const ki = canvas.getBoundingClientRect();
+        const nn = event.clientX - ki.left;
+        const nm = event.clientY - ki.top;
+        const xx = Math.floor(nn / ngd);
+        const xxx = Math.floor(nm / ngd);
+        setzxc({ x: xx, y: xxx });
+        const xxc = { x: xx, y: xxx };
+        sethyu(xxc);
+        if (ffty) {
+          if (asfgb && avb) {
+            ghy.current = avb;
+            setbgra(false);
+            if (j === "BASE/TCMPopStarSystem") {
+              cghe(avb, palyerAddress, asfgb, action, null);
+            } else {
+              v(avb, palyerAddress, asfgb, action, null);
+            }
+
+            abn.current = nn;
+            abb.current = nm;
+            handleData(hyu as any);
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              const { x, y } = avb;
+              ctx.fillStyle = asfgb;
+              ctx.fillRect(x * ngd - ss.x, y * ngd - ss.y, ngd, ngd);
+              if (j === "BASE/TCMPopStarSystem") {
+                ddr(ctx, avb, true);
+              }
+              ddr(ctx, avb, false);
+            }
+          }
+        } else {
+          setqw(true);
+        }
+
+        setbgra(false);
+        setvdf(true);
+
+        setaz(0);
+        setaxx(0);
+      }
+    });
+  };
+
+  let timeout: NodeJS.Timeout;
+  const [bgra, setbgra] = useState(false);
+  const [ttc, settc] = useState(false);
+  const bdadgx = useRef<NodeJS.Timeout | null>(null);
+  const [aaas, seta] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [lastDragEndX, setLastDragEndX] = useState(0);
+  const [fingerNum, setFingerNum] = useState(0);
+  const asnm = nmh(avb.x, avb.y);
+  const b = getComponentValue(Pixel, asnm) as any;
+  const action = b && b.action ? b.action : "interact";
+  const c = 150;
+  const d = (event: React.MouseEvent<HTMLDivElement>) => {
+    setFingerNum(event.buttons);
+    if (plokkk === true) {
+      return;
+    }
+    setbgra(true);
+
+    setaz(event.clientX);
+    setaxx(event.clientY);
+    get_function_param(action);
+    bdadgx.current = setTimeout(() => {
+      seta(true);
+    }, c);
+  };
+
+  const e = () => {
+    setplokkk(true);
+  };
+  const f = () => {
+    setplokkk(false);
+  };
+
   const fft = () => {
     const gridSize = ngd;
     const checkSize = 10;
@@ -253,6 +353,68 @@ export default function Header({ hoveredData, handleData }: Props) {
     console.log(px, 0);
   };
 
+  const v = (
+    avb: any,
+    palyerAddress: any,
+    asfgb: any,
+    actionData: any,
+    other_params: any
+  ) => {
+    setll(true);
+
+    const kii = interact(avb, palyerAddress, asfgb, actionData, other_params);
+
+    kii.then((kiik: any) => {
+      if (kiik[1]) {
+        kiik[1].then((a: any) => {
+          if (a.status === "success") {
+            setll(false);
+            mmn();
+          } else {
+            handleError();
+            mmn();
+          }
+        });
+      } else {
+        handleError();
+      }
+    });
+  };
+  const cghe = (
+    avb: any,
+    palyerAddress: any,
+    asfgb: any,
+    actionData: any,
+    other_params: any
+  ) => {
+    setll(true);
+
+    const kii = interactTCM(
+      avb,
+      palyerAddress,
+      asfgb,
+      actionData,
+      other_params
+    );
+
+    kii.then((kiik: any) => {
+      if (kiik[1]) {
+        kiik[1].then((a: any) => {
+          if (a.status === "success") {
+            setass(true);
+            setll(false);
+            settc(true);
+            mmn();
+          } else {
+            handleError();
+            mmn();
+          }
+        });
+      } else {
+        handleError();
+      }
+    });
+  };
   const ddr = useCallback(
     (
       ctx: CanvasRenderingContext2D,
@@ -340,172 +502,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     [ngd, avb, nnn, bfs, cfrt, bff, asfgb, ss]
   );
 
-  let timeout: NodeJS.Timeout;
-  const [bgra, setbgra] = useState(false);
-  const [ttc, settc] = useState(false);
-  const bdadgx = useRef<NodeJS.Timeout | null>(null);
-  const [aaas, seta] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [lastDragEndX, setLastDragEndX] = useState(0);
-  const [fingerNum, setFingerNum] = useState(0);
-  const asnm = nmh(avb.x, avb.y);
-  const b = getComponentValue(Pixel, asnm) as any;
-  const action = b && b.action ? b.action : "interact";
-  const c = 150;
-  const d = (event: React.MouseEvent<HTMLDivElement>) => {
-    setFingerNum(event.buttons);
-    if (plokkk === true) {
-      return;
-    }
-    setbgra(true);
-
-    setaz(event.clientX);
-    setaxx(event.clientY);
-    get_function_param(action);
-    bdadgx.current = setTimeout(() => {
-      seta(true);
-    }, c);
-  };
-
-  const e = () => {
-    setplokkk(true);
-  };
-  const f = () => {
-    setplokkk(false);
-  };
-
-  const grq = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (plokkk === true) {
-      return;
-    }
-    seta(false);
-    setbgra(false);
-    setqw(false);
-    if (bdadgx.current) {
-      clearTimeout(bdadgx.current);
-      bdadgx.current = null;
-    }
-    const a = get_function_param(action);
-
-    a.then((x) => {
-      const ffty = Object.keys(x).length === 0;
-
-      if (aaas) {
-        seta(false);
-        setbgra(false);
-      } else {
-        const canvas = cnb.current as any;
-        const ki = canvas.getBoundingClientRect();
-        const nn = event.clientX - ki.left;
-        const nm = event.clientY - ki.top;
-        const xx = Math.floor(nn / ngd);
-        const xxx = Math.floor(nm / ngd);
-        setzxc({ x: xx, y: xxx });
-        const xxc = { x: xx, y: xxx };
-        sethyu(xxc);
-        if (ffty) {
-          if (asfgb && avb) {
-            ghy.current = avb;
-            setbgra(false);
-            if (j === "BASE/TCMPopStarSystem") {
-
-              cghe(avb, palyerAddress, asfgb, action, null);
-            } else {
-
-              v(avb, palyerAddress, asfgb, action, null);
-            }
-
-            abn.current = nn;
-            abb.current = nm;
-            handleData(hyu as any);
-            const ctx = canvas.getContext("2d");
-            if (ctx) {
-              const { x, y } = avb;
-              ctx.fillStyle = asfgb;
-              ctx.fillRect(x * ngd - ss.x, y * ngd - ss.y, ngd, ngd);
-              if (j === "BASE/TCMPopStarSystem") {
-                ddr(ctx, avb, true);
-              }
-              ddr(ctx, avb, false);
-            }
-          }
-        } else {
-          setqw(true);
-        }
-
-        setbgra(false);
-        setvdf(true);
-
-        setaz(0);
-        setaxx(0);
-      }
-    });
-  };
-
-  const v = (
-    avb: any,
-    palyerAddress: any,
-    asfgb: any,
-    actionData: any,
-    other_params: any
-  ) => {
-    setll(true);
-
-    const kii = interact(avb, palyerAddress, asfgb, actionData, other_params);
-
-    kii.then((kiik: any) => {
-      if (kiik[1]) {
-        kiik[1].then((a: any) => {
-          if (a.status === "success") {
-            setll(false);
-            mmn();
-          } else {
-            handleError();
-            mmn();
-          }
-        });
-      } else {
-        handleError();
-      }
-    });
-  };
-  const cghe = (
-    avb: any,
-    palyerAddress: any,
-    asfgb: any,
-    actionData: any,
-    other_params: any
-  ) => {
-    setll(true);
-    console.log(avb);
-
-    const kii = interactTCM(
-      avb,
-      palyerAddress,
-      asfgb,
-      actionData,
-      other_params
-    );
-
-    kii.then((kiik: any) => {
-      if (kiik[1]) {
-        kiik[1].then((a: any) => {
-          if (a.status === "success") {
-            setass(true);
-            setll(false);
-            settc(true);
-            mmn();
-          } else {
-            handleError();
-            mmn();
-          }
-        });
-      } else {
-        handleError();
-      }
-    });
-  };
-
   const [mm, setmm] = useState(null);
 
   const bdcx = (data) => {
@@ -513,7 +509,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const playFun = () => {
-    console.log(mm);
     if (mm === undefined) {
       const emptyRegion = fft();
       setacx({ x: emptyRegion, y: 0 });

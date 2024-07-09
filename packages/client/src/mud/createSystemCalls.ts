@@ -183,7 +183,7 @@ export function createSystemCalls(
         functionName: "registerDelegation",
         args: [palyerAddress, SYSTEMBOUND_DELEGATION, callData],
       });
-      console.log(hash, palyerAddress);
+      // console.log(hash, palyerAddress);
     } catch (error) {
       console.error("Failed to setup network:", error.message);
     }
@@ -385,7 +385,7 @@ console.log(coordinates);
       // }
       allArgs = other_params;
     }
-console.log(allArgs,333324584558,action);
+// console.log(allArgs,333324584558,action);
 
     let tx, hashValpublic;
     // const eoa = await getEoaContractFun();
@@ -418,7 +418,7 @@ console.log(allArgs,333324584558,action);
   };
 
   const payFunction = async (selectedName: any, numberData: any) => {
-    console.log("到了没", selectedName, numberData);
+    // console.log("到了没", selectedName, numberData);
     const system_name = window.localStorage.getItem("system_name") as string;
     const namespace = window.localStorage.getItem("namespace") as string;
     const [account] = await window.ethereum!.request({
@@ -445,7 +445,7 @@ console.log(allArgs,333324584558,action);
         args: [ resourceToHex({ "type": "system", "namespace": namespace, "name": system_name }), encodeData],
         value:parseEther(ethInPrice.toString())
       });
-      console.log(hash, palyerAddress);
+      // console.log(hash, palyerAddress);
     } catch (error) {
       console.error("Failed to setup network:", error.message);
     }
@@ -468,7 +468,7 @@ console.log(allArgs,333324584558,action);
       functionName: "quoteOutput",
       args: [[selectedName], [numberData * 10 ** 18]],
     });
-    console.log(encodequoteOutputData);
+    // console.log(encodequoteOutputData);
 
     try {
       const quoteOutput = await worldContract.read.call([
@@ -481,7 +481,7 @@ console.log(allArgs,333324584558,action);
       ]);
       console.log(quoteOutput);
       const ethInPrice = Number(quoteOutput) / 10 ** 18;
-      console.log(ethInPrice);
+      // console.log(ethInPrice);
       return ethInPrice;
     } catch (error) {
       console.log(error.message);

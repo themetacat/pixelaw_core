@@ -177,7 +177,6 @@ if(c === undefined){
       if (palyerAddress !== undefined) {
         bdcx(b);
         if(b){
-console.log(b);
 
           setge(b?.tokenAddressArr);
           if (b) {
@@ -239,13 +238,14 @@ console.log(b);
     return result;
   }
 
-  const md = ggt(
-    ge,
-    imageIconData,
-    bbd
-  );
+    const md = ggt(
+      ge,
+      imageIconData,
+      bbd
+    );
 
-console.log(md);
+ 
+
 
   useEffect(() => {
     if(ttc === true&&gs === false){
