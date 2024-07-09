@@ -11,7 +11,7 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart, { addressToEntityID } from "../rightPart";
 import { useMUD } from "../../MUDContext";
-import BoxPrompt from "../../components/boxPrompt";
+import BoxPrompt from "../BoxPrompt";
 import PopStar from "../popStar";
 import { convertToString, coorToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
