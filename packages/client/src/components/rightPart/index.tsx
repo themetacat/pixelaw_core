@@ -24,17 +24,17 @@ import { abi_json, update_app_value } from "../../mud/createSystemCalls";
 export const ManifestContext = createContext<string>("");
 
 interface Props {
-  coordinates: { x: number; y: number };
-  entityData: any;
-  setPanningState: any;
-  loading: any;
-  onUpdateAbiJson: any;
-  onHandleExe: any;
-  handlePageClickIs: any;
-  onUpdateAbiCommonJson: any;
-  onHandleLoading: any;
-  onHandleLoadingFun: any;
-  setPageClick: any;
+  avb: { x: number; y: number };
+  mkl: any;
+  pp: any;
+  ll: any;
+  p: any;
+  ppp: any;
+  f: any;
+  bnfa: any;
+  mmn: any;
+  l: any;
+  setplokkk: any;
 }
 export function convertToString(bytes32Value: string) {
   const byteArray = new Uint8Array(
@@ -49,18 +49,20 @@ export function coorToEntityID(x: number, y: number) {
 }
 export const addressToEntityID = (address: Hex) =>
   encodeEntity({ address: "address" }, { address });
+
+
 export default function RightPart({
-  coordinates,
-  loading,
-  onHandleExe,
-  entityData,
-  onUpdateAbiJson,
-  setPanningState,
-  handlePageClickIs,
-  onHandleLoading,
-  onHandleLoadingFun,
-  setPageClick,
-  onUpdateAbiCommonJson,
+  avb,
+  ll,
+  ppp,
+  mkl,
+  p,
+  pp,
+  f,
+  mmn,
+  l,
+  setplokkk,
+  bnfa,
 }: Props) {
   const {
     components: { App, Pixel, AppName },
@@ -69,11 +71,7 @@ export default function RightPart({
   const entities_app = useEntityQuery([Has(App)]);
   const [panning, setPanning] = useState(true);
   const loacl_app_name = window.localStorage.getItem("app_name");
-
-  // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
-
-  // const [pageClick, setPageClick] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
@@ -98,7 +96,6 @@ export default function RightPart({
           `${parts[1].replace(/\.json/g, "")}` +
           "Common.json") as any;
       } else {
-        // Common abi？
         worldAbiUrl = manifest;
       }
     }
@@ -108,29 +105,29 @@ export default function RightPart({
       systemData = abi_json[app_name];
     } else {
       try {
-        onHandleLoadingFun();
-        setPageClick();
-        const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
+        l();
+        setplokkk();
+        const response = await fetch(worldAbiUrl); 
         systemData = await response.json();
         if (systemData) {
-          onHandleLoading();
-          handlePageClickIs();
+          mmn();
+          f();
         }
 
         update_abi(systemData);
       } catch (error) {
-        onHandleLoading();
+        mmn();
         console.log("error:", error);
       }
     }
 
-    onUpdateAbiJson(systemData);
+    p(systemData);
 
     if (app_name + "Common" in abi_json) {
       common_abi = abi_json[app_name + "Common"];
     } else {
       try {
-        const response = await fetch(worldCommonAbiUrl); // 获取 ABI JSON 文件
+        const response = await fetch(worldCommonAbiUrl); 
         common_abi = await response.json();
         update_abi(common_abi, true);
       } catch (error) {
@@ -138,7 +135,7 @@ export default function RightPart({
       }
     }
 
-    onUpdateAbiCommonJson(common_abi);
+    bnfa(common_abi);
   };
   useEffect(() => {
     updateAbiUrl(localStorage.getItem("manifest"));
@@ -155,7 +152,7 @@ export default function RightPart({
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
+  const coor_entity = coorToEntityID(avb.x, avb.y);
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   let app_name, truncatedOwner;
 
@@ -192,7 +189,7 @@ export default function RightPart({
         }
         window.localStorage.setItem("panning", !panning);
         setPanning(!panning);
-        setPanningState(!panning);
+        pp(!panning);
       }}
     >
       <div style={{ display: "flex", position: "relative" }}>
@@ -221,7 +218,7 @@ export default function RightPart({
               <div
                 key={`${index}`}
                 onClick={(e) => {
-                  if (loading === true) {
+                  if (ll === true) {
                     return;
                   }
                   handleIconClick(index, value);
@@ -230,7 +227,7 @@ export default function RightPart({
                     "entityVal",
                     decodeEntity({ app_addr: "address" }, entitya).app_addr
                   );
-                  onHandleExe();
+                  ppp();
                   e.stopPropagation();
                 }}
                 className={style.btnGame}
@@ -243,28 +240,25 @@ export default function RightPart({
                   className={
                     selectedIcon === index ||
                     loacl_app_name
-                      ?.toLowerCase()
-                      .includes(
+                      ?.toLowerCase()===
                         capitalizeFirstLetter(
                           (value.app_name as string) !== undefined
                             ? (value.app_name as string)
                             : (value.namespace as string)
                         ).toLowerCase()
-                      )
                       ? style.imgCon1
                       : style.imgCon
                   }
                 >
-                  {loading === true &&
+                  {ll === true &&
                   loacl_app_name
-                    ?.toLowerCase()
-                    .includes(
+                    ?.toLowerCase()===
                       capitalizeFirstLetter(
                         (value.app_name as string) !== undefined
                           ? (value.app_name as string)
                           : (value.namespace as string)
                       ).toLowerCase()
-                    ) ? (
+                     ? (
                     <img
                       src={loadingImg}
                       alt=""
@@ -276,7 +270,7 @@ export default function RightPart({
                         width: "48px",
                         display: "inline-block",
                         marginRight: "15px",
-                        color: "white", // 将图标颜色设置为白色
+                        color: "white",
                         fontFamily: "NotoEmoji, sans-serif",
                       }}
                     >
@@ -292,14 +286,12 @@ export default function RightPart({
                   <div
                     className={
                       loacl_app_name
-                        ?.toLowerCase()
-                        .includes(
+                        ?.toLowerCase()===
                           capitalizeFirstLetter(
                             (value.app_name as string) !== undefined
                               ? (value.app_name as string)
                               : (value.namespace as string)
                           ).toLowerCase()
-                        )
                         ? style.appName1
                         : style.appName
                     }
@@ -312,13 +304,13 @@ export default function RightPart({
           })}
           {panning === false ? (
             <div style={{ position: "fixed", bottom: "12.4px" }}>
-              <span className={style.coordinates} style={{ color: "#fff" }}>
+              <span className={style.avb} style={{ color: "#fff" }}>
                 <span className={style.a}>x:</span>
-                <span className={style.fontCon}>{coordinates.x}</span>
+                <span className={style.fontCon}>{avb.x}</span>
               </span>
-              <span className={style.coordinates} style={{ color: "#fff" }}>
+              <span className={style.avb} style={{ color: "#fff" }}>
                 <span className={style.a}>y:</span>
-                <span className={style.fontCon}>{coordinates.y}</span>
+                <span className={style.fontCon}>{avb.y}</span>
               </span>
             </div>
           ) : (
@@ -326,16 +318,16 @@ export default function RightPart({
               <p>
                 <span className={style.a}>Coordinates: </span>
                 <span className={style.fontCon}>
-                  {coordinates.x},{coordinates.y}
+                  {avb.x},{avb.y}
                 </span>
               </p>
-              <p key={`Type-${coordinates.x}-${coordinates.y}`}>
+              <p key={`Type-${avb.x}-${avb.y}`}>
                 <span className={style.a}>Type: </span>
                 <span className={style.fontCon}>
                   {app_name ? app_name : "null"}
                 </span>
               </p>
-              <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
+              <p key={`Owner-${avb.x}-${avb.y}`}>
                 <span className={style.a}>Owner: </span>
                 <span className={style.fontCon}>
                   {" "}

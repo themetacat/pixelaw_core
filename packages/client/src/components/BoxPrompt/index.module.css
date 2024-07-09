@@ -10,7 +10,8 @@
   display: flex;
   gap: 24px;
   background-color: #170723;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
 }
 .firstPart {
@@ -21,7 +22,8 @@
   padding: 12px 16px 12px 16px;
   display: grid;
   gap: 4px;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   color: rgba(255, 255, 255, 1);
 }
@@ -49,7 +51,8 @@
   padding: 12px 16px 12px 16px;
   display: grid;
   gap: 4px;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   color: rgba(255, 255, 255, 1);
 }
@@ -77,7 +80,8 @@
   padding: 12px 16px 12px 16px;
   display: grid;
   gap: 4px;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   color: rgba(255, 255, 255, 1);
 }
@@ -169,7 +173,8 @@
   height: 241px;
   padding: 40px;
   background-color: #2d0c3b;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   display: grid;
   gap: 24px;
@@ -185,12 +190,20 @@
   height: 97px;
   padding: 40px;
   background-color: #2d0c3b;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   display: grid;
   gap: 24px;
   border: 1px solid #0b0113; /* 添加正确的边框属性 */
   text-transform: uppercase;
+  .turnOff {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 430px;
+    top: 20px;
+  }
   p {
     text-transform: uppercase;
     font-family: Silkscreen;
@@ -230,7 +243,8 @@
   height: 147px;
   padding: 40px;
   background-color: #2d0c3b;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   display: grid;
   gap: 24px;
@@ -246,6 +260,13 @@
     color: #ffffff;
     text-align: center;
     margin: 0px;
+  }
+  .turnOff {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    left: 440px;
+    top: 40px;
   }
   &:nth-last-child(1) {
     text-transform: uppercase;
@@ -290,7 +311,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: calc(100% - 245px);
+  width: calc(100% - 300px);
   z-index: 10000000;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6); /* 半透明黑色 */
@@ -351,7 +372,8 @@ p {
   padding: 40px;
   background-color: #2d0c3b;
   position: relative;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   .turnOff {
     width: 16px;
@@ -520,7 +542,8 @@ p {
   background-color: #2d0c3b;
   gap: 24px;
   border: 1px solid #0b0113;
-  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+  box-shadow:
+    inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
     0 0 12px 0 rgba(231, 189, 255, 0.05);
   position: relative;
   img {

@@ -52,12 +52,12 @@ const core_foundry = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://api.metacat.world/rpc'],
-      webSocket: ['wss://api.metacat.world/rpc'],
+      http: ['http://api.metacat.world/rpc'],
+      webSocket: ['ws://api.metacat.world/rpc'],
     },
     public: {
-      http: ['https://api.metacat.world/rpc'],
-      webSocket: ['wss://api.metacat.world/rpc'],
+      http: ['http://api.metacat.world/rpc'],
+      webSocket: ['ws://api.metacat.world/rpc'],
     },
   },
 })

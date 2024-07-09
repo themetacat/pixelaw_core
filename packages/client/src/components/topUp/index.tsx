@@ -20,13 +20,13 @@ import {
 } from "wagmi";
 
 interface Props {
-  setTopUpType: any;
+  setaq: any;
   palyerAddress: any;
   mainContent: any;
 }
 
 export default function TopUp({
-  setTopUpType,
+  setaq,
   palyerAddress,
   mainContent,
 }: Props) {
@@ -167,7 +167,7 @@ export default function TopUp({
           src={trunOff}
           alt=""
           onClick={() => {
-            setTopUpType(false);
+            setaq(false);
           }}
         />
       </div>

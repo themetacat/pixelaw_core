@@ -11,29 +11,29 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import toast, { Toaster } from "react-hot-toast";
 interface Props {
-  onHandleExe: any;
-  addressData: any;
-  selectedColor: any;
-  onHandleLoading: any;
+  ppp: any;
+  bgfd: any;
+  asfgb: any;
+  mmn: any;
   enumValue: any;
   action: any;
-  convertedParamsData: any;
-  onHandleLoadingFun: any;
-  paramInputs: any;
-  interactHandle: any;
-  coordinates: { x: number; y: number };
+  vbs: any;
+  l: any;
+  afgd: any;
+  v: any;
+  avb: { x: number; y: number };
 }
 export default function PopUpBox({
-  addressData,
-  selectedColor,
-  onHandleLoading,
-  interactHandle,
-  onHandleExe,
-  convertedParamsData,
+  bgfd,
+  asfgb,
+  mmn,
+  v,
+  ppp,
+  vbs,
   action,
-  coordinates,
-  paramInputs,
-  onHandleLoadingFun,
+  z,
+  afgd,
+  l,
   enumValue,
 }: Props) {
   const {
@@ -72,32 +72,7 @@ export default function PopUpBox({
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
 
-  const handleKeyDown = (e: any) => {
-    // enumValue.map((item: any, index: any) => {
-    //   if (e.key.includes(item)) {
-    //     switch (e.key) {
-    //       case "ArrowLeft":
-    //         // onHandleLeft();
-    //         onFunction(index + 1, "Left", inputs);
-    //         break;
-    //       case "ArrowRight":
-    //         onFunction(index + 1, "Right", inputs);
-    //         // onHandleRight();
-    //         break;
-    //       case "ArrowUp":
-    //         onFunction(index + 1, "Up", inputs);
-    //         // onHandleUp();
-    //         break;
-    //       case "ArrowDown":
-    //         onFunction(index + 1, "Down", inputs);
-    //         // onHandleDown();
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }
-    // });
-  };
+ 
   const [buttonInfoArray, setButtonInfoArray] = React.useState<
     { key: any; value: any }[]
   >([]);
@@ -108,8 +83,8 @@ export default function PopUpBox({
     renderedInputs: any,
     InputsData: any
   ) => {
-    const buttonInfo = { key: numData, value: item }; // 保存用户选择的按钮信息
-    onHandleLoadingFun();
+    const buttonInfo = { key: numData, value: item }; 
+    l();
 
     const keyArray = [buttonInfo.key];
 
@@ -127,38 +102,35 @@ export default function PopUpBox({
     });
 
     const args = [
-      coordinates,
+      avb,
       palyerAddress,
-      selectedColor,
+      asfgb,
       action,
       buttonInfo.key,
-    ]; // 使用buttonInfo.key作为参数之一
+    ];
 
     if (
       (renderedInputs == null && renderedInputs.length === 0) ||
       InputsData === 1
     ) {
-      interactHandle(
-        coordinates,
+      v(
+        avb,
         palyerAddress,
-        selectedColor,
+        asfgb,
         action,
         keyArray
       );
-      onHandleExe();
+      ppp();
     }
   };
 
-  // let enumItemsCount = 0; // 初始化为 0
   const renderInputsAndSpecialContent = (data: any) => {
     const renderedInputs: JSX.Element[] = [];
-    // let specialContent: JSX.Element | null = null;
     const specialContent: JSX.Element[] = [];
-    let hasRenderedSpecialContent = false; // 添加状态来跟踪是否已经渲染过 specialContent
+    let hasRenderedSpecialContent = false; 
     const numGroups = Object.keys(data).length;
     setInputsData(numGroups);
-    // 生成一个0到1之间的随机数
-    const randomNumber = Math.random();
+    const r = Math.random();
     let formDataContentArr = [];
     let formDataContentObj = {};
     let formDataContent = {};
@@ -167,21 +139,17 @@ export default function PopUpBox({
       if (key === "type") {
         return;
       }
-      // formDataContent = {};
-
-      // 如果值不是对象，则渲染输入框
       if (
         !value.internalType.includes("struct ") &&
         !value.internalType.includes("enum ")
       ) {
         renderedInputs.push(
           <input
-            key={`${key + randomNumber.toString()}`} // 使用key值和索引的组合作为唯一标识符
+            key={`${key + r.toString()}`} 
             type={value.type === "number" ? "number" : "text"}
             className={style.inputData}
             placeholder={value.name.toUpperCase()}
-            // style={{borderRadius:"35px"}}
-            // placeholder={value}
+            
             value={formData[value.name] as any}
             onChange={(e) => {
               const inputValue = e.target.value;
@@ -261,20 +229,20 @@ export default function PopUpBox({
     let otherParams = [];
     const buttonInfo = buttonInfoRef.current;
 
-    Object.entries(convertedParamsData).forEach(([key, value], index) => {
+    Object.entries(vbs).forEach(([key, value], index) => {
       otherParams.push(args[value.name])
     })
   
 
-    interactHandle(
-      coordinates,
+    v(
+      avb,
       palyerAddress,
-      selectedColor,
+      asfgb,
       action,
       otherParams
     );
 
-    onHandleExe();
+    ppp();
   }
 
   useEffect(() => {
@@ -295,23 +263,19 @@ export default function PopUpBox({
 
       setEntityaData(result);
     });
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+   
   }, [entities_app, Instruction, entityaData]);
 
   const fon = async () => {
     let formContentArr = [];
     const { inputs, content, formContent } =
-      renderInputsAndSpecialContent(convertedParamsData);
+      renderInputsAndSpecialContent(vbs);
 
     setFormData(formContent);
 
     setInputs(inputs);
 
-    const result = Object.values(convertedParamsData);
+    const result = Object.values(vbs);
     const hasResultContent = result.some(
       (r) => Array.isArray(r) && r.length > 0
     );
@@ -330,9 +294,9 @@ export default function PopUpBox({
 
   return (
     <div className={style.content}>
-      {convertedParamsData !== null ? (
+      {vbs !== null ? (
         <div className={style.btnBoxYo6jt}>
-          {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
+          {/* {renderInputsAndSpecialContent(vbs).inputs}*/}
        <div  className={style.inputsBox} style={{maxWidth:"460px"}}>{inputs}</div>
           {/* {resultContent.length!==0?inputs:''} */}
           <h2 className={style.title}>{instruC[app_name]}</h2>
@@ -348,7 +312,7 @@ export default function PopUpBox({
       <button
         type="button"
         className={style.closeBtn}
-        onClick={() => onHandleExe()}
+        onClick={() => ppp()}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

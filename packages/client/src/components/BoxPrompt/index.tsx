@@ -6,89 +6,327 @@ import rightIcon from "../../images/duihao.png";
 import loadingIcon from "../../images/loading (2).png";
 import trunOff from "../../images/turnOffBtn.png";
 import { imageIconData } from "../imageIconData";
+import { useComponentValue, useEntityQuery } from "@latticexyz/react";
+import { useMUD } from "../../MUDContext";
+import { abi_json } from "../../mud/createSystemCalls";
+import { resourceToHex, ContractWrite, getContract } from "@latticexyz/common";
+import RightPart, { addressToEntityID } from "../rightPart";
+import {
+  Abi,
+  encodeFunctionData,
+  parseEther,
+  decodeErrorResult,
+  toHex,
+} from "viem";
+import { convertToString, coorToEntityID } from "../rightPart/index";
 import Select from "../select";
+import {
+  encodeEntity,
+  syncToRecs,
+  decodeEntity,
+} from "@latticexyz/store-sync/recs";
+import {
+  Has,
+  getComponentValueStrict,
+  getComponentValue,
+  AnyComponentValue,
+} from "@latticexyz/recs";
+import { spanish } from "viem/accounts";
+import { flare } from "viem/chains";
 
 interface Props {
-  panningFromChild: any;
+  avb: any;
+  ttc: any;
+  playFun: any;
+  bdcx : any;
 }
 
-export default function BoxPrompt() {
-  const [timeLeft, setTimeLeft] = useState(300);
-  const [warnBox, setWarnBox] = useState(false);
+export default function BoxPrompt({ avb,ttc,playFun,bdcx  }: Props) {
+  const {
+    components: {
+      App,
+      Pixel,
+      AppName,
+      Instruction,
+      TCMPopStar,
+      TokenBalance,
+      UserDelegationControl,
+    },
+    network: { playerEntity, publicClient, palyerAddress },
+    systemCalls: { interact,forMent, payFunction,registerDelegation },
+  } = useMUD();
+  const [q, setq] = useState(120);
+  const [w, setw] = useState(false);
   const [buYBox, setBuYBox] = useState(false);
   const [loadingType, setLoadingType] = useState(false);
-  const [gameType, setGameType] = useState(false);
-  const [topUpType, setTopUpType] = useState(false);
+  const [e, sete] = useState(false);
+  const [r, setr] = useState(false);
+  const [t, sett] = useState(false);
   const [congratsType, setCongratsType] = useState(false);
-  const [numberData, setNumberData] = useState(30);
+  const [pf, setpf] = useState(false);
+  const [pss, setpss] = useState(false);
+  const [gs, setgs] = useState(false);
+  const [tst, settst] = useState(null);
+  const [fs, setfs] = useState(null);
+  const [vgf, setvgf] = useState(null);
+  const [ge, setge] = useState(null);
+  const [bbd, setbbd] = useState({});
+  const [po, setpo] = useState(1);
+  const coor_entity = coorToEntityID(avb.x, avb.y);
+  const [startTime, setStartTime] = useState(null); 
+  const pixel_value = getComponentValue(Pixel, coor_entity) as any;
+  const entities_app = useEntityQuery([Has(App)]);
 
-  // useEffect(()=>{
-  //   console.log(panningFromChild);
 
-  // },[panningFromChild])
+ 
 
-  const learnCon = [
-    {
-      label: "Insi",
-      img: "https://cdn.sanity.io/images/70kzkeor/production/b3a4586c6a25bf887f0bdd67dc22b7aaf86909a8-2000x2000.png?w=200&auto=format",
-    },
-    {
-      label: "Repo",
-      img: "https://poster-phi.vercel.app/metaverse_learn/282.png",
-    },
-    {
-      label: "Othe",
-      img: "https://poster-phi.vercel.app/metaverse_learn/283.png",
-    },
-  ];
+ 
+
+  const cv = () => {
+    if (vgf) {
+      const poo = payFunction(vgf?.key, po);
+      setLoadingType(true);
+      poo.then((result) => {
+        if (result.status === "success") {
+          setLoadingType(false);
+          setpss(true);
+        } else {
+          setLoadingType(false);
+          setpf(true);
+        }
+      })
+      .catch((error) => {
+        setLoadingType(false);
+        setpf(true);
+      });
+      setTimeout(() => {
+        setBuYBox(false);
+        setpss(false);
+        setpf(false);
+      }, 2000);
+    }
+  };
+
+  const gec = async () => {
+    const [account] = await window.ethereum!.request({
+      method: "eth_requestAccounts",
+    });
+    return account;
+  };
+
+  const addressToEntityIDTwo = (address: Hex, addressTwo: Hex) =>
+    encodeEntity(
+      { address: "address", addressTwo: "address" },
+      { address, addressTwo }
+    );
 
   const panningType = window.localStorage.getItem("panning");
 
+
+  const fdfun = async () => {
+    try {
+
+      const account = await gec();
+
+
+      const b = getComponentValue(
+        TCMPopStar,
+        addressToEntityID(account)
+      );
+      if(b){
+      const tokenBalancePromises = b.tokenAddressArr.map(
+        async (item) => {
+          try {
+            const balance = await getComponentValue(
+              TokenBalance,
+              addressToEntityIDTwo(account, item)
+            );
+            return { [item]: balance }; 
+          } catch (error) {
+            console.error(`Error fetching balance for ${item}:`, error);
+            return { [item]: undefined };
+          }
+        }
+      );
+
+   
+      const tokenBalanceResults = await Promise.all(tokenBalancePromises);
+      setbbd(tokenBalanceResults);
+     
+  }
+  const c = getComponentValue(
+    UserDelegationControl,
+    addressToEntityIDTwo(account, palyerAddress)
+  );
+if(c === undefined){
+  registerDelegation()
+}
+
+      return b;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (timeLeft > 0) {
-        setTimeLeft(timeLeft - 1);
+    const a = fdfun();
+    
+    
+    a.then((b) => {
+      if (palyerAddress !== undefined) {
+        bdcx(b);
+        if(b){
+console.log(b);
+
+          setge(b?.tokenAddressArr);
+          if (b) {
+          
+            const bb = Number(b.startTime) as any;
+            setStartTime(bb);
+  
+            const vb = Math.floor(Date.now() / 1000); 
+  
+            const elapsedTime = vb - bb;
+  
+            const updatedTimeLeft = Math.max(120 - elapsedTime, 0);
+            setq(updatedTimeLeft);
+           
+            const allZeros = b.matrixArray.every((data) => data === 0n);
+            
+            if (allZeros) {
+                setgs(true)
+                
+            } else {
+              
+              setgs(false)
+              if(b.gameFinished === true){
+                setr(true)
+              }
+            }
+           
+          }
+        }
+      
       }
-    }, 1000); // 每秒更新一次倒计时
+    });
+  }, []);
 
-    return () => clearTimeout(timer); // 清除计时器
-  }, [timeLeft]);
+ 
+  function ggt(tokenAddresses, imageData, bbd) {
+    const result = {};
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+    tokenAddresses?.forEach((address) => {
+      if (imageData[address]) {
+        const n = Object.values(bbd).find(
+          (obj) => obj[address]
+        );
+        let balance = n ? n[address] : 0;
+
+        if (typeof balance.balance === "bigint") {
+          balance = (balance.balance / BigInt(10 ** 18)).toString(); 
+        } else {
+          balance = balance.balance || "0";
+        }
+
+        result[address] = {
+          ...imageData[address],
+          balance: balance,
+        };
+      }
+    });
+
+    return result;
+  }
+
+  const md = ggt(
+    ge,
+    imageIconData,
+    bbd
+  );
+
+console.log(md);
+
+  useEffect(() => {
+    if(ttc === true&&gs === false){
+      if (tst !== null) {
+        const vb = Math.floor(Date.now() / 1000); 
+        const timeElapsed = vb - tst;
+        const newTimeLeft = 120 - timeElapsed;
+        setq(newTimeLeft > 0 ? newTimeLeft : 0);
+        if(localStorage.getItem('showGameOver') === 'false'){
+          localStorage.setItem('showGameOver','true')
+        }
+ 
+      }
+    }
+  }, [tst,ttc,r,gs]);
+
+  useEffect(() => {
+    if(ttc === true&&gs === false){
+      
+      if (q > 0) {
+        const timer = setTimeout(() => {
+          setq(q - 1);
+          if(localStorage.getItem('showGameOver') === 'false'){
+            localStorage.setItem('showGameOver','true')
+          }
+        }, 1000);
+  
+        return () => clearTimeout(timer);
+      }
+     
+    }
+  }, [q,ttc,r,gs]);
+
+  const minutes1 = Math.floor(q / 120);
+  const seconds = q % 120;
   const [selectedOption, setSelectedOption] = useState("option1");
 
   const handleSelectChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
 
-  const downHandleNumber = useCallback(
+  const mm = 
     (val: any) => {
-      console.log(val === 0, numberData);
-      if (val >= 10) {
-        setNumberData(numberData - 10);
-      } else {
-        toast.error("OUT OF STOCK");
-      }
-    },
-    [numberData]
-  );
-  const upHandleNumber = (val: any) => {
-    if (val <= 20) {
-      setNumberData(numberData + 10);
-    } else {
-      toast.error("EXCEEDS STOCK");
-    }
+     
+        setpo(po - 1);
+      
+    };
+  const unm = (val: any) => {
+  
+      setpo(po + 1);
+
   };
+
+
+
+  useEffect(()=>{
+   
+  
+    const payFor = forMent(vgf?.key, po)
+    sete(true)
+    payFor.then((item)=>{
+setfs(item)
+  sete(false)
+    })
+  },[vgf,po])
+
+
 
   return (
     <>
       <div className={style.container}>
         <div className={style.firstPart}>
-          <p>{`${minutes.toString().padStart(2, "0")}:${seconds
-            .toString()
-            .padStart(2, "0")}`}</p>
-          <p>TIME</p>
+          <p style={{cursor:"pointer"}}>
+          
+            {q !== 0&&gs === false ?q : 
+            <div onClick={()=>{
+              playFun()
+            }}>New<br/>Game</div>
+            }
+          </p>
+          {q !== 0&&gs === false ?<p>TIME</p> :null}
         </div>
         <div className={style.twoPart}>
           <p>350$bugs</p>
@@ -99,17 +337,18 @@ export default function BoxPrompt() {
           <p>REWARDS</p>
         </div>
         <div className={style.imgContent}>
-          {imageIconData.map((item, index) => (
-            <div key={index} className={style.containerItem}>
-              <div className={style.iconFont}>{item.icon}</div>
-              <img className={style.imgconItem} src={item.src} alt="" />
+       
+          {Object.entries(md).map(([key, { src, balance, name }]) => (
+            <div key={key} className={style.containerItem}>
+              <div className={style.iconFont}>{balance}</div>
+              <img className={style.imgconItem} src={src} alt={name} />
             </div>
           ))}
         </div>
         <button
           className={style.buyBtn}
           onClick={() => {
-            setBuYBox(!warnBox);
+            setBuYBox(!w);
           }}
         >
           BUY
@@ -117,7 +356,7 @@ export default function BoxPrompt() {
         <button
           className={style.warningIcon}
           onClick={() => {
-            setWarnBox(!warnBox);
+            setw(!w);
           }}
         >
           ?
@@ -141,45 +380,81 @@ export default function BoxPrompt() {
               <div className={style.dataIcon}>
                 <button
                   onClick={() => {
-                    downHandleNumber(numberData);
+                    mm(po);
                   }}
-                  className={numberData === 0 ? style.disabled : (null as any)}
+                  disabled={po ===1 }
+                  className={po === 1 ? style.disabled : (null as any)}
                 >
                   -
                 </button>
                 <p className={style.pp}></p>
-                <span className={style.numData}>{numberData}</span>
+                <span className={style.numData}>{po}</span>
                 <p className={style.pp}></p>
                 <button
                   onClick={() => {
-                    upHandleNumber(numberData);
+                    unm(po);
                   }}
-                  className={numberData === 30 ? style.disabled : (null as any)}
+                  className={po === 120 ? style.disabled : (null as any)}
                 >
                   +
                 </button>
               </div>
               <div style={{ zIndex: "999999" }}>
                 {" "}
-                <Select optionsTotal={learnCon} />
+                <Select
+                  md={md}
+                  setvgf={setvgf}
+                />
               </div>
             </div>
             <div className={style.twoBuy}>
               <span className={style.fontBuy}>FOR</span>
-              <span className={style.fontNum}>******BUGS</span>
-              {/* <span className={style.fontbugs}>(******BUGS)</span> */}
-              <br />
+              <span className={style.fontNum}>{fs}ETH</span>
+              {e === true ? (
+                <img
+                  src={loadingIcon}
+                  alt=""
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    marginTop: "5px",
+                    color: "#ffffff",
+                    filter: "grayscale(100%)",
+                  }}
+                  className={style.commonCls1}
+                />
+              ) : null}
+            
             </div>
 
-            <div className={style.patment}> payment failed!try again!</div>
+            {pf === true ? (
+              <div className={style.patment}>payment failed! try again!</div>
+            ) : null}
 
             <button
               className={style.payBtn}
               onClick={() => {
-                setBuYBox(false);
+                cv();
               }}
+              disabled={ fs === 0}
+              style={{cursor:fs === 0?"not-allowed":"auto"}}
             >
-              PAY
+              {pss === true ? (
+                <img
+                  src={rightIcon}
+                  alt=""
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    marginTop: "5px",
+                    position: "absolute",
+                    left: "50%",
+                    top: "25%",
+                  }}
+                />
+              ) : (
+                <span >PAY</span>
+              )}
               {loadingType === true ? (
                 <img
                   src={loadingIcon}
@@ -193,26 +468,13 @@ export default function BoxPrompt() {
                   }}
                   className={style.commonCls1}
                 />
-              ) : (
-                <img
-                  src={rightIcon}
-                  alt=""
-                  style={{
-                    width: "16px",
-                    height: "16px",
-                    marginTop: "5px",
-                    position: "absolute",
-                    left: "50%",
-                    top: "25%",
-                  }}
-                />
-              )}
+              ) : null}
             </button>
           </div>
         </div>
       ) : null}
 
-      {warnBox === true ? (
+      {w === true ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
         >
@@ -228,7 +490,7 @@ export default function BoxPrompt() {
             <button
               className={style.btnOk}
               onClick={() => {
-                setWarnBox(false);
+                setw(false);
               }}
             >
               OK
@@ -236,15 +498,29 @@ export default function BoxPrompt() {
           </div>
         </div>
       ) : null}
-      {gameType === true ? (
+      {
+      q === 0&&localStorage.getItem('showGameOver') === 'true'
+      ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
         >
           <div className={style.contentSuccess}>
+          <img
+              className={style.turnOff}
+              src={trunOff}
+              alt=""
+              onClick={() => {
+                localStorage.setItem('showGameOver','false')
+                // setr(false);
+                // setq(120)
+              }}
+            />
             <p>Game Over!</p>
             <button
               onClick={() => {
-                setGameType(false);
+                // setq(120)
+                // setr(false);
+                playFun()
               }}
             >
               Play Again
@@ -252,16 +528,29 @@ export default function BoxPrompt() {
           </div>
         </div>
       ) : null}
-      {congratsType === true ? (
+      {
+      gs === true
+      &&localStorage.getItem('showGameOver') === 'true'
+      ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
         >
           <div className={style.contentCon}>
+          <img
+              className={style.turnOff}
+              src={trunOff}
+              alt=""
+              onClick={() => {
+                localStorage.setItem('showGameOver','false')
+                setCongratsType(false);
+              }}
+            />
             <p>Congrats！</p>
             <p>+150 $bugs！</p>
             <button
               onClick={() => {
-                setCongratsType(false);
+                playFun();
+                setgs(false)
               }}
             >
               Play Again
@@ -269,7 +558,7 @@ export default function BoxPrompt() {
           </div>
         </div>
       ) : null}
-      {topUpType === true ? (
+      {t === true ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
         >
@@ -278,7 +567,7 @@ export default function BoxPrompt() {
               src={trunOff}
               alt=""
               onClick={() => {
-                setTopUpType(false);
+                sett(false);
               }}
             />
             <p>insufficient gasbalance</p>
