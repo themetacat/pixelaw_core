@@ -31,6 +31,7 @@ interface Props {
   onHandleLoadingFun: any;
   setPageClick: any;
 }
+
 export function convertToString(bytes32Value: string) {
 
   const byteArray = new Uint8Array(bytes32Value.match(/[\da-f]{2}/gi).map(h => parseInt(h, 16)));
@@ -66,8 +67,8 @@ export default function RightPart({
 
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
-  // const [pageClick, setPageClick] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
+
   const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
     localStorage.setItem("app_name", value.app_name);
@@ -75,7 +76,29 @@ export default function RightPart({
     localStorage.setItem("namespace", value.namespace);
     localStorage.setItem("manifest", value.manifest);
     update_app_value(-1)
+    
+    const newUrl = `/${value.app_name}`; // 可以根据需要修改 URL 结构   
+    window.history.pushState(null, "", newUrl); //卢
   };
+
+  //卢
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const newUrl = window.location.pathname;
+      console.log("URL changed to:", newUrl);
+      const appNameFromUrl = newUrl.replace(/^\//, ''); 
+      localStorage.setItem("app_name", appNameFromUrl);
+      updateAbiUrl(`BASE/${capitalizeFirstLetter(appNameFromUrl)}System`);
+    };
+
+    window.addEventListener("popstate", handleUrlChange);
+    handleUrlChange(); 
+    return () => {
+      window.removeEventListener("popstate", handleUrlChange);
+    };
+  }, []);
+  
+  
   const updateAbiUrl = async (manifest: string) => {
     const app_name = localStorage.getItem("app_name");
     const parts = manifest?.split("/") as any;

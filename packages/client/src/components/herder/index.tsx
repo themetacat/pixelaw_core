@@ -26,6 +26,7 @@ import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useDisconnect } from 'wagmi';
+import pixeLawlogo from '../../images/pixeLawlogo.png'
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -443,7 +444,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     selectedColor: any,
     actionData: any,
     other_params: any
-  ) => {
+  ) => { 
     setLoading(true);
 
     const interact_data = interact(
@@ -813,7 +814,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       <div className={style.container}>
         <img
           className={style.containerImg}
-          src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
+          src={pixeLawlogo}
           alt=""
         />
         <div className={style.content}>
