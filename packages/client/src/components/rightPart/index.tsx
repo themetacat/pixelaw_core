@@ -16,6 +16,7 @@ import loadingImg from "../../images/loading.png";
 import { hexToUtf8 } from "web3-utils";
 // import {setEntityaData } from "../herder/index"
 import { abi_json, update_app_value } from "../../mud/createSystemCalls";
+import { element } from "@rainbow-me/rainbowkit/dist/css/reset.css";
 export const ManifestContext = createContext<string>("");
 
 interface Props {
@@ -71,26 +72,30 @@ export default function RightPart({
 
   const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
-    localStorage.setItem("app_name", value.app_name);
+    localStorage.setItem("app_name", value.app_name);    
     localStorage.setItem("system_name", value.system_name);
     localStorage.setItem("namespace", value.namespace);
     localStorage.setItem("manifest", value.manifest);
     update_app_value(-1)
-    
     const newUrl = `/${value.app_name}`; // 可以根据需要修改 URL 结构   
-    window.history.pushState(null, "", newUrl); //卢
+    window.history.pushState(null, "", newUrl); //
   };
 
-
-
-  
-  //卢
+  //
   useEffect(() => {
     const handleUrlChange = () => {
       const newUrl = window.location.pathname;
       console.log("URL changed to:", newUrl);
       const appNameFromUrl = newUrl.replace(/^\//, ''); 
       localStorage.setItem("app_name", appNameFromUrl);
+      entities_app.forEach((entitya:any,index:any) => {
+        const value = getComponentValueStrict(App,entitya) as any;
+        const app_name = convertToString(entitya);
+        value.app_name =app_name as string;
+        if (app_name.toLowerCase() === appNameFromUrl.toLowerCase()) {
+          handleIconClick(index, value);
+        }
+      })
       updateAbiUrl(`BASE/${capitalizeFirstLetter(appNameFromUrl)}System`);
     };
 
@@ -244,14 +249,16 @@ export default function RightPart({
           {/* ~~~~ 移动游戏图片才调用 */}
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
+            console.log(value);
+            
             
             const app_name =  convertToString(entitya);
             // const app_name = getComponentValue(
             //   AppName,
             //   addressToEntityID(value.system_addr)
             // )?.app_name;
-            value.app_name = app_name as string;     
-            
+            value.app_name = app_name as string;    
+         
             return (
               <div
                 key={`${index}`}
