@@ -15,6 +15,7 @@ export const App = () => {
   } = useMUD();
 
   const syncProgress = useComponentValue(SyncProgress, singletonEntity) as any;
+  
   const [hoveredData, setHoveredData] = useState<{
     x: any;
     y: any;

@@ -127,6 +127,7 @@ export default function RightPart({
       }
     }
     let systemData = [];
+    
     let common_abi = [];
     if (app_name in abi_json) {
       systemData = abi_json[app_name];
@@ -136,6 +137,7 @@ export default function RightPart({
         setPageClick()
         const response = await fetch(worldAbiUrl); // 获取 ABI JSON 文件
         systemData = await response.json();
+        
         if(systemData){
           onHandleLoading()
           handlePageClickIs()

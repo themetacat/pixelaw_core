@@ -1063,7 +1063,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           onHandleLoadingFun={onHandleLoadingFun}
         />
       </div>
-
+                  
       {popExhibit === true ? (
         <>
           {showOverlay && <div className={style.overlay} />}

@@ -74,9 +74,11 @@ const garnet = defineChain({
   rpcUrls: {
     default: {
       http: ['https://rpc.garnet.qry.live'],
+
+      
       webSocket: ['wss://rpc.garnet.qry.live'],
     },
-    public: {
+    public: { 
       http: ['https://rpc.garnet.qry.live'],
       webSocket: ['wss://rpc.garnet.qry.live'],
     },
