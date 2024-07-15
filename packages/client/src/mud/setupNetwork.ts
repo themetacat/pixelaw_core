@@ -15,7 +15,8 @@ const response = await fetch('https://pixelaw-game.vercel.app/IWorld.abi.json');
 const IWorldAbi = await response.json();
 import { createBurnerAccount, getContract, transportObserver, ContractWrite, resourceToHex } from "@latticexyz/common";
 import { Subject, share } from "rxjs";
-
+import { resolveConfig } from "@latticexyz/store/internal";
+import tcmpopstarConfig from "./tcmpopstar.config";
 /*
  * Import our MUD config, which includes strong types for
  * our tables and other config options. We use this to generate
@@ -42,7 +43,8 @@ export type SetupNetworkResult = {
   palyerAddress: any;
   write$: any;
   write_sub: any;
-  abi: any
+  abi: any;
+  clientOptions:any
 };
 export async function setupNetwork(): Promise<SetupNetworkResult> {
 
@@ -71,7 +73,9 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
        * Create a temporary wallet and a viem client for it
        * (see https://viem.sh/docs/clients/wallet.html).
        */
+      // dbb0764905e05f24fc9c863c3969cefa04530b5e0c635b183cecc8db1eee54cc
       const burnerAccount = createBurnerAccount(networkConfig.privateKey as Hex);
+      // const burnerAccount = createBurnerAccount('0xdbb0764905e05f24fc9c863c3969cefa04530b5e0c635b183cecc8db1eee54cc');
       const burnerWalletClient = createWalletClient({
         ...clientOptions,
         account: burnerAccount,
@@ -125,7 +129,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       if (networkConfig.chain.id === 690) {
         indexerUrl = "https://indexer.pixelaw.world/";
       }else if(networkConfig.chain.id === 31338){
-        indexerUrl = "https://indexerdev.pixelaw.world/";
+        indexerUrl = "http://indexerdev.pixelaw.world/";
       }else if(networkConfig.chain.id === 17069){
         indexerUrl = "https://indexertest.pixelaw.world/";
       }
@@ -158,6 +162,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
             indexerUrl: indexerUrl,
+            tables: resolveConfig(tcmpopstarConfig).tables,
             filters: [
               {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Pixel" }),
@@ -174,9 +179,16 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Alert" }),
               },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "tcmPopStar", name: "TCMPopStar" }),
+              },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "tcmPopStar", name: "TokenBalance" }),
+              },
             ],
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
             
+   console.log(components,'componentscomponents');
    
             /*
              * If there is a faucet, request (test) ETH if you have
@@ -187,7 +199,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             
               const requestDrip = async () => {
                 const balance = await publicClient.getBalance({ address: account_addr });
-                console.info(`[Dev Faucet]: Player balance -> ${balance}`);
+                // console.info(`[Dev Faucet]: Player balance -> ${balance}`);
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   console.info("[Dev Faucet]: Balance is low, dripping funds to player");
@@ -221,6 +233,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                
             }
             if(networkConfig.chain.id === 31337 || networkConfig.chain.id === 31338){
+              
               requestDrip();
               setInterval(requestDrip, 2000)
             }else if(networkConfig.chain.id === 17069){
@@ -243,6 +256,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               write$: write$.asObservable().pipe(share()),
               write_sub: write$,
               abi: abi,
+              clientOptions
             });
           
           }).catch(reject);

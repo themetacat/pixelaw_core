@@ -1,0 +1,80 @@
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  height: 269px;
+  padding: 40px;
+  background-color: #2d0c3b;
+  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+    0 0 12px 0 rgba(231, 189, 255, 0.05);
+  display: grid;
+  gap: 24px;
+  border: 1px solid #0b0113; /* 添加正确的边框属性 */
+  text-transform: uppercase;
+}
+p {
+  margin: 0px;
+}
+.title {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 23.04px;
+  color: #ffffff;
+  letter-spacing: 8px;
+}
+.Container {
+  display: block;
+}
+.copywritingFirst {
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20.48px;
+  letter-spacing: 8px;
+  color: #ffffff;
+}
+.copywritingThree {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20.48px;
+  letter-spacing: 8px;
+  color: #ffffff;
+}
+.copywritingTwo {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17.92px;
+  letter-spacing: 8px;
+  color: #999999;
+}
+.copywritingFour {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 17.92px;
+  letter-spacing: 8px;
+  color: #294bff;
+  text-decoration: underline;
+}
+.btnPlay {
+  background-color: #200d2f;
+  border: 1px solid #0b0113;
+  padding: 10px 0px 10px 0px;
+  display: grid;
+  gap: 10px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 24px;
+  text-align: center;
+  letter-spacing: 8px;
+  border: 1px solid #0b0113;
+}
+.btnPlay:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+  color: #ffffff;
+}
+.btnPlay:active {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}

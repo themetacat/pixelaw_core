@@ -1,0 +1,58 @@
+.selectTrigger{
+    background-color: red;
+    width: 122px;
+    height: 26px;
+    padding: 8px 12px 8px 12px;
+    border:1px solid #0B0113;
+    background-color: #200D2F;
+    position: relative;
+    line-height: 28px;
+    align-items: center;
+    color: #ffffff;
+    display: flex;
+    gap: 8px;
+    span{
+        line-height: 28px;
+    }
+    &:hover{
+        background-color: rgba(255, 255, 255, 0.03);
+       }
+       &:active{
+        background-color: rgba(255, 255, 255, 0.05);
+       }
+}
+.downPoint{
+    position: absolute;
+    right: 8px; /* 调整右边距 */
+    top: 50%;
+    transform: translateY(-50%); /* 使用transform来垂直居中 */
+    width: 20px;
+    height: 20px;
+}
+.selectOptions{
+    gap: 8px;
+    padding: 8px 12px 8px 12px;
+    width: 122px;
+    border:1px solid #0B0113;
+    background-color: #200D2F;
+    margin-top: 2px;
+    z-index: 10000;
+}
+.selectOptionsItem{
+    display: flex;
+    color: #ffffff;
+    gap: 8px;
+    padding: 8px 0px 8px 0px;
+    height:28px;
+    width: 115px;
+    line-height: 28px;
+    border-bottom: 1px solid #0B0113;
+   
+    &:nth-last-child(1){
+        border-bottom:none;
+    }
+    &:hover{
+        background-color: rgba(255, 255, 255, 0.05);
+
+    }
+}

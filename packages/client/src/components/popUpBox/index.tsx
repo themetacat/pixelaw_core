@@ -31,7 +31,7 @@ export default function PopUpBox({
   onHandleExe,
   convertedParamsData,
   action,
-  coordinates,
+  z,
   paramInputs,
   onHandleLoadingFun,
   enumValue,
@@ -46,8 +46,6 @@ export default function PopUpBox({
   const [entityaData, setEntityaData] = useState("");
   const [keyDown, setKeyDown] = useState(null);
   const [formData, setFormData] = useState([]);
-  const [hasRenderedSpecialContent, setHasRenderedSpecialContent] =
-    useState(false);
   const [selectedButton, setSelectedButton] = useState<number | null>(null);
   const [InputsData, setInputsData] = useState(null);
   const [inputs, setInputs] = useState(null);
@@ -56,7 +54,6 @@ export default function PopUpBox({
   const [clickedButtons, setClickedButtons] = useState([]);
   const buttonInfoRef = React.useRef([]) as any;
   const app_name = localStorage.getItem("app_name");
-
   const appName = localStorage.getItem("manifest") as any;
   const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
@@ -72,32 +69,6 @@ export default function PopUpBox({
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
 
-  const handleKeyDown = (e: any) => {
-    // enumValue.map((item: any, index: any) => {
-    //   if (e.key.includes(item)) {
-    //     switch (e.key) {
-    //       case "ArrowLeft":
-    //         // onHandleLeft();
-    //         onFunction(index + 1, "Left", inputs);
-    //         break;
-    //       case "ArrowRight":
-    //         onFunction(index + 1, "Right", inputs);
-    //         // onHandleRight();
-    //         break;
-    //       case "ArrowUp":
-    //         onFunction(index + 1, "Up", inputs);
-    //         // onHandleUp();
-    //         break;
-    //       case "ArrowDown":
-    //         onFunction(index + 1, "Down", inputs);
-    //         // onHandleDown();
-    //         break;
-    //       default:
-    //         break;
-    //     }
-    //   }
-    // });
-  };
   const [buttonInfoArray, setButtonInfoArray] = React.useState<
     { key: any; value: any }[]
   >([]);
@@ -108,7 +79,7 @@ export default function PopUpBox({
     renderedInputs: any,
     InputsData: any
   ) => {
-    const buttonInfo = { key: numData, value: item }; // 保存用户选择的按钮信息
+    const buttonInfo = { key: numData, value: item };
     onHandleLoadingFun();
 
     const keyArray = [buttonInfo.key];
@@ -132,7 +103,7 @@ export default function PopUpBox({
       selectedColor,
       action,
       buttonInfo.key,
-    ]; // 使用buttonInfo.key作为参数之一
+    ];
 
     if (
       (renderedInputs == null && renderedInputs.length === 0) ||
@@ -149,15 +120,11 @@ export default function PopUpBox({
     }
   };
 
-  // let enumItemsCount = 0; // 初始化为 0
   const renderInputsAndSpecialContent = (data: any) => {
     const renderedInputs: JSX.Element[] = [];
-    // let specialContent: JSX.Element | null = null;
     const specialContent: JSX.Element[] = [];
-    let hasRenderedSpecialContent = false; // 添加状态来跟踪是否已经渲染过 specialContent
     const numGroups = Object.keys(data).length;
     setInputsData(numGroups);
-    // 生成一个0到1之间的随机数
     const randomNumber = Math.random();
     let formDataContentArr = [];
     let formDataContentObj = {};
@@ -167,21 +134,17 @@ export default function PopUpBox({
       if (key === "type") {
         return;
       }
-      // formDataContent = {};
 
-      // 如果值不是对象，则渲染输入框
       if (
         !value.internalType.includes("struct ") &&
         !value.internalType.includes("enum ")
       ) {
         renderedInputs.push(
           <input
-            key={`${key + randomNumber.toString()}`} // 使用key值和索引的组合作为唯一标识符
+            key={`${key + randomNumber.toString()}`}
             type={value.type === "number" ? "number" : "text"}
             className={style.inputData}
             placeholder={value.name.toUpperCase()}
-            // style={{borderRadius:"35px"}}
-            // placeholder={value}
             value={formData[value.name] as any}
             onChange={(e) => {
               const inputValue = e.target.value;
@@ -194,10 +157,6 @@ export default function PopUpBox({
               } else {
                 formDataContent[value.name] = inputValue;
               }
-              // // 如果输入框类型为 "number"，且输入值不是数字，则不更新 formData
-              // if (value.type === "number" && )) {
-              //   return;
-              // }
             }}
           />
         );
@@ -206,14 +165,13 @@ export default function PopUpBox({
           setResultContent(value as any);
           specialContent.push(
             <label className={style.direction}>{value.name}</label>
-          )
+          );
           value.enum_value.forEach((eunm_value, enum_index) => {
             specialContent.push(
               <button
                 ref={buttonInfoRef}
                 className={style.btn}
                 key={eunm_value}
-                // style={{backgroundColor:  selectedButton===enum_index?'#353' :'#000'}}
                 onClick={() => {
                   formDataContent[value.name] = enum_index;
                   formDataContentArr.push(key);
@@ -242,7 +200,6 @@ export default function PopUpBox({
       }
       if (Object.keys(formDataContent).length > 0) {
         formDataContentArr.push(formDataContent);
-        // formDataContentObj[key] =formDataContent;
       }
     });
 
@@ -262,9 +219,8 @@ export default function PopUpBox({
     const buttonInfo = buttonInfoRef.current;
 
     Object.entries(convertedParamsData).forEach(([key, value], index) => {
-      otherParams.push(args[value.name])
-    })
-  
+      otherParams.push(args[value.name]);
+    });
 
     interactHandle(
       coordinates,
@@ -284,47 +240,35 @@ export default function PopUpBox({
       const result = "0x" + num?.toString(16);
       if (instruction?.instruction) {
         const value = getComponentValueStrict(App, entitya) as any;
-        const app_name =  convertToString(entitya);
-        // const app_name = getComponentValue(
-        //   AppName,
-        //   addressToEntityID(value.system_addr)
-        // )?.app_name;
+        const app_name = convertToString(entitya);
         instruC[app_name] = instruction?.instruction;
         setInstruC(instruC);
       }
 
       setEntityaData(result);
     });
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
   }, [entities_app, Instruction, entityaData]);
 
   const fon = async () => {
     let formContentArr = [];
     const { inputs, content, formContent } =
       renderInputsAndSpecialContent(convertedParamsData);
-
     setFormData(formContent);
-
     setInputs(inputs);
-
     const result = Object.values(convertedParamsData);
     const hasResultContent = result.some(
       (r) => Array.isArray(r) && r.length > 0
     );
     if (hasResultContent) {
-      setResultContent(result.flat()); // 更新 resultContent 状态
+      setResultContent(result.flat());
     }
 
     setContent(content);
   };
 
   useEffect(() => {
-    if(Object.keys(instruC).length !== 0){
-      fon()
+    if (Object.keys(instruC).length !== 0) {
+      fon();
     }
   }, [instruC]);
 
@@ -332,11 +276,13 @@ export default function PopUpBox({
     <div className={style.content}>
       {convertedParamsData !== null ? (
         <div className={style.btnBoxYo6jt}>
-          {/* {renderInputsAndSpecialContent(convertedParamsData).inputs}*/}
-       <div  className={style.inputsBox} style={{maxWidth:"460px"}}>{inputs}</div>
-          {/* {resultContent.length!==0?inputs:''} */}
+          <div className={style.inputsBox} style={{ maxWidth: "460px" }}>
+            {inputs}
+          </div>
           <h2 className={style.title}>{instruC[app_name]}</h2>
-          <div className={style.buttonContainer} style={{maxWidth:"480px"}}>{content}</div>
+          <div className={style.buttonContainer} style={{ maxWidth: "480px" }}>
+            {content}
+          </div>
           {inputs?.length !== 0 || InputsData > 1 ? (
             <button onClick={handleConfirm} className={style.confirmBtn}>
               Confirm
