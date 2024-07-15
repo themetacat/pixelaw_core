@@ -55,7 +55,7 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
     network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { interact,forMent, payFunction,registerDelegation },
   } = useMUD();
-  const [timeLeft, setTimeLeft] = useState(120);
+  const [timeLeft, setTimeLeft] = useState(300);
   const [warnBox, setWarnBox] = useState(false);
   const [dataq, setdataq] = useState(false);
   const [cresa, setcresa] = useState(false);
@@ -77,8 +77,8 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
   const [startTime, setStartTime] = useState(null); 
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   const entities_app = useEntityQuery([Has(App)]);
-  const minutes = Math.floor(timeLeft / 120);
-  const seconds = timeLeft % 120;
+  const minutes = Math.floor(timeLeft / 300);
+  const seconds = timeLeft % 300;
   const [selectedOption, setSelectedOption] = useState("option1");
 
   const handlePayMent = () => {
@@ -131,6 +131,7 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
         TCMPopStar,
         addressToEntityID(account)
       );
+
 
       if(TCMPopStarData){
 
@@ -227,6 +228,7 @@ if(deleGeData === undefined){
     fetchDataTotal.then((TCMPopStarData) => {
       if (palyerAddress !== undefined) {
         handleEoaContractData(TCMPopStarData);
+
   
           if (TCMPopStarData) {
             setGetEoaContractData(TCMPopStarData?.tokenAddressArr);
@@ -237,7 +239,7 @@ if(deleGeData === undefined){
   
             const elapsedTime = currentTime - blockchainStartTime;
   
-            const updatedTimeLeft = Math.max(120 - elapsedTime, 0);
+            const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
             setTimeLeft(updatedTimeLeft);
            
             const allZeros = TCMPopStarData.matrixArray.every((data) => data === 0n);
@@ -258,7 +260,7 @@ if(deleGeData === undefined){
       
       }
     });
-  }, [fetchData, handleEoaContractData, matchedData, palyerAddress]);
+  }, [balanceData]);
 
 
   useEffect(() => {
@@ -267,7 +269,7 @@ if(deleGeData === undefined){
       if (datan !== null) {
         const currentTime = Math.floor(Date.now() / 1000); 
         const timeElapsed = currentTime - datan;
-        const newTimeLeft = 120 - timeElapsed;
+        const newTimeLeft = 300 - timeElapsed;
         setTimeLeft(newTimeLeft > 0 ? newTimeLeft : 0);
         if(localStorage.getItem('showGameOver') === 'false'){
           localStorage.setItem('showGameOver','true')
@@ -362,6 +364,7 @@ setdata(item)
               src={trunOff}
               alt=""
               onClick={() => {
+                setpay(false)
                 setdataq(false);
               }}
             />
@@ -384,7 +387,7 @@ setdata(item)
                   onClick={() => {
                     upHandleNumber(numberData);
                   }}
-                  className={numberData === 120 ? style.disabled : (null as any)}
+                  className={numberData === 300 ? style.disabled : (null as any)}
                 >
                   +
                 </button>

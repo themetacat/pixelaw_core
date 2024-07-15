@@ -443,7 +443,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             hoveredSquareRef.current = coordinates;
 
             setIsDragging(false);
-            if (appName === "BASE/TCMPopStarSystem") {
+            if (appName === "BASE/PopCraftSystem") {
               interactHandleTCM(
                 coordinates,
                 palyerAddress,
@@ -474,7 +474,7 @@ export default function Header({ hoveredData, handleData }: Props) {
                 GRID_SIZE,
                 GRID_SIZE
               );
-              if (appName === "BASE/TCMPopStarSystem") {
+              if (appName === "BASE/PopCraftSystem") {
                 drawGrid(ctx, coordinates, true);
               }
               drawGrid(ctx, coordinates, false);
@@ -843,7 +843,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     const canvas = canvasRef.current;
     if (canvas && entityData.length > 0) {
       const ctx = canvas.getContext("2d");
-      if (ctx && appName !== "BASE/TCMPopStarSystem") {
+      if (ctx && appName !== "BASE/PopCraftSystem") {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         drawGrid(ctx, hoveredSquare, false);
       } else {
@@ -896,7 +896,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   useEffect(() => {
     if (
-      appName === "BASE/TCMPopStarSystem"
+      appName === "BASE/PopCraftSystem"
     ) {
       setPopStar(true);
     }
@@ -1192,8 +1192,8 @@ export default function Header({ hoveredData, handleData }: Props) {
           <PopStar setPopStar={setPopStar} playFun={playFun} />
         </div>
       ) : null}
-      {(boxPrompt === true && appName === "BASE/PopStarSystem") ||
-      appName === "BASE/TCMPopStarSystem" ? (
+      {(boxPrompt === true ) ||
+      appName === "BASE/PopCraftSystem" ? (
         <BoxPrompt
           coordinates={coordinates}
           timeControl={timeControl}
