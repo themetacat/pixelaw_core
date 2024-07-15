@@ -42,8 +42,9 @@ export const App = () => {
         toastOptions={{
           duration: 2000,
           style: {
-            background: "linear-gradient(90deg, #dedfff,#8083cb)",
-            color: "black",
+            // background: "linear-gradient(90deg, #dedfff,#8083cb)",
+            backgroundColor:"#000000",
+            color:"#ffffff",
             borderRadius: "8px",
             zIndex: "999999999999",
             marginTop:"50px"

@@ -15,11 +15,8 @@ const response = await fetch('https://pixelaw-game.vercel.app/IWorld.abi.json');
 const IWorldAbi = await response.json();
 import { createBurnerAccount, getContract, transportObserver, ContractWrite, resourceToHex } from "@latticexyz/common";
 import { Subject, share } from "rxjs";
-
 import { resolveConfig } from "@latticexyz/store/internal";
-import { storeToV1 } from "@latticexyz/store/config/v2";
 import tcmpopstarConfig from "./tcmpopstar.config";
-
 /*
  * Import our MUD config, which includes strong types for
  * our tables and other config options. We use this to generate
@@ -47,7 +44,7 @@ export type SetupNetworkResult = {
   write$: any;
   write_sub: any;
   abi: any;
-  clientOptions: any;
+  clientOptions:any
 };
 export async function setupNetwork(): Promise<SetupNetworkResult> {
 
@@ -180,12 +177,15 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Alert" }),
               },
               {
-                tableId: resourceToHex({ type: "table", namespace: "tcmPopStar", name: "TCMPopStar" }),
+                tableId: resourceToHex({ type: "table", namespace: "popCraft", name: "TCMPopStar" }),
+              },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "popCraft", name: "TokenBalance" }),
               },
             ],
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
             console.log(components);
-            
+   
             /*
              * If there is a faucet, request (test) ETH if you have
              * less than 1 ETH. Repeat every 20 seconds to ensure you don't
@@ -195,7 +195,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             
               const requestDrip = async () => {
                 const balance = await publicClient.getBalance({ address: account_addr });
-                console.info(`[Dev Faucet]: Player balance -> ${balance}`);
+                // console.info(`[Dev Faucet]: Player balance -> ${balance}`);
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   console.info("[Dev Faucet]: Balance is low, dripping funds to player");
@@ -229,6 +229,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                
             }
             if(networkConfig.chain.id === 31337 || networkConfig.chain.id === 31338){
+              
               requestDrip();
               setInterval(requestDrip, 20000)
             }else if(networkConfig.chain.id === 17069){
@@ -251,7 +252,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               write$: write$.asObservable().pipe(share()),
               write_sub: write$,
               abi: abi,
-              clientOptions:clientOptions
+              clientOptions
             });
           
           }).catch(reject);

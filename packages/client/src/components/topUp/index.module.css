@@ -1,204 +1,466 @@
-.topBox{
-    width: 500px;
-    background-color: hsl(280, 77%, 14%,0.9);
-    position: absolute;
-    padding: 0px ;
-    left: 50%;
-    top: 50%;
-   border-radius: 15px;
-   transform: translate(-50%, -50%);
-   color: #fff;
-   /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
+.topBox {
+  width: 398px;
+  /* height: 519px; */
+  position: absolute;
+  padding: 40px;
+  left: 50%;
+  top: 50%;
+  gap: 16px;
+  transform: translate(-50%, -50%);
+  border: 1px solid #0b0113;
+  color: #fff;
+  background-color: #2d0c3b;
+  display: grid;
+  box-shadow: inset 0 0 12px 0 rgba(231, 189, 255, 0.2),
+    0 0 12px 0 rgba(231, 189, 255, 0.05);
 }
-.cant{
-    border-bottom: 1px solid #e8e4df;
-    /* background-color: rgba(244, 243, 241, 0.5); */
-    height: 40px;
-    line-height: 40px;
-    padding: 10px 10px 6px 15px;
-    border-radius: 15px 15px 0px 0px;
-}
-.bridgeBTN{
-    margin-left: 20px;
-    line-height: 25px;
+.cant {
+  height: 24px;
+  line-height: 24px;
+  /* border: 1px solid ; */
+  gap: 24px;
+  span {
     display: inline-block;
-    cursor: pointer;
+    width: 352px;
+    height: 23px;
+    font-family: Silkscreen;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 23.04px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    color: #ffffff;
+  }
 }
-.warningCon{
-    background-color:#f9f2c3 ;
-    padding: 10px;
-    /* font-family: Arial, Helvetica, sans-serif; */
-    color: #000;
+.imgOff {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 44px;
+  top: 44px;
 }
-.imgOff{
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    right: 20px;
-    top: 20px;
-}
-.titleOne{
-    margin-top: 18px;
-    margin-bottom: 8px;
-  
-}
-.titleOne1{
-    padding-top: 18px;
-    margin-bottom: 8px;
-}
-.onePart{
-height: auto;
-padding-bottom: 20px;
-border-bottom: 1px solid #9f9e9d;
-}
-.btnPart{
-    background-color: #fff;
-    border-radius: 50px;
-    border: 1px solid #858586;
-    height: 25px;
-}
-.partTwo{
-    display: flex;
-    margin-top: 20px;
-    cursor: pointer;
-}
-.inputCon{
-    height: 15px;
-    background-color: rgba(230, 225, 214, 0.5);
-    border: none;
-    width: 180px;
-    padding: 10px;
-    font-size: 15px;
-}
-.copyBtn{
-    position: absolute;
-    right: 0px;
-    line-height: 35px;
-    background-color: rgba(230, 225, 214,1);
-    display: inline-block;
-    height: 35px;
-    font-size: 15px;
-    color: #ad9134;
-}
-.addcon{
-    width: 240px;
-    position: relative;
-}
-.prvkey{
-    width: 240px;
-    position: relative;
-    margin-left: 10px;
-}
-.partThree{
-    height: 40px;
-    background-color:   rgba(229, 229, 229, 0.5);
-    padding: 8px;
-    line-height: 40px;
-    margin-top: 10px;
-    font-size: 20px;
-    button{
-background-color: rgba(229, 229, 229, 0.5);
-border: 1px solid #d7d7d7;
-width: 100px;
-height: 30px;
-margin-left: 12px;
-    }
-}
-.partFour{
-    padding: 10px;
-    margin-top: 5px;
-    /* font-family: Arial, Helvetica, sans-serif; */
-    
-    p{
-        margin: 0px;
-    }
-    input{
-        margin-left: 15px;
-        height: 40px;
-        margin-top: 10px;
-        font-size: 16px;
-        padding: 5px 10px 5px 10px;
-        border: 1px solid #e6e6e6;
-        width:calc( 100% - 100px);
-       
-    }
-}
-.svgIcon{
-    width: 50px;
-    height: 50px;
-    display: flex;
-    margin-top: 10px;
-  justify-content: center;
-  border: 1px solid #e6e6e6 !important;
-  align-items: center; /* 垂直居中 */
-  background-color: #fff;
+.bridgeBTN {
+  width: 52px;
+  height: 6px;
+  padding: 8px;
+  gap: 10px;
+  border: 1px 0px 0px 0px;
+  opacity: 0px;
+  background-color: #200d2f;
+  border: 1px solid #0b0113;
+  font-family: Silkscreen;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 8.36px;
+  letter-spacing: 0.1em;
   text-align: center;
+  color: #ffffff;
+  cursor: pointer;
 }
-.partFive{
-    margin-top: 12px;
-    display: flex;
-    justify-content: space-between; /* 水平两端对齐 */
-    align-items: center; /* 垂直居中 */
-    /* font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; */
-    input{
-        width: 80px;
-    }
+.warningCon {
+    background-color: #D59E111A;
+position: relative;
+    color: #D59E11;
+    border: 0.5px solid #D59E11;
+    width: 352px;
+    /* height: 112px; */
+    padding: 8px 12px 8px 12px;
+    gap: 10px;
+    margin-top: 8px;
+    opacity: 0px;
+    
 }
-.footerBtn{
-    width: 100%;
-    height: 50px;
-    background-color: #181818;
-    color: #fff;
-    margin-top: 12px;
-    margin-bottom: 12px;
-    z-index: 99999999999999;
+.triangle {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid rgba(213, 158, 17, 0.1); /* 可根据需要调整颜色 */
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+.titleOne {
+  display: inline-block;
+  width: 173px;
+  height: 20px;
+  font-family: Silkscreen;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20.48px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: #ffffff;
 }
-.footerBtnElse{
-    width: 100%;
-    height: 50px;
-    background-color: #e5e5e5;
-    color: #fff;
-    margin-top: 12px;
-    margin-bottom: 12px;
-    border: none;
-    z-index: 99999999999999;
+.titleOne1 {
+  font-family: Silkscreen;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20.48px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: #ffffff;
+  width: 136px;
+  height: 20px;
+  gap: 0px;
+  opacity: 0px;
+}
+.prilf {
+  font-family: Silkscreen;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 14.08px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: #d59e11;
+  height: 14px;
+}
+.onePart {
+  display: grid;
+  width: 376px;
+  height: 70px;
+  padding: 12px;
+  gap: 16px;
+  opacity: 0px;
+  background-color: #3f1551;
+}
+.imgICon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+.btnPart {
+  /* width:376px; */
+  height: 34px;
+  gap: 0px;
+  justify-content: space-between;
+  opacity: 0px;
+  display: grid;
+  gap: 4px;
+}
+.partImo {
+  height: 80px;
+  display: grid;
+  gap: 8px;
+}
+.partTwo {
+  display: flex;
+  cursor: pointer;
+  justify-content: space-between;
+  vertical-align: middle;
+  border-bottom: 0.5px solid #0b0113;
+  height: 41px;
+  width: 376px;
+  margin-top: 8px;
+}
+.btnMe {
+  width: 111px;
+  height: 6px;
+  padding: 8px;
+  gap: 10px;
+  border: 1px 0px 0px 0px;
+  opacity: 0px;
+  background-color: #200d2f;
+  font-family: Silkscreen;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 8px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: #ffffff;
+  border: 1px solid #0b0113;
+}
+.btnMeB{
+  width: 111px;
+  height: 22px;
+  gap: 10px;
+  border: 1px 0px 0px 0px;
+  opacity: 0px;
+  background-color:  #4d3d59;
+  font-family: Silkscreen;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 10px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: #ffffff;
+  border: 1px solid #0b0113;
+}
+
+.ConfirmingFont {
+  display: inline-block;
+  font-family: Silkscreen;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.36px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: #b34fdd;
+  width: 75px;
+  height: 15px;
+  gap: 0px;
+  opacity: 0px;
+}
+
+.partContent {
+  width: 376px;
+  /* height: 142px; */
+  padding: 12px;
+  gap: 16px;
+  opacity: 0px;
+  background: #3f1551;
+}
+.inputCon {
+  width: 100px !important;
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-family: Silkscreen;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.36px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  height: 15px;
+}
+.copyBtn {
+  position: absolute;
+  right: 0px;
+  line-height: 35px;
+  background-color: rgba(230, 225, 214, 1);
+  display: inline-block;
+  height: 35px;
+  font-size: 15px;
+  color: #ad9134;
+}
+.addcon {
+  width: 110px;
+  position: relative;
+  vertical-align: middle;
+}
+.imgUnioncopyBtn {
+  position: absolute;
+  right: 0px;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+}
+.imgUnionCopyBtn {
+  position: absolute;
+  right: -10px;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+}
+.prvkey {
+  position: relative;
+  gap: 8px;
+  opacity: 0px;
+  margin-top: 8px;
+  display: grid;
+  height: 56px;
+}
+.pqad {
+  width: 106px;
+  height: 15px;
+  gap: 0px;
+  opacity: 0px;
+  font-family: Silkscreen;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.36px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: #999999;
+}
+.imginputConPassWord {
+  width: 14px;
+  height: 14px;
+  margin-left: 4px;
+}
+.inputConPassWord {
+  gap: 4px;
+  opacity: 0px;
+  font-family: Silkscreen;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 15.36px;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: #ffffff;
+  background: none;
+  border: none;
+cursor: pointer;
+  height: 15px;
+}
+.partThree {
+  height: 40px;
+  background-color: rgba(229, 229, 229, 0.5);
+  padding: 8px;
+  line-height: 40px;
+  margin-top: 10px;
+  font-size: 20px;
+  button {
+    background-color: rgba(229, 229, 229, 0.5);
+    border: 1px solid #d7d7d7;
+    width: 100px;
+    height: 30px;
+    margin-left: 12px;
+  }
+}
+.partFour {
+  width: 400px;
+  height: 137px;
+  gap: 0px;
+  opacity: 0px;
+  p {
+    margin: 0px;
+    font-family: Silkscreen;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15.36px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    width: 400px;
+    height: 45px;
+    top: 284px;
+    gap: 0px;
+    opacity: 0px;
+    display: grid;
+    color: #ffffff;
+  }
+  input {
+    width: 342px !important;
+    height: 16px !important;
+    padding: 8px 12px 8px 12px;
+    gap: 0px;
+    border: 1px 0px 0px 0px;
+    justify-content: space-between;
+    opacity: 0px;
+    border: 1px solid #0b0113;
+    background-color: #5b2671;
+    font-family: Silkscreen;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 17.92px;
+    letter-spacing: 0.1em;
+    color: #ffffff;
+  }
+}
+.svgIcon {
+  width: 30.86px;
+  height: 30.86px;
+  border-radius: 50%;
+}
+.partFive {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  input {
+    width: 80px;
+  }
+}
+.mainFont {
+  width: 95px;
+  height: 34px;
+  display: grid;
+  gap: 4px;
+  position: relative;
+  span {
+    font-family: Silkscreen;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15.36px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    color: #ffffff;
+    display: inline-block;
+    height: 15px;
+  }
+  p {
+    font-family: Silkscreen;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15.36px;
+    letter-spacing: 0.1em;
+    text-align: left;
+    color: #b34fdd;
+    height: 15px;
+  }
+}
+.footerBtn {
+  text-transform: uppercase;
+  width: 400px;
+  height: 44px;
+  padding: 10px 0px 10px 0px;
+  gap: 10px;
+  opacity: 0px;
+  background-color: #200d2f;
+  color: #200d2f;
+  border: 1px solid #0b0113;
+  font-family: Silkscreen;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: #ffffff;
+}
+.footerBtnElse {
+  text-transform: uppercase;
+  width: 400px;
+  height: 44px;
+  padding: 10px 0px 10px 0px;
+  gap: 10px;
+  opacity: 0px;
+  background-color: #200d2f;
+  color: #200d2f;
+  border: 1px solid #0b0113;
+  font-family: Silkscreen;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: #ffffff;
 }
 .canvasWrapper {
-    /* width: 100%;
+  /* width: 100%;
     height: 100%; */
-    overflow-x: hidden; /* 允许水平滚动 */
-    overflow-y: hidden; /* 禁止垂直滚动 */
-    /* white-space: nowrap; 保证内容横向排列 */
-  }
-  .canvasWrapper::-webkit-scrollbar {
-    width: 8px;
-  }
-  .canvasWrapper::-webkit-scrollbar-track {
-    background-color:rgba(244, 243, 241, 0.5);
-  }
-  .canvasWrapper::-webkit-scrollbar-thumb {
-    background-color:rgba(244, 243, 241, 0.5);
-    border-radius: 4px;
-  }
-  .canvasWrapper::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(244, 243, 241, 0.5);
-  }
+  overflow-x: hidden; /* 允许水平滚动 */
+  overflow-y: hidden; /* 禁止垂直滚动 */
 
+  /* white-space: nowrap; 保证内容横向排列 */
+}
+.canvasWrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.canvasWrapper::-webkit-scrollbar-track {
+  background-color: rgba(244, 243, 241, 0.5);
+}
+.canvasWrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(244, 243, 241, 0.5);
+  border-radius: 4px;
+}
+.canvasWrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(244, 243, 241, 0.5);
+}
 
-  .commonCls1{
-    animation: spin 5s linear infinite;
-    -webkit-transform: rotate(3600deg);
-    transform: rotate(3600deg);
-    -webkit-transition: -webkit-transform 5s linear;
-    transition: transform 5s linear;
-    width: 30px;
-    height: 30px;
+.commonCls1 {
+  animation: spin 5s linear infinite;
+  -webkit-transform: rotate(3600deg);
+  transform: rotate(3600deg);
+  -webkit-transition: -webkit-transform 5s linear;
+  transition: transform 5s linear;
+  width: 30px;
+  height: 30px;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
   }
+}

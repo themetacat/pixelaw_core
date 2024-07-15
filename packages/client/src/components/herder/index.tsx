@@ -9,9 +9,11 @@ import {
 import { formatUnits } from "viem";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
-import RightPart from "../rightPart";
+import RightPart, { addressToEntityID } from "../rightPart";
 import { useMUD } from "../../MUDContext";
-import { convertToString, coorToEntityID, addressToEntityID } from "../rightPart/index";
+import BoxPrompt from "../BoxPrompt";
+import PopStar from "../popStar";
+import { convertToString, coorToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
 import TopUpContent from "../topUp";
 import {
@@ -26,7 +28,7 @@ import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useDisconnect } from 'wagmi';
-import { registerDelegation } from "../Account";
+import pixeLawlogo from '../../images/pixeLawlogo.png'
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -75,25 +77,36 @@ interface Props {
 
 export default function Header({ hoveredData, handleData }: Props) {
   const {
-    components: { App, Pixel, AppName, Instruction, TCMPopStar, UserDelegationControl },
+    components: {
+      App,
+      Pixel,
+      AppName,
+      Instruction,
+      TCMPopStar,
+      UserDelegationControl,
+    },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { interact },
+    systemCalls: { interact, interactTCM },
   } = useMUD();
-  const { address } = useAccount();
-  const { disconnect } = useDisconnect()
+  const { isConnected, address } = useAccount();
+
+  const { disconnect } = useDisconnect();
   const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
   const [popExhibit, setPopExhibit] = useState(false);
+  const [boxPrompt, setBoxPrompt] = useState(false);
   const [topUpType, setTopUpType] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
   const [instruC, setInstruC] = useState("");
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+  const [emptyRegionNum, setEmptyRegionNum] = useState({ x: 0, y: 0 });
   const [coordinatesData, setCoordinatesData] = useState({ x: 0, y: 0 });
   const [entityaData, setEntityaData] = useState("");
   const [paramInputs, setParamInputs] = useState([]);
   const [convertedParamsData, setConvertedParamsData] = useState(null);
+  const [tCMPopStarTime, setTCMPopStarTime] = useState(null);
   const [updateAbiJson, setUpdate_abi_json] = useState("");
   const [updateAbiCommonJson, setUpdate_abi_Common_json] = useState([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -104,14 +117,17 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [panningFromChild, setPanningFromChild] = useState(false);
+  const [popStar, setPopStar] = useState(false);
   const [pageClick, setPageClick] = useState(false);
   const [GRID_SIZE, setGRID_SIZE] = useState(32);
   const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
+  const [mainContent, setMainContent] = useState("MAINNET");
+  const [showList, setShowList] = useState(false);
+  const [addressModel, setAddressModel] = useState(false);
   const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
   const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
-  // const gridCount = Math.floor(CANVAS_WIDTH / GRID_SIZE);
-  // const CONTENT_WIDTH = gridCount * GRID_SIZE;
+
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
     y: number;
@@ -125,32 +141,18 @@ export default function Header({ hoveredData, handleData }: Props) {
   );
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
-  
-  // !!!address ?undefind
-  // const TCMPopStarData = getComponentValue(TCMPopStar, addressToEntityID(address));
-  // console.log(TCMPopStarData);
-  
-  // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
-  
-  // const coorToEntityID = (delegator: string, delegatee: string) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
-  //   console.log(playerEntity);
-    
-  // const delegation = getComponentValue(UserDelegationControl, playerEntity);
-  // console.log(delegation);
-  
-  
+  const panningType = window.localStorage.getItem("panning");
+  const coorToEntityID = (x: number, y: number) =>
+    encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
+
   const addressData =
     palyerAddress.substring(0, 4) +
     "..." +
     palyerAddress.substring(palyerAddress.length - 4);
-  //获取网络名称
   const chainName = publicClient.chain.name;
   const capitalizedString =
     chainName.charAt(0).toUpperCase() + chainName?.slice(1).toLowerCase();
-  //获取余额
-  // const balanceResultSW = useBalance({
-  //   address: palyerAddress,
-  // });
+
   const balanceFN = publicClient.getBalance({ address: palyerAddress });
   balanceFN.then((a: any) => {
     setBalance(a);
@@ -191,13 +193,14 @@ export default function Header({ hoveredData, handleData }: Props) {
     entities.forEach((entity) => {
       const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
       const value = getComponentValueStrict(Pixel, entity);
+
       if (value.text === "_none") {
         value.text = "";
       }
       if (value.color === "0") {
         value.color = "#2f1643";
       }
-      entityData.push({ coordinates, value }); // 将数据添加到数组中
+      entityData.push({ coordinates, value });
     });
   }
   const getEntityAtCoordinates = (x: number, y: number) => {
@@ -205,8 +208,8 @@ export default function Header({ hoveredData, handleData }: Props) {
       (entity) => entity.coordinates.x === x && entity.coordinates.y === y
     );
   };
+
   const appName = localStorage.getItem("manifest") as any;
-  // const appName = "BASE/Paint"
 
   const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
@@ -224,28 +227,60 @@ export default function Header({ hoveredData, handleData }: Props) {
   // registerDelegation();
 
 
+  const findEmptyRegion = () => {
+    const gridSize = GRID_SIZE;
+    const checkSize = 10;
+
+    const isEmpty = (x, y) => {
+      const encodeEntityNum = coorToEntityID(x, y);
+      const value = getComponentValue(Pixel, encodeEntityNum);
+      return value === undefined;
+    };
+
+    let px = 0,
+      x = 0,
+      y = 0;
+
+    while (true) {
+      let res = isEmpty(x, y);
+
+      if (res) {
+        if (x - px >= 9) {
+          if (y === 9) {
+            break;
+          }
+          y++;
+          x = px;
+        } else {
+          x++;
+        }
+      } else {
+        px = x + 1;
+        x = px;
+        y = 0;
+      }
+    }
+    return px;
+  };
+
   const drawGrid = useCallback(
     (
       ctx: CanvasRenderingContext2D,
       hoveredSquare: { x: number; y: number } | null,
-      mouseX: number,
-      mouseY: number
+      playType: any
     ) => {
       let pix_text;
 
-      // 填充整个画布背景色
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       ctx.lineWidth = 10;
       ctx.strokeStyle = "#000000";
-
-      // 绘制条纹x
+      const checkSize = 10;
       for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(x - scrollOffset.x, 0);
         ctx.lineTo(x - scrollOffset.x, CANVAS_HEIGHT);
         ctx.stroke();
       }
-      // 绘制条纹y
       for (let y = 0; y < CANVAS_HEIGHT; y += GRID_SIZE) {
         ctx.beginPath();
         ctx.moveTo(0, y - scrollOffset.y);
@@ -279,20 +314,21 @@ export default function Header({ hoveredData, handleData }: Props) {
           ctx.lineWidth = 3;
           ctx.strokeStyle = "#2e1043";
           ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-          // 绘制背景色
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-          const entity = getEntityAtCoordinates(i, j);
+          const entity = getEntityAtCoordinates(i, j) as any;
+
+
           if (entity) {
             ctx.fillStyle = entity.value.color;
             ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
             if (entity.value.text) {
-              ctx.fillStyle = "#000"; // 设置文本颜色
-              ctx.textAlign = "center"; // 设置文本水平居中
-              ctx.textBaseline = "middle"; // 设置文本垂直居中
+              ctx.fillStyle = "#000"; 
+              ctx.textAlign = "center"; 
+              ctx.textBaseline = "middle"; 
               if (
                 entity.value.text &&
-                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text) //Unicode码转换
+                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)
               ) {
                 pix_text = String.fromCodePoint(
                   parseInt(entity.value.text.substring(2), 16)
@@ -300,15 +336,18 @@ export default function Header({ hoveredData, handleData }: Props) {
               } else {
                 pix_text = entity.value.text;
               }
+
               const textX = currentX + GRID_SIZE / 2;
               const textY = currentY + GRID_SIZE / 2;
-              // ctx.fillText(pix_text, currentX + 2, currentY + 20);
               ctx.fillText(pix_text, textX, textY);
             }
           }
         }
       }
 
+      if (playType === true) {
+        const emptyRegion = findEmptyRegion();
+      }
       if (selectedColor && hoveredSquare) {
         ctx.fillStyle = selectedColor;
         ctx.fillRect(
@@ -339,6 +378,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   let timeout: NodeJS.Timeout;
   const [isDragging, setIsDragging] = useState(false);
+  const [timeControl, setTimeControl] = useState(false);
   const downTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [isLongPress, setIsLongPress] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -348,7 +388,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   const action =
     pixel_value && pixel_value.action ? pixel_value.action : "interact";
-  const ClickThreshold = 150; // 定义点击的时间阈值，单位为毫秒
+  const ClickThreshold = 150; 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     setFingerNum(event.buttons);
     if (pageClick === true) {
@@ -361,8 +401,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     get_function_param(action);
     downTimerRef.current = setTimeout(() => {
       setIsLongPress(true);
-
-      // 这里执行长按事件逻辑
     }, ClickThreshold);
   };
 
@@ -386,17 +424,12 @@ export default function Header({ hoveredData, handleData }: Props) {
     }
     const a = get_function_param(action);
     a.then((x) => {
-      // 检查对象是否为空
       const isEmpty = Object.keys(x).length === 0;
 
       if (isLongPress) {
-        // setPopExhibit(true)
-        // 长按事件的逻辑
         setIsLongPress(false);
         setIsDragging(false);
       } else {
-        // 点击事件的逻辑
-        // setPopExhibit(true)
         const canvas = canvasRef.current as any;
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
@@ -409,18 +442,25 @@ export default function Header({ hoveredData, handleData }: Props) {
         if (isEmpty) {
           if (selectedColor && coordinates) {
             hoveredSquareRef.current = coordinates;
-            // if (parts[1] !== "Snake") {
-            // setLoading(true);
+
             setIsDragging(false);
-            // setLoading(true);
-            interactHandle(
-              coordinates,
-              palyerAddress,
-              selectedColor,
-              action,
-              null
-            );
-            // }
+            if (appName === "BASE/PopCraftSystem") {
+              interactHandleTCM(
+                coordinates,
+                palyerAddress,
+                selectedColor,
+                action,
+                null
+              );
+            } else {
+              interactHandle(
+                coordinates,
+                palyerAddress,
+                selectedColor,
+                action,
+                null
+              );
+            }
 
             mouseXRef.current = mouseX;
             mouseYRef.current = mouseY;
@@ -435,7 +475,10 @@ export default function Header({ hoveredData, handleData }: Props) {
                 GRID_SIZE,
                 GRID_SIZE
               );
-              drawGrid(ctx, coordinates, mouseXRef.current, mouseYRef.current);
+              if (appName === "BASE/PopCraftSystem") {
+                drawGrid(ctx, coordinates, true);
+              }
+              drawGrid(ctx, coordinates, false);
             }
           }
         } else {
@@ -457,7 +500,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     selectedColor: any,
     actionData: any,
     other_params: any
-  ) => {
+  ) => { 
     setLoading(true);
     const interact_data = interact(
       coordinates,
@@ -484,6 +527,69 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
     });
   };
+  const interactHandleTCM = (
+    coordinates: any,
+    palyerAddress: any,
+    selectedColor: any,
+    actionData: any,
+    other_params: any
+  ) => {
+    setLoading(true);
+
+    const interact_data = interactTCM(
+      coordinates,
+      palyerAddress,
+      selectedColor,
+      actionData,
+      other_params
+    );
+
+    interact_data.then((increDataVal: any) => {
+      if (increDataVal[1]) {
+        increDataVal[1].then((a: any) => {
+          
+          if (a.status === "success") {
+            setLoading(false);
+            setTimeControl(true);
+            onHandleLoading();
+          } else {
+            handleError();
+            onHandleLoading();
+          }
+        });
+      } else {
+        handleError();
+      }
+    });
+  };
+
+  const [TCMPopStarData, setTCMPopStarData] = useState(null);
+
+  const handleEoaContractData = (data) => {
+    setTCMPopStarData(data);
+  };
+
+  const playFun = () => {
+    // console.log(TCMPopStarData);
+    if (TCMPopStarData === undefined) {
+      const emptyRegion = findEmptyRegion();
+      setEmptyRegionNum({ x: emptyRegion, y: 0 });
+    } else {
+      setEmptyRegionNum({ x: 0, y: 0 });
+    }
+    localStorage.setItem("showGameOver", "false");
+    const ctx = canvasRef?.current?.getContext("2d");
+    if (ctx && canvasRef) {
+      drawGrid(ctx, hoveredSquare, true);
+      interactHandleTCM(
+        emptyRegionNum,
+        palyerAddress,
+        selectedColor,
+        "interact",
+        null
+      );
+    }
+  };
 
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -493,17 +599,14 @@ export default function Header({ hoveredData, handleData }: Props) {
       mouseXRef.current = event.clientX - rect.left;
       mouseYRef.current = event.clientY - rect.top;
 
-      // 计算网格位置
       const gridX = Math.floor(mouseXRef.current / GRID_SIZE);
       const gridY = Math.floor(mouseYRef.current / GRID_SIZE);
 
-      // 更新hoveredSquare状态
       setHoveredSquare({ x: gridX, y: gridY });
 
-      // 绘制蓝色背景
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
-        drawGrid(ctx, hoveredSquare, mouseXRef.current, mouseYRef.current); // 重新绘制网格并传递hoveredSquare和鼠标位置
+        drawGrid(ctx, hoveredSquare, false);
       }
     },
     [drawGrid, hoveredSquare]
@@ -540,7 +643,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
         const ctx = canvas.getContext("2d");
         if (ctx) {
-          drawGrid(ctx, hoveredSquare, mouseX, mouseY); // 重新绘制画布并传入更新后的参数
+          drawGrid(ctx, hoveredSquare, false);
         }
       }
     },
@@ -586,7 +689,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     update_app_value(-1);
     function_def.forEach((param) => {
       (async () => {
-        // const filteredInputs = param.inputs.filter(component => !component.internalType.includes("struct DefaultParameters"));
         const filteredInputs = param.inputs.filter((component, index) => {
           const hasStructDefaultParameters = component.internalType.includes(
             DEFAULT_PARAMETERS_TYPE
@@ -601,7 +703,6 @@ export default function Header({ hoveredData, handleData }: Props) {
 
           return !hasStructDefaultParameters;
         });
-        // const filteredInputs = param.inputs;
         if (filteredInputs) {
           const copy_filteredInputs = deepCopy(filteredInputs);
 
@@ -637,7 +738,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [enumValue, setEnumValue] = useState({});
   const get_enum_value = (enumName: string) => {
     const res = [] as any;
-    // ${parts[1].replace(/\.abi\.json/g, "")}
 
     let systemCommonData = updateAbiCommonJson;
 
@@ -693,7 +793,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   const onHandleExe = () => {
     setPopExhibit(false);
     setShowOverlay(false);
-    // setLoading(false)
   };
 
   const onHandleLoading = () => {
@@ -712,6 +811,23 @@ export default function Header({ hoveredData, handleData }: Props) {
     setUpdate_abi_Common_json(data);
   };
 
+  const handleItemClick = (content) => {
+    setMainContent(content);
+  };
+  const handleAddClick = (content) => {
+    if (content === "topUp") {
+      setTopUpType(true);
+    } else {
+      disconnect();
+    }
+  };
+
+  const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
+  const addressContent = [
+    { name: "Top up", value: "topUp" },
+    { name: "Disconnect", value: "disconnect" },
+  ];
+
   useEffect(() => {
     const handleScroll = () => {
       setScrollOffset({ x: window.scrollX, y: window.scrollY });
@@ -728,12 +844,16 @@ export default function Header({ hoveredData, handleData }: Props) {
     const canvas = canvasRef.current;
     if (canvas && entityData.length > 0) {
       const ctx = canvas.getContext("2d");
-      if (ctx) {
+      if (ctx && appName !== "BASE/PopCraftSystem") {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        drawGrid(ctx, hoveredSquare, mouseX, mouseY);
+        drawGrid(ctx, hoveredSquare, false);
+      } else {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        drawGrid(ctx, hoveredSquare, true);
       }
     }
   }, [
+    appName,
     drawGrid,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
@@ -745,8 +865,6 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   useEffect(() => {
     const canvas = canvasRef.current as any;
-
-    // 在合适的地方注册鼠标移动事件和滚动条滚动事件
     const handleMouseMove = (event: any) => {
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -755,7 +873,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
       setCoordinates({ x: gridX, y: gridY });
       setHoveredSquare({ x: gridX, y: gridY });
-      // setHoveredSquare({ x: gridX, y: gridY });
       hoveredSquareRef.current = { x: gridX, y: gridY };
     };
 
@@ -764,15 +881,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
       setScrollOffset({ x: scrollX, y: scrollY });
     };
-
-    // document.addEventListener("wheel", function (event) {
-    //   downTimerRef.current = setTimeout(() => {
-    //     setIsLongPress(true);
-    //     setIsDragging(true);
-    //     setTranslateX(event.clientX);
-    //     setTranslateY(event.clientY);
-    //   }, ClickThreshold);
-    // });
 
     if (canvas) {
       canvas.addEventListener("mousemove", handleMouseMove);
@@ -786,42 +894,32 @@ export default function Header({ hoveredData, handleData }: Props) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [canvasRef, scrollOffset]);
-  const { isConnected } = useAccount();
 
-  const [mainContent, setMainContent] = useState("MAINNET");
-  const [showList, setShowList] = useState(false);
-  const [addressModel, setAddressModel] = useState(false);
-
-  const handleItemClick = (content) => {
-    setMainContent(content);
-  };
-  const handleAddClick = (content) => {
-    if (content === "topUp") {
-      setTopUpType(true);
-    } else {
-      console.log("退出");
-      disconnect()
+  useEffect(() => {
+    if (
+      appName === "BASE/PopCraftSystem"
+    ) {
+      setPopStar(true);
     }
-  };
+  }, [appName]);
 
-  const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
-  const addressContent = [
-    { name: "Top up", value: "topUp" },
-    { name: "Disconnect", value: "disconnect" },
-  ];
+  useEffect(() => {
+    if (isConnected) {
+      if (balance && (Number(balance) / 1e18).toFixed(8) < "0.000001") {
+        setTopUpType(true);
+      }
+    }
+  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
+
   const balanceSW = balanceFN.data?.value ?? 0n;
-
-
-  useEffect(()=>{
-
-    if(isConnected){
-  if(balance && (Number(balance) / 1e18).toFixed(8)<'0.000001'){
-    
-    setTopUpType(true)
-  }
+  
+  useEffect(() => {
+    if (isConnected) {
+      if ((Number(balance) / 1e18).toFixed(8) < "0.000001") {
+        setTopUpType(true);
+      }
     }
-
-      },[(Number(balance) / 1e18).toFixed(8),isConnected])
+  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
 
 
   return (
@@ -830,7 +928,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         
         <img
           className={style.containerImg}
-          src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
+          src={pixeLawlogo}
           alt=""
         />
 
@@ -851,25 +949,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             +
           </button>
         </div>
-        {/* <div style={{ position: "absolute", left: "400px" }}>
-          <div onClick={() => setShowList(!showList)} style={{ color: "#fff" }}>
-            {mainContent}
-          </div>
-          {showList && (
-            <div>
-              {netContent.length > 0 &&
-                netContent.map((item, index) => (
-                  <div
-                    style={{ color: "#fff" }}
-                    key={index}
-                    onClick={() => handleItemClick(item.name)}
-                  >
-                    {item.name}
-                  </div>
-                ))}
-            </div>
-          )}
-        </div> */}
+
         <div
           className={style.addr}
           style={{
@@ -877,8 +957,6 @@ export default function Header({ hoveredData, handleData }: Props) {
             marginLeft: "32px",
           }}
         >
-          {/* <span>{capitalizedString}</span> */}
-          {/* <ConnectButton /> */}
           <ConnectButton.Custom>
             {({
               account,
@@ -889,8 +967,6 @@ export default function Header({ hoveredData, handleData }: Props) {
               authenticationStatus,
               mounted,
             }) => {
-              // Note: If your app doesn't use authentication, you
-              // can remove all 'authenticationStatus' checks
               const ready = mounted && authenticationStatus !== "loading";
               const connected =
                 ready &&
@@ -913,8 +989,12 @@ export default function Header({ hoveredData, handleData }: Props) {
                   {(() => {
                     if (!connected) {
                       return (
-                        <button onClick={openConnectModal} type="button" className={style.btnConnect}>
-                         CONNECT
+                        <button
+                          onClick={openConnectModal}
+                          type="button"
+                          className={style.btnConnect}
+                        >
+                          CONNECT
                         </button>
                       );
                     }
@@ -928,11 +1008,8 @@ export default function Header({ hoveredData, handleData }: Props) {
                     }
 
                     return (
-                      <div style={{display:"flex"}}>  
-                      {chain.name}&nbsp;&nbsp;
                       <div
                         style={{
-                          // display: 'flex',
                           gap: 12,
                         }}
                         onMouseEnter={() => {
@@ -942,24 +1019,29 @@ export default function Header({ hoveredData, handleData }: Props) {
                           setAddressModel(false);
                         }}
                       >
+                        {" "}
+                        {chain.name}&nbsp;&nbsp;
                         <button
-                        style={{border:"none",background:"none",color:"#fff",fontFamily: 'Silkscreen,cursive',height:"50px"}}
-                        
-                          // onClick={openAccountModal}
+                          style={{
+                            border: "none",
+                            background: "none",
+                            color: "#fff",
+                            fontFamily: "Silkscreen,cursive",
+                            height: "55px",
+                          }}
                           type="button"
                         >
-                       
                           {account.displayName}
                           {account.displayBalance
                             ? ` (${account.displayBalance})`
                             : ""}
                         </button>
                         {addressModel && (
-                          <div>
+                          <div className={style.downBox}>
                             {addressContent.length > 0 &&
                               addressContent.map((item, index) => (
                                 <div
-                                  style={{ color: "#fff" ,backgroundColor:"hsl(290, 77%, 14%,1)"}}
+                                  className={style.downBoxItem}
                                   key={index}
                                   onClick={() => handleAddClick(item.value)}
                                 >
@@ -969,36 +1051,16 @@ export default function Header({ hoveredData, handleData }: Props) {
                           </div>
                         )}
                       </div>
-                      </div>
                     );
                   })()}
                 </div>
               );
             }}
           </ConnectButton.Custom>
-          {/* {isConnected && <SendTransaction />} */}
-
-          {/* <span
-            onClick={() => {
-              addressDataCopy(palyerAddress);
-            }}
-            className={style.balanceNum}
-          >
-            {addressData}
-          </span>
-          <span className={style.balanceNum}>
-            {" "}
-            {publicClient && balance != null ? (
-              <>
-                {formatUnits(balance, natIve).replace(/(\.\d{4})\d+$/, "$1")}{" "}
-                {publicClient.chain.nativeCurrency.symbol}
-              </>
-            ) : null}
-          </span> */}
         </div>
       </div>
 
-      <div style={{ display: "flex",height:"100vh" ,overflowY:"hidden"}}>
+      <div style={{ display: "flex", height: "100vh", overflowY: "hidden" }}>
         <div
           style={{
             width: `calc(100vw)`,
@@ -1066,7 +1128,6 @@ export default function Header({ hoveredData, handleData }: Props) {
           ))}
         </div>
         <RightPart
-          // update_abi_json={setUpdate_abi_json}
           coordinates={coordinates}
           entityData={entityData}
           setPanningState={handlePanningChange}
@@ -1101,17 +1162,48 @@ export default function Header({ hoveredData, handleData }: Props) {
       ) : (
         ""
       )}
-      {topUpType === true ? (
-        <div className={style.overlay} onClick={(event)=>{
-          if (!event.target.classList.contains('topBox') && event.target.classList.contains(style.overlay)) {
-          setTopUpType(false)
-          }
-        }}>
-          <TopUpContent 
-          setTopUpType={setTopUpType} 
-          mainContent={mainContent}
-          palyerAddress={palyerAddress}/>
+      {topUpType ? (
+        <div
+          className={style.overlay}
+          onClick={(event) => {
+            if (
+              !event.target.classList.contains("topBox") &&
+              event.target.classList.contains(style.overlay)
+            ) {
+              setTopUpType(false);
+            }
+          }}
+        >
+          <TopUpContent
+            setTopUpType={setTopUpType}
+            mainContent={mainContent}
+            palyerAddress={palyerAddress}
+          />
         </div>
+      ) : null}
+      {popStar === true ? (
+        <div
+          className={
+            panningType !== "false"
+              ? style.overlayPopStar
+              : style.overlayPopStarFl
+          }
+          onClick={() => {
+            setPopStar(false);
+            setBoxPrompt(true);
+          }}
+        >
+          <PopStar setPopStar={setPopStar} playFun={playFun} />
+        </div>
+      ) : null}
+      {(boxPrompt === true ) ||
+      appName === "BASE/PopCraftSystem" ? (
+        <BoxPrompt
+          coordinates={coordinates}
+          timeControl={timeControl}
+          playFun={playFun}
+          handleEoaContractData={handleEoaContractData}
+        />
       ) : null}
     </>
   );

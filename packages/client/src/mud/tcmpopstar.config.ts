@@ -1,9 +1,7 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
-  namespace: "tcmPopStar",
-  enums:{
-  },
+  namespace: "popCraft",
   tables: {
     TCMPopStar: {
       keySchema:{
@@ -17,11 +15,29 @@ export default mudConfig({
         matrixArray: "uint256[]",
         tokenAddressArr: "address[]"
       }
+    },
+    TokenBalance: {
+      keySchema:{
+        owner: "address",
+        tokenAddress: "address",
+      },
+      valueSchema:{
+        balance: "uint256",
+      }
+    },
+    TokenSold:{
+      keySchema:{
+        tokenAddress: "address",
+      },
+      valueSchema:{
+        soldNow: "uint256",
+        soldAll: "uint256"
+      }
     }
   },
   systems: {
-    TCMPopStarSystem: {
-      name: "TCMPopStarSystem",
+    PopCraftSystem: {
+      name: "PopCraftSystem",
       openAccess: false
     },
   }
