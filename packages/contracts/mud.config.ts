@@ -1,6 +1,10 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
+  userTypes: {
+    ResourceId: { filePath: "@latticexyz/store/src/ResourceId.sol", internalType: "bytes32" },
+  },
+  // userTypesFilename: "@latticexyz/store/src/ResourceId.sol",
   tables: {
     Permissions: {
       keySchema: {
@@ -135,6 +139,15 @@ export default mudConfig({
         message: "string",
       },
       offchainOnly: true
-    }
+    },
+    ERC20TokenBalance: {
+      keySchema: {
+        tokenAddress: "address",
+        namespaceId: "ResourceId"
+      },
+      valueSchema: {
+        value: "uint256"
+      }
+    },
   },
 });

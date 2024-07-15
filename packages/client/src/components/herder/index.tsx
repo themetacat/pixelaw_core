@@ -11,7 +11,7 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import toast, { Toaster } from "react-hot-toast";
 import RightPart from "../rightPart";
 import { useMUD } from "../../MUDContext";
-import { convertToString, coorToEntityID } from "../rightPart/index";
+import { convertToString, coorToEntityID, addressToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
 import TopUpContent from "../topUp";
 import {
@@ -26,6 +26,7 @@ import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useDisconnect } from 'wagmi';
+import { registerDelegation } from "../Account";
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -74,10 +75,11 @@ interface Props {
 
 export default function Header({ hoveredData, handleData }: Props) {
   const {
-    components: { App, Pixel, AppName, Instruction },
+    components: { App, Pixel, AppName, Instruction, TCMPopStar, UserDelegationControl },
     network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { interact },
   } = useMUD();
+  const { address } = useAccount();
   const { disconnect } = useDisconnect()
   const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
@@ -123,9 +125,20 @@ export default function Header({ hoveredData, handleData }: Props) {
   );
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
-
+  
+  // !!!address ?undefind
+  // const TCMPopStarData = getComponentValue(TCMPopStar, addressToEntityID(address));
+  // console.log(TCMPopStarData);
+  
   // const coorToEntityID = (x: number, y: number) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
-
+  
+  // const coorToEntityID = (delegator: string, delegatee: string) => encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
+  //   console.log(playerEntity);
+    
+  // const delegation = getComponentValue(UserDelegationControl, playerEntity);
+  // console.log(delegation);
+  
+  
   const addressData =
     palyerAddress.substring(0, 4) +
     "..." +
@@ -187,7 +200,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       entityData.push({ coordinates, value }); // 将数据添加到数组中
     });
   }
-
   const getEntityAtCoordinates = (x: number, y: number) => {
     return entityData.find(
       (entity) => entity.coordinates.x === x && entity.coordinates.y === y
@@ -209,6 +221,8 @@ export default function Header({ hoveredData, handleData }: Props) {
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
+  // registerDelegation();
+
 
   const drawGrid = useCallback(
     (
@@ -445,7 +459,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     other_params: any
   ) => {
     setLoading(true);
-
     const interact_data = interact(
       coordinates,
       palyerAddress,
@@ -457,6 +470,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     interact_data.then((increDataVal: any) => {
       if (increDataVal[1]) {
         increDataVal[1].then((a: any) => {
+          console.log(a);
           if (a.status === "success") {
             setLoading(false);
             onHandleLoading();
@@ -796,7 +810,8 @@ export default function Header({ hoveredData, handleData }: Props) {
     { name: "Disconnect", value: "disconnect" },
   ];
   const balanceSW = balanceFN.data?.value ?? 0n;
-  
+
+
   useEffect(()=>{
 
     if(isConnected){
@@ -808,14 +823,17 @@ export default function Header({ hoveredData, handleData }: Props) {
 
       },[(Number(balance) / 1e18).toFixed(8),isConnected])
 
+
   return (
     <>
       <div className={style.container}>
+        
         <img
           className={style.containerImg}
           src="https://dojo.pixelaw.xyz/assets/logo/pixeLaw-logo.png"
           alt=""
         />
+
         <div className={style.content}>
           <button
             className={numberData === 25 ? style.btnBoxY : style.btnBox}

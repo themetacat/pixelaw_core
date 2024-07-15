@@ -8,17 +8,25 @@ PixelData, App, AppData, AppUser,
 AppName, CoreActionAddress, PixelUpdate, 
 PixelUpdateData, Instruction, InstructionTableId, 
 QueueScheduledData, QueueScheduled, QueueProcessed,
-Alert, AlertData
+Alert, AlertData, ERC20TokenBalance
 } from "../codegen/index.sol";
 import { ResourceId, WorldResourceIdLib, WorldResourceIdInstance } from "@latticexyz/world/src/WorldResourceId.sol";
 import { RESOURCE_SYSTEM } from "@latticexyz/world/src/worldResourceTypes.sol";
+import { AccessControl } from "@latticexyz/world/src/AccessControl.sol";
+import { IWorldErrors } from "@latticexyz/world/src/IWorldErrors.sol";
+import { revertWithBytes } from "@latticexyz/world/src/revertWithBytes.sol";
 import {Position} from "../index.sol";
 import { SystemSwitch } from "@latticexyz/world-modules/src/utils/SystemSwitch.sol";
 
+interface IERC20 {
+    function balanceOf(address account) external view returns (uint256);
+    function transfer(address to, uint256 value) external returns (bool);
+}
 
-contract CoreSystem is System {
-  
+contract CoreSystem is System, IWorldErrors {
+  error TransferError();
   bytes32 constant string_null = keccak256(abi.encodePacked("_Null"));
+
   function init() public{
     bytes32 key = convertToBytes32('core_actions');
     CoreActionAddress.set(key, _world());
@@ -190,5 +198,49 @@ contract CoreSystem is System {
         result := mload(add(stringBytes, 32))
     }
     return result;
+  }
+
+  /**
+   * @notice Transfer ERC20 Token out of the World to a specific address.
+   * @dev Requires the caller to have access to the source namespace and ensures sufficient balance before transfer.
+   * @param fromNamespaceId The source namespace from which the Token will be deducted.
+   * @param toAddress The target address where the token will be sent.
+   * @param amount The amount to transfer.
+   */
+  function transferERC20TokenToAddress(
+    ResourceId fromNamespaceId,
+    address tokenAddress,
+    address toAddress,
+    uint256 amount
+  ) public {
+    // Require caller to have access to the namespace
+    AccessControl.requireAccess(fromNamespaceId, _msgSender());
+    // AccessControl.requireOwner(fromNamespaceId, _msgSender());
+
+    // Get current namespace balance
+    uint256 balance = ERC20TokenBalance.get(tokenAddress, fromNamespaceId);
+    // Require the balance to be greater or equal to the amount to transfer
+    if (amount > balance) revert World_InsufficientBalance(balance, amount);
+    uint256 world_balance = IERC20(tokenAddress).balanceOf(_world());
+    if (amount > world_balance) revert World_InsufficientBalance(world_balance, amount);
+
+    // Update the balances
+    ERC20TokenBalance.set(tokenAddress, fromNamespaceId, balance - amount);
+
+    // Transfer the balance to the given address, revert on failure
+    // (bool success, bytes memory data) = payable(toAddress).call{ value: amount }("");
+    bool success = IERC20(tokenAddress).transfer(toAddress, amount);
+    if (!success) revert TransferError();
+  }
+
+  function setTokenBalanceForNamespace(address[] memory tokenAddressArr, uint256[] memory tokenAddressBalance, ResourceId fromNamespaceId) public {
+    // AccessControl.requireOwner(WorldResourceIdLib.encodeNamespace("root"), _msgSender());
+
+    require(tokenAddressArr.length == tokenAddressBalance.length, "Different lengths");
+    for(uint256 i; i < tokenAddressArr.length; i++){
+      uint256 world_balance = IERC20(tokenAddressArr[i]).balanceOf(_world());
+      if (tokenAddressBalance[i] > world_balance) revert World_InsufficientBalance(world_balance, tokenAddressBalance[i]);
+      ERC20TokenBalance.set(tokenAddressArr[i], fromNamespaceId, tokenAddressBalance[i]);
+    }
   }
 }

@@ -5,12 +5,15 @@ pragma solidity >=0.8.21;
 
 import { PermissionsData, PixelData, PixelUpdateData } from "./../index.sol";
 import { Position } from "./../../index.sol";
+import { ResourceId } from "@latticexyz/world/src/WorldResourceId.sol";
 
 /**
  * @title ICoreSystem
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface ICoreSystem {
+  error TransferError();
+
   function init() external;
 
   function update_permission(string memory allowed_app_name, PermissionsData memory permission_param) external;
@@ -38,4 +41,17 @@ interface ICoreSystem {
   function alert_player(Position memory position, address player, string memory message) external;
 
   function convertToBytes32(string memory input) external pure returns (bytes32);
+
+  function transferERC20TokenToAddress(
+    ResourceId fromNamespaceId,
+    address tokenAddress,
+    address toAddress,
+    uint256 amount
+  ) external;
+
+  function setTokenBalanceForNamespace(
+    address[] memory tokenAddressArr,
+    uint256[] memory tokenAddressBalance,
+    ResourceId fromNamespaceId
+  ) external;
 }

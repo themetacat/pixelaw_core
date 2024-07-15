@@ -15,7 +15,6 @@ import {
   useAccount,
   useBalance,
 } from "wagmi";
-import { getTransactionReceipt } from '@wagmi/core';
 
 interface Props {
   setTopUpType: any;

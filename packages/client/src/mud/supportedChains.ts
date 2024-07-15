@@ -52,14 +52,24 @@ const core_foundry = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://api.metacat.world/rpc'],
-      webSocket: ['wss://api.metacat.world/rpc'],
+      http: ['https://api.pixelaw.world/rpc'],
+      webSocket: ['wss://api.pixelaw.world/rpc'],
     },
     public: {
-      http: ['https://api.metacat.world/rpc'],
-      webSocket: ['wss://api.metacat.world/rpc'],
+      http: ['https://api.pixelaw.world/rpc'],
+      webSocket: ['wss://api.pixelaw.world/rpc'],
     },
   },
+  // rpcUrls: {
+  //   default: {
+  //     http: ['https://47.243.184.241/rpc'],
+  //     webSocket: ['ws://47.243.184.241/rpc'],
+  //   },
+  //   public: {
+  //     http: ['http://47.243.184.241/rpc'],
+  //     webSocket: ['ws://47.243.184.241/rpc'],
+  //   },
+  // },
 })
 
 const garnet = defineChain({

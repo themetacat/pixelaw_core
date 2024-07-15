@@ -16,6 +16,10 @@ const IWorldAbi = await response.json();
 import { createBurnerAccount, getContract, transportObserver, ContractWrite, resourceToHex } from "@latticexyz/common";
 import { Subject, share } from "rxjs";
 
+import { resolveConfig } from "@latticexyz/store/internal";
+import { storeToV1 } from "@latticexyz/store/config/v2";
+import tcmpopstarConfig from "./tcmpopstar.config";
+
 /*
  * Import our MUD config, which includes strong types for
  * our tables and other config options. We use this to generate
@@ -42,7 +46,8 @@ export type SetupNetworkResult = {
   palyerAddress: any;
   write$: any;
   write_sub: any;
-  abi: any
+  abi: any;
+  clientOptions: any;
 };
 export async function setupNetwork(): Promise<SetupNetworkResult> {
 
@@ -54,7 +59,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       // 使用模板字符串拼接字符串
       const fullPath = `https://pixelaw-game.vercel.app/${passedValue?.replace("BASE/", "")}`;
      
-
       /*
        * Create a viem public (read only) client
        * (https://viem.sh/docs/clients/public.html)
@@ -64,7 +68,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
         transport: transportObserver(fallback([webSocket(), http()])),
         pollingInterval: 3000,
       } as const satisfies ClientConfig;
-
       const publicClient = createPublicClient(clientOptions);
 
       /*
@@ -72,6 +75,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
        * (see https://viem.sh/docs/clients/wallet.html).
        */
       const burnerAccount = createBurnerAccount(networkConfig.privateKey as Hex);
+      
       const burnerWalletClient = createWalletClient({
         ...clientOptions,
         account: burnerAccount,
@@ -93,7 +97,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       /*
       * Create an object for communicating with the deployed World.
       */
-     
+      
       const worldContract = getContract({
         address: networkConfig.worldAddress as Hex, 
         abi: IWorldAbi,
@@ -158,6 +162,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             publicClient,
             startBlock: BigInt(networkConfig.initialBlockNumber),
             indexerUrl: indexerUrl,
+            tables: resolveConfig(tcmpopstarConfig).tables,
             filters: [
               {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Pixel" }),
@@ -174,10 +179,13 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Alert" }),
               },
+              {
+                tableId: resourceToHex({ type: "table", namespace: "tcmPopStar", name: "TCMPopStar" }),
+              },
             ],
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
+            console.log(components);
             
-   
             /*
              * If there is a faucet, request (test) ETH if you have
              * less than 1 ETH. Repeat every 20 seconds to ensure you don't
@@ -191,7 +199,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-                  await testClient.setBalance({ address: account_addr, value: parseEther('4') });
+                  await testClient.setBalance({ address: account_addr, value: parseEther('10') });
                 };
               };
      
@@ -222,7 +230,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             }
             if(networkConfig.chain.id === 31337 || networkConfig.chain.id === 31338){
               requestDrip();
-              setInterval(requestDrip, 2000)
+              setInterval(requestDrip, 20000)
             }else if(networkConfig.chain.id === 17069){
               sendPostRequest();
               setInterval(sendPostRequest, 40000)
@@ -243,6 +251,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               write$: write$.asObservable().pipe(share()),
               write_sub: write$,
               abi: abi,
+              clientOptions:clientOptions
             });
           
           }).catch(reject);
