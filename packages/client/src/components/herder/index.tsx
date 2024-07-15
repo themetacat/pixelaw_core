@@ -27,7 +27,8 @@ import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-import { useDisconnect } from "wagmi";
+import { useDisconnect } from 'wagmi';
+import pixeLawlogo from '../../images/pixeLawlogo.png'
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
