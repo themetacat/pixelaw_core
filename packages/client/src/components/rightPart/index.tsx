@@ -36,7 +36,6 @@ interface Props {
   onHandleLoadingFun: any;
   setPageClick: any;
 }
-
 export function convertToString(bytes32Value: string) {
   const byteArray = new Uint8Array(
     bytes32Value.match(/[\da-f]{2}/gi).map((h) => parseInt(h, 16))
