@@ -312,25 +312,19 @@ export default function Header({ hoveredData, handleData }: Props) {
           ctx.lineWidth = 3;
           ctx.strokeStyle = "#2e1043";
           ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-          // 绘制背景色
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
           const entity = getEntityAtCoordinates(i, j) as any;
 
-          // if (i === 5 && j === 5) {
-          //   const img = new Image();
-          //   img.src = 'https://poster-phi.vercel.app/metaverse_learn/283.png';
-          //     ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
-          // }
-          // const value = getComponentValueStrict(Pixel, entity);
+
 
           if (entity) {
             ctx.fillStyle = entity.value.color;
             ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
             if (entity.value.text) {
-              ctx.fillStyle = "#000"; // 设置文本颜色
-              ctx.textAlign = "center"; // 设置文本水平居中
-              ctx.textBaseline = "middle"; // 设置文本垂直居中
+              ctx.fillStyle = "#000"; 
+              ctx.textAlign = "center"; 
+              ctx.textBaseline = "middle"; 
               if (
                 entity.value.text &&
                 /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)
