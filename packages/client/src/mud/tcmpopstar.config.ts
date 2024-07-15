@@ -1,7 +1,7 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
-  namespace: "tcmPopStar",
+  namespace: "popCraft",
   tables: {
     TCMPopStar: {
       keySchema:{
@@ -36,8 +36,8 @@ export default mudConfig({
     }
   },
   systems: {
-    TCMPopStarSystem: {
-      name: "TCMPopStarSystem",
+    PopCraftSystem: {
+      name: "PopCraftSystem",
       openAccess: false
     },
   }

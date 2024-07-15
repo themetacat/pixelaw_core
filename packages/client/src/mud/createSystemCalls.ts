@@ -294,18 +294,18 @@ export function createSystemCalls(
         method: "eth_requestAccounts",
       });
 
-      // const encodeData = encodeFunctionData({
-      //   abi: abi_json[app_name],
-      //   functionName: action,
-      //   args: allArgs
-      // })
+      const encodeData = encodeFunctionData({
+        abi: abi_json[app_name],
+        functionName: action,
+        args: allArgs
+      })
 
       // const encodeData = encodeFunctionData({
       //   abi: abi_json[app_name],
       //   functionName: "buyToken",
       //   args: ["0xC750a84ECE60aFE3CBf4154958d18036D3f15786", 2]
       // })
-      // const txData = await worldContract.write.call([resourceToHex({ "type": "system", "namespace": namespace, "name": system_name }), encodeData])
+      const txData = await worldContract.write.call([resourceToHex({ "type": "system", "namespace": namespace, "name": system_name }), encodeData])
       // const txData = await worldContract.write.setTokenBalanceForNamespace([["0xC750a84ECE60aFE3CBf4154958d18036D3f15786","0x65638Aa354d2dEC431aa851F52eC0528cc6D84f3", "0x1ca53886132119F99eE4994cA9D0a9BcCD2bB96f"], [100000000000000000000, 100000000000000000000, 100000000000000000000], "0x6e7374636d506f70537461720000000000000000000000000000000000000000"])
       // const txData = await worldContract.write.transferERC20TokenToAddress(["0x6e7374636d506f70537461720000000000000000000000000000000000000000", "0xC750a84ECE60aFE3CBf4154958d18036D3f15786", "0x60EA96f57B3a5715A90DAe1440a78f8bb339C92e", 1000000000000000000])
 
@@ -357,7 +357,7 @@ export function createSystemCalls(
     action: string,
     other_params: any
   ) => {
-console.log(coordinates);
+// console.log(coordinates);
 
     
     const app_name = window.localStorage.getItem("app_name") || "paint";
@@ -409,7 +409,7 @@ console.log(coordinates);
             name: system_name,
           }),
           encodeData,
-        ], {gas: 20000000n});
+        ], {gas: 50000000n});
         // console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
         
         hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });

@@ -180,10 +180,10 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 tableId: resourceToHex({ type: "table", namespace: "", name: "Alert" }),
               },
               {
-                tableId: resourceToHex({ type: "table", namespace: "tcmPopStar", name: "TCMPopStar" }),
+                tableId: resourceToHex({ type: "table", namespace: "popCraft", name: "TCMPopStar" }),
               },
               {
-                tableId: resourceToHex({ type: "table", namespace: "tcmPopStar", name: "TokenBalance" }),
+                tableId: resourceToHex({ type: "table", namespace: "popCraft", name: "TokenBalance" }),
               },
             ],
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
