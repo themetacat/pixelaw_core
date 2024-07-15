@@ -19,22 +19,21 @@ import { SetupNetworkResult } from "../../mud/setupNetwork";
 import loadingImg from "../../images/loading.png";
 
 import { hexToUtf8 } from "web3-utils";
-// import {setEntityaData } from "../herder/index"
 import { abi_json, update_app_value } from "../../mud/createSystemCalls";
 export const ManifestContext = createContext<string>("");
 
 interface Props {
-  avb: { x: number; y: number };
-  mkl: any;
-  pp: any;
-  ll: any;
-  p: any;
-  ppp: any;
-  f: any;
-  bnfa: any;
-  mmn: any;
-  l: any;
-  setplokkk: any;
+  coordinates: { x: number; y: number };
+  entityData: any;
+  setPanningState: any;
+  loading: any;
+  onUpdateAbiJson: any;
+  onHandleExe: any;
+  handlePageClickIs: any;
+  onUpdateAbiCommonJson: any;
+  onHandleLoading: any;
+  onHandleLoadingFun: any;
+  setPageClick: any;
 }
 export function convertToString(bytes32Value: string) {
   const byteArray = new Uint8Array(
@@ -52,17 +51,17 @@ export const addressToEntityID = (address: Hex) =>
 
 
 export default function RightPart({
-  avb,
-  ll,
-  ppp,
-  mkl,
-  p,
-  pp,
-  f,
-  mmn,
-  l,
-  setplokkk,
-  bnfa,
+  coordinates,
+  loading,
+  onHandleExe,
+  entityData,
+  onUpdateAbiJson,
+  setPanningState,
+  handlePageClickIs,
+  onHandleLoading,
+  onHandleLoadingFun,
+  setPageClick,
+  onUpdateAbiCommonJson,
 }: Props) {
   const {
     components: { App, Pixel, AppName },
@@ -105,23 +104,23 @@ export default function RightPart({
       systemData = abi_json[app_name];
     } else {
       try {
-        l();
-        setplokkk();
+        onHandleLoadingFun();
+        setPageClick();
         const response = await fetch(worldAbiUrl); 
         systemData = await response.json();
         if (systemData) {
-          mmn();
-          f();
+          onHandleLoading();
+          handlePageClickIs();
         }
 
         update_abi(systemData);
       } catch (error) {
-        mmn();
+        onHandleLoading();
         console.log("error:", error);
       }
     }
 
-    p(systemData);
+    onUpdateAbiJson(systemData);
 
     if (app_name + "Common" in abi_json) {
       common_abi = abi_json[app_name + "Common"];
@@ -135,7 +134,7 @@ export default function RightPart({
       }
     }
 
-    bnfa(common_abi);
+    onUpdateAbiCommonJson(common_abi);
   };
   useEffect(() => {
     updateAbiUrl(localStorage.getItem("manifest"));
@@ -152,7 +151,7 @@ export default function RightPart({
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  const coor_entity = coorToEntityID(avb.x, avb.y);
+  const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   let app_name, truncatedOwner;
 
@@ -164,22 +163,6 @@ export default function RightPart({
     )}`;
   }
 
-  const btn1 = () => {
-    localStorage.setItem("app_name", "paint");
-    localStorage.setItem("manifest", "BASE/PaintSystem");
-    updateAbiUrl("BASE/PaintSystem");
-  };
-  const btn2 = () => {
-    localStorage.setItem("app_name", "snake");
-    localStorage.setItem("manifest", "BASE/SnakeSystem");
-    updateAbiUrl("BASE/SnakeSystem");
-  };
-  const btn3 = () => {
-    localStorage.setItem("app_name", "myapp");
-    localStorage.setItem("manifest", "BASE/MyAppSystem");
-    updateAbiUrl("BASE/MyAppSystem");
-  };
-
   return (
     <div
       className={panning === false ? style.container : style.container1}
@@ -189,7 +172,7 @@ export default function RightPart({
         }
         window.localStorage.setItem("panning", !panning);
         setPanning(!panning);
-        pp(!panning);
+        setPanningState(!panning);
       }}
     >
       <div style={{ display: "flex", position: "relative" }}>
@@ -218,7 +201,7 @@ export default function RightPart({
               <div
                 key={`${index}`}
                 onClick={(e) => {
-                  if (ll === true) {
+                  if (loading === true) {
                     return;
                   }
                   handleIconClick(index, value);
@@ -227,7 +210,7 @@ export default function RightPart({
                     "entityVal",
                     decodeEntity({ app_addr: "address" }, entitya).app_addr
                   );
-                  ppp();
+                  onHandleExe();
                   e.stopPropagation();
                 }}
                 className={style.btnGame}
@@ -250,7 +233,7 @@ export default function RightPart({
                       : style.imgCon
                   }
                 >
-                  {ll === true &&
+                  {loading === true &&
                   loacl_app_name
                     ?.toLowerCase()===
                       capitalizeFirstLetter(
@@ -304,13 +287,13 @@ export default function RightPart({
           })}
           {panning === false ? (
             <div style={{ position: "fixed", bottom: "12.4px" }}>
-              <span className={style.avb} style={{ color: "#fff" }}>
+              <span className={style.coordinates} style={{ color: "#fff" }}>
                 <span className={style.a}>x:</span>
-                <span className={style.fontCon}>{avb.x}</span>
+                <span className={style.fontCon}>{coordinates.x}</span>
               </span>
-              <span className={style.avb} style={{ color: "#fff" }}>
+              <span className={style.coordinates} style={{ color: "#fff" }}>
                 <span className={style.a}>y:</span>
-                <span className={style.fontCon}>{avb.y}</span>
+                <span className={style.fontCon}>{coordinates.y}</span>
               </span>
             </div>
           ) : (
@@ -318,16 +301,16 @@ export default function RightPart({
               <p>
                 <span className={style.a}>Coordinates: </span>
                 <span className={style.fontCon}>
-                  {avb.x},{avb.y}
+                  {coordinates.x},{coordinates.y}
                 </span>
               </p>
-              <p key={`Type-${avb.x}-${avb.y}`}>
+              <p key={`Type-${coordinates.x}-${coordinates.y}`}>
                 <span className={style.a}>Type: </span>
                 <span className={style.fontCon}>
                   {app_name ? app_name : "null"}
                 </span>
               </p>
-              <p key={`Owner-${avb.x}-${avb.y}`}>
+              <p key={`Owner-${coordinates.x}-${coordinates.y}`}>
                 <span className={style.a}>Owner: </span>
                 <span className={style.fontCon}>
                   {" "}

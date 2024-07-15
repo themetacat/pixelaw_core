@@ -35,13 +35,13 @@ import { spanish } from "viem/accounts";
 import { flare } from "viem/chains";
 
 interface Props {
-  avb: any;
-  ttc: any;
+  coordinates: any;
+  timeControl: any;
   playFun: any;
-  bdcx : any;
+  handleEoaContractData : any;
 }
 
-export default function BoxPrompt({ avb,ttc,playFun,bdcx  }: Props) {
+export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaContractData  }: Props) {
   const {
     components: {
       App,
@@ -55,59 +55,58 @@ export default function BoxPrompt({ avb,ttc,playFun,bdcx  }: Props) {
     network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { interact,forMent, payFunction,registerDelegation },
   } = useMUD();
-  const [q, setq] = useState(120);
-  const [w, setw] = useState(false);
-  const [buYBox, setBuYBox] = useState(false);
-  const [loadingType, setLoadingType] = useState(false);
-  const [e, sete] = useState(false);
-  const [r, setr] = useState(false);
-  const [t, sett] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [warnBox, setWarnBox] = useState(false);
+  const [dataq, setdataq] = useState(false);
+  const [cresa, setcresa] = useState(false);
+  const [forPayMonType, setForPayMonType] = useState(false);
+  const [a, seta] = useState(false);
+  const [data2, setdata2] = useState(false);
   const [congratsType, setCongratsType] = useState(false);
-  const [pf, setpf] = useState(false);
-  const [pss, setpss] = useState(false);
-  const [gs, setgs] = useState(false);
-  const [tst, settst] = useState(null);
-  const [fs, setfs] = useState(null);
-  const [vgf, setvgf] = useState(null);
-  const [ge, setge] = useState(null);
-  const [bbd, setbbd] = useState({});
-  const [po, setpo] = useState(1);
-  const coor_entity = coorToEntityID(avb.x, avb.y);
+  const [pay, setpay] = useState(false);
+  const [pay1, setpay1] = useState(false);
+  const [gameSuccess, setGameSuccess] = useState(false);
+  const [datan, setdatan] = useState(null);
+  const [TCMPopStarNum, setTCMPopStarData] = useState(null);
+  const [data, setdata] = useState(null);
+  const [data1, setdata1] = useState(null);
+  const [getEoaContractData, setGetEoaContractData] = useState(null);
+  const [balanceData, setBalanceData] = useState({});
+  const [numberData, setNumberData] = useState(1);
+  const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
   const [startTime, setStartTime] = useState(null); 
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   const entities_app = useEntityQuery([Has(App)]);
+  const minutes = Math.floor(timeLeft / 120);
+  const seconds = timeLeft % 120;
+  const [selectedOption, setSelectedOption] = useState("option1");
 
-
- 
-
- 
-
-  const cv = () => {
-    if (vgf) {
-      const poo = payFunction(vgf?.key, po);
-      setLoadingType(true);
-      poo.then((result) => {
+  const handlePayMent = () => {
+    if (data1) {
+      const payFunctionTwo = payFunction(data1?.key, numberData);
+      setcresa(true);
+      payFunctionTwo.then((result) => {
         if (result.status === "success") {
-          setLoadingType(false);
-          setpss(true);
+          setcresa(false);
+          setpay1(true);
         } else {
-          setLoadingType(false);
-          setpf(true);
+          setcresa(false);
+          setpay(true);
         }
       })
       .catch((error) => {
-        setLoadingType(false);
-        setpf(true);
+        setcresa(false);
+        setpay(true);
       });
       setTimeout(() => {
-        setBuYBox(false);
-        setpss(false);
-        setpf(false);
+        setdataq(false);
+        setpay1(false);
+        setpay(false);
       }, 2000);
     }
   };
 
-  const gec = async () => {
+  const getEoaContract = async () => {
     const [account] = await window.ethereum!.request({
       method: "eth_requestAccounts",
     });
@@ -122,26 +121,28 @@ export default function BoxPrompt({ avb,ttc,playFun,bdcx  }: Props) {
 
   const panningType = window.localStorage.getItem("panning");
 
-
-  const fdfun = async () => {
+  const fetchData = async () => {
     try {
 
-      const account = await gec();
+      const account = await getEoaContract();
 
 
-      const b = getComponentValue(
+      const TCMPopStarData = getComponentValue(
         TCMPopStar,
         addressToEntityID(account)
       );
-      if(b){
-      const tokenBalancePromises = b.tokenAddressArr.map(
+
+      if(TCMPopStarData){
+
+     
+      const tokenBalancePromises = TCMPopStarData.tokenAddressArr.map(
         async (item) => {
           try {
             const balance = await getComponentValue(
               TokenBalance,
               addressToEntityIDTwo(account, item)
             );
-            return { [item]: balance }; 
+            return { [item]: balance };
           } catch (error) {
             console.error(`Error fetching balance for ${item}:`, error);
             return { [item]: undefined };
@@ -151,76 +152,40 @@ export default function BoxPrompt({ avb,ttc,playFun,bdcx  }: Props) {
 
    
       const tokenBalanceResults = await Promise.all(tokenBalancePromises);
-      setbbd(tokenBalanceResults);
+      setBalanceData(tokenBalanceResults);
+
      
   }
-  const c = getComponentValue(
+  const deleGeData = getComponentValue(
     UserDelegationControl,
     addressToEntityIDTwo(account, palyerAddress)
   );
-if(c === undefined){
+if(deleGeData === undefined){
   registerDelegation()
 }
 
-      return b;
+
+      return TCMPopStarData;
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-
-  useEffect(() => {
-    const a = fdfun();
-    
-    
-    a.then((b) => {
-      if (palyerAddress !== undefined) {
-        bdcx(b);
-        if(b){
-
-          setge(b?.tokenAddressArr);
-          if (b) {
-          
-            const bb = Number(b.startTime) as any;
-            setStartTime(bb);
-  
-            const vb = Math.floor(Date.now() / 1000); 
-  
-            const elapsedTime = vb - bb;
-  
-            const updatedTimeLeft = Math.max(120 - elapsedTime, 0);
-            setq(updatedTimeLeft);
-           
-            const allZeros = b.matrixArray.every((data) => data === 0n);
-            
-            if (allZeros) {
-                setgs(true)
-                
-            } else {
-              
-              setgs(false)
-              if(b.gameFinished === true){
-                setr(true)
-              }
-            }
-           
-          }
-        }
-      
-      }
-    });
-  }, []);
-
+  const matchedData = getMatchedData(
+    getEoaContractData,
+    imageIconData,
+    balanceData
+  );
  
-  function ggt(tokenAddresses, imageData, bbd) {
+  function getMatchedData(tokenAddresses, imageData, balanceData) {
     const result = {};
 
     tokenAddresses?.forEach((address) => {
       if (imageData[address]) {
-        const n = Object.values(bbd).find(
+        const balanceObj = Object.values(balanceData).find(
           (obj) => obj[address]
         );
-        let balance = n ? n[address] : 0;
+        let balance = balanceObj ? balanceObj[address] : 0;
 
         if (typeof balance.balance === "bigint") {
           balance = (balance.balance / BigInt(10 ** 18)).toString(); 
@@ -238,36 +203,86 @@ if(c === undefined){
     return result;
   }
 
-    const md = ggt(
-      ge,
-      imageIconData,
-      bbd
-    );
 
- 
+
+
+  const handleSelectChange = (event: any) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const downHandleNumber = 
+    (val: any) => {
+     
+        setNumberData(numberData - 1);
+     
+    };
+  const upHandleNumber = (val: any) => {
+      setNumberData(numberData + 1);
+  };
+
+  useEffect(() => {
+    const fetchDataTotal = fetchData();
+    
+    
+    fetchDataTotal.then((TCMPopStarData) => {
+      if (palyerAddress !== undefined) {
+        handleEoaContractData(TCMPopStarData);
+  
+          if (TCMPopStarData) {
+            setGetEoaContractData(TCMPopStarData?.tokenAddressArr);
+            const blockchainStartTime = Number(TCMPopStarData.startTime) as any;
+            setStartTime(blockchainStartTime);
+  
+            const currentTime = Math.floor(Date.now() / 1000);
+  
+            const elapsedTime = currentTime - blockchainStartTime;
+  
+            const updatedTimeLeft = Math.max(120 - elapsedTime, 0);
+            setTimeLeft(updatedTimeLeft);
+           
+            const allZeros = TCMPopStarData.matrixArray.every((data) => data === 0n);
+            
+            if (allZeros) {
+                setGameSuccess(true)
+                
+            } else { 
+              
+              setGameSuccess(false)
+              if(TCMPopStarData.gameFinished === true){
+                seta(true)
+              }
+            }
+           
+          }
+      
+      
+      }
+    });
+  }, [fetchData, handleEoaContractData, matchedData, palyerAddress]);
 
 
   useEffect(() => {
-    if(ttc === true&&gs === false){
-      if (tst !== null) {
-        const vb = Math.floor(Date.now() / 1000); 
-        const timeElapsed = vb - tst;
+    
+    if(timeControl === true&&gameSuccess === false){
+      if (datan !== null) {
+        const currentTime = Math.floor(Date.now() / 1000); 
+        const timeElapsed = currentTime - datan;
         const newTimeLeft = 120 - timeElapsed;
-        setq(newTimeLeft > 0 ? newTimeLeft : 0);
+        setTimeLeft(newTimeLeft > 0 ? newTimeLeft : 0);
         if(localStorage.getItem('showGameOver') === 'false'){
           localStorage.setItem('showGameOver','true')
         }
  
       }
     }
-  }, [tst,ttc,r,gs]);
+  }, [datan,timeControl,a,gameSuccess]);
 
   useEffect(() => {
-    if(ttc === true&&gs === false){
+    if(timeControl === true&&gameSuccess === false){
       
-      if (q > 0) {
+      if (timeLeft > 0) {
         const timer = setTimeout(() => {
-          setq(q - 1);
+          setTimeLeft(timeLeft - 1);
           if(localStorage.getItem('showGameOver') === 'false'){
             localStorage.setItem('showGameOver','true')
           }
@@ -277,41 +292,17 @@ if(c === undefined){
       }
      
     }
-  }, [q,ttc,r,gs]);
-
-  const minutes1 = Math.floor(q / 120);
-  const seconds = q % 120;
-  const [selectedOption, setSelectedOption] = useState("option1");
-
-  const handleSelectChange = (event: any) => {
-    setSelectedOption(event.target.value);
-  };
-
-  const mm = 
-    (val: any) => {
-     
-        setpo(po - 1);
-      
-    };
-  const unm = (val: any) => {
-  
-      setpo(po + 1);
-
-  };
-
+  }, [timeLeft,timeControl,a,gameSuccess]);
 
 
   useEffect(()=>{
-   
-  
-    const payFor = forMent(vgf?.key, po)
-    sete(true)
+    const payFor = forMent(data1?.key, numberData)
+    setForPayMonType(true)
     payFor.then((item)=>{
-setfs(item)
-  sete(false)
+setdata(item)
+  setForPayMonType(false)
     })
-  },[vgf,po])
-
+  },[data1,numberData])
 
 
   return (
@@ -319,14 +310,13 @@ setfs(item)
       <div className={style.container}>
         <div className={style.firstPart}>
           <p style={{cursor:"pointer"}}>
-          
-            {q !== 0&&gs === false ?q : 
+            {timeLeft !== 0&&gameSuccess === false?timeLeft : 
             <div onClick={()=>{
               playFun()
             }}>New<br/>Game</div>
             }
           </p>
-          {q !== 0&&gs === false ?<p>TIME</p> :null}
+          {timeLeft !== 0&&gameSuccess === false ?<p>TIME</p> :null}
         </div>
         <div className={style.twoPart}>
           <p>350$bugs</p>
@@ -338,7 +328,7 @@ setfs(item)
         </div>
         <div className={style.imgContent}>
        
-          {Object.entries(md).map(([key, { src, balance, name }]) => (
+          {Object.entries(matchedData).map(([key, { src, balance, name }]) => (
             <div key={key} className={style.containerItem}>
               <div className={style.iconFont}>{balance}</div>
               <img className={style.imgconItem} src={src} alt={name} />
@@ -348,7 +338,7 @@ setfs(item)
         <button
           className={style.buyBtn}
           onClick={() => {
-            setBuYBox(!w);
+            setdataq(!warnBox);
           }}
         >
           BUY
@@ -356,13 +346,13 @@ setfs(item)
         <button
           className={style.warningIcon}
           onClick={() => {
-            setw(!w);
+            setWarnBox(!warnBox);
           }}
         >
           ?
         </button>
       </div>
-      {buYBox === true ? (
+      {dataq === true ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
         >
@@ -372,7 +362,7 @@ setfs(item)
               src={trunOff}
               alt=""
               onClick={() => {
-                setBuYBox(false);
+                setdataq(false);
               }}
             />
             <div className={style.firstBuy}>
@@ -380,21 +370,21 @@ setfs(item)
               <div className={style.dataIcon}>
                 <button
                   onClick={() => {
-                    mm(po);
+                    downHandleNumber(numberData);
                   }}
-                  disabled={po ===1 }
-                  className={po === 1 ? style.disabled : (null as any)}
+                  disabled={numberData ===1 }
+                  className={numberData === 1 ? style.disabled : (null as any)}
                 >
                   -
                 </button>
                 <p className={style.pp}></p>
-                <span className={style.numData}>{po}</span>
+                <span className={style.numData}>{numberData}</span>
                 <p className={style.pp}></p>
                 <button
                   onClick={() => {
-                    unm(po);
+                    upHandleNumber(numberData);
                   }}
-                  className={po === 120 ? style.disabled : (null as any)}
+                  className={numberData === 120 ? style.disabled : (null as any)}
                 >
                   +
                 </button>
@@ -402,15 +392,15 @@ setfs(item)
               <div style={{ zIndex: "999999" }}>
                 {" "}
                 <Select
-                  md={md}
-                  setvgf={setvgf}
+                  matchedData={matchedData}
+                  setdata1={setdata1}
                 />
               </div>
             </div>
             <div className={style.twoBuy}>
               <span className={style.fontBuy}>FOR</span>
-              <span className={style.fontNum}>{fs}ETH</span>
-              {e === true ? (
+              <span className={style.fontNum}>{data}ETH</span>
+              {forPayMonType === true ? (
                 <img
                   src={loadingIcon}
                   alt=""
@@ -424,22 +414,22 @@ setfs(item)
                   className={style.commonCls1}
                 />
               ) : null}
-            
+           
             </div>
 
-            {pf === true ? (
+            {pay === true ? (
               <div className={style.patment}>payment failed! try again!</div>
             ) : null}
 
             <button
               className={style.payBtn}
               onClick={() => {
-                cv();
+                handlePayMent();
               }}
-              disabled={ fs === 0}
-              style={{cursor:fs === 0?"not-allowed":"auto"}}
+              disabled={ data === 0}
+              style={{cursor:data === 0?"not-allowed":"auto"}}
             >
-              {pss === true ? (
+              {pay1 === true ? (
                 <img
                   src={rightIcon}
                   alt=""
@@ -455,7 +445,7 @@ setfs(item)
               ) : (
                 <span >PAY</span>
               )}
-              {loadingType === true ? (
+              {cresa === true ? (
                 <img
                   src={loadingIcon}
                   alt=""
@@ -474,7 +464,7 @@ setfs(item)
         </div>
       ) : null}
 
-      {w === true ? (
+      {warnBox === true ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
         >
@@ -490,7 +480,7 @@ setfs(item)
             <button
               className={style.btnOk}
               onClick={() => {
-                setw(false);
+                setWarnBox(false);
               }}
             >
               OK
@@ -499,7 +489,7 @@ setfs(item)
         </div>
       ) : null}
       {
-      q === 0&&localStorage.getItem('showGameOver') === 'true'
+      timeLeft === 0&&localStorage.getItem('showGameOver') === 'true'
       ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
@@ -511,15 +501,12 @@ setfs(item)
               alt=""
               onClick={() => {
                 localStorage.setItem('showGameOver','false')
-                // setr(false);
-                // setq(120)
               }}
             />
             <p>Game Over!</p>
             <button
               onClick={() => {
-                // setq(120)
-                // setr(false);
+           
                 playFun()
               }}
             >
@@ -529,7 +516,7 @@ setfs(item)
         </div>
       ) : null}
       {
-      gs === true
+      gameSuccess === true
       &&localStorage.getItem('showGameOver') === 'true'
       ? (
         <div
@@ -550,7 +537,7 @@ setfs(item)
             <button
               onClick={() => {
                 playFun();
-                setgs(false)
+                setGameSuccess(false)
               }}
             >
               Play Again
@@ -558,7 +545,7 @@ setfs(item)
           </div>
         </div>
       ) : null}
-      {t === true ? (
+      {data2 === true ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
         >
@@ -567,7 +554,7 @@ setfs(item)
               src={trunOff}
               alt=""
               onClick={() => {
-                sett(false);
+                setdata2(false);
               }}
             />
             <p>insufficient gasbalance</p>

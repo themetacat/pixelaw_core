@@ -2,11 +2,11 @@ import React from "react";
 import style from "./index.module.css";
 
 interface Props {
-  setpia: any;
+  setPopStar: any;
   playFun: any;
 }
 
-export default function PopStar({ setpia, playFun }: Props) {
+export default function PopStar({ setPopStar, playFun }: Props) {
   return (
     <div className={style.content}>
       <p className={style.title}>WELCOME TO TCM-POPSTAR!</p>
@@ -33,7 +33,7 @@ export default function PopStar({ setpia, playFun }: Props) {
       <button
         className={style.btnPlay}
         onClick={() => {
-          setpia(false);
+          setPopStar(false);
           playFun();
         }}
       >

@@ -6,11 +6,11 @@ import rightIcon from '../../images/duihao.png';
 // import  {imageIconData} from '../imageIconData'
 
 type Props = {
-  md:any
-  setvgf:any
+  matchedData:any
+  setdata1:any
 };
 
-export default function Select({md,setvgf}:Props) {
+export default function Select({matchedData,setdata1}:Props) {
   const [selectedOption, setSelectedOption] = React.useState('');
   const [downPointType, setDownPointType] = React.useState(true);
 
@@ -21,23 +21,23 @@ export default function Select({md,setvgf}:Props) {
     setDownPointType(true)
     setSelectedOption(newType);
     console.log(key,item)
-    setvgf({key,item});
+    setdata1({key,item});
   };
 
   useEffect(() => {
-    if (md && Object.keys(md).length > 0) {
-      console.log(md);
-      const firstNonEmptyItem = Object.values(md).find(item => item.name);
-      const firstNonEmptyItemEntry = Object.entries(md).find(([key, item]) => 
-      setvgf({key,item})
+    if (matchedData && Object.keys(matchedData).length > 0) {
+      console.log(matchedData);
+      const firstNonEmptyItem = Object.values(matchedData).find(item => item.name);
+      const firstNonEmptyItemEntry = Object.entries(matchedData).find(([key, item]) => 
+      setdata1({key,item})
     );
    
     if (firstNonEmptyItem) {
-      const [key, item] = Object.entries(md).find(([key, item]) => item === firstNonEmptyItem);
+      const [key, item] = Object.entries(matchedData).find(([key, item]) => item === firstNonEmptyItem);
     
       const firstNonEmptyItemEntry = { [key]: item };
       console.log(firstNonEmptyItemEntry);
-      setvgf({key,item});
+      setdata1({key,item});
     }  
 
       if (!selectedOption && firstNonEmptyItem) {
@@ -51,7 +51,7 @@ export default function Select({md,setvgf}:Props) {
       <div className={style.customSelect}>
         <div className={style.selectTrigger}>
           <img
-            src={Object.values(md).find(item => item.name === selectedOption)?.src}
+            src={Object.values(matchedData).find(item => item.name === selectedOption)?.src}
             style={{
               width: '28px',
               height: '28px',
@@ -66,7 +66,7 @@ export default function Select({md,setvgf}:Props) {
         {
           downPointType === false?
           <div id="customSelectDropdown" className={style.selectOptions}>
-          {Object.entries(md).map(([key, item], index) => (
+          {Object.entries(matchedData).map(([key, item], index) => (
 
          <div key={index} onClick={() => changeType(item.name,item,key)} className={style.selectOptionsItem}>
               <img

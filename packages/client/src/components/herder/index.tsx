@@ -90,101 +90,108 @@ export default function Header({ hoveredData, handleData }: Props) {
   const { isConnected, address } = useAccount();
 
   const { disconnect } = useDisconnect();
-  const [nnn, setnnn] = useState(25);
-  const [uhn, setuhn] = useState("");
-  const [qw, setqw] = useState(false);
-  const [ass, setass] = useState(false);
-  const [aq, setaq] = useState(false);
-  const [ll, setll] = useState(false);
-  const [hhh, sethhh] = useState(false);
-  const [pia, setpia] = useState(false);
-  const [plokkk, setplokkk] = useState(false);
+  const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
-  const [aww, setaww] = useState<bigint | null>(null);
+  const [popExhibit, setPopExhibit] = useState(false);
+  const [boxPrompt, setBoxPrompt] = useState(false);
+  const [topUpType, setTopUpType] = useState(false);
+  const [balance, setBalance] = useState<bigint | null>(null);
+  const [translateX, setTranslateX] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
+  const [instruC, setInstruC] = useState("");
+  const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
+  const [emptyRegionNum, setEmptyRegionNum] = useState({ x: 0, y: 0 });
+  const [coordinatesData, setCoordinatesData] = useState({ x: 0, y: 0 });
+  const [entityaData, setEntityaData] = useState("");
+  const [paramInputs, setParamInputs] = useState([]);
+  const [convertedParamsData, setConvertedParamsData] = useState(null);
   const [tCMPopStarTime, setTCMPopStarTime] = useState(null);
-  const cnb = useRef<HTMLCanvasElement>(null);
-  const bng = useRef<HTMLDivElement>(null);
-  const [vbs, setvbs] = useState(null);
-  const [az, setaz] = useState(0);
-  const [axx, setaxx] = useState(0);
-  const [avb, setavb] = useState({ x: 0, y: 0 });
-  const [acx, setacx] = useState({ x: 0, y: 0 });
-  const [zxc, setzxc] = useState({ x: 0, y: 0 });
-  const [afgd, setafgd] = useState([]);
-  const [uhm, setuhm] = useState([]);
-  const [ss, setss] = useState({ x: 0, y: 0 });
-  const [vdf, setvdf] = useState(false);
-  const [nn, setnn] = useState(0);
-  const [nm, setnm] = useState(0);
-
-  const bda = useEntityQuery([Has(Pixel)]);
+  const [updateAbiJson, setUpdate_abi_json] = useState("");
+  const [updateAbiCommonJson, setUpdate_abi_Common_json] = useState([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const visibleAreaRef = useRef<HTMLDivElement>(null);
+  const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [mouseX, setMouseX] = useState(0);
+  const [mouseY, setMouseY] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [panningFromChild, setPanningFromChild] = useState(false);
+  const [popStar, setPopStar] = useState(false);
+  const [pageClick, setPageClick] = useState(false);
+  const [GRID_SIZE, setGRID_SIZE] = useState(32);
+  const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
-  const bfs = document.documentElement.clientWidth;
-  const bff = document.documentElement.clientHeight;
+  const [mainContent, setMainContent] = useState("MAINNET");
+  const [showList, setShowList] = useState(false);
+  const [addressModel, setAddressModel] = useState(false);
+  const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
+  const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
 
-  const [hyu, sethyu] = useState<{
+  const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
     y: number;
   } | null>(null);
 
-  const ghy = useRef<{ x: number; y: number } | null>(null);
-  const dfg = window.sessionStorage.getItem("selectedColorSign");
+  const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
+  const colorSession = window.sessionStorage.getItem("selectedColorSign");
 
-  const [asfgb, setasfgb] = useState(dfg !== null ? dfg : "#ffffff");
-  const abn = useRef(0);
-  const abb = useRef(0);
-  const bhg = window.localStorage.getItem("panning");
-  const nmh = (x: number, y: number) =>
+  const [selectedColor, setSelectedColor] = useState(
+    colorSession !== null ? colorSession : "#ffffff"
+  );
+  const mouseXRef = useRef(0);
+  const mouseYRef = useRef(0);
+  const panningType = window.localStorage.getItem("panning");
+  const coorToEntityID = (x: number, y: number) =>
     encodeEntity({ x: "uint32", y: "uint32" }, { x, y });
 
-  const bgfd =
+  const addressData =
     palyerAddress.substring(0, 4) +
     "..." +
     palyerAddress.substring(palyerAddress.length - 4);
-
-  const bbfd = publicClient.chain.name;
+  const chainName = publicClient.chain.name;
   const capitalizedString =
-    bbfd.charAt(0).toUpperCase() + bbfd?.slice(1).toLowerCase();
+    chainName.charAt(0).toUpperCase() + chainName?.slice(1).toLowerCase();
 
-  const btyr = publicClient.getBalance({ address: palyerAddress });
-  btyr.then((a: any) => {
-    setaww(a);
+  const balanceFN = publicClient.getBalance({ address: palyerAddress });
+  balanceFN.then((a: any) => {
+    setBalance(a);
   });
   const natIve = publicClient.chain.nativeCurrency.decimals;
-  const vdas = () => {
-    setnnn(nnn - 5);
-    setngd(ngd - 6);
-    setss({ x: 0, y: 0 });
-    setaz(0);
-    setaxx(0);
+  const btnLower = () => {
+    setNumberData(numberData - 5);
+    setGRID_SIZE(GRID_SIZE - 6);
+    setScrollOffset({ x: 0, y: 0 });
+    setTranslateX(0);
+    setTranslateY(0);
   };
-  const vdaa = () => {
-    setnnn(nnn + 5);
-    setngd(ngd + 6);
-    setss({ x: 0, y: 0 });
-    setaz(0);
-    setaxx(0);
+  const btnAdd = () => {
+    setNumberData(numberData + 5);
+    setGRID_SIZE(GRID_SIZE + 6);
+    setScrollOffset({ x: 0, y: 0 });
+    setTranslateX(0);
+    setTranslateY(0);
   };
-  const [ngd, setngd] = useState(32);
-  function csas(color: any) {
-    setasfgb(color);
+
+  function handleColorOptionClick(color: any) {
+    setSelectedColor(color);
     window.sessionStorage.setItem("selectedColorSign", color);
   }
 
-  const zxdg = () => {
-    sethyu(null);
-    if (bdadgx.current) {
-      clearTimeout(bdadgx.current);
-      bdadgx.current = null;
+  const handleLeave = () => {
+    setHoveredSquare(null);
+    if (downTimerRef.current) {
+      clearTimeout(downTimerRef.current);
+      downTimerRef.current = null;
     }
-    seta(false);
+    setIsLongPress(false);
   };
 
-  const mkl: { avb: { x: number; y: number }; value: any }[] = [];
-  if (bda.length !== 0) {
-    bda.forEach((a) => {
-      const avb = decodeEntity({ x: "uint32", y: "uint32" }, a);
-      const value = getComponentValueStrict(Pixel, a);
+  const entityData: { coordinates: { x: number; y: number }; value: any }[] =
+    [];
+  if (entities.length !== 0) {
+    entities.forEach((entity) => {
+      const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
+      const value = getComponentValueStrict(Pixel, entity);
 
       if (value.text === "_none") {
         value.text = "";
@@ -192,136 +199,38 @@ export default function Header({ hoveredData, handleData }: Props) {
       if (value.color === "0") {
         value.color = "#2f1643";
       }
-      mkl.push({ avb, value });
+      entityData.push({ coordinates, value });
     });
   }
 
-  const cfrt = (x: number, y: number) => {
-    return mkl.find((a) => a.avb.x === x && a.avb.y === y);
+  const getEntityAtCoordinates = (x: number, y: number) => {
+    return entityData.find(
+      (entity) => entity.coordinates.x === x && entity.coordinates.y === y
+    );
   };
 
-  const j = localStorage.getItem("manifest") as any;
+  const appName = localStorage.getItem("manifest") as any;
 
-  const parts = j?.split("/") as any;
+  const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
-  if (j) {
+  if (appName) {
     if (parts[0] === "BASE") {
       worldAbiUrl = ("https://pixelaw-game.vercel.app/" +
         `${parts[1].replace(/\.abi\.json/g, "")}` +
         ".abi.json") as any;
     } else {
-      worldAbiUrl = j;
+      worldAbiUrl = appName;
     }
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
 
-  const grq = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (plokkk === true) {
-      return;
-    }
-    seta(false);
-    setbgra(false);
-    setqw(false);
-    if (bdadgx.current) {
-      clearTimeout(bdadgx.current);
-      bdadgx.current = null;
-    }
-    const a = get_function_param(action);
-
-    a.then((x) => {
-      const ffty = Object.keys(x).length === 0;
-
-      if (aaas) {
-        seta(false);
-        setbgra(false);
-      } else {
-        const canvas = cnb.current as any;
-        const ki = canvas.getBoundingClientRect();
-        const nn = event.clientX - ki.left;
-        const nm = event.clientY - ki.top;
-        const xx = Math.floor(nn / ngd);
-        const xxx = Math.floor(nm / ngd);
-        setzxc({ x: xx, y: xxx });
-        const xxc = { x: xx, y: xxx };
-        sethyu(xxc);
-        if (ffty) {
-          if (asfgb && avb) {
-            ghy.current = avb;
-            setbgra(false);
-            if (j === "BASE/TCMPopStarSystem") {
-              cghe(avb, palyerAddress, asfgb, action, null);
-            } else {
-              v(avb, palyerAddress, asfgb, action, null);
-            }
-
-            abn.current = nn;
-            abb.current = nm;
-            handleData(hyu as any);
-            const ctx = canvas.getContext("2d");
-            if (ctx) {
-              const { x, y } = avb;
-              ctx.fillStyle = asfgb;
-              ctx.fillRect(x * ngd - ss.x, y * ngd - ss.y, ngd, ngd);
-              if (j === "BASE/TCMPopStarSystem") {
-                ddr(ctx, avb, true);
-              }
-              ddr(ctx, avb, false);
-            }
-          }
-        } else {
-          setqw(true);
-        }
-
-        setbgra(false);
-        setvdf(true);
-
-        setaz(0);
-        setaxx(0);
-      }
-    });
-  };
-
-  let timeout: NodeJS.Timeout;
-  const [bgra, setbgra] = useState(false);
-  const [ttc, settc] = useState(false);
-  const bdadgx = useRef<NodeJS.Timeout | null>(null);
-  const [aaas, seta] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [lastDragEndX, setLastDragEndX] = useState(0);
-  const [fingerNum, setFingerNum] = useState(0);
-  const asnm = nmh(avb.x, avb.y);
-  const b = getComponentValue(Pixel, asnm) as any;
-  const action = b && b.action ? b.action : "interact";
-  const c = 150;
-  const d = (event: React.MouseEvent<HTMLDivElement>) => {
-    setFingerNum(event.buttons);
-    if (plokkk === true) {
-      return;
-    }
-    setbgra(true);
-
-    setaz(event.clientX);
-    setaxx(event.clientY);
-    get_function_param(action);
-    bdadgx.current = setTimeout(() => {
-      seta(true);
-    }, c);
-  };
-
-  const e = () => {
-    setplokkk(true);
-  };
-  const f = () => {
-    setplokkk(false);
-  };
-
-  const fft = () => {
-    const gridSize = ngd;
+  const findEmptyRegion = () => {
+    const gridSize = GRID_SIZE;
     const checkSize = 10;
 
-    const ffty = (x, y) => {
-      const encodeEntityNum = nmh(x, y);
+    const isEmpty = (x, y) => {
+      const encodeEntityNum = coorToEntityID(x, y);
       const value = getComponentValue(Pixel, encodeEntityNum);
       return value === undefined;
     };
@@ -331,7 +240,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       y = 0;
 
     while (true) {
-      let res = ffty(x, y);
+      let res = isEmpty(x, y);
 
       if (res) {
         if (x - px >= 9) {
@@ -350,135 +259,91 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
     }
     return px;
-    console.log(px, 0);
   };
 
-  const v = (
-    avb: any,
-    palyerAddress: any,
-    asfgb: any,
-    actionData: any,
-    other_params: any
-  ) => {
-    setll(true);
-
-    const kii = interact(avb, palyerAddress, asfgb, actionData, other_params);
-
-    kii.then((kiik: any) => {
-      if (kiik[1]) {
-        kiik[1].then((a: any) => {
-          if (a.status === "success") {
-            setll(false);
-            mmn();
-          } else {
-            handleError();
-            mmn();
-          }
-        });
-      } else {
-        handleError();
-      }
-    });
-  };
-  const cghe = (
-    avb: any,
-    palyerAddress: any,
-    asfgb: any,
-    actionData: any,
-    other_params: any
-  ) => {
-    setll(true);
-
-    const kii = interactTCM(
-      avb,
-      palyerAddress,
-      asfgb,
-      actionData,
-      other_params
-    );
-
-    kii.then((kiik: any) => {
-      if (kiik[1]) {
-        kiik[1].then((a: any) => {
-          if (a.status === "success") {
-            setass(true);
-            setll(false);
-            settc(true);
-            mmn();
-          } else {
-            handleError();
-            mmn();
-          }
-        });
-      } else {
-        handleError();
-      }
-    });
-  };
-  const ddr = useCallback(
+  const drawGrid = useCallback(
     (
       ctx: CanvasRenderingContext2D,
-      hyu: { x: number; y: number } | null,
+      hoveredSquare: { x: number; y: number } | null,
       playType: any
     ) => {
       let pix_text;
 
-      ctx.fillRect(0, 0, bfs, bff);
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       ctx.lineWidth = 10;
       ctx.strokeStyle = "#000000";
       const checkSize = 10;
-      for (let x = 0; x < bfs; x += ngd) {
+      for (let x = 0; x < CANVAS_WIDTH; x += GRID_SIZE) {
         ctx.beginPath();
-        ctx.moveTo(x - ss.x, 0);
-        ctx.lineTo(x - ss.x, bff);
+        ctx.moveTo(x - scrollOffset.x, 0);
+        ctx.lineTo(x - scrollOffset.x, CANVAS_HEIGHT);
         ctx.stroke();
       }
-      for (let y = 0; y < bff; y += ngd) {
+      for (let y = 0; y < CANVAS_HEIGHT; y += GRID_SIZE) {
         ctx.beginPath();
-        ctx.moveTo(0, y - ss.y);
-        ctx.lineTo(bfs, y - ss.y);
+        ctx.moveTo(0, y - scrollOffset.y);
+        ctx.lineTo(CANVAS_WIDTH, y - scrollOffset.y);
         ctx.stroke();
       }
 
-      const dfge = 15;
-      const hty = 0.8;
-      const fontWeight = "normal";
-      const fontSize = nnn === 25 ? dfge : dfge + (nnn - 25) * hty;
+      const baseFontSize = 15;
+      const fontSizeIncrement = 0.8;
+      const fontWeight = "normal"; // 设置字体粗细
+      const fontSize =
+        numberData === 25
+          ? baseFontSize
+          : baseFontSize + (numberData - 25) * fontSizeIncrement;
       ctx.font = `${fontWeight} ${fontSize}px Arial`;
 
-      const vbdas = {
-        x: Math.max(0, Math.floor(ss.x / ngd)),
-        y: Math.max(0, Math.floor(ss.y / ngd)),
-        width: Math.ceil(document.documentElement.clientWidth / ngd),
-        height: Math.ceil(document.documentElement.clientHeight / ngd),
+      const visibleArea = {
+        x: Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE)),
+        y: Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE)),
+        width: Math.ceil(document.documentElement.clientWidth / GRID_SIZE),
+        height: Math.ceil(document.documentElement.clientHeight / GRID_SIZE),
       };
-      for (let i = vbdas.x; i < vbdas.x + vbdas.width; i++) {
-        for (let j = vbdas.y; j < vbdas.y + vbdas.height; j++) {
-          const o = i * ngd - ss.x;
-          const oo = j * ngd - ss.y;
+      for (let i = visibleArea.x; i < visibleArea.x + visibleArea.width; i++) {
+        for (
+          let j = visibleArea.y;
+          j < visibleArea.y + visibleArea.height;
+          j++
+        ) {
+          const currentX = i * GRID_SIZE - scrollOffset.x;
+          const currentY = j * GRID_SIZE - scrollOffset.y;
           ctx.lineWidth = 3;
           ctx.strokeStyle = "#2e1043";
-          ctx.strokeRect(o, oo, ngd, ngd);
+          ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+          // 绘制背景色
           ctx.fillStyle = "#2f1643";
-          ctx.fillRect(o, oo, ngd, ngd);
-          const a = cfrt(i, j) as any;
-          if (a) {
-            ctx.fillStyle = a.value.color;
-            ctx.fillRect(o, oo, ngd, ngd);
-            if (a.value.text) {
-              ctx.fillStyle = "#000";
-              ctx.textAlign = "center";
-              ctx.textBaseline = "middle";
-              if (a.value.text && /^U\+[0-9A-Fa-f]{4,}$/.test(a.value.text)) {
+          ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+          const entity = getEntityAtCoordinates(i, j) as any;
+
+          // if (i === 5 && j === 5) {
+          //   const img = new Image();
+          //   img.src = 'https://poster-phi.vercel.app/metaverse_learn/283.png';
+          //     ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
+          // }
+          // const value = getComponentValueStrict(Pixel, entity);
+
+          if (entity) {
+            ctx.fillStyle = entity.value.color;
+            ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+            if (entity.value.text) {
+              ctx.fillStyle = "#000"; // 设置文本颜色
+              ctx.textAlign = "center"; // 设置文本水平居中
+              ctx.textBaseline = "middle"; // 设置文本垂直居中
+              if (
+                entity.value.text &&
+                /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)
+              ) {
                 pix_text = String.fromCodePoint(
-                  parseInt(a.value.text.substring(2), 16)
+                  parseInt(entity.value.text.substring(2), 16)
                 );
               } else {
-                pix_text = a.value.text;
+                pix_text = entity.value.text;
               }
 
-              const textX = o + ngd / 2;
-              const textY = oo + ngd / 2;
+              const textX = currentX + GRID_SIZE / 2;
+              const textY = currentY + GRID_SIZE / 2;
               ctx.fillText(pix_text, textX, textY);
             }
           }
@@ -486,100 +351,317 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
 
       if (playType === true) {
-        const emptyRegion = fft();
+        const emptyRegion = findEmptyRegion();
       }
-      if (asfgb && hyu) {
-        ctx.fillStyle = asfgb;
-        ctx.fillRect(avb.x * ngd - ss.x, avb.y * ngd - ss.y, ngd, ngd);
+      if (selectedColor && hoveredSquare) {
+        ctx.fillStyle = selectedColor;
+        ctx.fillRect(
+          coordinates.x * GRID_SIZE - scrollOffset.x,
+          coordinates.y * GRID_SIZE - scrollOffset.y,
+          GRID_SIZE,
+          GRID_SIZE
+        );
       }
 
-      if (hyu) {
+      if (hoveredSquare) {
         ctx.canvas.style.cursor = "pointer";
       } else {
         ctx.canvas.style.cursor = "default";
       }
     },
-    [ngd, avb, nnn, bfs, cfrt, bff, asfgb, ss]
+    [
+      GRID_SIZE,
+      coordinates,
+      numberData,
+      CANVAS_WIDTH,
+      getEntityAtCoordinates,
+      CANVAS_HEIGHT,
+      selectedColor,
+      scrollOffset,
+    ]
   );
 
-  const [mm, setmm] = useState(null);
+  let timeout: NodeJS.Timeout;
+  const [isDragging, setIsDragging] = useState(false);
+  const [timeControl, setTimeControl] = useState(false);
+  const downTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isLongPress, setIsLongPress] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [lastDragEndX, setLastDragEndX] = useState(0);
+  const [fingerNum, setFingerNum] = useState(0);
+  const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
+  const pixel_value = getComponentValue(Pixel, coor_entity) as any;
+  const action =
+    pixel_value && pixel_value.action ? pixel_value.action : "interact";
+  const ClickThreshold = 150; 
+  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    setFingerNum(event.buttons);
+    if (pageClick === true) {
+      return;
+    }
+    setIsDragging(true);
 
-  const bdcx = (data) => {
-    setmm(data);
+    setTranslateX(event.clientX);
+    setTranslateY(event.clientY);
+    get_function_param(action);
+    downTimerRef.current = setTimeout(() => {
+      setIsLongPress(true);
+    }, ClickThreshold);
+  };
+
+  const handlePageClick = () => {
+    setPageClick(true);
+  };
+  const handlePageClickIs = () => {
+    setPageClick(false);
+  };
+
+  const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (pageClick === true) {
+      return;
+    }
+    setIsLongPress(false);
+    setIsDragging(false);
+    setPopExhibit(false);
+    if (downTimerRef.current) {
+      clearTimeout(downTimerRef.current);
+      downTimerRef.current = null;
+    }
+    const a = get_function_param(action);
+    a.then((x) => {
+      const isEmpty = Object.keys(x).length === 0;
+
+      if (isLongPress) {
+        setIsLongPress(false);
+        setIsDragging(false);
+      } else {
+        const canvas = canvasRef.current as any;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+        const gridX = Math.floor(mouseX / GRID_SIZE);
+        const gridY = Math.floor(mouseY / GRID_SIZE);
+        setCoordinatesData({ x: gridX, y: gridY });
+        const newHoveredSquare = { x: gridX, y: gridY };
+        setHoveredSquare(newHoveredSquare);
+        if (isEmpty) {
+          if (selectedColor && coordinates) {
+            hoveredSquareRef.current = coordinates;
+
+            setIsDragging(false);
+            if (appName === "BASE/TCMPopStarSystem") {
+              interactHandleTCM(
+                coordinates,
+                palyerAddress,
+                selectedColor,
+                action,
+                null
+              );
+            } else {
+              interactHandle(
+                coordinates,
+                palyerAddress,
+                selectedColor,
+                action,
+                null
+              );
+            }
+
+            mouseXRef.current = mouseX;
+            mouseYRef.current = mouseY;
+            handleData(hoveredSquare as any);
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              const { x, y } = coordinates;
+              ctx.fillStyle = selectedColor;
+              ctx.fillRect(
+                x * GRID_SIZE - scrollOffset.x,
+                y * GRID_SIZE - scrollOffset.y,
+                GRID_SIZE,
+                GRID_SIZE
+              );
+              if (appName === "BASE/TCMPopStarSystem") {
+                drawGrid(ctx, coordinates, true);
+              }
+              drawGrid(ctx, coordinates, false);
+            }
+          }
+        } else {
+          setPopExhibit(true);
+        }
+
+        setIsDragging(false);
+        setShowOverlay(true);
+
+        setTranslateX(0);
+        setTranslateY(0);
+      }
+    });
+  };
+
+  const interactHandle = (
+    coordinates: any,
+    palyerAddress: any,
+    selectedColor: any,
+    actionData: any,
+    other_params: any
+  ) => {
+    setLoading(true);
+
+    const interact_data = interact(
+      coordinates,
+      palyerAddress,
+      selectedColor,
+      actionData,
+      other_params
+    );
+
+    interact_data.then((increDataVal: any) => {
+      if (increDataVal[1]) {
+        increDataVal[1].then((a: any) => {
+          if (a.status === "success") {
+            setLoading(false);
+            onHandleLoading();
+          } else {
+            handleError();
+            onHandleLoading();
+          }
+        });
+      } else {
+        handleError();
+      }
+    });
+  };
+  const interactHandleTCM = (
+    coordinates: any,
+    palyerAddress: any,
+    selectedColor: any,
+    actionData: any,
+    other_params: any
+  ) => {
+    setLoading(true);
+
+    const interact_data = interactTCM(
+      coordinates,
+      palyerAddress,
+      selectedColor,
+      actionData,
+      other_params
+    );
+
+    interact_data.then((increDataVal: any) => {
+      if (increDataVal[1]) {
+        increDataVal[1].then((a: any) => {
+          
+          if (a.status === "success") {
+            setLoading(false);
+            setTimeControl(true);
+            onHandleLoading();
+          } else {
+            handleError();
+            onHandleLoading();
+          }
+        });
+      } else {
+        handleError();
+      }
+    });
+  };
+
+  const [TCMPopStarData, setTCMPopStarData] = useState(null);
+
+  const handleEoaContractData = (data) => {
+    setTCMPopStarData(data);
   };
 
   const playFun = () => {
-    if (mm === undefined) {
-      const emptyRegion = fft();
-      setacx({ x: emptyRegion, y: 0 });
+    // console.log(TCMPopStarData);
+    if (TCMPopStarData === undefined) {
+      const emptyRegion = findEmptyRegion();
+      setEmptyRegionNum({ x: emptyRegion, y: 0 });
     } else {
-      setacx({ x: 0, y: 0 });
+      setEmptyRegionNum({ x: 0, y: 0 });
     }
     localStorage.setItem("showGameOver", "false");
-    const ctx = cnb?.current?.getContext("2d");
-    if (ctx && cnb) {
-      ddr(ctx, hyu, true);
-      cghe(acx, palyerAddress, asfgb, "interact", null);
+    const ctx = canvasRef?.current?.getContext("2d");
+    if (ctx && canvasRef) {
+      drawGrid(ctx, hoveredSquare, true);
+      interactHandleTCM(
+        emptyRegionNum,
+        palyerAddress,
+        selectedColor,
+        "interact",
+        null
+      );
     }
   };
 
-  const k = useCallback(
+  const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!bng.current || !cnb.current) return;
+      if (!visibleAreaRef.current || !canvasRef.current) return;
 
-      const ki = bng.current.getBoundingClientRect();
-      abn.current = event.clientX - ki.left;
-      abb.current = event.clientY - ki.top;
+      const rect = visibleAreaRef.current.getBoundingClientRect();
+      mouseXRef.current = event.clientX - rect.left;
+      mouseYRef.current = event.clientY - rect.top;
 
-      const xx = Math.floor(abn.current / ngd);
-      const xxx = Math.floor(abb.current / ngd);
+      const gridX = Math.floor(mouseXRef.current / GRID_SIZE);
+      const gridY = Math.floor(mouseYRef.current / GRID_SIZE);
 
-      sethyu({ x: xx, y: xxx });
+      setHoveredSquare({ x: gridX, y: gridY });
 
-      const ctx = cnb.current.getContext("2d");
+      const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
-        ddr(ctx, hyu, false);
+        drawGrid(ctx, hoveredSquare, false);
       }
     },
-    [ddr, hyu]
+    [drawGrid, hoveredSquare]
   );
 
-  const ppl = useCallback(
+  const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!bng.current || !bgra) return;
+      if (!visibleAreaRef.current || !isDragging) return;
 
-      const dx = az - event.clientX;
-      const dy = axx - event.clientY;
+      const dx = translateX - event.clientX;
+      const dy = translateY - event.clientY;
 
-      setaz(event.clientX);
-      setaxx(event.clientY);
+      setTranslateX(event.clientX);
+      setTranslateY(event.clientY);
 
-      setss((prevOffset) => ({
+      setScrollOffset((prevOffset) => ({
         x: Math.max(0, prevOffset.x + dx),
         y: Math.max(0, prevOffset.y + dy),
       }));
 
-      const canvas = cnb.current;
+      const canvas = canvasRef.current;
       if (canvas) {
-        const ki = canvas.getBoundingClientRect();
-        const nn = event.clientX - ki.left;
-        const nm = event.clientY - ki.top;
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
 
-        setnn(nn);
-        setnm(nm);
+        setMouseX(mouseX);
+        setMouseY(mouseY);
 
-        const xx = Math.floor((nn + ss.x) / ngd);
-        const xxx = Math.floor((nm + ss.y) / ngd);
+        const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
+        const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
 
-        sethyu({ x: xx, y: xxx });
+        setHoveredSquare({ x: gridX, y: gridY });
 
         const ctx = canvas.getContext("2d");
         if (ctx) {
-          ddr(ctx, hyu, false);
+          drawGrid(ctx, hoveredSquare, false);
         }
       }
     },
-    [az, axx, bng, ddr, hyu, bgra, ss, ngd]
+    [
+      translateX,
+      translateY,
+      visibleAreaRef,
+      drawGrid,
+      hoveredSquare,
+      isDragging,
+      scrollOffset,
+      GRID_SIZE,
+    ]
   );
 
   const DEFAULT_PARAMETERS_TYPE = "struct DefaultParameters";
@@ -588,7 +670,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     function_name: string,
     common_json: any[] = []
   ) => {
-    const abi_json = uhn;
+    const abi_json = updateAbiJson;
 
     if (abi_json === "") {
       return [];
@@ -619,7 +701,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           const filteredEnum = param.inputs.filter((component) =>
             component.internalType.includes("enum ")
           );
-          setafgd(filteredEnum);
+          setParamInputs(filteredEnum);
           if (hasStructDefaultParameters) {
             update_app_value(index);
           }
@@ -631,7 +713,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
           res = get_struct(copy_filteredInputs);
 
-          setvbs(res);
+          setConvertedParamsData(res);
         }
       })();
     });
@@ -662,7 +744,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const get_enum_value = (enumName: string) => {
     const res = [] as any;
 
-    let systemCommonData = uhm;
+    let systemCommonData = updateAbiCommonJson;
 
     const enumData = systemCommonData.ast.nodes.find(
       (node) => node.name === enumName
@@ -702,41 +784,58 @@ export default function Header({ hoveredData, handleData }: Props) {
     );
   };
 
-  const pp = (newPanningValue: any) => {
-    setqw(false);
-    setvdf(false);
-    sethhh(newPanningValue);
+  const handlePanningChange = (newPanningValue: any) => {
+    setPopExhibit(false);
+    setShowOverlay(false);
+    setPanningFromChild(newPanningValue);
   };
   const handleError = () => {
-    setll(false);
-    mmn();
+    setLoading(false);
+    onHandleLoading();
     toast.error("An error was reported");
   };
 
-  const ppp = () => {
-    setqw(false);
-    setvdf(false);
+  const onHandleExe = () => {
+    setPopExhibit(false);
+    setShowOverlay(false);
   };
 
-  const mmn = () => {
-    setll(false);
+  const onHandleLoading = () => {
+    setLoading(false);
   };
 
-  const l = () => {
-    setll(true);
+  const onHandleLoadingFun = () => {
+    setLoading(true);
   };
 
-  const p = (data: any) => {
-    setuhn(data);
+  const handleUpdateAbiJson = (data: any) => {
+    setUpdate_abi_json(data);
   };
 
-  const nm_ng = (data: any) => {
-    setuhm(data);
+  const handleUpdateAbiCommonJson = (data: any) => {
+    setUpdate_abi_Common_json(data);
   };
+
+  const handleItemClick = (content) => {
+    setMainContent(content);
+  };
+  const handleAddClick = (content) => {
+    if (content === "topUp") {
+      setTopUpType(true);
+    } else {
+      disconnect();
+    }
+  };
+
+  const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
+  const addressContent = [
+    { name: "Top up", value: "topUp" },
+    { name: "Disconnect", value: "disconnect" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
-      setss({ x: window.scrollX, y: window.scrollY });
+      setScrollOffset({ x: window.scrollX, y: window.scrollY });
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -747,37 +846,45 @@ export default function Header({ hoveredData, handleData }: Props) {
   }, []);
 
   useEffect(() => {
-    const canvas = cnb.current;
-    if (canvas && mkl.length > 0) {
+    const canvas = canvasRef.current;
+    if (canvas && entityData.length > 0) {
       const ctx = canvas.getContext("2d");
-      if (ctx && j !== "BASE/TCMPopStarSystem") {
-        ctx.clearRect(0, 0, bfs, bff);
-        ddr(ctx, hyu, false);
+      if (ctx && appName !== "BASE/TCMPopStarSystem") {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        drawGrid(ctx, hoveredSquare, false);
       } else {
-        ctx.clearRect(0, 0, bfs, bff);
-        ddr(ctx, hyu, true);
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        drawGrid(ctx, hoveredSquare, true);
       }
     }
-  }, [j, ddr, bfs, bff, mkl.length, hyu, nn, nm]);
+  }, [
+    appName,
+    drawGrid,
+    CANVAS_WIDTH,
+    CANVAS_HEIGHT,
+    entityData.length,
+    hoveredSquare,
+    mouseX,
+    mouseY,
+  ]);
 
   useEffect(() => {
-    const canvas = cnb.current as any;
-
+    const canvas = canvasRef.current as any;
     const handleMouseMove = (event: any) => {
-      const ki = canvas.getBoundingClientRect();
-      const nn = event.clientX - ki.left;
-      const nm = event.clientY - ki.top;
-      const xx = Math.floor((nn + ss.x) / ngd);
-      const xxx = Math.floor((nm + ss.y) / ngd);
-      setavb({ x: xx, y: xxx });
-      sethyu({ x: xx, y: xxx });
-      ghy.current = { x: xx, y: xxx };
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      const gridX = Math.floor((mouseX + scrollOffset.x) / GRID_SIZE);
+      const gridY = Math.floor((mouseY + scrollOffset.y) / GRID_SIZE);
+      setCoordinates({ x: gridX, y: gridY });
+      setHoveredSquare({ x: gridX, y: gridY });
+      hoveredSquareRef.current = { x: gridX, y: gridY };
     };
 
     const handleScroll = () => {
       const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
       const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-      setss({ x: scrollX, y: scrollY });
+      setScrollOffset({ x: scrollX, y: scrollY });
     };
 
     if (canvas) {
@@ -791,50 +898,33 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [cnb, ss]);
+  }, [canvasRef, scrollOffset]);
 
-  const [mainContent, setMainContent] = useState("MAINNET");
-  const [showList, setShowList] = useState(false);
-  const [juy, setjuy] = useState(false);
-
-  const handleItemClick = (content) => {
-    setMainContent(content);
-  };
-  const handleAddClick = (content) => {
-    if (content === "topUp") {
-      setaq(true);
-    } else {
-      disconnect();
-    }
-  };
   useEffect(() => {
-    if (j === "BASE/PopStarSystem" || j === "BASE/TCMPopStarSystem") {
-      setpia(true);
+    if (
+      appName === "BASE/TCMPopStarSystem"
+    ) {
+      setPopStar(true);
     }
-  }, [j]);
-
-  const netContent = [{ name: "TESTNET" }, { name: "MAINNET" }];
-  const addressContent = [
-    { name: "Top up", value: "topUp" },
-    { name: "Disconnect", value: "disconnect" },
-  ];
+  }, [appName]);
 
   useEffect(() => {
     if (isConnected) {
-      if (aww && (Number(aww) / 1e18).toFixed(8) < "0.000001") {
-        setaq(true);
+      if (balance && (Number(balance) / 1e18).toFixed(8) < "0.000001") {
+        setTopUpType(true);
       }
     }
-  }, [(Number(aww) / 1e18).toFixed(8), isConnected]);
+  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
 
-  const balanceSW = btyr.data?.value ?? 0n;
+  const balanceSW = balanceFN.data?.value ?? 0n;
+  
   useEffect(() => {
     if (isConnected) {
-      if ((Number(aww) / 1e18).toFixed(8) < "0.000001") {
-        setaq(true);
+      if ((Number(balance) / 1e18).toFixed(8) < "0.000001") {
+        setTopUpType(true);
       }
     }
-  }, [(Number(aww) / 1e18).toFixed(8), isConnected]);
+  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
 
   return (
     <>
@@ -846,17 +936,17 @@ export default function Header({ hoveredData, handleData }: Props) {
         />
         <div className={style.content}>
           <button
-            className={nnn === 25 ? style.btnBoxY : style.btnBox}
-            disabled={nnn === 25}
-            onClick={vdas}
+            className={numberData === 25 ? style.btnBoxY : style.btnBox}
+            disabled={numberData === 25}
+            onClick={btnLower}
           >
             −
           </button>
-          <span className={style.spanData}>{nnn}%</span>
+          <span className={style.spanData}>{numberData}%</span>
           <button
-            className={nnn === 100 ? style.btnBoxY : style.btnBox}
-            disabled={nnn === 100}
-            onClick={vdaa}
+            className={numberData === 100 ? style.btnBoxY : style.btnBox}
+            disabled={numberData === 100}
+            onClick={btnAdd}
           >
             +
           </button>
@@ -925,10 +1015,10 @@ export default function Header({ hoveredData, handleData }: Props) {
                           gap: 12,
                         }}
                         onMouseEnter={() => {
-                          setjuy(true);
+                          setAddressModel(true);
                         }}
                         onMouseLeave={() => {
-                          setjuy(false);
+                          setAddressModel(false);
                         }}
                       >
                         {" "}
@@ -948,7 +1038,7 @@ export default function Header({ hoveredData, handleData }: Props) {
                             ? ` (${account.displayBalance})`
                             : ""}
                         </button>
-                        {juy && (
+                        {addressModel && (
                           <div className={style.downBox}>
                             {addressContent.length > 0 &&
                               addressContent.map((item, index) => (
@@ -981,14 +1071,18 @@ export default function Header({ hoveredData, handleData }: Props) {
             display: "flex",
           }}
           className={style.bodyCon}
-          onMouseDown={d}
-          onMouseUp={grq}
-          onMouseMove={ppl}
-          onMouseLeave={zxdg}
-          onMouseEnter={k}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMoveData}
+          onMouseLeave={handleLeave}
+          onMouseEnter={handleMouseEnter}
         >
-          <div ref={bng} className={style.canvasWrapper}>
-            <canvas ref={cnb} width={bfs} height={bfs} />
+          <div ref={visibleAreaRef} className={style.canvasWrapper}>
+            <canvas
+              ref={canvasRef}
+              width={CANVAS_WIDTH}
+              height={CANVAS_WIDTH}
+            />
           </div>
         </div>
         <div
@@ -1009,7 +1103,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             <span
               key={index}
               className={`color-option${
-                asfgb === option.color ? " selected" : ""
+                selectedColor === option.color ? " selected" : ""
               }`}
               data-color={option.color}
               style={{
@@ -1018,9 +1112,9 @@ export default function Header({ hoveredData, handleData }: Props) {
                 height: "48px",
                 display: "inline-block",
               }}
-              onClick={() => csas(option.color)}
+              onClick={() => handleColorOptionClick(option.color)}
             >
-              {asfgb === option.color && (
+              {selectedColor === option.color && (
                 <div
                   className="selected-circle"
                   style={{
@@ -1036,33 +1130,33 @@ export default function Header({ hoveredData, handleData }: Props) {
           ))}
         </div>
         <RightPart
-          avb={avb}
-          mkl={mkl}
-          pp={pp}
-          ll={ll}
-          ppp={ppp}
-          setplokkk={e}
-          f={f}
-          p={p}
-          bnfa={nm_ng}
-          mmn={mmn}
-          l={l}
+          coordinates={coordinates}
+          entityData={entityData}
+          setPanningState={handlePanningChange}
+          loading={loading}
+          onHandleExe={onHandleExe}
+          setPageClick={handlePageClick}
+          handlePageClickIs={handlePageClickIs}
+          onUpdateAbiJson={handleUpdateAbiJson}
+          onUpdateAbiCommonJson={handleUpdateAbiCommonJson}
+          onHandleLoading={onHandleLoading}
+          onHandleLoadingFun={onHandleLoadingFun}
         />
       </div>
 
-      {qw === true ? (
+      {popExhibit === true ? (
         <>
-          {vdf && <div className={style.overlay} />}
+          {showOverlay && <div className={style.overlay} />}
           <PopUpBox
-            bgfd={bgfd}
-            avb={avb}
-            ppp={ppp}
-            asfgb={asfgb}
-            v={v}
-            mmn={mmn}
-            l={l}
-            afgd={afgd}
-            vbs={vbs}
+            addressData={addressData}
+            coordinates={coordinates}
+            onHandleExe={onHandleExe}
+            selectedColor={selectedColor}
+            interactHandle={interactHandle}
+            onHandleLoading={onHandleLoading}
+            onHandleLoadingFun={onHandleLoadingFun}
+            paramInputs={paramInputs}
+            convertedParamsData={convertedParamsData}
             enumValue={enumValue}
             action={action}
           />
@@ -1070,7 +1164,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       ) : (
         ""
       )}
-      {aq ? (
+      {topUpType ? (
         <div
           className={style.overlay}
           onClick={(event) => {
@@ -1078,33 +1172,40 @@ export default function Header({ hoveredData, handleData }: Props) {
               !event.target.classList.contains("topBox") &&
               event.target.classList.contains(style.overlay)
             ) {
-              setaq(false);
+              setTopUpType(false);
             }
           }}
         >
           <TopUpContent
-            setaq={setaq}
+            setTopUpType={setTopUpType}
             mainContent={mainContent}
             palyerAddress={palyerAddress}
           />
         </div>
       ) : null}
-      {pia === true ? (
+      {popStar === true ? (
         <div
           className={
-            bhg !== "false" ? style.overlayPopStar : style.overlayPopStarFl
+            panningType !== "false"
+              ? style.overlayPopStar
+              : style.overlayPopStarFl
           }
           onClick={() => {
-            setpia(false);
-            setass(true);
+            setPopStar(false);
+            setBoxPrompt(true);
           }}
         >
-          <PopStar setpia={setpia} playFun={playFun} />
+          <PopStar setPopStar={setPopStar} playFun={playFun} />
         </div>
       ) : null}
-      {(ass === true && j === "BASE/PopStarSystem") ||
-      j === "BASE/TCMPopStarSystem" ? (
-        <BoxPrompt avb={avb} ttc={ttc} playFun={playFun} bdcx={bdcx} />
+      {(boxPrompt === true && appName === "BASE/PopStarSystem") ||
+      appName === "BASE/TCMPopStarSystem" ? (
+        <BoxPrompt
+          coordinates={coordinates}
+          timeControl={timeControl}
+          playFun={playFun}
+          handleEoaContractData={handleEoaContractData}
+        />
       ) : null}
     </>
   );

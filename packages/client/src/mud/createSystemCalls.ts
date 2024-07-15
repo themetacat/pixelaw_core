@@ -174,6 +174,7 @@ export function createSystemCalls(
       functionName: "initDelegation",
       args: [palyerAddress, SYSTEM_ID, 2],
     });
+    
     const eoaWalletClient = await getEoaContractFun();
     try {
       const hash = await eoaWalletClient.writeContract({
@@ -399,17 +400,34 @@ console.log(coordinates);
         functionName: action,
         args: allArgs,
       });
-      const txData = await worldContract.write.callFrom([
-        account,
-        resourceToHex({
-          type: "system",
-          namespace: namespace,
-          name: system_name,
-        }),
-        encodeData,
-      ]);
+      if(action === 'interact'){
+        const txData = await worldContract.write.callFrom([
+          account,
+          resourceToHex({
+            type: "system",
+            namespace: namespace,
+            name: system_name,
+          }),
+          encodeData,
+        ], {gas: 20000000n});
+        // console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
+        
+        hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
+      }else{
+        const txData = await worldContract.write.callFrom([
+          account,
+          resourceToHex({
+            type: "system",
+            namespace: namespace,
+            name: system_name,
+          }),
+          encodeData,
+        ]);
+        hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
+      }
+     
 
-      hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
+    
     } catch (error) {
       console.error("Failed to setup network:", error.message);
       return [null, null];
@@ -479,7 +497,7 @@ console.log(coordinates);
         }),
         encodequoteOutputData,
       ]);
-      console.log(quoteOutput);
+      // console.log(quoteOutput);
       const ethInPrice = Number(quoteOutput) / 10 ** 18;
       // console.log(ethInPrice);
       return ethInPrice;
