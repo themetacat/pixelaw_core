@@ -80,13 +80,9 @@ export default function RightPart({
     localStorage.setItem("system_name", value.system_name);
     localStorage.setItem("namespace", value.namespace);
     localStorage.setItem("manifest", value.manifest);
-<<<<<<< HEAD
-    update_app_value(-1);
-=======
     update_app_value(-1)
     const newUrl = `/${value.app_name}`; // 可以根据需要修改 URL 结构   
     window.history.pushState(null, "", newUrl); //
->>>>>>> pro-core
   };
 
   //
