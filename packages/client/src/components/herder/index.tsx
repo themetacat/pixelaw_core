@@ -443,15 +443,7 @@ export default function Header({ hoveredData, handleData }: Props) {
             hoveredSquareRef.current = coordinates;
 
             setIsDragging(false);
-            if (appName === "BASE/PopCraftSystem") {
-              interactHandleTCM(
-                coordinates,
-                palyerAddress,
-                selectedColor,
-                action,
-                null
-              );
-            } else {
+            if (appName !== "BASE/PopCraftSystem") {
               interactHandle(
                 coordinates,
                 palyerAddress,
@@ -814,9 +806,12 @@ export default function Header({ hoveredData, handleData }: Props) {
     setMainContent(content);
   };
   const handleAddClick = (content) => {
+    console.log(content);
+    
     if (content === "topUp") {
       setTopUpType(true);
     } else {
+      
       disconnect();
     }
   };
@@ -1185,7 +1180,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               : style.overlayPopStarFl
           }
           onClick={() => {
-            setPopStar(false);
+            // setPopStar(false);
             setBoxPrompt(true);
           }}
         >
