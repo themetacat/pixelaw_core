@@ -129,7 +129,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       if (networkConfig.chain.id === 690) {
         indexerUrl = "https://indexer.pixelaw.world/";
       }else if(networkConfig.chain.id === 31338){
-        indexerUrl = "http://indexerdev.pixelaw.world/";
+        indexerUrl = "https://indexerdev.pixelaw.world/";
       }else if(networkConfig.chain.id === 17069){
         indexerUrl = "https://indexertest.pixelaw.world/";
       }
