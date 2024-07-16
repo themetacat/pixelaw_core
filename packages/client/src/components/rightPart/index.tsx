@@ -20,6 +20,7 @@ import loadingImg from "../../images/loading.png";
 
 import { hexToUtf8 } from "web3-utils";
 import { abi_json, update_app_value } from "../../mud/createSystemCalls";
+import { element } from "@rainbow-me/rainbowkit/dist/css/reset.css";
 export const ManifestContext = createContext<string>("");
 
 interface Props {
@@ -35,6 +36,7 @@ interface Props {
   onHandleLoadingFun: any;
   setPageClick: any;
 }
+
 export function convertToString(bytes32Value: string) {
   const byteArray = new Uint8Array(
     bytes32Value.match(/[\da-f]{2}/gi).map((h) => parseInt(h, 16))
@@ -72,14 +74,44 @@ export default function RightPart({
   const loacl_app_name = window.localStorage.getItem("app_name");
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
+
   const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
-    localStorage.setItem("app_name", value.app_name);
+    localStorage.setItem("app_name", value.app_name);    
     localStorage.setItem("system_name", value.system_name);
     localStorage.setItem("namespace", value.namespace);
     localStorage.setItem("manifest", value.manifest);
-    update_app_value(-1);
+    update_app_value(-1)
+    const newUrl = `/${value.app_name}`; // 可以根据需要修改 URL 结构   
+    window.history.pushState(null, "", newUrl); //
   };
+
+  //
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const newUrl = window.location.pathname;
+      console.log("URL changed to:", newUrl);
+      const appNameFromUrl = newUrl.replace(/^\//, ''); 
+      localStorage.setItem("app_name", appNameFromUrl);
+      entities_app.forEach((entitya:any,index:any) => {
+        const value = getComponentValueStrict(App,entitya) as any;
+        const app_name = convertToString(entitya);
+        value.app_name =app_name as string;
+        if (app_name.toLowerCase() === appNameFromUrl.toLowerCase()) {
+          handleIconClick(index, value);
+        }
+      })
+      updateAbiUrl(`BASE/${capitalizeFirstLetter(appNameFromUrl)}System`);
+    };
+
+    window.addEventListener("popstate", handleUrlChange);
+    handleUrlChange(); 
+    return () => {
+      window.removeEventListener("popstate", handleUrlChange);
+    };
+  }, []);
+  
+  
   const updateAbiUrl = async (manifest: string) => {
     const app_name = localStorage.getItem("app_name");
     const parts = manifest?.split("/") as any;
