@@ -29,6 +29,8 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import { useDisconnect } from 'wagmi';
 import pixeLawlogo from '../../images/pixeLawlogo.png'
+import backgroundMusic from '../../audio/1.mp3';
+import effectSound from '../../audio/2.mp3';
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -127,6 +129,44 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [addressModel, setAddressModel] = useState(false);
   const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
   const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
+  const audioRef = useRef<HTMLAudioElement>(null);//控制背景音乐
+  const effectRef = useRef(null); //元素音效卡
+  useEffect(() => {
+    const handleMouseMove = () => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0; // 重置音频播放位置
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.then(_ => {
+            // 自动播放成功
+            window.removeEventListener('mousemove', handleMouseMove); // 移除事件监听器
+          }).catch(error => {
+            // 自动播放失败，例如浏览器阻止了自动播放
+            // console.log('Error in autoplay:', error);
+          });
+        }
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove); // 在用户移动鼠标时播放音乐
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove); // 清除事件监听器
+    };
+  }, []);
+  const handleEnded = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // 重置音频播放位置
+      audioRef.current.play(); // 循环播放
+    }
+  };
+  //消消卡音效
+  const playEffect = () => {
+    if (effectRef.current) {
+      effectRef.current.currentTime = 0;
+      effectRef.current.play(); 
+    }
+  };
+
+  
 
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
@@ -139,6 +179,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [selectedColor, setSelectedColor] = useState(
     colorSession !== null ? colorSession : "#ffffff"
   );
+
   const mouseXRef = useRef(0);
   const mouseYRef = useRef(0);
   const panningType = window.localStorage.getItem("panning");
@@ -417,6 +458,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     setIsLongPress(false);
     setIsDragging(false);
     setPopExhibit(false);
+    playEffect();
     if (downTimerRef.current) {
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
@@ -778,8 +820,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   const handleError = () => {
     setLoading(false);
     onHandleLoading();
-    toast.error("An error was reported");
+    toast.error("An error was reported")
   };
+  
 
   const onHandleExe = () => {
     setPopExhibit(false);
@@ -1103,6 +1146,8 @@ export default function Header({ hoveredData, handleData }: Props) {
               }}
               onClick={() => handleColorOptionClick(option.color)}
             >
+              {/* 元素音效卡 */}
+              <audio ref={effectRef} src={effectSound} />  
               {selectedColor === option.color && (
                 <div
                   className="selected-circle"
@@ -1131,6 +1176,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           onHandleLoading={onHandleLoading}
           onHandleLoadingFun={onHandleLoadingFun}
         />
+        <audio ref={audioRef} src={backgroundMusic} onEnded={handleEnded} loop />
       </div>
 
       {popExhibit === true ? (
