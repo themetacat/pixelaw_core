@@ -130,7 +130,10 @@ export default function Header({ hoveredData, handleData }: Props) {
   const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
   const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
   const audioRef = useRef<HTMLAudioElement>(null);//控制背景音乐
-  const effectRef = useRef(null); //元素音效卡
+  const audioCache: { [url: string]: HTMLAudioElement } = {};//控制背景音效
+
+ 
+
   useEffect(() => {
     const handleMouseMove = () => {
       if (audioRef.current) {
@@ -141,7 +144,6 @@ export default function Header({ hoveredData, handleData }: Props) {
             // 自动播放成功
             window.removeEventListener('mousemove', handleMouseMove); // 移除事件监听器
           }).catch(error => {
-            // 自动播放失败，例如浏览器阻止了自动播放
             // console.log('Error in autoplay:', error);
           });
         }
@@ -158,12 +160,28 @@ export default function Header({ hoveredData, handleData }: Props) {
       audioRef.current.play(); // 循环播放
     }
   };
+
   //消消卡音效
-  const playEffect = () => {
-    if (effectRef.current) {
-      effectRef.current.currentTime = 0;
-      effectRef.current.play(); 
-    }
+  const loadAudio = (url: string): Promise<HTMLAudioElement> => {
+    return new Promise((resolve) => {
+      if (audioCache[url]) {
+        resolve(audioCache[url]);
+      } else {
+        const audio = new Audio(url);
+        audio.load();
+        audio.onloadeddata = () => {
+          audioCache[url] = audio;
+          resolve(audio);
+        };
+      }
+    });
+  };
+  
+  const playEffect = async () => {
+    const effectUrl = effectSound
+    const audio = await loadAudio(effectUrl);
+    audio.currentTime = 0;
+    audio.play();
   };
 
   
@@ -451,14 +469,14 @@ export default function Header({ hoveredData, handleData }: Props) {
     setPageClick(false);
   };
 
-  const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseUp = async (event: React.MouseEvent<HTMLDivElement>) => {
     if (pageClick === true) {
       return;
     }
     setIsLongPress(false);
     setIsDragging(false);
     setPopExhibit(false);
-    playEffect();
+    await playEffect();
     if (downTimerRef.current) {
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
@@ -603,11 +621,13 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const playFun = () => {
-    // console.log(TCMPopStarData);
+    let EmptyRegionNum = 0
     if (TCMPopStarData === undefined) {
       const emptyRegion = findEmptyRegion();
+      EmptyRegionNum=emptyRegion
       setEmptyRegionNum({ x: emptyRegion, y: 0 });
     } else {
+
       setEmptyRegionNum({ x: 0, y: 0 });
     }
     localStorage.setItem("showGameOver", "false");
@@ -615,7 +635,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     if (ctx && canvasRef) {
       drawGrid(ctx, hoveredSquare, true);
       interactHandleTCM(
-        emptyRegionNum,
+        { x: EmptyRegionNum, y: 0 },
         palyerAddress,
         selectedColor,
         "interact",
@@ -961,7 +981,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   return (
     <>
       <div className={style.container}>
-        <img
+        <imgplayEffect
           className={style.containerImg}
           src={pixeLawlogo}
           alt=""
@@ -1146,8 +1166,6 @@ export default function Header({ hoveredData, handleData }: Props) {
               }}
               onClick={() => handleColorOptionClick(option.color)}
             >
-              {/* 元素音效卡 */}
-              <audio ref={effectRef} src={effectSound} />  
               {selectedColor === option.color && (
                 <div
                   className="selected-circle"
