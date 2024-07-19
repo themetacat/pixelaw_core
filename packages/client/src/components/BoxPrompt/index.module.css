@@ -311,7 +311,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: calc(100% - 300px);
+  width: calc(100% - 253px);
   z-index: 10000000;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6); /* 半透明黑色 */
