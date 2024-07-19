@@ -161,7 +161,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   }, []);
   const handleEnded = () => {
     if (audioRef.current) {
-      audioRef.current.currentTime = 0; // 重置音频播放位置
+      audioRef.current.currentTime = 0; 
       audioRef.current.play(); // 循环播放
     }
   };
