@@ -59,6 +59,7 @@ p {
 .btnPlay {
   background-color: #200d2f;
   border: 1px solid #0b0113;
+  font-family: Silkscreen, cursive;
   padding: 10px 0px 10px 0px;
   display: grid;
   gap: 10px;
