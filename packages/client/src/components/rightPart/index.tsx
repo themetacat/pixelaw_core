@@ -232,7 +232,7 @@ export default function RightPart({
             value.app_name = app_name as string;
 
             return (
-              <div
+              <div  
                 key={`${index}`}
                 onClick={(e) => {
                   if (loading === true) {
