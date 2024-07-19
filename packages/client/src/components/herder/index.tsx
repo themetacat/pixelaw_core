@@ -339,19 +339,27 @@ export default function Header({ hoveredData, handleData }: Props) {
               }
             }
             if(entity.value.app !== "PopCraft"){
-            ctx.fillStyle = entity.value.color;
-            ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+              ctx.fillStyle = entity.value.color;
+              ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
           }
-            if (entity.value.app === "PopCraft"&&entity.value.owner !==undefined&&tcmTokenAddrDict[entity.value.owner]!==undefined&&Number(entity?.value?.text)>0) {
-              const img = new Image();
+            if (entity.value.app === "PopCraft"&&entity.value.owner !==undefined&&tcmTokenAddrDict[entity.value.owner]!==undefined) {
              
-              img.src =
-                imageIconData[
-                  tcmTokenAddrDict[entity?.value.owner][Number(entity?.value?.text) - 1]
-                ]?.src;
-              if (TCMPopStarData&&img.src!==undefined) {
-                ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
+              if(Number(entity?.value?.text)>0){
+                const img = new Image();
+             
+                img.src =
+                  imageIconData[
+                    tcmTokenAddrDict[entity?.value.owner][Number(entity?.value?.text) - 1]
+                  ]?.src;
+                if (TCMPopStarData&&img.src!==undefined) {
+                  ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
+                }
+              }else{
+                ctx.fillStyle = entity.value.color;
+                ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+             
               }
+           
             }
             if (entity.value.text && entity.value.app !== "PopCraft") {
               ctx.fillStyle = "#000";
@@ -1214,7 +1222,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               : style.overlayPopStarFl
           }
           onClick={() => {
-            setPopStar(false);
+            // setPopStar(false);
             setBoxPrompt(true);
           }}
         >
