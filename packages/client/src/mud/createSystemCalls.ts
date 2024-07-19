@@ -232,7 +232,9 @@ export function createSystemCalls(
     const namespace = window.localStorage.getItem("namespace") as string;
 
     let allArgs = [];
-
+    // const txData1 = await worldContract.write.setTokenBalanceForNamespace([['0x9c0153C56b460656DF4533246302d42Bd2b49947', '0xC750a84ECE60aFE3CBf4154958d18036D3f15786', '0x65638Aa354d2dEC431aa851F52eC0528cc6D84f3', '0x1ca53886132119F99eE4994cA9D0a9BcCD2bB96f', '0x7Ea470137215BDD77370fC3b049bd1d009e409f9', '0xca7f09561D1d80C5b31b390c8182A0554CF09F21', '0xdCc7Bd0964B467554C9b64d3eD610Dff12AF794e', '0x54b31D72a658A5145704E8fC2cAf5f87855cc1Cd', '0xF66D7aB71764feae0e15E75BAB89Bd0081a7180d'], [20000000000000000000, 20000000000000000000, 20000000000000000000, 20000000000000000000, 20000000000000000000, 20000000000000000000, 20000000000000000000, 20000000000000000000, 20000000000000000000], "0x6e73706f70437261667400000000000000000000000000000000000000000000"])
+    // console.log( await publicClient.waitForTransactionReceipt({ hash: txData1 }));
+    
      const args = {
         for_player: addressData,
         for_app: app_name,
@@ -270,6 +272,7 @@ export function createSystemCalls(
           }),
           encodeData,
         ], {gas: 50000000n});
+        console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
         
         hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
       }else{
@@ -318,6 +321,7 @@ export function createSystemCalls(
         args: [ resourceToHex({ "type": "system", "namespace": namespace, "name": system_name }), encodeData],
         value:parseEther(ethInPrice.toString())
       });
+
       hashValpublic = publicClient.waitForTransactionReceipt({ hash: hash })
 
     } catch (error) {
@@ -328,8 +332,11 @@ export function createSystemCalls(
   };
 
   const forMent = async (selectedName: any, numberData: any) => {
+    const app_name = window.localStorage.getItem("app_name") || "PopCraft";
     const system_name = window.localStorage.getItem("system_name") as string;
     const namespace = window.localStorage.getItem("namespace") as string;
+    console.log(abi_json[app_name]);
+    
     const encodequoteOutputData = encodeFunctionData({
       abi: abi_json[app_name],
       functionName: "quoteOutput",
