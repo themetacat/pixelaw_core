@@ -606,8 +606,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const playFun = () => {
-    // console.log(TCMPopStarData);\
     const emptyRegion = findEmptyRegion();
+    console.log(emptyRegion)
+
     if (TCMPopStarData === undefined) {
       setEmptyRegionNum({ x: emptyRegion, y: 0 });
     } else {
