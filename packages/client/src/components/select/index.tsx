@@ -20,13 +20,11 @@ export default function Select({matchedData,setdata1}:Props) {
     
     setDownPointType(true)
     setSelectedOption(newType);
-    console.log(key,item)
     setdata1({key,item});
   };
 
   useEffect(() => {
     if (matchedData && Object.keys(matchedData).length > 0) {
-      console.log(matchedData);
       const firstNonEmptyItem = Object.values(matchedData).find(item => item.name);
       const firstNonEmptyItemEntry = Object.entries(matchedData).find(([key, item]) => 
       setdata1({key,item})
@@ -36,7 +34,6 @@ export default function Select({matchedData,setdata1}:Props) {
       const [key, item] = Object.entries(matchedData).find(([key, item]) => item === firstNonEmptyItem);
     
       const firstNonEmptyItemEntry = { [key]: item };
-      console.log(firstNonEmptyItemEntry);
       setdata1({key,item});
     }  
 
