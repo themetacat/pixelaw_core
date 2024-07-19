@@ -405,12 +405,11 @@ export default function Header({ hoveredData, handleData }: Props) {
              
               if(Number(entity?.value?.text)>0){
                 const img = new Image();
-             
                 img.src =
                   imageIconData[
                     tcmTokenAddrDict[entity?.value.owner][Number(entity?.value?.text) - 1]
                   ]?.src;
-                if (TCMPopStarData&&img.src!==undefined) {
+                if (img.src!==undefined) {
                   ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
                 }
               }else{

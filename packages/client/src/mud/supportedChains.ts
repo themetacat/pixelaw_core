@@ -60,16 +60,6 @@ const core_foundry = defineChain({
       webSocket: ['wss://api.pixelaw.world/rpc'],
     },
   },
-  // rpcUrls: {
-  //   default: {
-  //     http: ['https://47.243.184.241/rpc'],
-  //     webSocket: ['ws://47.243.184.241/rpc'],
-  //   },
-  //   public: {
-  //     http: ['http://47.243.184.241/rpc'],
-  //     webSocket: ['ws://47.243.184.241/rpc'],
-  //   },
-  // },
 })
 
 const garnet = defineChain({
