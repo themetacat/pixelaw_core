@@ -275,6 +275,8 @@ export function createSystemCalls(
         console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
         
         hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
+        // console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
+        
       }else{
         const txData = await worldContract.write.callFrom([
           account,

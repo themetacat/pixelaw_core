@@ -34,6 +34,7 @@ interface Props {
   onUpdateAbiCommonJson: any;
   onHandleLoading: any;
   onHandleLoadingFun: any;
+  onHandleOwner: any;
   setPageClick: any;
 }
 export function convertToString(bytes32Value: string) {
@@ -54,6 +55,7 @@ export const addressToEntityID = (address: Hex) =>
 export default function RightPart({
   coordinates,
   loading,
+  onHandleOwner,
   onHandleExe,
   entityData,
   onUpdateAbiJson,
@@ -80,7 +82,9 @@ export default function RightPart({
     localStorage.setItem("system_name", value.system_name);
     localStorage.setItem("namespace", value.namespace);
     localStorage.setItem("manifest", value.manifest);
-    update_app_value(-1);
+    update_app_value(-1)
+    const newUrl = `/${value.app_name}`; // 可以根据需要修改 URL 结构   
+    window.history.pushState(null, "", newUrl); //
   };
 
   //
@@ -187,6 +191,7 @@ export default function RightPart({
   if (pixel_value) {
     app_name = pixel_value.app;
     const owner = pixel_value.owner;
+    onHandleOwner(owner)
     truncatedOwner = `${owner?.substring(0, 6)}...${owner.substring(
       owner.length - 4
     )}`;
