@@ -9,7 +9,7 @@ interface Props {
 export default function PopStar({ setPopStar, playFun }: Props) {
   return (
     <div className={style.content}>
-      <p className={style.title}>WELCOME TO TCM-POPSTAR!</p>
+      <p className={style.title}>WELCOME TO TCM-POPCRAFT!</p>
       <div className={style.Container}>
         <p className={style.copywritingFirst}>How to play?</p>
         <span className={style.copywritingThree}>5 minutes</span>&nbsp;
