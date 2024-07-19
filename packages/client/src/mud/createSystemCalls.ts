@@ -272,7 +272,6 @@ export function createSystemCalls(
           }),
           encodeData,
         ], {gas: 50000000n});
-        console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
         
         hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
         // console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
@@ -337,7 +336,6 @@ export function createSystemCalls(
     const app_name = window.localStorage.getItem("app_name") || "PopCraft";
     const system_name = window.localStorage.getItem("system_name") as string;
     const namespace = window.localStorage.getItem("namespace") as string;
-    console.log(abi_json[app_name]);
     
     const encodequoteOutputData = encodeFunctionData({
       abi: abi_json[app_name],

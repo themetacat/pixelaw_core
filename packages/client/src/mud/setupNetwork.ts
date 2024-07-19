@@ -184,7 +184,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               },
             ],
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
-            console.log(components);
    
             /*
              * If there is a faucet, request (test) ETH if you have
