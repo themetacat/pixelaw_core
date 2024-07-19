@@ -28,8 +28,10 @@ import AddIcon from "../../images/jia.png";
 import { CANVAS_HEIGHT } from "../../global/constants";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-import { useDisconnect } from "wagmi";
-import pixeLawlogo from "../../images/pixeLawlogo.png";
+import { useDisconnect } from 'wagmi';
+import pixeLawlogo from '../../images/pixeLawlogo.png'
+import backgroundMusic from '../../audio/1.mp3';
+import effectSound from '../../audio/2.mp3';
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -132,6 +134,62 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [ownerData, setOwnerData] = useState(null);
   const CANVAS_WIDTH = document.documentElement.clientWidth; // 获取整个页面的宽度
   const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
+  const audioRef = useRef<HTMLAudioElement>(null);//控制背景音乐
+  const audioCache: { [url: string]: HTMLAudioElement } = {};//控制背景音效
+
+ 
+
+  useEffect(() => {
+    const handleMouseMove = () => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0; // 重置音频播放位置
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.then(_ => {
+            // 自动播放成功
+            window.removeEventListener('mousemove', handleMouseMove); // 移除事件监听器
+          }).catch(error => {
+            // console.log('Error in autoplay:', error);
+          });
+        }
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove); // 在用户移动鼠标时播放音乐
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove); // 清除事件监听器
+    };
+  }, []);
+  const handleEnded = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; 
+      audioRef.current.play(); // 循环播放
+    }
+  };
+
+  //消消卡音效
+  const loadAudio = (url: string): Promise<HTMLAudioElement> => {
+    return new Promise((resolve) => {
+      if (audioCache[url]) {
+        resolve(audioCache[url]);
+      } else {
+        const audio = new Audio(url);
+        audio.load();
+        audio.onloadeddata = () => {
+          audioCache[url] = audio;
+          resolve(audio);
+        };
+      }
+    });
+  };
+  
+  const playEffect = async () => {
+    const effectUrl = effectSound
+    const audio = await loadAudio(effectUrl);
+    audio.currentTime = 0;
+    audio.play();
+  };
+
+  
 
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
@@ -211,7 +269,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       entityData.push({ coordinates, value });
     });
   }
-
   const getEntityAtCoordinates = (x: number, y: number) => {
     return entityData.find(
       (entity) => entity.coordinates.x === x && entity.coordinates.y === y
@@ -233,6 +290,8 @@ export default function Header({ hoveredData, handleData }: Props) {
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
+  // registerDelegation();
+
 
   const findEmptyRegion = () => {
     const gridSize = GRID_SIZE;
@@ -346,12 +405,11 @@ export default function Header({ hoveredData, handleData }: Props) {
              
               if(Number(entity?.value?.text)>0){
                 const img = new Image();
-             
                 img.src =
                   imageIconData[
                     tcmTokenAddrDict[entity?.value.owner][Number(entity?.value?.text) - 1]
                   ]?.src;
-                if (TCMPopStarData&&img.src!==undefined) {
+                if (img.src!==undefined) {
                   ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
                 }
               }else{
@@ -448,13 +506,14 @@ export default function Header({ hoveredData, handleData }: Props) {
     setPageClick(false);
   };
 
-  const handleMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseUp = async (event: React.MouseEvent<HTMLDivElement>) => {
     if (pageClick === true) {
       return;
     }
     setIsLongPress(false);
     setIsDragging(false);
     setPopExhibit(false);
+    await playEffect();
     if (downTimerRef.current) {
       clearTimeout(downTimerRef.current);
       downTimerRef.current = null;
@@ -541,7 +600,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     other_params: any
   ) => {
     setLoading(true);
-
     const interact_data = interact(
       coordinates,
       palyerAddress,
@@ -553,6 +611,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     interact_data.then((increDataVal: any) => {
       if (increDataVal[1]) {
         increDataVal[1].then((a: any) => {
+          console.log(a);
           if (a.status === "success") {
             setLoading(false);
             onHandleLoading();
@@ -606,12 +665,13 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const playFun = () => {
-    const emptyRegion = findEmptyRegion();
-    console.log(emptyRegion)
-
+    let EmptyRegionNum = 0
     if (TCMPopStarData === undefined) {
+      const emptyRegion = findEmptyRegion();
+      EmptyRegionNum=emptyRegion
       setEmptyRegionNum({ x: emptyRegion, y: 0 });
     } else {
+
       setEmptyRegionNum({ x: 0, y: 0 });
     }
     localStorage.setItem("showGameOver", "false");
@@ -619,7 +679,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     if (ctx && canvasRef) {
       drawGrid(ctx, hoveredSquare, true);
       interactHandleTCM(
-        emptyRegionNum,
+        { x: EmptyRegionNum, y: 0 },
         palyerAddress,
         selectedColor,
         "interact",
@@ -824,8 +884,9 @@ export default function Header({ hoveredData, handleData }: Props) {
   const handleError = () => {
     setLoading(false);
     onHandleLoading();
-    toast.error("An error was reported");
+    toast.error("An error was reported")
   };
+  
 
   const onHandleExe = () => {
     setPopExhibit(false);
@@ -937,8 +998,8 @@ export default function Header({ hoveredData, handleData }: Props) {
   useEffect(() => {
     if (appName === "BASE/PopCraftSystem") {
       setPopStar(true);
-    } else {
-      setBoxPrompt(false);
+    }else{
+      setBoxPrompt(false)
       setPopStar(false);
     }
   }, [appName]);
@@ -960,6 +1021,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
     }
   }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
+
 
   return (
     <>
@@ -1174,6 +1236,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           onHandleLoadingFun={onHandleLoadingFun}
           onHandleOwner={onHandleOwner}
         />
+        <audio ref={audioRef} src={backgroundMusic} onEnded={handleEnded} loop />
       </div>
 
       {popExhibit === true ? (

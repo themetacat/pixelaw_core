@@ -56,7 +56,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       // 使用模板字符串拼接字符串
       const fullPath = `https://pixelaw-game.vercel.app/${passedValue?.replace("BASE/", "")}`;
      
-
       /*
        * Create a viem public (read only) client
        * (https://viem.sh/docs/clients/public.html)
@@ -66,16 +65,14 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
         transport: transportObserver(fallback([webSocket(), http()])),
         pollingInterval: 3000,
       } as const satisfies ClientConfig;
-
       const publicClient = createPublicClient(clientOptions);
 
       /*
        * Create a temporary wallet and a viem client for it
        * (see https://viem.sh/docs/clients/wallet.html).
        */
-      // dbb0764905e05f24fc9c863c3969cefa04530b5e0c635b183cecc8db1eee54cc
       const burnerAccount = createBurnerAccount(networkConfig.privateKey as Hex);
-      // const burnerAccount = createBurnerAccount('0xdbb0764905e05f24fc9c863c3969cefa04530b5e0c635b183cecc8db1eee54cc');
+      
       const burnerWalletClient = createWalletClient({
         ...clientOptions,
         account: burnerAccount,
@@ -97,7 +94,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       /*
       * Create an object for communicating with the deployed World.
       */
-     
+      
       const worldContract = getContract({
         address: networkConfig.worldAddress as Hex, 
         abi: IWorldAbi,
@@ -129,7 +126,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
       if (networkConfig.chain.id === 690) {
         indexerUrl = "https://indexer.pixelaw.world/";
       }else if(networkConfig.chain.id === 31338){
-        indexerUrl = "http://indexerdev.pixelaw.world/";
+        indexerUrl = "https://indexerdev.pixelaw.world/";
       }else if(networkConfig.chain.id === 17069){
         indexerUrl = "https://indexertest.pixelaw.world/";
       }
@@ -187,8 +184,6 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               },
             ],
           }).then(({ components, latestBlock$, storedBlockLogs$, waitForTransaction }) => {
-            
-   console.log(components,'componentscomponents');
    
             /*
              * If there is a faucet, request (test) ETH if you have
@@ -203,7 +198,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   console.info("[Dev Faucet]: Balance is low, dripping funds to player");
-                  await testClient.setBalance({ address: account_addr, value: parseEther('4') });
+                  await testClient.setBalance({ address: account_addr, value: parseEther('10') });
                 };
               };
      
@@ -235,7 +230,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             if(networkConfig.chain.id === 31337 || networkConfig.chain.id === 31338){
               
               requestDrip();
-              setInterval(requestDrip, 2000)
+              setInterval(requestDrip, 20000)
             }else if(networkConfig.chain.id === 17069){
               sendPostRequest();
               setInterval(sendPostRequest, 40000)

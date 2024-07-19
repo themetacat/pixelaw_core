@@ -37,7 +37,6 @@ interface Props {
   onHandleOwner: any;
   setPageClick: any;
 }
-
 export function convertToString(bytes32Value: string) {
   const byteArray = new Uint8Array(
     bytes32Value.match(/[\da-f]{2}/gi).map((h) => parseInt(h, 16))
@@ -233,7 +232,7 @@ export default function RightPart({
             value.app_name = app_name as string;
 
             return (
-              <div
+              <div  
                 key={`${index}`}
                 onClick={(e) => {
                   if (loading === true) {

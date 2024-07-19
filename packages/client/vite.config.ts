@@ -8,6 +8,9 @@ export default defineConfig({
     fs: {
       strict: false,
     },
+    hmr:{
+      overlay:false
+    }
   },
   build: {
     target: "es2022",

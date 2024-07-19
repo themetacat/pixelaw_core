@@ -12,7 +12,7 @@ canvas {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 10000000;
+  z-index: 999;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5); /* 半透明黑色 */
   pointer-events: auto !important;
@@ -23,7 +23,7 @@ canvas {
   top: 0;
   left: 0;
   width: calc(100% - 253px);
-  z-index: 9999999;
+  z-index: 999;
   height: 100%;
   pointer-events: auto !important;
 }
@@ -33,7 +33,7 @@ canvas {
   top: 0;
   left: 0;
   width: calc(100% - 78px);
-  z-index: 9999999;
+  z-index: 999;
   height: 100%;
   pointer-events: auto !important;
 }
@@ -142,7 +142,9 @@ canvas {
   padding: 0;
   flex-direction: column;
   opacity: 1;
+  font-family: "your-emoji-font", sans-serif !important; 
 }
+/* 使用 !important 来强制应用 Play 按钮的字体样式 */
 .btnBoxY {
   border-radius: 50px;
   width: 80px;
@@ -264,7 +266,8 @@ canvas {
   }
 }
 .loadingContainer {
-  position: absolute;
+  /* position: absolute; */
+  position: relative;
   right: 150px;
   bottom: 20px;
   width: 100px;

@@ -15,3 +15,4 @@ import { Instruction, InstructionData, InstructionTableId } from "./tables/Instr
 import { QueueScheduled, QueueScheduledData, QueueScheduledTableId } from "./tables/QueueScheduled.sol";
 import { QueueProcessed, QueueProcessedTableId } from "./tables/QueueProcessed.sol";
 import { Alert, AlertData, AlertTableId } from "./tables/Alert.sol";
+import { ERC20TokenBalance, ERC20TokenBalanceTableId } from "./tables/ERC20TokenBalance.sol";

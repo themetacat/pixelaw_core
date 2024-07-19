@@ -6,6 +6,7 @@
   height: calc(100vh - 60px);
 }
 .contBox1 {
+  z-index: 10;
   padding-left: 15px;
   padding-right: 15px;
   flex: 1 1 0%;

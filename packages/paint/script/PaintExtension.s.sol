@@ -17,7 +17,7 @@ import { RESOURCE_SYSTEM } from "@latticexyz/world/src/worldResourceTypes.sol";
 import { IStore } from "@latticexyz/store/src/IStore.sol";
 import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 import { DefaultParameters } from "../src/core_codegen/index.sol";
- 
+import { WorldContextConsumerLib } from "@latticexyz/world/src/WorldContext.sol";
 // For deploying MessageSystem
 import { PaintSystem } from "../src/systems/PaintSystem.sol";
  
@@ -30,9 +30,10 @@ contract PaintExtension is Script {
     WorldRegistrationSystem world = WorldRegistrationSystem(worldAddress);
     ResourceId namespaceResource = WorldResourceIdLib.encodeNamespace(bytes14("paint"));
     ResourceId systemResource = WorldResourceIdLib.encode(RESOURCE_SYSTEM, "paint", "PaintSystem");
+    // address worldAddress1 = WorldContextConsumerLib._world();
     console.log("Namespace ID: %x", uint256(ResourceId.unwrap(namespaceResource)));
     console.log("System ID:    %x", uint256(ResourceId.unwrap(systemResource)));
- 
+    // console.log("address: ", worldAddress1);
     vm.startBroadcast(deployerPrivateKey);
     world.registerNamespace(namespaceResource);
  
