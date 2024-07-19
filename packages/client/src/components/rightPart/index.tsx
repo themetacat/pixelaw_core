@@ -34,6 +34,7 @@ interface Props {
   onUpdateAbiCommonJson: any;
   onHandleLoading: any;
   onHandleLoadingFun: any;
+  onHandleOwner: any;
   setPageClick: any;
 }
 export function convertToString(bytes32Value: string) {
@@ -54,6 +55,7 @@ export const addressToEntityID = (address: Hex) =>
 export default function RightPart({
   coordinates,
   loading,
+  onHandleOwner,
   onHandleExe,
   entityData,
   onUpdateAbiJson,
@@ -189,6 +191,7 @@ export default function RightPart({
   if (pixel_value) {
     app_name = pixel_value.app;
     const owner = pixel_value.owner;
+    onHandleOwner(owner)
     truncatedOwner = `${owner?.substring(0, 6)}...${owner.substring(
       owner.length - 4
     )}`;

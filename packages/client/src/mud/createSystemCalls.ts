@@ -481,6 +481,7 @@ export function createSystemCalls(
   };
 
   const forMent = async (selectedName: any, numberData: any) => {
+    const app_name = window.localStorage.getItem("app_name") || "PopCraft";
     const system_name = window.localStorage.getItem("system_name") as string;
     const namespace = window.localStorage.getItem("namespace") as string;
     const encodequoteOutputData = encodeFunctionData({

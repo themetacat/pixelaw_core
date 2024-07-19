@@ -38,6 +38,7 @@ interface Props {
   coordinates: any;
   timeControl: any;
   playFun: any;
+  // handlematchedData: any;
   handleEoaContractData : any;
 }
 
@@ -87,16 +88,19 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
       setcresa(true);
       payFunctionTwo.then((result) => {
         if (result.status === "success") {
+
           setcresa(false);
           setpay1(true);
         } else {
+    
           setcresa(false);
           setpay(true);
         }
       })
       .catch((error) => {
+     
         setcresa(false);
-        setpay(true);
+        // setpay(true);
       });
       setTimeout(() => {
         setdataq(false);
@@ -177,7 +181,6 @@ if(deleGeData === undefined){
     imageIconData,
     balanceData
   );
- 
   function getMatchedData(tokenAddresses, imageData, balanceData) {
     const result = {};
 
@@ -364,6 +367,7 @@ setdata(item)
               src={trunOff}
               alt=""
               onClick={() => {
+                setNumberData(1)
                 setpay(false)
                 setdataq(false);
               }}
