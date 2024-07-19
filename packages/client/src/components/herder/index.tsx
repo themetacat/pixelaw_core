@@ -957,6 +957,9 @@ export default function Header({ hoveredData, handleData }: Props) {
       appName === "BASE/PopCraftSystem"
     ) {
       setPopStar(true);
+    }else{
+      setBoxPrompt(false)
+      setPopStar(false);
     }
   }, [appName]);
 
