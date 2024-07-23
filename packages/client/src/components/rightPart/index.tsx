@@ -249,8 +249,6 @@ export default function RightPart({
           {/* ~~~~ 移动游戏图片才调用 */}
           {entities_app.map((entitya, index) => {
             const value = getComponentValueStrict(App, entitya) as any;
-            console.log(value);
-            
             
             const app_name =  convertToString(entitya);
             // const app_name = getComponentValue(
