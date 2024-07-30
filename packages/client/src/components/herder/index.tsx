@@ -823,7 +823,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           }
         });
       } else {
-        handleError();
+        handleError();/^[^A-Za-z]*$/
       }
     });
   };
