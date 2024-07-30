@@ -10,6 +10,7 @@ import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { useMUD } from "../../MUDContext";
 import { abi_json } from "../../mud/createSystemCalls";
 import { resourceToHex, ContractWrite, getContract } from "@latticexyz/common";
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 import RightPart, { addressToEntityID } from "../rightPart";
 import {
   Abi,
@@ -39,10 +40,10 @@ interface Props {
   timeControl: any;
   playFun: any;
   // handlematchedData: any;
-  handleEoaContractData : any;
+  handleEoaContractData: any;
 }
 
-export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaContractData  }: Props) {
+export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoaContractData }: Props) {
   const {
     components: {
       App,
@@ -54,7 +55,7 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
       UserDelegationControl,
     },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { interact,forMent, payFunction,registerDelegation },
+    systemCalls: { interact, forMent, payFunction, registerDelegation },
   } = useMUD();
   const [timeLeft, setTimeLeft] = useState(300);
   const [warnBox, setWarnBox] = useState(false);
@@ -75,7 +76,7 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
   const [balanceData, setBalanceData] = useState({});
   const [numberData, setNumberData] = useState(1);
   const coor_entity = coorToEntityID(coordinates.x, coordinates.y);
-  const [startTime, setStartTime] = useState(null); 
+  const [startTime, setStartTime] = useState(null);
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   const entities_app = useEntityQuery([Has(App)]);
   const minutes = Math.floor(timeLeft / 300);
@@ -92,16 +93,16 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
           setcresa(false);
           setpay1(true);
         } else {
-    
+
           setcresa(false);
           setpay(true);
         }
       })
-      .catch((error) => {
-     
-        setcresa(false);
-        // setpay(true);
-      });
+        .catch((error) => {
+
+          setcresa(false);
+          // setpay(true);
+        });
       setTimeout(() => {
         setdataq(false);
         setpay1(false);
@@ -112,8 +113,13 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
 
   const getEoaContract = async () => {
     const [account] = await window.ethereum!.request({
-      method: "eth_requestAccounts",
+      method: "eth_accounts",
     });
+    
+
+    // const { address, connector } = useAccount();
+    // console.log(address);
+    
     return account;
   };
 
@@ -124,53 +130,48 @@ export default function BoxPrompt({ coordinates,timeControl,playFun,handleEoaCon
     );
 
   const panningType = window.localStorage.getItem("panning");
-
+  
   const fetchData = async () => {
     try {
 
       const account = await getEoaContract();
 
-
       const TCMPopStarData = getComponentValue(
         TCMPopStar,
         addressToEntityID(account)
       );
-
-
-      if(TCMPopStarData){
-
-     
-      const tokenBalancePromises = TCMPopStarData.tokenAddressArr.map(
-        async (item) => {
-          try {
-            const balance = await getComponentValue(
-              TokenBalance,
-              addressToEntityIDTwo(account, item)
-            );
-            return { [item]: balance };
-          } catch (error) {
-            console.error(`Error fetching balance for ${item}:`, error);
-            return { [item]: undefined };
+        // console.log(TCMPopStarData);
+      if (TCMPopStarData) {
+        const tokenBalancePromises = TCMPopStarData.tokenAddressArr.map(
+          async (item) => {
+            try {
+              const balance = await getComponentValue(
+                TokenBalance,
+                addressToEntityIDTwo(account, item)
+              );
+              return { [item]: balance };
+            } catch (error) {
+              console.error(`Error fetching balance for ${item}:`, error);
+              return { [item]: undefined };
+            }
           }
-        }
+        );
+        const tokenBalanceResults = await Promise.all(tokenBalancePromises);
+        setBalanceData(tokenBalanceResults);
+      }
+      const deleGeData = getComponentValue(
+        UserDelegationControl,
+        addressToEntityIDTwo(account, palyerAddress)
       );
+      
+      
+      localStorage.setItem('deleGeData',JSON.stringify(deleGeData))
 
-   
-      const tokenBalanceResults = await Promise.all(tokenBalancePromises);
-      setBalanceData(tokenBalanceResults);
-
-     
-  }
-  const deleGeData = getComponentValue(
-    UserDelegationControl,
-    addressToEntityIDTwo(account, palyerAddress)
-  );
-if(deleGeData === undefined){
-  registerDelegation()
-}
-
-
+      // if (deleGeData === undefined) {
+      //   registerDelegation()
+      // }
       return TCMPopStarData;
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -192,7 +193,7 @@ if(deleGeData === undefined){
         let balance = balanceObj ? balanceObj[address] : 0;
 
         if (typeof balance.balance === "bigint") {
-          balance = (balance.balance / BigInt(10 ** 18)).toString(); 
+          balance = (balance.balance / BigInt(10 ** 18)).toString();
         } else {
           balance = balance.balance || "0";
         }
@@ -214,114 +215,114 @@ if(deleGeData === undefined){
     setSelectedOption(event.target.value);
   };
 
-  const downHandleNumber = 
+  const downHandleNumber =
     (val: any) => {
-     
-        setNumberData(numberData - 1);
-     
+
+      setNumberData(numberData - 1);
+
     };
   const upHandleNumber = (val: any) => {
-      setNumberData(numberData + 1);
+    setNumberData(numberData + 1);
   };
 
   useEffect(() => {
     const fetchDataTotal = fetchData();
-    
-    
+
+
     fetchDataTotal.then((TCMPopStarData) => {
       if (palyerAddress !== undefined) {
         handleEoaContractData(TCMPopStarData);
 
-  
-          if (TCMPopStarData) {
-            setGetEoaContractData(TCMPopStarData?.tokenAddressArr);
-            const blockchainStartTime = Number(TCMPopStarData.startTime) as any;
-            setStartTime(blockchainStartTime);
-  
-            const currentTime = Math.floor(Date.now() / 1000);
-  
-            const elapsedTime = currentTime - blockchainStartTime;
-  
-            const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
-            setTimeLeft(updatedTimeLeft);
-           
-            const allZeros = TCMPopStarData.matrixArray.every((data) => data === 0n);
-            
-            if (allZeros) {
-                setGameSuccess(true)
-                
-            } else { 
-              
-              setGameSuccess(false)
-              if(TCMPopStarData.gameFinished === true){
-                seta(true)
-              }
+
+        if (TCMPopStarData) {
+          setGetEoaContractData(TCMPopStarData?.tokenAddressArr);
+          const blockchainStartTime = Number(TCMPopStarData.startTime) as any;
+          setStartTime(blockchainStartTime);
+
+          const currentTime = Math.floor(Date.now() / 1000);
+
+          const elapsedTime = currentTime - blockchainStartTime;
+
+          const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
+          setTimeLeft(updatedTimeLeft);
+
+          const allZeros = TCMPopStarData.matrixArray.every((data) => data === 0n);
+
+          if (allZeros) {
+            setGameSuccess(true)
+
+          } else {
+
+            setGameSuccess(false)
+            if (TCMPopStarData.gameFinished === true) {
+              seta(true)
             }
-           
           }
-      
-      
+
+        }
+
+
       }
     });
   }, [balanceData]);
 
 
   useEffect(() => {
-    
-    if(timeControl === true&&gameSuccess === false){
+
+    if (timeControl === true && gameSuccess === false) {
       if (datan !== null) {
-        const currentTime = Math.floor(Date.now() / 1000); 
+        const currentTime = Math.floor(Date.now() / 1000);
         const timeElapsed = currentTime - datan;
         const newTimeLeft = 300 - timeElapsed;
         setTimeLeft(newTimeLeft > 0 ? newTimeLeft : 0);
-        if(localStorage.getItem('showGameOver') === 'false'){
-          localStorage.setItem('showGameOver','true')
+        if (localStorage.getItem('showGameOver') === 'false') {
+          localStorage.setItem('showGameOver', 'true')
         }
- 
+
       }
     }
-  }, [datan,timeControl,a,gameSuccess]);
+  }, [datan, timeControl, a, gameSuccess]);
 
   useEffect(() => {
-    if(timeControl === true&&gameSuccess === false){
-      
+    if (timeControl === true && gameSuccess === false) {
+
       if (timeLeft > 0) {
         const timer = setTimeout(() => {
           setTimeLeft(timeLeft - 1);
-          if(localStorage.getItem('showGameOver') === 'false'){
-            localStorage.setItem('showGameOver','true')
+          if (localStorage.getItem('showGameOver') === 'false') {
+            localStorage.setItem('showGameOver', 'true')
           }
         }, 1000);
-  
+
         return () => clearTimeout(timer);
       }
-     
+
     }
-  }, [timeLeft,timeControl,a,gameSuccess]);
+  }, [timeLeft, timeControl, a, gameSuccess]);
 
 
-  useEffect(()=>{
+  useEffect(() => {
     const payFor = forMent(data1?.key, numberData)
     setForPayMonType(true)
-    payFor.then((item)=>{
-setdata(item)
-  setForPayMonType(false)
+    payFor.then((item) => {
+      setdata(item)
+      setForPayMonType(false)
     })
-  },[data1,numberData])
+  }, [data1, numberData])
 
 
   return (
     <>
       <div className={style.container}>
         <div className={style.firstPart}>
-          <p style={{cursor:"pointer"}}>
-            {timeLeft !== 0&&gameSuccess === false?timeLeft : 
-            <div onClick={()=>{
-              playFun()
-            }}>New<br/>Game</div>
+          <p style={{ cursor: "pointer" }}>
+            {timeLeft !== 0 && gameSuccess === false ? timeLeft :
+              <div onClick={() => {
+                playFun()
+              }}>New<br />Game</div>
             }
           </p>
-          {timeLeft !== 0&&gameSuccess === false ?<p>TIME</p> :null}
+          {timeLeft !== 0 && gameSuccess === false ? <p>TIME</p> : null}
         </div>
         <div className={style.twoPart}>
           <p>350$bugs</p>
@@ -332,7 +333,7 @@ setdata(item)
           <p>REWARDS</p>
         </div>
         <div className={style.imgContent}>
-       
+
           {Object.entries(matchedData).map(([key, { src, balance, name }]) => (
             <div key={key} className={style.containerItem}>
               <div className={style.iconFont}>{balance}</div>
@@ -379,7 +380,7 @@ setdata(item)
                   onClick={() => {
                     downHandleNumber(numberData);
                   }}
-                  disabled={numberData ===1 }
+                  disabled={numberData === 1}
                   className={numberData === 1 ? style.disabled : (null as any)}
                 >
                   -
@@ -421,7 +422,7 @@ setdata(item)
                   className={style.commonCls1}
                 />
               ) : null}
-           
+
             </div>
 
             {pay === true ? (
@@ -433,8 +434,8 @@ setdata(item)
               onClick={() => {
                 handlePayMent();
               }}
-              disabled={ data === 0}
-              style={{cursor:data === 0?"not-allowed":"auto"}}
+              disabled={data === 0}
+              style={{ cursor: data === 0 ? "not-allowed" : "auto" }}
             >
               {pay1 === true ? (
                 <img
@@ -496,62 +497,62 @@ setdata(item)
         </div>
       ) : null}
       {
-      timeLeft === 0&&localStorage.getItem('showGameOver') === 'true'
-      ? (
-        <div
-          className={panningType !== "false" ? style.overlayBuy : style.overlay}
-        >
-          <div className={style.contentSuccess}>
-          <img
-              className={style.turnOff}
-              src={trunOff}
-              alt=""
-              onClick={() => {
-                localStorage.setItem('showGameOver','false')
-              }}
-            />
-            <p>Game Over!</p>
-            <button
-              onClick={() => {
-           
-                playFun()
-              }}
+        timeLeft === 0 && localStorage.getItem('showGameOver') === 'true'
+          ? (
+            <div
+              className={panningType !== "false" ? style.overlayBuy : style.overlay}
             >
-              Play Again
-            </button>
-          </div>
-        </div>
-      ) : null}
+              <div className={style.contentSuccess}>
+                <img
+                  className={style.turnOff}
+                  src={trunOff}
+                  alt=""
+                  onClick={() => {
+                    localStorage.setItem('showGameOver', 'false')
+                  }}
+                />
+                <p>Game Over!</p>
+                <button
+                  onClick={() => {
+
+                    playFun()
+                  }}
+                >
+                  Play Again
+                </button>
+              </div>
+            </div>
+          ) : null}
       {
-      gameSuccess === true
-      &&localStorage.getItem('showGameOver') === 'true'
-      ? (
-        <div
-          className={panningType !== "false" ? style.overlayBuy : style.overlay}
-        >
-          <div className={style.contentCon}>
-          <img
-              className={style.turnOff}
-              src={trunOff}
-              alt=""
-              onClick={() => {
-                localStorage.setItem('showGameOver','false')
-                setCongratsType(false);
-              }}
-            />
-            <p>Congrats！</p>
-            <p>+150 $bugs！</p>
-            <button
-              onClick={() => {
-                playFun();
-                setGameSuccess(false)
-              }}
+        gameSuccess === true
+          && localStorage.getItem('showGameOver') === 'true'
+          ? (
+            <div
+              className={panningType !== "false" ? style.overlayBuy : style.overlay}
             >
-              Play Again
-            </button>
-          </div>
-        </div>
-      ) : null}
+              <div className={style.contentCon}>
+                <img
+                  className={style.turnOff}
+                  src={trunOff}
+                  alt=""
+                  onClick={() => {
+                    localStorage.setItem('showGameOver', 'false')
+                    setCongratsType(false);
+                  }}
+                />
+                <p>Congrats！</p>
+                <p>+150 $bugs！</p>
+                <button
+                  onClick={() => {
+                    playFun();
+                    setGameSuccess(false)
+                  }}
+                >
+                  Play Again
+                </button>
+              </div>
+            </div>
+          ) : null}
       {data2 === true ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}

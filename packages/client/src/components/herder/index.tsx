@@ -32,6 +32,7 @@ import { useDisconnect } from 'wagmi';
 import pixeLawlogo from '../../images/pixeLawlogo.png'
 import backgroundMusic from '../../audio/1.mp3';
 import effectSound from '../../audio/2.mp3';
+
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
   { color: "#999999", title: "Option 1" },
@@ -89,8 +90,9 @@ export default function Header({ hoveredData, handleData }: Props) {
       UserDelegationControl,
     },
     network: { playerEntity, publicClient, palyerAddress },
-    systemCalls: { interact, interactTCM },
+    systemCalls: { interact, interactTCM,registerDelegation },
   } = useMUD();
+
   const { isConnected, address } = useAccount();
 
   const { disconnect } = useDisconnect();
@@ -136,8 +138,50 @@ export default function Header({ hoveredData, handleData }: Props) {
   const CANVAS_HEIGHT = document.documentElement.clientHeight; // 获取整个页面的高度
   const audioRef = useRef<HTMLAudioElement>(null);//控制背景音乐
   const audioCache: { [url: string]: HTMLAudioElement } = {};//控制背景音效
+  const [showTopUp, setShowTopUp] = useState(false); //控制弹出层的显示与隐藏
 
+  const [playFun1, setPlayFun] = useState(false);
+
+  const handleTopUpClick = () => {
+    setShowTopUp(true);
+  };
+
+  const handleTopUpSuccess = () => {
+    setPopStar(true);
+    setPlayFun(true);
+  };
+
+
+  useEffect(() => {
+    if (isConnected) {
+      const balanceFN = publicClient.getBalance({ address: palyerAddress });
+
+      balanceFN.then((a: any) => {
+                
+        setBalance(a);
+        if ((Number(a) / 1e18) < 0.000001) {
+          setTopUpType(true);
+          console.log(1);
+          localStorage.setItem('money','nomoney')
+          
+        } else {
+          localStorage.setItem('money','toomoney')
+          setPlayFun(true); // 如果余额大于0.000001，设置playFun为true
+        }
+      });
+    }
+  }, [isConnected, palyerAddress, publicClient]);
  
+  useEffect(() => {
+    if (isConnected && balance) {
+      if ((Number(balance) / 1e18) < 0.000001) {
+        setTopUpType(true);
+      } else {
+        setPlayFun(true); // 如果余额大于0.000001，设置playFun为true
+      }
+    }
+  }, [isConnected, balance]);
+
 
   useEffect(() => {
     const handleMouseMove = () => {
@@ -149,7 +193,6 @@ export default function Header({ hoveredData, handleData }: Props) {
             // 自动播放成功
             window.removeEventListener('mousemove', handleMouseMove); // 移除事件监听器
           }).catch(error => {
-            // console.log('Error in autoplay:', error);
           });
         }
       }
@@ -161,7 +204,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   }, []);
   const handleEnded = () => {
     if (audioRef.current) {
-      audioRef.current.currentTime = 0; 
+      audioRef.current.currentTime = 0;
       audioRef.current.play(); // 循环播放
     }
   };
@@ -181,7 +224,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
     });
   };
-  
   const playEffect = async () => {
     const effectUrl = effectSound
     const audio = await loadAudio(effectUrl);
@@ -189,7 +231,12 @@ export default function Header({ hoveredData, handleData }: Props) {
     audio.play();
   };
 
-  
+  const getEoaContract = async () => {
+    const [account] = await window.ethereum!.request({
+      method: "eth_requestAccounts",
+    });
+    return account;
+  };
 
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
@@ -202,7 +249,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [selectedColor, setSelectedColor] = useState(
     colorSession !== null ? colorSession : "#ffffff"
   );
-  const onHandleOwner = (data)=>{
+  const onHandleOwner = (data) => {
     setOwnerData(data)
   }
   const mouseXRef = useRef(0);
@@ -243,7 +290,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     setSelectedColor(color);
     window.sessionStorage.setItem("selectedColorSign", color);
   }
-  
+
   const handleLeave = () => {
     setHoveredSquare(null);
     if (downTimerRef.current) {
@@ -290,8 +337,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   } else {
     worldAbiUrl = "https://pixelaw-game.vercel.app/Paint.abi.json";
   }
-  // registerDelegation();
-
 
   const findEmptyRegion = () => {
     const gridSize = GRID_SIZE;
@@ -326,12 +371,109 @@ export default function Header({ hoveredData, handleData }: Props) {
         y = 0;
       }
     }
-
     return px;
   };
 
-  let tcmTokenAddrDict ={}
-  
+  //画布
+  const drawGrid2 = useCallback(
+
+    (
+      ctx: CanvasRenderingContext2D,
+      hoveredSquare: { x: number; y: number } | null,
+      playType: any
+    ) => {
+      let pix_text;
+      // const scrollOffset = { x: 23, y: 10 };
+
+
+      ctx.fillRect(0, 0, 10, 10);
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = "#000000";
+      const checkSize = 10;
+      for (let x = 0; x < 10; x += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(x - scrollOffset.x, 0);
+        ctx.lineTo(x - scrollOffset.x, 10);
+        ctx.stroke();
+      }
+      for (let y = 0; y < 10; y += GRID_SIZE) {
+        ctx.beginPath();
+        ctx.moveTo(0, y - scrollOffset.y);
+        ctx.lineTo(10, y - scrollOffset.y);
+        ctx.stroke();
+      }
+
+      const baseFontSize = 15;
+      const fontSizeIncrement = 0.8;
+      const fontWeight = "normal";
+      const fontSize =
+        numberData === 25
+          ? baseFontSize
+          : baseFontSize + (numberData - 25) * fontSizeIncrement;
+      ctx.font = `${fontWeight} ${fontSize}px Arial`;
+
+      const visibleArea = {
+        x: Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE)),
+        y: Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE)),
+        width: CANVAS_WIDTH / GRID_SIZE,
+        height: CANVAS_HEIGHT / GRID_SIZE,
+      };
+      for (let i = 0; i < 10; i++) {
+        for (
+          let j = 0;
+          j < 10;
+          j++
+        ) {
+          const currentX = (i + 23) * GRID_SIZE - scrollOffset.x;
+          const currentY = (j + 10) * GRID_SIZE - scrollOffset.y;
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = "#2e1043";
+          ctx.strokeRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+          ctx.fillStyle = "#2f1643";
+          ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
+          const img = new Image();
+          if (TCMPopStarData && TCMPopStarData.tokenAddressArr && TCMPopStarData.matrixArray) {
+            img.src =
+              imageIconData[
+                TCMPopStarData.tokenAddressArr[Number(TCMPopStarData.matrixArray[i + j * 10]) - 1]
+              ]?.src;
+            if (img.src !== undefined) {
+              ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
+            }
+          }
+        }
+      }
+
+      if (selectedColor && hoveredSquare) {
+        ctx.fillStyle = selectedColor;
+        ctx.fillRect(
+          coordinates.x * GRID_SIZE - scrollOffset.x,
+          coordinates.y * GRID_SIZE - scrollOffset.y,
+          GRID_SIZE,
+          GRID_SIZE
+        );
+      }
+
+      if (hoveredSquare) {
+        ctx.canvas.style.cursor = "pointer";
+      } else {
+        ctx.canvas.style.cursor = "default";
+      }
+    },
+    [
+      GRID_SIZE,
+      coordinates,
+      numberData,
+      TCMPopStarData,
+      CANVAS_WIDTH,
+      getEntityAtCoordinates,
+      CANVAS_HEIGHT,
+      selectedColor,
+      scrollOffset,
+    ]
+  );
+
+  let tcmTokenAddrDict = {}
   const drawGrid = useCallback(
     (
       ctx: CanvasRenderingContext2D,
@@ -372,7 +514,6 @@ export default function Header({ hoveredData, handleData }: Props) {
         width: Math.ceil(document.documentElement.clientWidth / GRID_SIZE),
         height: Math.ceil(document.documentElement.clientHeight / GRID_SIZE),
       };
-
       for (let i = visibleArea.x; i < visibleArea.x + visibleArea.width; i++) {
         for (
           let j = visibleArea.y;
@@ -388,43 +529,46 @@ export default function Header({ hoveredData, handleData }: Props) {
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
           const entity = getEntityAtCoordinates(i, j) as any;
           if (entity) {
-            if(entity.value.owner!==undefined&&tcmTokenAddrDict[entity.value.owner] === undefined){
+            if (entity.value.owner !== undefined && tcmTokenAddrDict[entity.value.owner] === undefined) {
               const TCMPopStarDataFun = getComponentValue(
                 TCMPopStar,
                 addressToEntityID(entity.value.owner)
               );
-              if(TCMPopStarDataFun?.tokenAddressArr !==undefined){
-                tcmTokenAddrDict[entity.value.owner] =TCMPopStarDataFun?.tokenAddressArr
+              if (TCMPopStarDataFun?.tokenAddressArr !== undefined) {
+                tcmTokenAddrDict[entity.value.owner] = TCMPopStarDataFun?.tokenAddressArr
               }
             }
-            if(entity.value.app !== "PopCraft"){
+            //渲染背景
+            if (entity.value.app !== "PopCraft") {
               ctx.fillStyle = entity.value.color;
               ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-          }
-            if (entity.value.app === "PopCraft"&&entity.value.owner !==undefined&&tcmTokenAddrDict[entity.value.owner]!==undefined) {
-             
-              if(Number(entity?.value?.text)>0){
+            }
+            // entity.value.app === "PopCraft"
+
+            if (entity.value.app === "PopCraft" && entity.value.owner !== undefined && tcmTokenAddrDict[entity.value.owner] !== undefined) {
+
+              if (Number(entity?.value?.text) > 0) {
                 const img = new Image();
                 img.src =
                   imageIconData[
                     tcmTokenAddrDict[entity?.value.owner][Number(entity?.value?.text) - 1]
                   ]?.src;
-                if (img.src!==undefined) {
+                if (img.src !== undefined) {
                   ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
                 }
-              }else{
+              } else {
                 ctx.fillStyle = entity.value.color;
                 ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
-             
+
               }
-           
+
             }
             if (entity.value.text && entity.value.app !== "PopCraft") {
               ctx.fillStyle = "#000";
               ctx.textAlign = "center";
               ctx.textBaseline = "middle";
               if (
-                entity.value.text && 
+                entity.value.text &&
                 /^U\+[0-9A-Fa-f]{4,}$/.test(entity.value.text)
               ) {
                 pix_text = String.fromCodePoint(
@@ -471,6 +615,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     ]
   );
 
+
   let timeout: NodeJS.Timeout;
   const [isDragging, setIsDragging] = useState(false);
   const [timeControl, setTimeControl] = useState(false);
@@ -485,6 +630,16 @@ export default function Header({ hoveredData, handleData }: Props) {
     pixel_value && pixel_value.action ? pixel_value.action : "interact";
   const ClickThreshold = 150;
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    if (appName === "BASE/PopCraftSystem") {
+      // drawGrid2 
+      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      drawGrid2(ctx, coordinates, false);
+    } else {
+      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      drawGrid(ctx, coordinates, false);
+    }
     setFingerNum(event.buttons);
     if (pageClick === true) {
       return;
@@ -535,20 +690,31 @@ export default function Header({ hoveredData, handleData }: Props) {
         setCoordinatesData({ x: gridX, y: gridY });
         const newHoveredSquare = { x: gridX, y: gridY };
         setHoveredSquare(newHoveredSquare);
+
         if (isEmpty) {
+
           if (selectedColor && coordinates) {
             hoveredSquareRef.current = coordinates;
 
             setIsDragging(false);
             if (appName === "BASE/PopCraftSystem") {
-              if (action === "pop") {
-                interactHandleTCM(
-                  coordinates,
-                  palyerAddress,
-                  selectedColor,
-                  action,
-                  null
-                );
+
+              // if (action === "pop") {
+
+              if (TCMPopStarData) {
+                const new_coor = {
+                  x: coordinates.x - 23 + TCMPopStarData.x,
+                  y: coordinates.y - 10 + TCMPopStarData.y,
+                }
+                if (new_coor.x >= 0 && new_coor.y >= 0) {
+                  interactHandleTCM(
+                    new_coor,
+                    palyerAddress,
+                    selectedColor,
+                    'pop',
+                    null
+                  );
+                }
               }
             } else {
               interactHandle(
@@ -574,8 +740,11 @@ export default function Header({ hoveredData, handleData }: Props) {
                 GRID_SIZE
               );
               if (appName === "BASE/PopCraftSystem") {
-                drawGrid(ctx, coordinates, true);
+                // drawGrid2
+                ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                drawGrid2(ctx, coordinates, true);
               }
+              ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
               drawGrid(ctx, coordinates, false);
             }
           }
@@ -611,7 +780,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     interact_data.then((increDataVal: any) => {
       if (increDataVal[1]) {
         increDataVal[1].then((a: any) => {
-          console.log(a);
           if (a.status === "success") {
             setLoading(false);
             onHandleLoading();
@@ -665,10 +833,17 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const playFun = () => {
+    let deldata = localStorage.getItem('deleGeData')
+    let money = localStorage.getItem('money')
+    if(deldata == "undefined"){      
+      if(money == "toomoney"){
+        registerDelegation()
+      }
+    }
     let EmptyRegionNum = 0
     if (TCMPopStarData === undefined) {
       const emptyRegion = findEmptyRegion();
-      EmptyRegionNum=emptyRegion
+      EmptyRegionNum = emptyRegion
       setEmptyRegionNum({ x: emptyRegion, y: 0 });
     } else {
 
@@ -677,7 +852,16 @@ export default function Header({ hoveredData, handleData }: Props) {
     localStorage.setItem("showGameOver", "false");
     const ctx = canvasRef?.current?.getContext("2d");
     if (ctx && canvasRef) {
-      drawGrid(ctx, hoveredSquare, true);
+    
+      if (appName === "BASE/PopCraftSystem") {
+        // drawGrid2
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        drawGrid2(ctx, coordinates, true);
+      } else {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        drawGrid(ctx, coordinates, true);
+      }
+
       interactHandleTCM(
         { x: EmptyRegionNum, y: 0 },
         palyerAddress,
@@ -703,11 +887,18 @@ export default function Header({ hoveredData, handleData }: Props) {
 
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
-        drawGrid(ctx, hoveredSquare, false);
+        if (appName === "BASE/PopCraftSystem") {
+          ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+          drawGrid2(ctx, coordinates, false);
+        } else {
+          ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+          drawGrid(ctx, coordinates, false);
+        }
       }
     },
-    [drawGrid, hoveredSquare]
+    [drawGrid, hoveredSquare, drawGrid2]
   );
+
 
   const handleMouseMoveData = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -740,7 +931,13 @@ export default function Header({ hoveredData, handleData }: Props) {
 
         const ctx = canvas.getContext("2d");
         if (ctx) {
-          drawGrid(ctx, hoveredSquare, false);
+          if (appName === "BASE/PopCraftSystem") {
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            drawGrid2(ctx, coordinates, false);
+          } else {
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            drawGrid(ctx, coordinates, false);
+          }
         }
       }
     },
@@ -749,6 +946,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       translateY,
       visibleAreaRef,
       drawGrid,
+      drawGrid2,
       hoveredSquare,
       isDragging,
       scrollOffset,
@@ -756,8 +954,8 @@ export default function Header({ hoveredData, handleData }: Props) {
     ]
   );
 
-  const DEFAULT_PARAMETERS_TYPE = "struct DefaultParameters";
 
+  const DEFAULT_PARAMETERS_TYPE = "struct DefaultParameters";
   const get_function_param = async (
     function_name: string,
     common_json: any[] = []
@@ -886,7 +1084,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     onHandleLoading();
     toast.error("An error was reported")
   };
-  
+
 
   const onHandleExe = () => {
     setPopExhibit(false);
@@ -949,12 +1147,13 @@ export default function Header({ hoveredData, handleData }: Props) {
         drawGrid(ctx, hoveredSquare, false);
       } else {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        drawGrid(ctx, hoveredSquare, true);
+        drawGrid2(ctx, hoveredSquare, true);
       }
     }
   }, [
     appName,
     drawGrid,
+    drawGrid2,
     CANVAS_WIDTH,
     CANVAS_HEIGHT,
     entityData.length,
@@ -998,29 +1197,13 @@ export default function Header({ hoveredData, handleData }: Props) {
   useEffect(() => {
     if (appName === "BASE/PopCraftSystem") {
       setPopStar(true);
-    }else{
+    } else {
       setBoxPrompt(false)
       setPopStar(false);
     }
   }, [appName]);
 
-  useEffect(() => {
-    if (isConnected) {
-      if (balance && (Number(balance) / 1e18).toFixed(8) < "0.000001") {
-        setTopUpType(true);
-      }
-    }
-  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
-
-  const balanceSW = balanceFN.data?.value ?? 0n;
-
-  useEffect(() => {
-    if (isConnected) {
-      if ((Number(balance) / 1e18).toFixed(8) < "0.000001") {
-        setTopUpType(true);
-      }
-    }
-  }, [(Number(balance) / 1e18).toFixed(8), isConnected]);
+ 
 
 
   return (
@@ -1177,6 +1360,7 @@ export default function Header({ hoveredData, handleData }: Props) {
               height={CANVAS_WIDTH}
             />
           </div>
+
         </div>
         <div
           style={{
@@ -1195,9 +1379,8 @@ export default function Header({ hoveredData, handleData }: Props) {
           {Array.from(colorOptionsData).map((option, index) => (
             <span
               key={index}
-              className={`color-option${
-                selectedColor === option.color ? " selected" : ""
-              }`}
+              className={`color-option${selectedColor === option.color ? " selected" : ""
+                }`}
               data-color={option.color}
               style={{
                 backgroundColor: option.color,
@@ -1275,9 +1458,11 @@ export default function Header({ hoveredData, handleData }: Props) {
             setTopUpType={setTopUpType}
             mainContent={mainContent}
             palyerAddress={palyerAddress}
+            onTopUpSuccess={handleTopUpSuccess}  // 传递回调函数
           />
         </div>
       ) : null}
+
       {popStar === true ? (
         <div
           className={
@@ -1286,20 +1471,20 @@ export default function Header({ hoveredData, handleData }: Props) {
               : style.overlayPopStarFl
           }
           onClick={() => {
-            // setPopStar(false);
             setBoxPrompt(true);
           }}
         >
-          <PopStar setPopStar={setPopStar} playFun={playFun} />
+          <PopStar setPopStar={setPopStar} playFun1={playFun1} playFun={playFun} onTopUpClick={handleTopUpClick} />
         </div>
       ) : null}
+
       {boxPrompt === true || appName === "BASE/PopCraftSystem" ? (
         <BoxPrompt
           coordinates={coordinates}
           timeControl={timeControl}
           playFun={playFun}
-          // handlematchedData={handlematchedData}
           handleEoaContractData={handleEoaContractData}
+          
         />
       ) : null}
     </>

@@ -57,19 +57,22 @@ p {
   text-decoration: underline;
 }
 .btnPlay {
-  background-color: #200d2f;
-  border: 1px solid #0b0113;
-  font-family: Silkscreen, cursive;
+  text-transform: uppercase;
+  width: 480px;
+  height: 44px;
   padding: 10px 0px 10px 0px;
-  display: grid;
   gap: 10px;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 18px;
-  line-height: 24px;
-  text-align: center;
-  letter-spacing: 8px;
+  opacity: 0px;
+  background-color: #200d2f;
+  color: #200d2f;
   border: 1px solid #0b0113;
+  font-family: Silkscreen;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: #ffffff;
 }
 .btnPlay:hover {
   background-color: rgba(255, 255, 255, 0.03);

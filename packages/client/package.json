@@ -31,6 +31,7 @@
     "contracts": "workspace:*",
     "ethers": "^5",
     "jotai": "^2.6.2",
+    "lodash": "^4.17.21",
     "lodash.merge": "^4.6.2",
     "next-auth": "^4.24.7",
     "react": "^18.2.0",

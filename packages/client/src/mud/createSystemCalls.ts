@@ -256,6 +256,8 @@ export function createSystemCalls(
       const [account] = await window.ethereum!.request({
         method: "eth_requestAccounts",
       });
+      console.log(account);
+      
 
       const encodeData = encodeFunctionData({
         abi: abi_json[app_name],
@@ -274,7 +276,7 @@ export function createSystemCalls(
         ], {gas: 50000000n});
         
         hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
-        // console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
+        console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
         
       }else{
         const txData = await worldContract.write.callFrom([
@@ -286,7 +288,10 @@ export function createSystemCalls(
           }),
           encodeData,
         ]);
+        console.log(account);
+        
         hashValpublic = publicClient.waitForTransactionReceipt({ hash: txData });
+        console.log(await publicClient.waitForTransactionReceipt({ hash: txData }));
       }
      
     } catch (error) {

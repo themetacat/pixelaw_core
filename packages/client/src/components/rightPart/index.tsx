@@ -75,9 +75,10 @@ export default function RightPart({
   const loacl_app_name = window.localStorage.getItem("app_name");
   const [update_abi_jsonData, setUpdate_abi_json] = useState(null);
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
-
+  
   const handleIconClick = (index: number, value: any) => {
     setSelectedIcon(index);
+
     localStorage.setItem("app_name", value.app_name);    
     localStorage.setItem("system_name", value.system_name);
     localStorage.setItem("namespace", value.namespace);

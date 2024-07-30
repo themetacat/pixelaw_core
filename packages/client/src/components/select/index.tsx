@@ -3,7 +3,6 @@ import style from './index.module.css';
 import downPoint from '../../images/xialajiantou.png';
 import upPoint from '../../images/shanglajiantou.png';
 import rightIcon from '../../images/duihao.png';
-// import  {imageIconData} from '../imageIconData'
 
 type Props = {
   matchedData:any

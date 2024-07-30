@@ -23,12 +23,14 @@ interface Props {
   setTopUpType: any;
   palyerAddress: any;
   mainContent: any;
+  onTopUpSuccess: () => void;
 }
 
 export default function TopUp({
   setTopUpType,
   palyerAddress,
   mainContent,
+   onTopUpSuccess, 
 }: Props) {
   const [warningModel, setWarningModel] = useState(false);
   const [withDrawType, setWithDrawType] = useState(false);
@@ -39,19 +41,21 @@ export default function TopUp({
   const [privateKey, setprivateKey] = useState("");
   const [withDrawHashVal, setwithDrawHashVal] = useState(undefined);
   const {
-    network: { walletClient },
+    network: { walletClient, publicClient },
   } = useMUD();
   const { address, isConnected } = useAccount();
-  const MIN_SESSION_WALLET_BALANCE = parseEther("0.0000003");
+  const MIN_SESSION_WALLET_BALANCE = parseEther("0.0003");
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
-  const [inputValue, setInputValue] = useState("0.0003");
+  const [inputValue, setInputValue] = useState("0.000003");
   const {
     data: hash,
     error,
     isPending,
     sendTransaction,
+    sendTransactionAsync,
+    status
   } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -68,6 +72,7 @@ export default function TopUp({
   const balanceResultEOA = useBalance({
     address: address,
   });
+  
   async function withDraw() {
     if (balanceSW > MIN_SESSION_WALLET_BALANCE) {
       const value = balanceSW - MIN_SESSION_WALLET_BALANCE;
@@ -148,8 +153,13 @@ export default function TopUp({
   async function submit() {
     const to = palyerAddress;
     const value = inputValue;
-
-    const a = sendTransaction({ to, value: parseEther(inputValue) });
+    
+    const result_hash = await sendTransactionAsync({ to, value: parseEther(inputValue) });
+    const result = await publicClient.waitForTransactionReceipt({hash: result_hash})
+    if (result.status === "success") {
+      onTopUpSuccess(); // 调用回调函数
+    }
+    
   }
   return (
     <div className={style.topBox}>
@@ -161,7 +171,7 @@ export default function TopUp({
           alt=""
           onClick={() => {
             setTopUpType(false);
-          }}
+          }} 
         />
       </div>
       <ConnectButton.Custom>
