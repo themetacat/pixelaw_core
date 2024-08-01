@@ -228,7 +228,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 }
                
             }
-            if(networkConfig.chain.id === 31337 || networkConfig.chain.id === 31338){
+            if(networkConfig.chain.id === 31337){
               
               requestDrip();
               setInterval(requestDrip, 20000)
