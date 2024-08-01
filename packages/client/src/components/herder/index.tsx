@@ -883,9 +883,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const playFun = () => {
-
     let deldata = localStorage.getItem('deleGeData')
-
     let money = localStorage.getItem('money')
     setLoadingpaly(true)
     if (deldata == "undefined") {
