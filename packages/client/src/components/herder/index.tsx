@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import style from "./index.module.css";
-import {
-  Has,
-  getComponentValueStrict,
-  getComponentValue,
-  AnyComponentValue,
-} from "@latticexyz/recs";
+import { Has, getComponentValueStrict, getComponentValue, AnyComponentValue, } from "@latticexyz/recs";
 import { formatUnits } from "viem";
 import { imageIconData } from "../imageIconData";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
@@ -17,11 +12,7 @@ import PopStar from "../popStar";
 import { convertToString, coorToEntityID } from "../rightPart/index";
 import PopUpBox from "../popUpBox";
 import TopUpContent from "../topUp";
-import {
-  encodeEntity,
-  syncToRecs,
-  decodeEntity,
-} from "@latticexyz/store-sync/recs";
+import { encodeEntity, syncToRecs, decodeEntity, } from "@latticexyz/store-sync/recs";
 import { update_app_value } from "../../mud/createSystemCalls";
 import powerIcon from "../../images/jian_sekuai.png";
 import AddIcon from "../../images/jia.png";
@@ -32,6 +23,7 @@ import { useDisconnect } from 'wagmi';
 import pixeLawlogo from '../../images/pixeLawlogo.png'
 import backgroundMusic from '../../audio/1.mp3';
 import effectSound from '../../audio/2.mp3';
+import { flare } from "viem/chains";
 
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
@@ -76,7 +68,6 @@ const colorOptionsData = [
 interface Props {
   hoveredData: { x: number; y: number } | null;
   handleData: (data: { x: number; y: number }) => void;
-  // instruction:any
 }
 
 export default function Header({ hoveredData, handleData }: Props) {
@@ -94,7 +85,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   } = useMUD();
 
   const { isConnected, address } = useAccount();
-
   const { disconnect } = useDisconnect();
   const [numberData, setNumberData] = useState(25);
   const gridCanvasRef = React.useRef(null);
@@ -122,7 +112,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingplay, setLoadingpaly] = useState(false);
-
   const [panningFromChild, setPanningFromChild] = useState(false);
   const [popStar, setPopStar] = useState(false);
   const [pageClick, setPageClick] = useState(false);
@@ -130,7 +119,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   const entities = useEntityQuery([Has(Pixel)]);
   const entities_app = useEntityQuery([Has(App)]);
   const [mainContent, setMainContent] = useState("MAINNET");
-
   const [TCMPopStarData, setTCMPopStarData] = useState(null);
   const [matchedData, setMatchedData] = useState(null);
   const [showList, setShowList] = useState(false);
@@ -145,15 +133,12 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [playFuntop, setPlayFun] = useState(false);
   const playAction = localStorage.getItem('playAction');
 
-
-
   const handleTopUpClick = () => {
     setShowTopUp(true);
   };
 
   const handleTopUpSuccess = () => {
     setPlayFun(true);
-    localStorage.setItem('playAction', 'play')
     setPopStar(true);
   };
 
@@ -162,64 +147,44 @@ export default function Header({ hoveredData, handleData }: Props) {
       const balanceFN = publicClient.getBalance({ address: palyerAddress });
 
       balanceFN.then((a: any) => {
+        console.log(a);
 
         setBalance(a);
-        // if ((Number(a) / 1e18) < 0.000001) {
-        //   setTopUpType(true);
-        //   localStorage.setItem('money', 'nomoney')
-        //   localStorage.setItem('playAction','noplay')
-
-        // } else {
-
-        //   setPlayFun(true); // 如果余额大于0.000001，设置playFun为true
-        //   localStorage.setItem('money', 'toomoney')
-        //   console.log(333333);
-        //   console.log(TCMPopStarData);
-
-        //   if(TCMPopStarData && TCMPopStarData.startTime){
-        //     // console.log(TCMPopStarData);
-
-        //       const currentTime = Math.floor(Date.now() / 1000);
-
-        //       const elapsedTime = currentTime - Number(TCMPopStarData.startTime);
-
-        //       const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
-
-        //       if (updatedTimeLeft == 0) {
-        //         localStorage.setItem('playAction','gameContinue');            
-        //       }
-        //     }else{
-        //       localStorage.setItem('playAction','play')
-        //     }
-        // }
+       
       });
+    }else{
+      setBalance(0n);
     }
   }, [isConnected, palyerAddress, publicClient]);
 
   useEffect(() => {
-    if (isConnected && balance) {
-      if ((Number(balance) / 1e18) < 0.000001) {
+
+    if (isConnected) {
+      console.log((Number(balance) / 1e18));
+      if ((Number(balance) / 1e18) < 0.00001) {
         setTopUpType(true);
         localStorage.setItem('money', 'nomoney')
         localStorage.setItem('playAction', 'noplay')
       } else {
-
-        setPlayFun(true); // 如果余额大于0.000001，设置playFun为true
+        setTopUpType(false);
+        setPlayFun(false); // 如果余额大于0.000001，设置playFun为true
         localStorage.setItem('money', 'toomoney')
-
         if (TCMPopStarData && TCMPopStarData.startTime) {
           const currentTime = Math.floor(Date.now() / 1000);
           const elapsedTime = currentTime - Number(TCMPopStarData.startTime);
           const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
-
           if (updatedTimeLeft > 0) {
             localStorage.setItem('playAction', 'gameContinue');
+          } else {
+            localStorage.setItem('playAction', 'play')
           }
         } else {
           localStorage.setItem('playAction', 'play')
         }
-
       }
+    }else{
+      localStorage.setItem('money', 'nomoney')
+      localStorage.setItem('playAction', 'noplay')
     }
   }, [isConnected, balance]);
 
@@ -242,6 +207,7 @@ export default function Header({ hoveredData, handleData }: Props) {
       window.removeEventListener('mousemove', handleMouseMove); // 清除事件监听器
     };
   }, []);
+
   const handleEnded = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
@@ -270,14 +236,12 @@ export default function Header({ hoveredData, handleData }: Props) {
     audio.currentTime = 0;
     audio.play();
   };
-
   const getEoaContract = async () => {
     const [account] = await window.ethereum!.request({
       method: "eth_requestAccounts",
     });
     return account;
   };
-
   const [hoveredSquare, setHoveredSquare] = useState<{
     x: number;
     y: number;
@@ -285,7 +249,6 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   const hoveredSquareRef = useRef<{ x: number; y: number } | null>(null);
   const colorSession = window.sessionStorage.getItem("selectedColorSign");
-
   const [selectedColor, setSelectedColor] = useState(
     colorSession !== null ? colorSession : "#ffffff"
   );
@@ -346,7 +309,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     entities.forEach((entity) => {
       const coordinates = decodeEntity({ x: "uint32", y: "uint32" }, entity);
       const value = getComponentValueStrict(Pixel, entity);
-
       if (value.text === "_none") {
         value.text = "";
       }
@@ -363,7 +325,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   };
 
   const appName = localStorage.getItem("manifest") as any;
-
   const parts = appName?.split("/") as any;
   let worldAbiUrl: any;
   if (appName) {
@@ -381,17 +342,14 @@ export default function Header({ hoveredData, handleData }: Props) {
   const findEmptyRegion = () => {
     const gridSize = GRID_SIZE;
     const checkSize = 10;
-
     const isEmpty = (x, y) => {
       const encodeEntityNum = coorToEntityID(x, y);
       const value = getComponentValue(Pixel, encodeEntityNum);
       return value === undefined;
     };
-
     let px = 0,
       x = 0,
       y = 0;
-
     while (true) {
       let res = isEmpty(x, y);
 
@@ -866,6 +824,8 @@ export default function Header({ hoveredData, handleData }: Props) {
             setLoadingpaly(false)
             setTimeControl(true);
             onHandleLoading();
+            localStorage.setItem('playAction', 'gameContinue');
+
           } else {
             handleError();
             onHandleLoading();
@@ -891,14 +851,14 @@ export default function Header({ hoveredData, handleData }: Props) {
         const delegationData = registerDelegation();
         delegationData.then((data) => {
           console.log(data);
-          
+
           if (data != undefined && data.status == "success") {
             playData() //渲染游戏画布+图片
-          }else{
+          } else {
             setLoadingpaly(false)
           }
         });
-      }else{
+      } else {
         setLoadingpaly(false)
       }
     } else {

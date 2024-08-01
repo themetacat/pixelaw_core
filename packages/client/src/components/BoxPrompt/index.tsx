@@ -164,7 +164,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
         addressToEntityIDTwo(account, palyerAddress)
       );
       
-      
       localStorage.setItem('deleGeData',JSON.stringify(deleGeData))
 
       // if (deleGeData === undefined) {

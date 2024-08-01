@@ -19,12 +19,12 @@ export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,
   
   const { isConnected } = useAccount();
 
+
   const handleConnectClick = () => {
 
 
     if (isConnected) {
       // setPopStar(false);
-
       if (playAction == 'play'){
         setPopStar(true)
         playFun();
