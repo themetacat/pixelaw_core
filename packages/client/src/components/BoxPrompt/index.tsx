@@ -68,7 +68,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   const [pay1, setpay1] = useState(false);
   const [gameSuccess, setGameSuccess] = useState(false);
   const [datan, setdatan] = useState(null);
-  const [TCMPopStarNum, setTCMPopStarData] = useState(null);
   const [data, setdata] = useState(null);
   const [data1, setdata1] = useState(null);
   const [getEoaContractData, setGetEoaContractData] = useState(null);
@@ -206,9 +205,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
     return result;
   }
 
-
-
-
   const handleSelectChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
@@ -257,10 +253,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
               seta(true)
             }
           }
-
         }
-
-
       }
     });
   };

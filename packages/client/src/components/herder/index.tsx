@@ -147,7 +147,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       const balanceFN = publicClient.getBalance({ address: palyerAddress });
 
       balanceFN.then((a: any) => {
-        console.log(a);
 
         setBalance(a);
        
@@ -159,7 +158,6 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   useEffect(() => {
     if (isConnected) {
-      console.log((Number(balance) / 1e18));
       if ((Number(balance) / 1e18) < 0.00001) {
         setTopUpType(true);
         localStorage.setItem('money', 'nomoney')
@@ -173,8 +171,6 @@ export default function Header({ hoveredData, handleData }: Props) {
           const currentTime = Math.floor(Date.now() / 1000);
           const elapsedTime = currentTime - Number(TCMPopStarData.startTime);
           const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
-          console.log(111111111111);
-          console.log(TCMPopStarData);
           
           if (updatedTimeLeft > 0) {
             localStorage.setItem('playAction', 'gameContinue');
@@ -182,12 +178,9 @@ export default function Header({ hoveredData, handleData }: Props) {
             localStorage.setItem('playAction', 'play')
           }
         } else {
-          console.log(33333);
           if(localStorage.getItem("playAction")!== "gameContinue"){
             localStorage.setItem('playAction', 'play')
-
           }
-
         }
       }
     }else{
@@ -417,7 +410,7 @@ export default function Header({ hoveredData, handleData }: Props) {
           ? baseFontSize
           : baseFontSize + (numberData - 25) * fontSizeIncrement;
       ctx.font = `${fontWeight} ${fontSize}px Arial`;
-
+      
       const visibleArea = {
         x: Math.max(0, Math.floor(scrollOffset.x / GRID_SIZE)),
         y: Math.max(0, Math.floor(scrollOffset.y / GRID_SIZE)),
@@ -438,16 +431,13 @@ export default function Header({ hoveredData, handleData }: Props) {
           ctx.fillStyle = "#2f1643";
           ctx.fillRect(currentX, currentY, GRID_SIZE, GRID_SIZE);
           const img = new Image();
-          // console.log(TCMPopStarData);
 
           if (TCMPopStarData && TCMPopStarData.tokenAddressArr && TCMPopStarData.matrixArray) {
-            // console.log('img11111'）
             img.src =
               imageIconData[
                 TCMPopStarData.tokenAddressArr[Number(TCMPopStarData.matrixArray[i + j * 10]) - 1]
               ]?.src;
             if (img.src !== undefined) {
-              // console.log('img22222');
 
               ctx.drawImage(img, currentX, currentY, GRID_SIZE, GRID_SIZE);
             }
@@ -828,14 +818,12 @@ export default function Header({ hoveredData, handleData }: Props) {
       if (increDataVal[1]) {
         increDataVal[1].then((a: any) => {
           if (a.status === "success") {
+   
             setLoading(false);
             setLoadingpaly(false)
             setTimeControl(true);
             onHandleLoading();
             localStorage.setItem('playAction', 'gameContinue');
-            console.log(222222222);
-            console.log("setsetset");
-
           } else {
             handleError();
             onHandleLoading();
@@ -846,12 +834,9 @@ export default function Header({ hoveredData, handleData }: Props) {
       }
     });
   };
-
   const handleEoaContractData = (data) => {
-
     setTCMPopStarData(data);
   };
-
   const playFun = () => {
     let deldata = localStorage.getItem('deleGeData')
     let money = localStorage.getItem('money')
@@ -860,8 +845,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       if (money == "toomoney") {
         const delegationData = registerDelegation();
         delegationData.then((data) => {
-          console.log(data);
-
           if (data != undefined && data.status == "success") {
             playData() //渲染游戏画布+图片
           } else {
