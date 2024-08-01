@@ -837,51 +837,109 @@ export default function Header({ hoveredData, handleData }: Props) {
   const handleEoaContractData = (data) => {
     setTCMPopStarData(data);
   };
-  const playFun = () => {
-    let deldata = localStorage.getItem('deleGeData')
-    let money = localStorage.getItem('money')
-    setLoadingpaly(true)
-    if (deldata == "undefined") {
-      if (money == "toomoney") {
-        const delegationData = registerDelegation();
-        delegationData.then((data) => {
-          if (data != undefined && data.status == "success") {
-            playData() //渲染游戏画布+图片
+  // const playFun =  () => {
+  //   let deldata = localStorage.getItem('deleGeData')
+  //   let money = localStorage.getItem('money')
+  //   setLoadingpaly(true)
+  //   if (deldata == "undefined") {
+  //     if (money == "toomoney") {
+  //       const delegationData = registerDelegation();
+  //       delegationData.then((data) => {
+  //         if (data != undefined && data.status == "success") {
+  //           playData() //渲染游戏画布+图片
+  //         } else {
+  //           setLoadingpaly(false)
+  //         }
+  //       });
+  //     } else {
+  //       setLoadingpaly(false)
+  //     }
+  //   } else {
+  //     playData()
+  //   }
+  // };
+  // const playData = () => {
+  //   let EmptyRegionNum = 0
+  //   if (TCMPopStarData === undefined) {
+  //     const emptyRegion = findEmptyRegion();
+  //     EmptyRegionNum = emptyRegion
+  //     setEmptyRegionNum({ x: emptyRegion, y: 0 });
+  //   } else {
+
+  //     setEmptyRegionNum({ x: 0, y: 0 });
+  //   }
+  //   localStorage.setItem("showGameOver", "false");
+  //   const ctx = canvasRef?.current?.getContext("2d");
+  //   if (ctx && canvasRef) {
+
+  //     if (appName === "BASE/PopCraftSystem") {
+
+  //       // drawGrid2
+  //       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  //       drawGrid2(ctx, coordinates, true);
+  //     } else {
+  //       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  //       drawGrid(ctx, coordinates, true);
+  //     }
+
+  //     interactHandleTCM(
+  //       { x: EmptyRegionNum, y: 0 },
+  //       palyerAddress,
+  //       selectedColor,
+  //       "interact",
+  //       null
+  //     );
+  //   }
+  // }
+
+
+  const playFun = async () => {
+    let deldata = localStorage.getItem('deleGeData');
+    let money = localStorage.getItem('money');
+    setLoadingpaly(true);
+  
+    if (deldata === "undefined") {
+      if (money === "toomoney") {
+        try {
+          const delegationData = await registerDelegation();
+          if (delegationData && delegationData.status === "success") {
+            playData(); // 渲染游戏画布+图片
           } else {
-            setLoadingpaly(false)
+            setLoadingpaly(false);
           }
-        });
+        } catch (error) {
+          setLoadingpaly(false);
+          console.error("Error registering delegation:", error);
+        }
       } else {
-        setLoadingpaly(false)
+        setLoadingpaly(false);
       }
     } else {
-      playData()
+      playData();
     }
   };
+  
   const playData = () => {
-    let EmptyRegionNum = 0
-    if (TCMPopStarData === undefined) {
+    let EmptyRegionNum = 0;
+    if (!TCMPopStarData) {
       const emptyRegion = findEmptyRegion();
-      EmptyRegionNum = emptyRegion
+      EmptyRegionNum = emptyRegion;
       setEmptyRegionNum({ x: emptyRegion, y: 0 });
     } else {
-
       setEmptyRegionNum({ x: 0, y: 0 });
     }
     localStorage.setItem("showGameOver", "false");
+  
     const ctx = canvasRef?.current?.getContext("2d");
     if (ctx && canvasRef) {
-
       if (appName === "BASE/PopCraftSystem") {
-
-        // drawGrid2
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         drawGrid2(ctx, coordinates, true);
       } else {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         drawGrid(ctx, coordinates, true);
       }
-
+  
       interactHandleTCM(
         { x: EmptyRegionNum, y: 0 },
         palyerAddress,
@@ -890,7 +948,8 @@ export default function Header({ hoveredData, handleData }: Props) {
         null
       );
     }
-  }
+  };
+  
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (!visibleAreaRef.current || !canvasRef.current) return;
