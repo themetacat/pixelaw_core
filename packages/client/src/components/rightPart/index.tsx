@@ -77,6 +77,7 @@ export default function RightPart({
   const [selectedIcon, setSelectedIcon] = useState<number | null>(null);
   
   const handleIconClick = (index: number, value: any) => {
+
     setSelectedIcon(index);
 
     localStorage.setItem("app_name", value.app_name);    

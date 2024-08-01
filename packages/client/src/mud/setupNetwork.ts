@@ -193,8 +193,9 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
             const account_addr = burnerWalletClient.account.address
             
               const requestDrip = async () => {
+                
                 const balance = await publicClient.getBalance({ address: account_addr });
-                // console.info(`[Dev Faucet]: Player balance -> ${balance}`);
+                console.info(`[Dev Faucet]: Player balance -> ${balance}`);
                 const lowBalance = balance < parseEther("1");
                 if (lowBalance) {
                   console.info("[Dev Faucet]: Balance is low, dripping funds to player");
@@ -231,6 +232,7 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
               
               requestDrip();
               setInterval(requestDrip, 20000)
+              
             }else if(networkConfig.chain.id === 17069){
               sendPostRequest();
               setInterval(sendPostRequest, 40000)

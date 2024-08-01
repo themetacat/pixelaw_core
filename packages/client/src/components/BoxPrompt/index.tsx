@@ -34,7 +34,6 @@ import {
 } from "@latticexyz/recs";
 import { spanish } from "viem/accounts";
 import { flare } from "viem/chains";
-
 interface Props {
   coordinates: any;
   timeControl: any;
@@ -82,7 +81,8 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   const minutes = Math.floor(timeLeft / 300);
   const seconds = timeLeft % 300;
   const [selectedOption, setSelectedOption] = useState("option1");
-
+  const { address } = useAccount();
+  
   const handlePayMent = () => {
     if (data1) {
       const payFunctionTwo = payFunction(data1?.key, numberData);
@@ -225,7 +225,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
     setNumberData(numberData + 1);
   };
 
-  useEffect(() => {
+  const updateTCMPopStarData = () => {
     const fetchDataTotal = fetchData();
 
 
@@ -240,10 +240,11 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
           setStartTime(blockchainStartTime);
 
           const currentTime = Math.floor(Date.now() / 1000);
-
+          
           const elapsedTime = currentTime - blockchainStartTime;
-
+          
           const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
+          
           setTimeLeft(updatedTimeLeft);
 
           const allZeros = TCMPopStarData.matrixArray.every((data) => data === 0n);
@@ -264,7 +265,11 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
 
       }
     });
-  }, [balanceData]);
+  };
+ 
+  useEffect(() => {
+    updateTCMPopStarData();
+  }, [balanceData, address]);
 
 
   useEffect(() => {
@@ -284,8 +289,10 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   }, [datan, timeControl, a, gameSuccess]);
 
   useEffect(() => {
-    if (timeControl === true && gameSuccess === false) {
+    // console.log(timeLeft, gameSuccess);
 
+    if (timeControl === true && gameSuccess === false) {
+      
       if (timeLeft > 0) {
         const timer = setTimeout(() => {
           setTimeLeft(timeLeft - 1);

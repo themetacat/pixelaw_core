@@ -2,22 +2,37 @@ import React, { useEffect } from "react";
 import style from "./index.module.css";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import loadingImg from "../../images/loading.png";
 
 interface Props {
   setPopStar: any;
   playFun: any;
-  playFun1: any;
+  playFuntop: any;
   onTopUpClick: any; // 添加回调函数
+  loadingplay: any;
+
+  
 }
 
-export default function PopStar({ setPopStar, playFun, onTopUpClick, playFun1 }: Props) {
+export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,loadingplay }: Props) {
+  const playAction = localStorage.getItem("playAction");
+  
   const { isConnected } = useAccount();
 
   const handleConnectClick = () => {
+
+
     if (isConnected) {
-      setPopStar(false);
-      // playFun1();
-      playFun();
+      // setPopStar(false);
+
+      if (playAction == 'play'){
+        setPopStar(true)
+        playFun();
+      } else {
+        setPopStar(false);
+      }
+      
+      // playFun();
 
       if (!playFun) {
         onTopUpClick(); // 调用回调函数
@@ -107,7 +122,19 @@ export default function PopStar({ setPopStar, playFun, onTopUpClick, playFun1 }:
                     type="button"
                     className={style.btnPlay}
                   >
-                    {playFun1 ? "Play" : "Top Up First"}
+                    {/* {playAction == 'play' ? "Play" : "Top Up First"} */}
+                    {
+                      loadingplay === true ?(
+                        <img
+                          src={loadingImg}
+                          alt=""
+                          className={`${style.commonCls1} ${style.spinAnimation}`}
+                        />
+                      ):(
+                        <> {playAction == 'play' ? "Play" : "Top Up First"}</>
+                      )
+                      
+                    }
                   </button>
                 );
               })()}
