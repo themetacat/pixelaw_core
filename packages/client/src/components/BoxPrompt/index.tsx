@@ -140,7 +140,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
         TCMPopStar,
         addressToEntityID(account)
       );
-        // console.log(TCMPopStarData);
       if (TCMPopStarData) {
         const tokenBalancePromises = TCMPopStarData.tokenAddressArr.map(
           async (item) => {

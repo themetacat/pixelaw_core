@@ -158,7 +158,6 @@ export default function Header({ hoveredData, handleData }: Props) {
   }, [isConnected, palyerAddress, publicClient]);
 
   useEffect(() => {
-
     if (isConnected) {
       console.log((Number(balance) / 1e18));
       if ((Number(balance) / 1e18) < 0.00001) {
@@ -169,24 +168,33 @@ export default function Header({ hoveredData, handleData }: Props) {
         setTopUpType(false);
         setPlayFun(false); // 如果余额大于0.000001，设置playFun为true
         localStorage.setItem('money', 'toomoney')
+        
         if (TCMPopStarData && TCMPopStarData.startTime) {
           const currentTime = Math.floor(Date.now() / 1000);
           const elapsedTime = currentTime - Number(TCMPopStarData.startTime);
           const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
+          console.log(111111111111);
+          console.log(TCMPopStarData);
+          
           if (updatedTimeLeft > 0) {
             localStorage.setItem('playAction', 'gameContinue');
           } else {
             localStorage.setItem('playAction', 'play')
           }
         } else {
-          localStorage.setItem('playAction', 'play')
+          console.log(33333);
+          if(localStorage.getItem("playAction")!== "gameContinue"){
+            localStorage.setItem('playAction', 'play')
+
+          }
+
         }
       }
     }else{
       localStorage.setItem('money', 'nomoney')
       localStorage.setItem('playAction', 'noplay')
     }
-  }, [isConnected, balance]);
+  }, [isConnected, balance,]);
 
   useEffect(() => {
     const handleMouseMove = () => {
@@ -825,6 +833,8 @@ export default function Header({ hoveredData, handleData }: Props) {
             setTimeControl(true);
             onHandleLoading();
             localStorage.setItem('playAction', 'gameContinue');
+            console.log(222222222);
+            console.log("setsetset");
 
           } else {
             handleError();
