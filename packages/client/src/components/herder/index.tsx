@@ -155,7 +155,7 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   useEffect(() => {
     if (isConnected) {
-      if ((Number(balance) / 1e18) < 1.4) {
+      if ((Number(balance) / 1e18) < 0.000001) {
         setTopUpType(true);
         
         localStorage.setItem('money', 'nomoney')
