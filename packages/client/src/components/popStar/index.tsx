@@ -11,12 +11,12 @@ interface Props {
   onTopUpClick: any; // 添加回调函数
   loadingplay: any;
 
-  
+
 }
 
-export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,loadingplay }: Props) {
+export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop, loadingplay }: Props) {
   const playAction = localStorage.getItem("playAction");
-  
+
   const { isConnected } = useAccount();
 
 
@@ -25,13 +25,13 @@ export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,
 
     if (isConnected) {
       // setPopStar(false);
-      if (playAction == 'play'){
+      if (playAction == 'play') {
         setPopStar(true)
         playFun();
       } else {
         setPopStar(false);
       }
-      
+
       // playFun();
 
       if (!playFun) {
@@ -48,22 +48,22 @@ export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,
       <p className={style.title}>WELCOME TO POPCRAFT!</p>
       <div className={style.Container}>
         <p className={style.copywritingFirst}>How to play?</p>
+        <span className={style.copywritingTwo}>This is a compossibility-based elimination game.You have</span>
         <span className={style.copywritingThree}>5 minutes</span>&nbsp;
         <span className={style.copywritingTwo}>
           {" "}
-          countdown time to eliminate all the stars.{" "}
+          to eliminate all the materials.{" "}
         </span>
         <br />
-        <span className={style.copywritingTwo}> Get</span>
+        <span className={style.copywritingTwo}>    Get rewarded with </span>
         <span className={style.copywritingThree}> 150 $bugs</span>
         <span className={style.copywritingTwo}>
           {" "}
-          rewarded for completions.
+          for completing the game.
           <br />
-          In order to complete the game, made,you may need materials made from
-          the game
+          To complete the game, you may need materials from the game
         </span>
-        <span className={style.copywritingFour}> This Cursed Machine</span>
+        <a href="https://thiscursedmachine.fun/" target="_blank" rel="noopener noreferrer" className={style.copywritingFour}> This Cursed Machine</a>
         <span className={style.copywritingTwo}>.</span>
       </div>
       <ConnectButton.Custom>
@@ -124,16 +124,16 @@ export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,
                   >
                     {/* {playAction == 'play' ? "Play" : "Top Up First"} */}
                     {
-                      loadingplay === true ?(
+                      loadingplay === true ? (
                         <img
                           src={loadingImg}
                           alt=""
                           className={`${style.commonCls1} ${style.spinAnimation}`}
                         />
-                      ):(
+                      ) : (
                         <> {playAction == 'play' ? "Play" : "Top Up First"}</>
                       )
-                      
+
                     }
                   </button>
                 );

@@ -40,9 +40,10 @@ interface Props {
   playFun: any;
   // handlematchedData: any;
   handleEoaContractData: any;
+  setPopStar: any;
 }
 
-export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoaContractData }: Props) {
+export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoaContractData, setPopStar }: Props) {
   const {
     components: {
       App,
@@ -81,24 +82,21 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   const seconds = timeLeft % 300;
   const [selectedOption, setSelectedOption] = useState("option1");
   const { address } = useAccount();
-  
+
   const handlePayMent = () => {
     if (data1) {
       const payFunctionTwo = payFunction(data1?.key, numberData);
       setcresa(true);
       payFunctionTwo.then((result) => {
         if (result.status === "success") {
-
           setcresa(false);
-          setpay1(true);
+          // setpay1(true);
         } else {
-
           setcresa(false);
           setpay(true);
         }
       })
         .catch((error) => {
-
           setcresa(false);
           // setpay(true);
         });
@@ -114,11 +112,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
     const [account] = await window.ethereum!.request({
       method: "eth_accounts",
     });
-    
-
-    // const { address, connector } = useAccount();
-    // console.log(address);
-    
     return account;
   };
 
@@ -127,14 +120,11 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       { address: "address", addressTwo: "address" },
       { address, addressTwo }
     );
-
   const panningType = window.localStorage.getItem("panning");
-  
+
   const fetchData = async () => {
     try {
-
       const account = await getEoaContract();
-
       const TCMPopStarData = getComponentValue(
         TCMPopStar,
         addressToEntityID(account)
@@ -161,14 +151,11 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
         UserDelegationControl,
         addressToEntityIDTwo(account, palyerAddress)
       );
-      
-      localStorage.setItem('deleGeData',JSON.stringify(deleGeData))
-
+      localStorage.setItem('deleGeData', JSON.stringify(deleGeData))
       // if (deleGeData === undefined) {
       //   registerDelegation()
       // }
       return TCMPopStarData;
-
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -179,29 +166,26 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
     imageIconData,
     balanceData
   );
+
   function getMatchedData(tokenAddresses, imageData, balanceData) {
     const result = {};
-
     tokenAddresses?.forEach((address) => {
       if (imageData[address]) {
         const balanceObj = Object.values(balanceData).find(
           (obj) => obj[address]
         );
         let balance = balanceObj ? balanceObj[address] : 0;
-
         if (typeof balance.balance === "bigint") {
           balance = (balance.balance / BigInt(10 ** 18)).toString();
         } else {
           balance = balance.balance || "0";
         }
-
         result[address] = {
           ...imageData[address],
           balance: balance,
         };
       }
     });
-
     return result;
   }
 
@@ -209,45 +193,30 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
     setSelectedOption(event.target.value);
   };
 
-  const downHandleNumber =
-    (val: any) => {
-
-      setNumberData(numberData - 1);
-
-    };
+  const downHandleNumber = (val: any) => {
+    setNumberData(numberData - 1);
+  };
   const upHandleNumber = (val: any) => {
     setNumberData(numberData + 1);
   };
 
   const updateTCMPopStarData = () => {
     const fetchDataTotal = fetchData();
-
-
     fetchDataTotal.then((TCMPopStarData) => {
       if (palyerAddress !== undefined) {
         handleEoaContractData(TCMPopStarData);
-
-
         if (TCMPopStarData) {
           setGetEoaContractData(TCMPopStarData?.tokenAddressArr);
           const blockchainStartTime = Number(TCMPopStarData.startTime) as any;
           setStartTime(blockchainStartTime);
-
           const currentTime = Math.floor(Date.now() / 1000);
-          
           const elapsedTime = currentTime - blockchainStartTime;
-          
           const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
-          
           setTimeLeft(updatedTimeLeft);
-
           const allZeros = TCMPopStarData.matrixArray.every((data) => data === 0n);
-
           if (allZeros) {
             setGameSuccess(true)
-
           } else {
-
             setGameSuccess(false)
             if (TCMPopStarData.gameFinished === true) {
               seta(true)
@@ -257,33 +226,27 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       }
     });
   };
- 
+
   useEffect(() => {
     updateTCMPopStarData();
   }, [balanceData, address]);
 
-
   useEffect(() => {
-
     if (timeControl === true && gameSuccess === false) {
       if (datan !== null) {
         const currentTime = Math.floor(Date.now() / 1000);
         const timeElapsed = currentTime - datan;
-        const newTimeLeft = 300 - timeElapsed;
+        const newTimeLeft = 15 - timeElapsed;
         setTimeLeft(newTimeLeft > 0 ? newTimeLeft : 0);
         if (localStorage.getItem('showGameOver') === 'false') {
           localStorage.setItem('showGameOver', 'true')
         }
-
       }
     }
   }, [datan, timeControl, a, gameSuccess]);
 
   useEffect(() => {
-    // console.log(timeLeft, gameSuccess);
-
     if (timeControl === true && gameSuccess === false) {
-      
       if (timeLeft > 0) {
         const timer = setTimeout(() => {
           setTimeLeft(timeLeft - 1);
@@ -291,13 +254,10 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
             localStorage.setItem('showGameOver', 'true')
           }
         }, 1000);
-
         return () => clearTimeout(timer);
       }
-
     }
   }, [timeLeft, timeControl, a, gameSuccess]);
-
 
   useEffect(() => {
     const payFor = forMent(data1?.key, numberData)
@@ -426,7 +386,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
             {pay === true ? (
               <div className={style.patment}>payment failed! try again!</div>
             ) : null}
-
             <button
               className={style.payBtn}
               onClick={() => {
@@ -469,7 +428,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
           </div>
         </div>
       ) : null}
-
       {warnBox === true ? (
         <div
           className={panningType !== "false" ? style.overlayBuy : style.overlay}
@@ -501,19 +459,11 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
               className={panningType !== "false" ? style.overlayBuy : style.overlay}
             >
               <div className={style.contentSuccess}>
-                <img
-                  className={style.turnOff}
-                  src={trunOff}
-                  alt=""
-                  onClick={() => {
-                    localStorage.setItem('showGameOver', 'false')
-                  }}
-                />
                 <p>Game Over!</p>
                 <button
                   onClick={() => {
-
                     playFun()
+                    setPopStar(false)
                   }}
                 >
                   Play Again

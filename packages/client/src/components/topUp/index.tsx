@@ -30,7 +30,7 @@ export default function TopUp({
   setTopUpType,
   palyerAddress,
   mainContent,
-   onTopUpSuccess, 
+  onTopUpSuccess,
 }: Props) {
   const [warningModel, setWarningModel] = useState(false);
   const [withDrawType, setWithDrawType] = useState(false);
@@ -41,6 +41,7 @@ export default function TopUp({
   const [privateKey, setprivateKey] = useState("");
   const [withDrawHashVal, setwithDrawHashVal] = useState(undefined);
   const [balance, setBalance] = useState(0);
+  const [topUpFailed, setTopUpFailed] = useState(false);
   const {
     network: { walletClient, publicClient },
   } = useMUD();
@@ -49,14 +50,13 @@ export default function TopUp({
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
-   
-   useEffect(() => {
+
+  useEffect(() => {
     publicClient.getBalance({ address: palyerAddress }).then((balance: any) => {
       setBalance(Number(balance));
-     })
-   },[])
+    });
+  }, []);
 
-  
   const [inputValue, setInputValue] = useState("0.000003");
   const {
     data: hash,
@@ -64,7 +64,7 @@ export default function TopUp({
     isPending,
     sendTransaction,
     sendTransactionAsync,
-    status
+    status,
   } = useSendTransaction();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -77,23 +77,23 @@ export default function TopUp({
   } = useWaitForTransactionReceipt({
     hash: withDrawHashVal,
   });
-  
+
   const balanceSW = balanceResultSW.data?.value ?? 0n;
-  
+
   const balanceResultEOA = useBalance({
     address: address,
   });
-  
+
   async function withDraw() {
     if (parseEther(balance.toString()) > MIN_SESSION_WALLET_BALANCE) {
       const value = parseEther(balance.toString()) - MIN_SESSION_WALLET_BALANCE;
-      
+
       const hash = await walletClient.sendTransaction({
         to: address,
         value: value,
       });
       console.log(hash);
-      
+
       setwithDrawHashVal(hash);
     } else {
       toast.error("BALANCE not enough");
@@ -167,14 +167,22 @@ export default function TopUp({
   async function submit() {
     const to = palyerAddress;
     const value = inputValue;
-    
-    const result_hash = await sendTransactionAsync({ to, value: parseEther(inputValue) });
-    const result = await publicClient.waitForTransactionReceipt({hash: result_hash})
-    if (result.status === "success") {
-      onTopUpSuccess(); // 调用回调函数
+
+    try {
+      const result_hash = await sendTransactionAsync({ to, value: parseEther(inputValue) });
+      const result = await publicClient.waitForTransactionReceipt({ hash: result_hash });
+      if (result.status === "success") {
+        onTopUpSuccess(); // 调用回调函数
+      } else {
+        setTopUpFailed(true);
+        toast.error("Failed to top up!");
+      }
+    } catch (error) {
+      setTopUpFailed(true);
+      toast.error("Failed to top up!");
     }
-    
   }
+
   return (
     <div className={style.topBox}>
       <div className={style.cant}>
@@ -185,7 +193,7 @@ export default function TopUp({
           alt=""
           onClick={() => {
             setTopUpType(false);
-          }} 
+          }}
         />
       </div>
       <ConnectButton.Custom>
@@ -436,15 +444,19 @@ export default function TopUp({
                 }
                 disabled={transferPayType === true || isConfirming || isPending}
               >
-                {transferPayType === true && "Not enough funds"}
-                {transferPayType === false &&
+                {topUpFailed && " top up!"}
+                {!topUpFailed && transferPayType === true && "Not enough funds"}
+                {!topUpFailed &&
+                  transferPayType === false &&
                   !isConfirming &&
                   !isPending &&
                   "Deposit via transfer"}
 
-                {transferPayType === false && (isConfirming || isPending) && (
-                  <div>Waiting for confirmation...</div>
-                )}
+                {!topUpFailed &&
+                  transferPayType === false &&
+                  (isConfirming || isPending) && (
+                    <div>Waiting for confirmation...</div>
+                  )}
               </button>
             </>
           );
