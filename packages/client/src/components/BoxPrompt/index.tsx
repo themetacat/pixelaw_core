@@ -34,11 +34,11 @@ import {
 } from "@latticexyz/recs";
 import { spanish } from "viem/accounts";
 import { flare } from "viem/chains";
+
 interface Props {
   coordinates: any;
   timeControl: any;
   playFun: any;
-  // handlematchedData: any;
   handleEoaContractData: any;
   setPopStar: any;
 }
@@ -78,8 +78,8 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   const [startTime, setStartTime] = useState(null);
   const pixel_value = getComponentValue(Pixel, coor_entity) as any;
   const entities_app = useEntityQuery([Has(App)]);
-  const minutes = Math.floor(timeLeft / 300);
-  const seconds = timeLeft % 300;
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
   const [selectedOption, setSelectedOption] = useState("option1");
   const { address } = useAccount();
 
@@ -90,7 +90,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       payFunctionTwo.then((result) => {
         if (result.status === "success") {
           setcresa(false);
-          // setpay1(true);
         } else {
           setcresa(false);
           setpay(true);
@@ -268,13 +267,31 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
     })
   }, [data1, numberData])
 
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60).toString().padStart(2, '0');
+    const seconds = (time % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  };
+
+  useEffect(() => {
+    // 在组件挂载时将 showGameOver 设置为 false
+    localStorage.setItem('showGameOver', 'false');
+    // 检查 localStorage 中的 showGameOver 值
+    const showGameOver = localStorage.getItem('showGameOver');
+    if (showGameOver === 'true') {
+      setGameSuccess(true);
+    } else {
+      setGameSuccess(false);
+    }
+  }, []);
+  
 
   return (
     <>
       <div className={style.container}>
         <div className={style.firstPart}>
           <p style={{ cursor: "pointer" }}>
-            {timeLeft !== 0 && gameSuccess === false ? timeLeft :
+            {timeLeft !== 0 && gameSuccess === false ? formatTime(timeLeft) :
               <div onClick={() => {
                 playFun()
               }}>New<br />Game</div>
@@ -350,7 +367,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
                   onClick={() => {
                     upHandleNumber(numberData);
                   }}
-                  className={numberData === 300 ? style.disabled : (null as any)}
+                  className={numberData === 300? style.disabled : (null as any)}
                 >
                   +
                 </button>

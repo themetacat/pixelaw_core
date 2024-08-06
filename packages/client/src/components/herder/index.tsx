@@ -24,6 +24,7 @@ import pixeLawlogo from '../../images/pixeLawlogo.png'
 import backgroundMusic from '../../audio/1.mp3';
 import effectSound from '../../audio/2.mp3';
 import { flare } from "viem/chains";
+import { B } from "@latticexyz/store/dist/store-e0caabe3";
 
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
@@ -133,6 +134,22 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [playFuntop, setPlayFun] = useState(false);
   const playAction = localStorage.getItem('playAction');
 
+
+  useEffect ( () => {
+    const playAction = localStorage.getItem('playAction');
+    if (playAction === 'gameContinue') {
+      setPopStar(true);
+      setPlayFun(true)
+    }else if (playAction === 'play') {
+      setPopStar(true);
+    setPlayFun(false);
+    }else{
+      setPopStar(false);
+    }
+  },[])
+
+
+
   const handleTopUpClick = () => {
     setShowTopUp(true);
   };
@@ -140,6 +157,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const handleTopUpSuccess = () => {
     setPlayFun(true);
     setPopStar(true);
+    localStorage.setItem('playAction', 'play');
   };
 
   useEffect(() => {
@@ -155,9 +173,10 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   useEffect(() => {
     if (isConnected) {
-      if ((Number(balance) / 1e18) < 0.000001) {
+      console.log(balance);
+      
+      if ((Number(balance) / 1e18) < 0.00001) {
         setTopUpType(true);
-        
         localStorage.setItem('money', 'nomoney')
         localStorage.setItem('playAction', 'noplay')
       } else {
@@ -615,6 +634,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     ]
   );
 
+
   let timeout: NodeJS.Timeout;
   const [isDragging, setIsDragging] = useState(false);
   const [timeControl, setTimeControl] = useState(false);
@@ -691,15 +711,11 @@ export default function Header({ hoveredData, handleData }: Props) {
         setHoveredSquare(newHoveredSquare);
 
         if (isEmpty) {
-
           if (selectedColor && coordinates) {
             hoveredSquareRef.current = coordinates;
-
             setIsDragging(false);
             if (appName === "BASE/PopCraftSystem") {
-
               // if (action === "pop") {
-
               if (TCMPopStarData) {
                 const new_coor = {
                   x: coordinates.x - 23 + TCMPopStarData.x,
@@ -855,6 +871,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     } else {
       playData()
     }
+    // localStorage.setItem('playAction', 'play'); // 设置 playAction 为 play
   };
   const playData = () => {
     let EmptyRegionNum = 0
@@ -883,7 +900,8 @@ export default function Header({ hoveredData, handleData }: Props) {
         null
       );
     }
-  }
+    // localStorage.setItem('playAction', 'gameContinue'); // 设置 playAction 为 gameContinue
+  };
 
   const handleMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {

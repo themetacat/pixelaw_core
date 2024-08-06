@@ -42,9 +42,10 @@ export default function TopUp({
   const [withDrawHashVal, setwithDrawHashVal] = useState(undefined);
   const [balance, setBalance] = useState(0);
   const [topUpFailed, setTopUpFailed] = useState(false);
-  const {
-    network: { walletClient, publicClient },
-  } = useMUD();
+  const [buttonText, setButtonText] = useState("Deposit via transfer");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  const {  network: { walletClient, publicClient } } = useMUD();
   const { address, isConnected } = useAccount();
   const MIN_SESSION_WALLET_BALANCE = parseEther("0.0003");
   const balanceResultSW = useBalance({
@@ -79,7 +80,6 @@ export default function TopUp({
   });
 
   const balanceSW = balanceResultSW.data?.value ?? 0n;
-
   const balanceResultEOA = useBalance({
     address: address,
   });
@@ -156,7 +156,7 @@ export default function TopUp({
       parseFloat(inputValue) < Number(balanceResultEOA.data?.value) / 1e18
     ) {
       setTransferPayType(false);
-
+      setButtonText("Waiting for confirmation...");
       submit();
     } else {
       setLoading(false);
@@ -173,13 +173,28 @@ export default function TopUp({
       const result = await publicClient.waitForTransactionReceipt({ hash: result_hash });
       if (result.status === "success") {
         onTopUpSuccess(); // 调用回调函数
+        setButtonText("Deposit via transfer"); // 恢复按钮文案
       } else {
         setTopUpFailed(true);
         toast.error("Failed to top up!");
+        setButtonText("Top up!");
+        setIsButtonDisabled(true);
+        setTimeout(() => {
+          setButtonText("Deposit via transfer");
+          setIsButtonDisabled(false);
+          setTopUpFailed(false); // 重置失败状态
+        }, 3000); // 延迟三秒后恢复按钮文案和启用按钮
       }
     } catch (error) {
       setTopUpFailed(true);
       toast.error("Failed to top up!");
+      setButtonText("Top up!");
+      setIsButtonDisabled(true);
+      setTimeout(() => {
+        setButtonText("Deposit via transfer");
+        setIsButtonDisabled(false);
+        setTopUpFailed(false); // 重置失败状态
+      }, 3000); // 延迟三秒后恢复按钮文案和启用按钮
     }
   }
 
@@ -434,7 +449,6 @@ export default function TopUp({
                   </div>
                 </div>
               </div>
-
               <button
                 onClick={transferPay}
                 className={
@@ -442,15 +456,15 @@ export default function TopUp({
                     ? style.footerBtn
                     : style.footerBtnElse
                 }
-                disabled={transferPayType === true || isConfirming || isPending}
+                disabled={transferPayType === true || isConfirming || isPending || isButtonDisabled}
               >
-                {topUpFailed && " top up!"}
+                {topUpFailed && buttonText}
                 {!topUpFailed && transferPayType === true && "Not enough funds"}
                 {!topUpFailed &&
                   transferPayType === false &&
                   !isConfirming &&
                   !isPending &&
-                  "Deposit via transfer"}
+                  buttonText}
 
                 {!topUpFailed &&
                   transferPayType === false &&
