@@ -228,15 +228,15 @@ export async function setupNetwork(): Promise<SetupNetworkResult> {
                 }
                
             }
-            if(networkConfig.chain.id === 31337){
+            // if(networkConfig.chain.id === 31337){
               
-              requestDrip();
-              setInterval(requestDrip, 20000)
+            //   requestDrip();
+            //   setInterval(requestDrip, 20000)
               
-            }else if(networkConfig.chain.id === 17069){
-              sendPostRequest();
-              setInterval(sendPostRequest, 40000)
-            }
+            // }else if(networkConfig.chain.id === 17069){
+            //   sendPostRequest();
+            //   setInterval(sendPostRequest, 40000)
+            // }
 
             resolve({
               world,

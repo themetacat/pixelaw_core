@@ -582,3 +582,12 @@ p {
     color: rgba(255, 255, 255, 1);
   }
 }
+.commonCls2 {
+  animation: spin 5s linear infinite;
+  -webkit-transform: rotate(3600deg);
+  transform: rotate(3600deg);
+  -webkit-transition: -webkit-transform 5s linear;
+  transition: transform 5s linear;
+  /* width: 100%; */
+  height: 100%;
+}

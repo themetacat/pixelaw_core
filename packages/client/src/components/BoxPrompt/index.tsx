@@ -12,6 +12,8 @@ import { abi_json } from "../../mud/createSystemCalls";
 import { resourceToHex, ContractWrite, getContract } from "@latticexyz/common";
 import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 import RightPart, { addressToEntityID } from "../rightPart";
+import loadingImg from "../../images/loading.png";
+
 import {
   Abi,
   encodeFunctionData,
@@ -41,9 +43,10 @@ interface Props {
   playFun: any;
   handleEoaContractData: any;
   setPopStar: any;
+  loadingplay: any;
 }
 
-export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoaContractData, setPopStar }: Props) {
+export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoaContractData, setPopStar, loadingplay }: Props) {
   const {
     components: {
       App,
@@ -82,6 +85,19 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   const seconds = timeLeft % 60;
   const [selectedOption, setSelectedOption] = useState("option1");
   const { address } = useAccount();
+  const [loading, setLoading] = useState(false);
+
+
+  const handlePlayAgain = () => {
+    setLoading(true); 
+    setTimeout(() => {
+      setLoading(false);
+      setdataq(false);  
+      playFun();
+      setPopStar(false);
+    }, 2000); 
+  };
+
 
   const handlePayMent = () => {
     if (data1) {
@@ -90,6 +106,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       payFunctionTwo.then((result) => {
         if (result.status === "success") {
           setcresa(false);
+          // setpay1(true);
         } else {
           setcresa(false);
           setpay(true);
@@ -235,7 +252,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       if (datan !== null) {
         const currentTime = Math.floor(Date.now() / 1000);
         const timeElapsed = currentTime - datan;
-        const newTimeLeft = 15 - timeElapsed;
+        const newTimeLeft = 300 - timeElapsed;
         setTimeLeft(newTimeLeft > 0 ? newTimeLeft : 0);
         if (localStorage.getItem('showGameOver') === 'false') {
           localStorage.setItem('showGameOver', 'true')
@@ -284,7 +301,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       setGameSuccess(false);
     }
   }, []);
-  
+
 
   return (
     <>
@@ -367,7 +384,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
                   onClick={() => {
                     upHandleNumber(numberData);
                   }}
-                  className={numberData === 300? style.disabled : (null as any)}
+                  className={numberData === 15 ? style.disabled : (null as any)}
                 >
                   +
                 </button>
@@ -477,13 +494,27 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
             >
               <div className={style.contentSuccess}>
                 <p>Game Over!</p>
-                <button
+                {/* <button
                   onClick={() => {
                     playFun()
                     setPopStar(false)
                   }}
                 >
                   Play Again
+                </button> */}
+                <button
+                  onClick={handlePlayAgain}
+                  disabled={loading}
+                  style={{ cursor: loading ? "not-allowed" : "auto" }}
+                >
+                  {loading ? (
+                    <img
+                      src={loadingImg}
+                      className={`${style.commonCls2} ${style.spinAnimation}`}
+                    />
+                  ) : (
+                    "Play Again"
+                  )}
                 </button>
               </div>
             </div>

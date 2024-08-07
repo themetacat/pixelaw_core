@@ -10,30 +10,20 @@ interface Props {
   playFuntop: any;
   onTopUpClick: any; // 添加回调函数
   loadingplay: any;
-
-
 }
 
 export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop, loadingplay }: Props) {
   const playAction = localStorage.getItem("playAction");
-
   const { isConnected } = useAccount();
-
-
   const handleConnectClick = () => {
 
-
     if (isConnected) {
-      // setPopStar(false);
       if (playAction == 'play') {
         setPopStar(true)
         playFun();
       } else {
         setPopStar(false);
       }
-
-      // playFun();
-
       if (!playFun) {
         onTopUpClick(); // 调用回调函数
       }
@@ -48,7 +38,7 @@ export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,
       <p className={style.title}>WELCOME TO POPCRAFT!</p>
       <div className={style.Container}>
         <p className={style.copywritingFirst}>How to play?</p>
-        <span className={style.copywritingTwo}>This is a compossibility-based elimination game.You have</span>
+        <span className={style.copywritingTwo}>This is a compossibility-based elimination game.You have&nbsp;</span>
         <span className={style.copywritingThree}>5 minutes</span>&nbsp;
         <span className={style.copywritingTwo}>
           {" "}
@@ -122,7 +112,6 @@ export default function PopStar({ setPopStar, playFun, onTopUpClick, playFuntop,
                     type="button"
                     className={style.btnPlay}
                   >
-                    {/* {playAction == 'play' ? "Play" : "Top Up First"} */}
                     {
                       loadingplay === true ? (
                         <img

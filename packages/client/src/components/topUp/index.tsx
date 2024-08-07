@@ -24,6 +24,7 @@ interface Props {
   palyerAddress: any;
   mainContent: any;
   onTopUpSuccess: () => void;
+  setTopUpTypeto:any;
 }
 
 export default function TopUp({
@@ -41,17 +42,15 @@ export default function TopUp({
   const [privateKey, setprivateKey] = useState("");
   const [withDrawHashVal, setwithDrawHashVal] = useState(undefined);
   const [balance, setBalance] = useState(0);
-  const [topUpFailed, setTopUpFailed] = useState(false);
-  const [buttonText, setButtonText] = useState("Deposit via transfer");
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  const {  network: { walletClient, publicClient } } = useMUD();
+  const {
+    network: { walletClient, publicClient },
+  } = useMUD();
   const { address, isConnected } = useAccount();
   const MIN_SESSION_WALLET_BALANCE = parseEther("0.0003");
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
-
+  
   useEffect(() => {
     publicClient.getBalance({ address: palyerAddress }).then((balance: any) => {
       setBalance(Number(balance));
@@ -71,15 +70,13 @@ export default function TopUp({
     useWaitForTransactionReceipt({
       hash,
     });
-  const {
-    isLoading: isConfirmingWith,
-    isSuccess: isConfirmedWith,
-    isPending: isPendingWith,
-  } = useWaitForTransactionReceipt({
-    hash: withDrawHashVal,
-  });
+  const { isLoading: isConfirmingWith, isSuccess: isConfirmedWith, isPending: isPendingWith } =
+    useWaitForTransactionReceipt({
+      hash: withDrawHashVal,
+    });
 
   const balanceSW = balanceResultSW.data?.value ?? 0n;
+
   const balanceResultEOA = useBalance({
     address: address,
   });
@@ -130,8 +127,18 @@ export default function TopUp({
     );
   };
 
+  // const handleCopy = () => {
+  //   navigator.clipboard.writeText(palyerAddress).then(
+  //     function () {
+  //       toast.success("Text copied to clipboard");
+  //     },
+  //     function (err) {
+  //       toast.error("Error in copying text");
+  //     }
+  //   );
+  // };
   const handleCopy = () => {
-    navigator.clipboard.writeText(palyerAddress).then(
+    navigator.clipboard.writeText(address).then(
       function () {
         toast.success("Text copied to clipboard");
       },
@@ -140,7 +147,7 @@ export default function TopUp({
       }
     );
   };
-
+  
   const bridgeHandle = () => {
     if (mainContent === "MAINNET") {
       window.open("https://redstone.xyz/deposit");
@@ -156,7 +163,7 @@ export default function TopUp({
       parseFloat(inputValue) < Number(balanceResultEOA.data?.value) / 1e18
     ) {
       setTransferPayType(false);
-      setButtonText("Waiting for confirmation...");
+
       submit();
     } else {
       setLoading(false);
@@ -171,30 +178,19 @@ export default function TopUp({
     try {
       const result_hash = await sendTransactionAsync({ to, value: parseEther(inputValue) });
       const result = await publicClient.waitForTransactionReceipt({ hash: result_hash });
+      console.log(result);
       if (result.status === "success") {
-        onTopUpSuccess(); // 调用回调函数
-        setButtonText("Deposit via transfer"); // 恢复按钮文案
+        // onTopUpSuccess(); // 调用回调函数
+        toast.success("Top up successful!"); // 显示成功消息
       } else {
-        setTopUpFailed(true);
+        setTransferPayType(true);
         toast.error("Failed to top up!");
-        setButtonText("Top up!");
-        setIsButtonDisabled(true);
-        setTimeout(() => {
-          setButtonText("Deposit via transfer");
-          setIsButtonDisabled(false);
-          setTopUpFailed(false); // 重置失败状态
-        }, 3000); // 延迟三秒后恢复按钮文案和启用按钮
       }
     } catch (error) {
-      setTopUpFailed(true);
+      setTransferPayType(true);
       toast.error("Failed to top up!");
-      setButtonText("Top up!");
-      setIsButtonDisabled(true);
-      setTimeout(() => {
-        setButtonText("Deposit via transfer");
-        setIsButtonDisabled(false);
-        setTopUpFailed(false); // 重置失败状态
-      }, 3000); // 延迟三秒后恢复按钮文案和启用按钮
+    } finally {
+      setTransferPayType(false); // 确保在任何情况下都将按钮文案恢复为“Deposit via transfer”
     }
   }
 
@@ -449,6 +445,7 @@ export default function TopUp({
                   </div>
                 </div>
               </div>
+
               <button
                 onClick={transferPay}
                 className={
@@ -456,21 +453,17 @@ export default function TopUp({
                     ? style.footerBtn
                     : style.footerBtnElse
                 }
-                disabled={transferPayType === true || isConfirming || isPending || isButtonDisabled}
+                disabled={transferPayType === true || isConfirming || isPending}
               >
-                {topUpFailed && buttonText}
-                {!topUpFailed && transferPayType === true && "Not enough funds"}
-                {!topUpFailed &&
-                  transferPayType === false &&
+                {transferPayType === true && "Not enough funds"}
+                {transferPayType === false &&
                   !isConfirming &&
                   !isPending &&
-                  buttonText}
+                  "Deposit via transfer"}
 
-                {!topUpFailed &&
-                  transferPayType === false &&
-                  (isConfirming || isPending) && (
-                    <div>Waiting for confirmation...</div>
-                  )}
+                {transferPayType === false && (isConfirming || isPending) && (
+                  <div>Waiting for confirmation...</div>
+                )}
               </button>
             </>
           );

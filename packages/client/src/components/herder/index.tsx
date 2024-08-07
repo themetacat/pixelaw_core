@@ -24,7 +24,6 @@ import pixeLawlogo from '../../images/pixeLawlogo.png'
 import backgroundMusic from '../../audio/1.mp3';
 import effectSound from '../../audio/2.mp3';
 import { flare } from "viem/chains";
-import { B } from "@latticexyz/store/dist/store-e0caabe3";
 
 const colorOptionsData = [
   { color: "#4d4d4d", title: "Option 1" },
@@ -92,6 +91,8 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [popExhibit, setPopExhibit] = useState(false);
   const [boxPrompt, setBoxPrompt] = useState(false);
   const [topUpType, setTopUpType] = useState(false);
+  const [topUpTypeto, setTopUpTypeto] = useState(false);
+
   const [balance, setBalance] = useState<bigint | null>(null);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
@@ -113,6 +114,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   const [mouseY, setMouseY] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingplay, setLoadingpaly] = useState(false);
+  const [loadingGameOver, setLoadingGameOver] = useState(false);
   const [panningFromChild, setPanningFromChild] = useState(false);
   const [popStar, setPopStar] = useState(false);
   const [pageClick, setPageClick] = useState(false);
@@ -148,12 +150,10 @@ export default function Header({ hoveredData, handleData }: Props) {
     }
   },[])
 
-
-
   const handleTopUpClick = () => {
     setShowTopUp(true);
   };
-
+  
   const handleTopUpSuccess = () => {
     setPlayFun(true);
     setPopStar(true);
@@ -173,8 +173,6 @@ export default function Header({ hoveredData, handleData }: Props) {
 
   useEffect(() => {
     if (isConnected) {
-      console.log(balance);
-      
       if ((Number(balance) / 1e18) < 0.00001) {
         setTopUpType(true);
         localStorage.setItem('money', 'nomoney')
@@ -205,6 +203,8 @@ export default function Header({ hoveredData, handleData }: Props) {
     }
   }, [isConnected, balance,]);
 
+
+  
 
 
   useEffect(() => {
@@ -401,8 +401,6 @@ export default function Header({ hoveredData, handleData }: Props) {
     ) => {
       let pix_text;
       // const scrollOffset = { x: 23, y: 10 };
-
-
       ctx.fillRect(0, 0, 10, 10);
       ctx.lineWidth = 10;
       ctx.strokeStyle = "#000000";
@@ -871,7 +869,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     } else {
       playData()
     }
-    // localStorage.setItem('playAction', 'play'); // 设置 playAction 为 play
+    localStorage.setItem('playAction', 'play'); // 设置 playAction 为 play
   };
   const playData = () => {
     let EmptyRegionNum = 0
@@ -900,7 +898,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         null
       );
     }
-    // localStorage.setItem('playAction', 'gameContinue'); // 设置 playAction 为 gameContinue
+    localStorage.setItem('playAction', 'gameContinue'); // 设置 playAction 为 gameContinue
   };
 
   const handleMouseEnter = useCallback(
@@ -1197,6 +1195,7 @@ export default function Header({ hoveredData, handleData }: Props) {
   ]);
 
   useEffect(() => {
+    
     const canvas = canvasRef.current as any;
     const handleMouseMove = (event: any) => {
       const rect = canvas.getBoundingClientRect();
@@ -1490,6 +1489,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         >
           <TopUpContent
             setTopUpType={setTopUpType}
+            setTopUpTypeto={setTopUpTypeto}
             mainContent={mainContent}
             palyerAddress={palyerAddress}
             onTopUpSuccess={handleTopUpSuccess}  // 传递回调函数
@@ -1524,7 +1524,6 @@ export default function Header({ hoveredData, handleData }: Props) {
           playFun={playFun}
           handleEoaContractData={handleEoaContractData}
           setPopStar={setPopStar}
-
         />
       ) : null}
     </>
