@@ -89,15 +89,14 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
 
 
   const handlePlayAgain = () => {
-    setLoading(true); 
+    setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      setdataq(false);  
+      setdataq(false);
       playFun();
       setPopStar(false);
-    }, 2000); 
+    }, 2000);
   };
-
 
   const handlePayMent = () => {
     if (data1) {
@@ -105,22 +104,30 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       setcresa(true);
       payFunctionTwo.then((result) => {
         if (result.status === "success") {
+          toast.success("Payment successed!");
           setcresa(false);
-          // setpay1(true);
+          setpay1(true);
+          setTimeout(() => {
+            setpay1(false);
+            setdataq(false);
+          }, 3000);
         } else {
+          toast.error("Payment failed! Try again!");
           setcresa(false);
           setpay(true);
+          setTimeout(() => {
+            setpay(false);
+          }, 3000);
         }
       })
         .catch((error) => {
+          toast.error("Payment failed! Try again!");
           setcresa(false);
-          // setpay(true);
+          setpay(true);
+          setTimeout(() => {
+            setpay(false);
+          }, 3000);
         });
-      setTimeout(() => {
-        setdataq(false);
-        setpay1(false);
-        setpay(false);
-      }, 2000);
     }
   };
 
@@ -208,12 +215,13 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   const handleSelectChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
-
   const downHandleNumber = (val: any) => {
     setNumberData(numberData - 1);
   };
   const upHandleNumber = (val: any) => {
-    setNumberData(numberData + 1);
+    if (data !== 0) {
+      setNumberData(numberData + 1);
+    }
   };
 
   const updateTCMPopStarData = () => {
@@ -291,9 +299,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
   };
 
   useEffect(() => {
-    // 在组件挂载时将 showGameOver 设置为 false
     localStorage.setItem('showGameOver', 'false');
-    // 检查 localStorage 中的 showGameOver 值
     const showGameOver = localStorage.getItem('showGameOver');
     if (showGameOver === 'true') {
       setGameSuccess(true);
@@ -384,7 +390,8 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
                   onClick={() => {
                     upHandleNumber(numberData);
                   }}
-                  className={numberData === 15 ? style.disabled : (null as any)}
+                  disabled={data === 0}
+                  className={data === 0 ? style.disabled : (null as any)}
                 >
                   +
                 </button>
@@ -494,14 +501,6 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
             >
               <div className={style.contentSuccess}>
                 <p>Game Over!</p>
-                {/* <button
-                  onClick={() => {
-                    playFun()
-                    setPopStar(false)
-                  }}
-                >
-                  Play Again
-                </button> */}
                 <button
                   onClick={handlePlayAgain}
                   disabled={loading}

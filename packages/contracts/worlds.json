@@ -12,10 +12,8 @@
     "blockNumber": 1094495
   },
   "31337": {
-  "address": "0x784844480280ca865ac8ef89bb554283dddff737",
-  "blockNumber": 5371008
-},
-
+    "address": "0x784844480280ca865ac8ef89bb554283dddff737"
+  },
   "31338": {
     "address": "0x784844480280ca865ac8ef89bb554283dddff737",
     "blockNumber": 4505993

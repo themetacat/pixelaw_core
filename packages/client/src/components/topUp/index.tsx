@@ -24,7 +24,7 @@ interface Props {
   palyerAddress: any;
   mainContent: any;
   onTopUpSuccess: () => void;
-  setTopUpTypeto:any;
+  setTopUpTypeto: any;
 }
 
 export default function TopUp({
@@ -42,15 +42,17 @@ export default function TopUp({
   const [privateKey, setprivateKey] = useState("");
   const [withDrawHashVal, setwithDrawHashVal] = useState(undefined);
   const [balance, setBalance] = useState(0);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [withdrawButtonText, setWithdrawButtonText] = useState("WITHDRAW ALL");
   const {
     network: { walletClient, publicClient },
   } = useMUD();
   const { address, isConnected } = useAccount();
-  const MIN_SESSION_WALLET_BALANCE = parseEther("0.0003");
+  const MIN_SESSION_WALLET_BALANCE = parseEther("0.00003");
   const balanceResultSW = useBalance({
     address: palyerAddress,
   });
-  
+
   useEffect(() => {
     publicClient.getBalance({ address: palyerAddress }).then((balance: any) => {
       setBalance(Number(balance));
@@ -81,22 +83,33 @@ export default function TopUp({
     address: address,
   });
 
-  async function withDraw() {
-    if (parseEther(balance.toString()) > MIN_SESSION_WALLET_BALANCE) {
-      const value = parseEther(balance.toString()) - MIN_SESSION_WALLET_BALANCE;
 
+
+  async function withDraw() {
+    const balance_eth = balance / 1e18;
+    if (parseEther(balance_eth.toString()) > Number(MIN_SESSION_WALLET_BALANCE)) {
+      const value = parseEther(balance_eth.toString()) - MIN_SESSION_WALLET_BALANCE;
+      console.log(value);
+      setIsWithdrawing(true);
+      setWithdrawButtonText("Waiting for confirmation...");
       const hash = await walletClient.sendTransaction({
         to: address,
         value: value,
       });
-      console.log(hash);
-
       setwithDrawHashVal(hash);
     } else {
       toast.error("BALANCE not enough");
     }
   }
-
+  useEffect(() => {
+    if (isConfirmedWith) {
+      setIsWithdrawing(false);
+      setWithdrawButtonText("WITHDRAW ALL");
+      publicClient.getBalance({ address: palyerAddress }).then((balance: any) => {
+        setBalance(Number(balance));
+      });
+    }
+  }, [isConfirmedWith]);
   useEffect(() => {
     const networkConfigPromise = getNetworkConfig();
     networkConfigPromise.then((networkConfigPromiseVal) => {
@@ -105,8 +118,24 @@ export default function TopUp({
   }, []);
   const [balanceSWNum, setBalanceSWNum] = useState(Number(balanceSW) / 1e18);
 
+  // const handleChange = (event) => {
+  //   setInputValue(event.target.value);
+  //   setTransferPayType(false);
+  // };
   const handleChange = (event) => {
-    setInputValue(event.target.value);
+    const value = event.target.value;
+    const balanceEOA = Number(balanceResultEOA.data?.value) / 1e18;
+
+    if (parseFloat(value) < 0) {
+      setInputValue("0");
+    }
+    else if (parseFloat(value) > balanceEOA) {
+      setInputValue(balanceEOA.toString());
+    }
+    else {
+      setInputValue(value);
+    }
+
     setTransferPayType(false);
   };
 
@@ -127,18 +156,8 @@ export default function TopUp({
     );
   };
 
-  // const handleCopy = () => {
-  //   navigator.clipboard.writeText(palyerAddress).then(
-  //     function () {
-  //       toast.success("Text copied to clipboard");
-  //     },
-  //     function (err) {
-  //       toast.error("Error in copying text");
-  //     }
-  //   );
-  // };
-  const handleCopy = () => {
-    navigator.clipboard.writeText(address).then(
+  const handleCopy = (addressToCopy) => {
+    navigator.clipboard.writeText(addressToCopy).then(
       function () {
         toast.success("Text copied to clipboard");
       },
@@ -147,7 +166,7 @@ export default function TopUp({
       }
     );
   };
-  
+
   const bridgeHandle = () => {
     if (mainContent === "MAINNET") {
       window.open("https://redstone.xyz/deposit");
@@ -271,7 +290,7 @@ export default function TopUp({
                           src={UnioncopyBtn}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleCopy();
+                            handleCopy(address);
                           }}
                           alt=""
                           className={style.imgUnionCopyBtn}
@@ -336,7 +355,9 @@ export default function TopUp({
                       />
                       <img
                         src={UnioncopyBtn}
-                        onClick={handleCopy}
+                        onClick={() => {
+                          handleCopy(palyerAddress);
+                        }}
                         alt=""
                         className={style.imgUnioncopyBtn}
                       />
@@ -348,7 +369,7 @@ export default function TopUp({
                     </div>
                   </div>
 
-                  <div
+                  {/* <div
                     className={
                       withDrawType === true ? style.btnMeB : style.btnMe
                     }
@@ -370,8 +391,16 @@ export default function TopUp({
                         Waiting for confirmation...
                       </div>
                     )}
+                  </div> */}
+                  <div
+                    className={style.btnMe}
+                    onClick={withDraw}
+                    disabled={isWithdrawing || balance === 0}
+                  >
+                    {withdrawButtonText}
                   </div>
                 </div>
+
                 <div className={style.prvkey}>
                   <p className={style.pqad}>PRIVATE KEY</p>
                   <div style={{ display: "flex", gap: "4px" }}>

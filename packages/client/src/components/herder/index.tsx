@@ -179,7 +179,7 @@ export default function Header({ hoveredData, handleData }: Props) {
         localStorage.setItem('playAction', 'noplay')
       } else {
         setTopUpType(false);
-        setPlayFun(false); // 如果余额大于0.000001，设置playFun为true
+        setPlayFun(true); // 如果余额大于0.000001，设置playFun为true
         localStorage.setItem('money', 'toomoney')
         if (TCMPopStarData && TCMPopStarData.startTime) {
           const currentTime = Math.floor(Date.now() / 1000);
@@ -202,10 +202,6 @@ export default function Header({ hoveredData, handleData }: Props) {
       localStorage.setItem('playAction', 'noplay')
     }
   }, [isConnected, balance,]);
-
-
-  
-
 
   useEffect(() => {
     const handleMouseMove = () => {
@@ -869,7 +865,7 @@ export default function Header({ hoveredData, handleData }: Props) {
     } else {
       playData()
     }
-    localStorage.setItem('playAction', 'play'); // 设置 playAction 为 play
+    // localStorage.setItem('playAction', 'play'); // 设置 playAction 为 play
   };
   const playData = () => {
     let EmptyRegionNum = 0
