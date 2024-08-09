@@ -60,7 +60,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
     network: { playerEntity, publicClient, palyerAddress },
     systemCalls: { interact, forMent, payFunction, registerDelegation },
   } = useMUD();
-  const [timeLeft, setTimeLeft] = useState(300);
+  const [timeLeft, setTimeLeft] = useState(303);
   const [warnBox, setWarnBox] = useState(false);
   const [dataq, setdataq] = useState(false);
   const [cresa, setcresa] = useState(false);
@@ -235,7 +235,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
           setStartTime(blockchainStartTime);
           const currentTime = Math.floor(Date.now() / 1000);
           const elapsedTime = currentTime - blockchainStartTime;
-          const updatedTimeLeft = Math.max(300 - elapsedTime, 0);
+          const updatedTimeLeft = Math.max(303 - elapsedTime, 0);
           setTimeLeft(updatedTimeLeft);
           const allZeros = TCMPopStarData.matrixArray.every((data) => data === 0n);
           if (allZeros) {
@@ -260,7 +260,7 @@ export default function BoxPrompt({ coordinates, timeControl, playFun, handleEoa
       if (datan !== null) {
         const currentTime = Math.floor(Date.now() / 1000);
         const timeElapsed = currentTime - datan;
-        const newTimeLeft = 300 - timeElapsed;
+        const newTimeLeft = 303 - timeElapsed;
         setTimeLeft(newTimeLeft > 0 ? newTimeLeft : 0);
         if (localStorage.getItem('showGameOver') === 'false') {
           localStorage.setItem('showGameOver', 'true')
